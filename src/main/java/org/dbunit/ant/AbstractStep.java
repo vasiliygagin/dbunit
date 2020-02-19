@@ -45,6 +45,7 @@ import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.dataset.xml.FlatDtdProducer;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.dataset.xml.XmlProducer;
+import org.dbunit.dataset.yaml.YamlProducer;
 import org.dbunit.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
     public static final String FORMAT_DTD = "dtd";
     public static final String FORMAT_CSV = "csv";
     public static final String FORMAT_XLS = "xls";
+    public static final String FORMAT_YML = "yml";
 
     private boolean ordered = false;
 
@@ -197,9 +199,13 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             {
                 return new CachedDataSet(new XlsDataSet(src));
             }
+            else if (format.equalsIgnoreCase(FORMAT_YML))
+            {
+                return new CachedDataSet(new YamlProducer(src), true);
+            }
             else
             {
-                throw new IllegalArgumentException("Type must be either 'flat'(default), 'xml', 'csv', 'xls' or 'dtd' but was: " + format);
+                throw new IllegalArgumentException("Type must be either 'flat'(default), 'xml', 'csv', 'xls', 'yml' or 'dtd' but was: " + format);
             }
 
             if (forwardonly)
@@ -232,6 +238,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
                 || format.equalsIgnoreCase(FORMAT_XML)
                 || format.equalsIgnoreCase(FORMAT_CSV)
                 || format.equalsIgnoreCase(FORMAT_XLS)
+                || format.equalsIgnoreCase(FORMAT_YML)
         )
         {
             return true;
@@ -257,7 +264,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
         if (!isDataFormat(format))
         {
-            throw new IllegalArgumentException("format must be either 'flat'(default), 'xml', 'csv' or 'xls' but was: " + format);
+            throw new IllegalArgumentException("format must be either 'flat'(default), 'xml', 'csv', 'xls' or 'yml' but was: " + format);
         }
     }
 

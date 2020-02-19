@@ -80,6 +80,7 @@
     <mockObjectsVersion>0.09</mockObjectsVersion>
     <poiVersion>4.1.0</poiVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
+    <snakeYamlVersion>2.2</snakeYamlVersion>
     <xmlParserAPIsVersion>2.6.2</xmlParserAPIsVersion>
 
     <!-- Database driver versions -->
@@ -474,6 +475,11 @@
       <artifactId>mmmockobjects</artifactId>
       <version>${mmmockobjectsVersion}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeYamlVersion}</version>
     </dependency>
     <!-- TODO: check why follow dependency is necessary -->
     <dependency>

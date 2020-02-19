@@ -231,8 +231,8 @@
             <tr>
               <td>format</td>
               <td>Format type of supplied source file(s). Possible
-              values are "flat", "xml", "csv", "dtd", "xls".
-              Defaults to 
+                values are "flat", "xml", "csv", "dtd", "xls", "yml".
+              Defaults to
               <b>"flat"</b></td>
               <td>
                 <p>No</p>

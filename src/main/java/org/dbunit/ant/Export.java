@@ -42,6 +42,7 @@ import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.dataset.xml.XmlDataSet;
+import org.dbunit.dataset.yaml.YamlDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,13 +110,14 @@ public class Export extends AbstractStep
                 || format.equalsIgnoreCase(FORMAT_XML)
                 || format.equalsIgnoreCase(FORMAT_DTD)
                 || format.equalsIgnoreCase(FORMAT_CSV)
-                || format.equalsIgnoreCase(FORMAT_XLS))
+                || format.equalsIgnoreCase(FORMAT_XLS)
+                || format.equalsIgnoreCase(FORMAT_YML))
         {
             _format = format;
         }
         else
         {
-            throw new IllegalArgumentException("Type must be one of: 'flat'(default), 'xml', 'dtd' or 'xls' but was: " + format);
+            throw new IllegalArgumentException("Type must be one of: 'flat'(default), 'xml', 'dtd', 'xls' or 'yml' but was: " + format);
         }
     }
 
@@ -205,6 +207,10 @@ public class Export extends AbstractStep
                     else if (_format.equalsIgnoreCase(FORMAT_XLS))
                     {
                         XlsDataSet.write(dataset, out);
+                    }
+                    else if (_format.equalsIgnoreCase(FORMAT_YML))
+                    {
+                        YamlDataSet.write(dataset, out);
                     }
                     else
                     {
