@@ -1285,6 +1285,7 @@ enable this to generate coverage report HTML files during build (same as site)
           <issueLinkTemplatePerSystem>
             <sfbugs><![CDATA[https://sourceforge.net/p/dbunit/bugs/%ISSUE%]]></sfbugs>
             <sffeatures><![CDATA[https://sourceforge.net/p/dbunit/feature-requests/%ISSUE%]]></sffeatures>
+            <sfplugintickets><![CDATA[https://sourceforge.net/p/dbunit/plugintickets/%ISSUE%]]></sfplugintickets>
             <sfmerges><![CDATA[https://sourceforge.net/p/dbunit/code.git/merge-requests/%ISSUE%]]></sfmerges>
           </issueLinkTemplatePerSystem>
         </configuration>
