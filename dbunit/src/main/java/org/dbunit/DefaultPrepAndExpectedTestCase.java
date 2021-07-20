@@ -144,10 +144,45 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase
             throws Exception
     {
         log.info("configureTest: saving instance variables");
-        this.prepDataSet = makeCompositeDataSet(prepDataFiles, "prep");
-        this.expectedDataSet =
-                makeCompositeDataSet(expectedDataFiles, "expected");
+
+        final boolean isCaseSensitiveTableNames = lookupFeatureValue(
+                DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+        log.info("configureTest: using case sensitive table names={}",
+                isCaseSensitiveTableNames);
+
+        this.prepDataSet = makeCompositeDataSet(prepDataFiles, "prep",
+                isCaseSensitiveTableNames);
+        this.expectedDataSet = makeCompositeDataSet(expectedDataFiles,
+                "expected", isCaseSensitiveTableNames);
+
         this.verifyTableDefs = verifyTableDefinitions;
+    }
+
+    private boolean lookupFeatureValue(final String featureName)
+            throws Exception
+    {
+        boolean featureValue;
+
+        if (databaseTester == null)
+        {
+            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
+        }
+
+        IDatabaseConnection connection = null;
+        try
+        {
+            connection = databaseTester.getConnection();
+            final DatabaseConfig config = connection.getConfig();
+            featureValue = config.getFeature(featureName);
+        } finally
+        {
+            if (connection != null)
+            {
+                connection.close();
+            }
+        }
+
+        return featureValue;
     }
 
     /**
@@ -651,16 +686,39 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase
     }
 
     /**
-     * Make a <code>IDataSet</code> from the specified files.
+     * Make a <code>IDataSet</code> from the specified files with case sensitive
+     * table names as false.
      *
      * @param dataFiles
      *            Represents the array of dbUnit data files.
+     * @param dataFilesName
+     *            Concept name of the data files, e.g. prep, expected.
      * @return The composite dataset.
      * @throws DataSetException
      *             On dbUnit errors.
      */
     public IDataSet makeCompositeDataSet(final String[] dataFiles,
             final String dataFilesName) throws DataSetException
+    {
+        return makeCompositeDataSet(dataFiles, dataFilesName, false);
+    }
+
+    /**
+     * Make a <code>IDataSet</code> from the specified files.
+     *
+     * @param dataFiles
+     *            Represents the array of dbUnit data files.
+     * @param dataFilesName
+     *            Concept name of the data files, e.g. prep, expected.
+     * @param isCaseSensitiveTableNames
+     *            true if case sensitive table names is on.
+     * @return The composite dataset.
+     * @throws DataSetException
+     *             On dbUnit errors.
+     */
+    public IDataSet makeCompositeDataSet(final String[] dataFiles,
+            final String dataFilesName, final boolean isCaseSensitiveTableNames)
+            throws DataSetException
     {
         if (dataFileLoader == null)
         {
@@ -685,7 +743,8 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase
         }
 
         final IDataSet[] dataSet = (IDataSet[]) list.toArray(new IDataSet[] {});
-        final IDataSet compositeDS = new CompositeDataSet(dataSet);
+        final IDataSet compositeDS =
+                new CompositeDataSet(dataSet, true, isCaseSensitiveTableNames);
         return compositeDS;
     }
 
