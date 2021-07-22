@@ -51,7 +51,7 @@
     <gpgPluginVersion>1.6</gpgPluginVersion>
     <installPluginVersion>2.5.2</installPluginVersion>
     <jacocoPluginVersion>0.8.3</jacocoPluginVersion>
-    <japicmpPluginVersion>0.14.3</japicmpPluginVersion>
+    <japicmpPluginVersion>0.15.3</japicmpPluginVersion>
     <jarPluginVersion>3.0.2</jarPluginVersion>
     <jdependPluginVersion>2.0</jdependPluginVersion>
     <javadocPluginVersion>3.0.0</javadocPluginVersion>
