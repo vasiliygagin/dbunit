@@ -30,9 +30,8 @@
 
     <section name="News">
       <table border="1">
-<!--
         <tr>
-          <td>2018-11-21</td>
+          <td>2021-07-23</td>
           <td> 
             Please try the 2.7.2-SNAPSHOT snapshot build and let us know how it works!
             <br/>
@@ -42,7 +41,6 @@
             for the snapshot contents (and any subsequent updates).
           </td>
         </tr>
--->
         <tr>
           <td>2021-07-22</td>
           <td> 
