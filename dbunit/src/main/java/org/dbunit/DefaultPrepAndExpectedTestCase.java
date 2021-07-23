@@ -163,15 +163,10 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase
     {
         boolean featureValue;
 
-        if (databaseTester == null)
-        {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
-
         IDatabaseConnection connection = null;
         try
         {
-            connection = databaseTester.getConnection();
+            connection = getConnection();
             final DatabaseConfig config = connection.getConfig();
             featureValue = config.getFeature(featureName);
         } finally

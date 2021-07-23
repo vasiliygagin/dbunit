@@ -13,10 +13,9 @@
   </properties>
 
   <body>
-<!--
-    <release version="2.7.2-SNAPSHOT" date="TBD" description="">
+    <release version="2.7.2-SNAPSHOT" date="TBD" description="DefaultPrepAndExpectedTestCase getConnection(),">
+      <action dev="jeffjensen" type="fix" issue="441" system="sfbugs">DefaultPrepAndExpectedTestCase must use correct getConnection() to initialize DatabaseConfig </action>
     </release>
--->
     <release version="2.7.1" date="Jul 22, 2021" description="Apache POI 4.1.0, Maven relativePath warning, UniqueIdentifierType: change caught exception for Java 12, Set some dependencies optional, Remove commons-io, commons-collections deps, case sensitive tables">
       <action dev="jeffjensen" type="update" issue="231" system="sffeatures" due-to="felixknecht">Update Apache POI to version 4.1.0</action>
       <action dev="jeffjensen" type="update" issue="235" system="sffeatures" due-to="viczi">Eliminate the Maven's relativePath warning</action>
