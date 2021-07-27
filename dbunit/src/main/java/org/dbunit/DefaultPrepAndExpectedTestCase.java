@@ -270,8 +270,15 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase
     {
         try
         {
-            final IDataSet dataset =
-                    new CompositeDataSet(prepDataSet, expectedDataSet);
+            final boolean isCaseSensitiveTableNames = lookupFeatureValue(
+                    DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+            log.info("cleanupData: using case sensitive table names={}",
+                    isCaseSensitiveTableNames);
+
+            final IDataSet[] dataSets =
+                    new IDataSet[] {prepDataSet, expectedDataSet};
+            final IDataSet dataset = new CompositeDataSet(dataSets, true,
+                    isCaseSensitiveTableNames);
             final String[] tableNames = dataset.getTableNames();
             final int count = tableNames.length;
             log.info("cleanupData: about to clean up {} tables={}", count,
