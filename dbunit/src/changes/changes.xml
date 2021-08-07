@@ -13,7 +13,8 @@
   </properties>
 
   <body>
-    <release version="2.7.3-SNAPSHOT" date="TBD" description="">
+    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers">
+      <action dev="jeffjensen" type="add" issue="250" system="sffeatures">Add 'actual is null' and 'actual is not null' ValueComparers</action>
     </release>
     <release version="2.7.2" date="Jul 27, 2021" description="DefaultPrepAndExpectedTestCase getConnection(), more case sensitive tables">
       <action dev="jeffjensen" type="fix" issue="441" system="sfbugs">DefaultPrepAndExpectedTestCase must use correct getConnection() to initialize DatabaseConfig </action>
