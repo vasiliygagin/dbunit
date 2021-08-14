@@ -19,6 +19,7 @@
   <description>
     dbUnit is a JUnit extension (also usable from Ant and Maven) targeted for database-driven projects that, among other things, puts your database into a known state between test runs. This is an excellent way to avoid the myriad of problems that can occur when one test case corrupts the database and causes subsequent tests to fail or exacerbate the damage.
   </description>
+
   <licenses>
     <license>
       <name>GNU Lesser General Public License, Version 2.1</name>
@@ -53,8 +54,8 @@
     <jacocoPluginVersion>0.8.3</jacocoPluginVersion>
     <japicmpPluginVersion>0.15.3</japicmpPluginVersion>
     <jarPluginVersion>3.0.2</jarPluginVersion>
-    <jdependPluginVersion>2.0</jdependPluginVersion>
     <javadocPluginVersion>3.0.0</javadocPluginVersion>
+    <jdependPluginVersion>2.0</jdependPluginVersion>
     <jxrPluginVersion>2.5</jxrPluginVersion>
     <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
     <pmdPluginVersion>3.8</pmdPluginVersion>
@@ -301,9 +302,75 @@
     </contributor>
   </contributors>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- databases -->
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>${derbyDriverVersion}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2DriverVersion}</version>
+        <!-- Note that the 1.1.113 version is the last one officially built with JDK 1.4 -->
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>${hsqldbDriverVersion}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysqlDriverVersion}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc6</artifactId>
+        <version>${oracleJ6DriverVersion}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc8</artifactId>
+        <version>${oracleJ8v19DriverVersion}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc10</artifactId>
+        <version>${oracleJ10v19DriverVersion}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.oracle.database.xml</groupId>
+        <artifactId>xdb</artifactId>
+        <version>${oracleXdbVersion}</version>
+        <scope>test</scope>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresqlDriverVersion}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.microsoft.sqlserver</groupId>
+        <artifactId>mssql-jdbc</artifactId>
+        <version>${sqlServer41DriverVersion}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
-
     <!--
       TODO: check which dependencies could marked as optional. For
       instance, ant is optional because it's only necessary for the
@@ -333,12 +400,6 @@
     </dependency>
 
     <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>${hsqldbDriverVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junitVersion}</version>
@@ -357,6 +418,7 @@
       <version>${antVersion}</version>
       <optional>true</optional>
     </dependency>
+
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
@@ -377,12 +439,6 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>${poiVersion}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${postgresqlDriverVersion}</version>
       <optional>true</optional>
     </dependency>
 
@@ -419,13 +475,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2DriverVersion}</version>
-      <!-- Note that the 1.1.113 version is the last one officially built with JDK 1.4 -->
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>gsbase</groupId>
       <artifactId>gsbase</artifactId>
       <version>${gsbaseVersion}</version>
@@ -436,6 +485,21 @@
       <artifactId>xmlParserAPIs</artifactId>
       <version>${xmlParserAPIsVersion}</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- databases -->
+    <!-- compile scope needed for ext package classes -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
     </dependency>
   </dependencies>
 
@@ -1286,14 +1350,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>org.apache.derby</groupId>
           <artifactId>derby</artifactId>
-          <version>${derbyDriverVersion}</version>
-          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1319,8 +1379,6 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1341,15 +1399,12 @@ enable this to generate coverage report HTML files during build (same as site)
       </build>
       <dependencies>
         <dependency>
-           <groupId>com.h2database</groupId>
-           <artifactId>h2</artifactId>
-           <version>${h2DriverVersion}</version>
-       </dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+        </dependency>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1363,8 +1418,6 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1388,14 +1441,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc6</artifactId>
-          <version>${oracleJ6DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.xml</groupId>
           <artifactId>xdb</artifactId>
-          <version>${oracleXdbVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1419,14 +1468,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.xml</groupId>
           <artifactId>xdb</artifactId>
-          <version>${oracleXdbVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1450,14 +1495,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.xml</groupId>
           <artifactId>xdb</artifactId>
-          <version>${oracleXdbVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1487,8 +1528,6 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.xml</groupId>
           <artifactId>xdb</artifactId>
-          <version>${oracleXdbVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1512,14 +1551,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc10</artifactId>
-          <version>${oracleJ10v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.xml</groupId>
           <artifactId>xdb</artifactId>
-          <version>${oracleXdbVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1542,13 +1577,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
-          <version>${postgresqlDriverVersion}</version>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1571,13 +1603,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>${mysqlDriverVersion}</version>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1600,13 +1629,10 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.microsoft.sqlserver</groupId>
           <artifactId>mssql-jdbc</artifactId>
-          <version>${sqlServer41DriverVersion}</version>
         </dependency>
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
@@ -1630,8 +1656,6 @@ enable this to generate coverage report HTML files during build (same as site)
         <dependency>
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>${oracleJ8v19DriverVersion}</version>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
