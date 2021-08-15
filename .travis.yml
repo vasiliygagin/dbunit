@@ -10,27 +10,27 @@ jobs:
   include:
     - stage: "Integration Test"
       name: "HSQLDB"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,hsqldb verify
+      script: mvn -B -e -Pit-config,hsqldb verify
     - name: "H2"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,h2 verify
+      script: mvn -B -e -Pit-config,h2 verify
     - name: "Derby"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,derby verify
+      script: mvn -B -e -Pit-config,derby verify
     - name: "Postgres"
       before_install:
         - sudo /etc/init.d/postgresql stop
         - docker-compose -f dbunit-docker/docker-compose.yml up -d postgres
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,postgresql verify
+      script: mvn -B -e -Pit-config,postgresql verify
     - name: "MySQL"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,mysql verify
+      script: mvn -B -e -Pit-config,mysql verify
       before_install:
         - sudo /etc/init.d/mysql stop
         - docker-compose -f dbunit-docker/docker-compose.yml up -d mysql
     - name: "MS SQL"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,mssql41 verify
+      script: mvn -B -e -Pit-config,mssql41 verify
       before_install:
         - docker-compose -f dbunit-docker/docker-compose.yml up -d mssql
     - name: "Oracle 11 JDK 8 Driver"
-      script: mvn -f dbunit/pom.xml -B -e -Pit-config,oracle-ojdbc8 verify
+      script: mvn -B -e -Pit-config,oracle-ojdbc8 verify
       before_install:
         - docker-compose -f dbunit-docker/docker-compose.yml up -d oracle11
         - sleep 1m
