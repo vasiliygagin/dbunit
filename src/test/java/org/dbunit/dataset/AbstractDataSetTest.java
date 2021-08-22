@@ -26,6 +26,8 @@ import org.dbunit.database.AmbiguousTableNameException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Manuel Laflamme
@@ -56,7 +58,7 @@ public abstract class AbstractDataSetTest extends AbstractTest
 
         // exclude BLOB_TABLE and CLOB_TABLE from test since not supported by
         // all database vendor
-        List nameList = new ArrayList(Arrays.asList(names));
+        List<String> nameList = new ArrayList(Arrays.asList(names));
         nameList.remove("BLOB_TABLE");
         nameList.remove("CLOB_TABLE");
         nameList.remove("SDO_GEOMETRY_TABLE");
@@ -71,6 +73,13 @@ public abstract class AbstractDataSetTest extends AbstractTest
         */
         nameList.remove("DBUNIT.dtproperties");
         nameList.remove("dtproperties");
+        /*
+         these noted in mcr.microsoft.com/mssql/server:2019-latest 
+         */
+        nameList.remove("MSreplication_options");
+        final List<String> removeList = nameList.stream()
+                .filter(t -> t.startsWith("spt")).collect(Collectors.toList());
+        nameList.removeAll(removeList);
         /*
         These tables are created specifically for testing identity columns on MSSQL server.
         They should be ignored on other platforms.
