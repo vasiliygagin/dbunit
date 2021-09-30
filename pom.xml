@@ -1303,7 +1303,7 @@ enable this to generate coverage report HTML files during build (same as site)
     <!-- distribution repos specified in parent -->
     <site>
       <id>sourceforge</id>
-      <url>scp://shell.sourceforge.net/home/project-web/dbunit/htdocs</url>
+      <url>scp://shell.sourceforge.net/home/project-web/dbunit/htdocs/dbunit/</url>
     </site>
   </distributionManagement>
 
