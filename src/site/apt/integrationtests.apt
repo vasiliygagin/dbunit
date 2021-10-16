@@ -317,6 +317,8 @@ mvn -Pit-config,derby verify
 *---------------*-----------------------------------------------*
 |SQLServer      |mvn -e -Pit-config,mssql41 verify              |
 *---------------*-----------------------------------------------*
+|SQLServer 2019 |mvn -e -Pit-config,mssql2019 verify            |
+*---------------*-----------------------------------------------*
 
 * Running Integration Tests with IDEs
 

@@ -22,6 +22,20 @@ services:
     image: dbunit/dbunit-it-sqlserver:2.0.0
     ports:
       - 1433:1433
+  mssql2019:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_HOST=sqlserver19
+      - MSSQL_SA_PASSWORD=theSaPassword1234
+      - SA_PASSWORD=theSaPassword1234
+
+      - DB_HOST=sqlserver19
+      - DB_DATABASE=dbunit
+      - DB_USERNAME=sa
+      - DB_PASSWORD=theSaPassword1234
+    ports:
+      - 1433:1433
   oracle11:
     image: dbunit/dbunit-it-oracle11g:1.0.1
     ports:
