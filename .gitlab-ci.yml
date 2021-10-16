@@ -71,7 +71,7 @@ mssql-2019-latest-integration-test-job:
     DB_USERNAME: sa
     DB_PASSWORD: theSaPassword1234
   script:
-    - mvn $MAVEN_CLI_COMMON -Pit-config,mssql41 verify -Ddbunit.profile.user=sa -Ddbunit.profile.password=theSaPassword1234 -Ddbunit.profile.url=jdbc:sqlserver://sqlserver19:1433;DatabaseName=dbunit;user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor
+    - mvn $MAVEN_CLI_COMMON -Pit-config,mssql2019 verify -Ddbunit.profile.url=jdbc:sqlserver://sqlserver19:1433;DatabaseName=dbunit;user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor
 
 mysql-integration-test-job:
   extends: .integration-test-base
