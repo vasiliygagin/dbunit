@@ -270,6 +270,19 @@ dataSet.addReplacementObject("[NULL]", null);]]></source>
           <br/>
  </td>
         </tr>
+        <tr>
+          <td><a name="csvdataset" href="apidocs/org/dbunit/dataset/csv/CsvDataSet.html">CsvDataSet</a></td>
+          <td>
+            Reads and writes CSV dataset documents.  Each CSV file represents a table - one CSV file per table.
+            <ul>
+              <li>CSV base filename must match table name.</li>
+              <li>Requires a file named table-ordering.txt containing all table names (same as the base file name; case insensitive but best to match case), one per line, sorted in insert order.</li>
+              <li>All data CSV files reside in the same directory as table-ordering.txt</li>
+              <li>Numeric CSV data file fields must not have trailing spaces before the comma-separator as will interpret it as a String instead of a number.</li>
+              <li>Specify null values as null without quotes.</li>
+            </ul>
+          </td>
+        </tr>
       </table>
       </p>
     </section>
