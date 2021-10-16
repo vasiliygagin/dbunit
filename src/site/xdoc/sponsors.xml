@@ -17,11 +17,10 @@
 			  <a href="http://www.sourceforge.net">SourceForge</a> provides us the web space, source control, and all other tools in its great platform
 			</li>
 	      	<li>
-			  <a href="http://www.intertech.com">Intertech Consulting and Training</a> hosts our CI builds at <a href="http://dbunit.intertech.com/jenkins">http://dbunit.intertech.com/jenkins</a>
+			  <a href="https://gitlab.com">GitLab</a> hosts our CI builds at <a href="https://gitlab.com/dbUnit">https://gitlab.com/dbUnit</a>
 			</li>
 	      </ul>
 		<p>To all of them our sincere thanks for their support!</p>
     </section>
-
   </body>
 </document>
