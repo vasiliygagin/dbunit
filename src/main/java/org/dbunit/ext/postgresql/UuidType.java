@@ -64,7 +64,7 @@ public class UuidType
     }
 
     public Object typeCast(Object arg0) throws TypeCastException {
-        return arg0.toString();
+        return (arg0 == null) ? null : arg0.toString();
     }
 
     private Object getUUID(Object value, Connection connection) throws TypeCastException {
