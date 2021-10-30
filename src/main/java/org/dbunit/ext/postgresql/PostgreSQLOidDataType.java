@@ -2,6 +2,7 @@ package org.dbunit.ext.postgresql;
 
 import org.dbunit.dataset.datatype.BytesDataType;
 import org.dbunit.dataset.datatype.TypeCastException;
+import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 import org.slf4j.Logger;
@@ -38,8 +39,8 @@ public class PostgreSQLOidDataType
         connection.setAutoCommit(false);
 
         try {
-            LargeObjectManager lobj =
-                    ((org.postgresql.PGConnection) resultSet.getStatement().getConnection()).getLargeObjectAPI();
+            PGConnection pgConnection = connection.unwrap(PGConnection.class);
+            LargeObjectManager lobj = pgConnection.getLargeObjectAPI();
 
             long oid = resultSet.getLong(column);
             if (oid == 0) {
