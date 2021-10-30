@@ -132,6 +132,20 @@ public class TimestampDataTypeTest extends AbstractDataTypeTest
         assertEquals(ts1, THIS_TYPE.typeCast(ts2));
     }
 
+    public void testWithTimezone_DaylightSavingTime() throws Exception
+    {
+        Timestamp ts1 = makeTimestamp(2021, 5, 26, 18, 42, 50, 900, "Europe/Helsinki");
+        String ts2 = "2021-06-26 18:42:50.900 +0300";
+        assertEquals(ts1, THIS_TYPE.typeCast(ts2));
+    }
+
+    public void testWithTimezone_StandardTime() throws Exception
+    {
+        Timestamp ts1 = makeTimestamp(2021, 1, 14, 18, 42, 50, 900, "Europe/Helsinki");
+        String ts2 = "2021-02-14 18:42:50.900 +0200";
+        assertEquals(ts1, THIS_TYPE.typeCast(ts2));
+    }
+    
     @Override
     public void testTypeCast() throws Exception
     {

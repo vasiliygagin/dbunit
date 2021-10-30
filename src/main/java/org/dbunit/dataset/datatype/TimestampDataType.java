@@ -142,9 +142,12 @@ public class TimestampDataType extends AbstractDataType
             // Apply zone if any
             if (zoneValue != null)
             {
+                long tsTime = ts.getTime();
+
                 TimeZone localTZ = java.util.TimeZone.getDefault();
-                BigInteger localTZOffset = BigInteger.valueOf(localTZ.getRawOffset());
-                BigInteger time = BigInteger.valueOf(ts.getTime() / 1000 * 1000).add(localTZOffset)
+                int offset = localTZ.getOffset(tsTime);
+                BigInteger localTZOffset = BigInteger.valueOf(offset);
+                BigInteger time = BigInteger.valueOf(tsTime / 1000 * 1000).add(localTZOffset)
                         .multiply(ONE_BILLION).add(BigInteger.valueOf(ts.getNanos()));
                 int hours = Integer.parseInt(zoneValue.substring(1, 3));
                 int minutes = Integer.parseInt(zoneValue.substring(3, 5));

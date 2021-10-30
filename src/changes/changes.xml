@@ -13,7 +13,8 @@
   </properties>
 
   <body>
-    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection">
+    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection, Timestamp DST">
+      <action dev="jeffjensen" type="fix" issue="438" system="sfbugs" due-to="jammule">Timestamp conversion for instants during daylight saving time is off</action>
       <action dev="jeffjensen" type="fix" issue="436" system="sfbugs" due-to="sfranson">Unwrap PGConnection instead of casting to it</action>
       <action dev="jeffjensen" type="add" issue="250" system="sffeatures">Add 'actual is null' and 'actual is not null' ValueComparers</action>
     </release>
