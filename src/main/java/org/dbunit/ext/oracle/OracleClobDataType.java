@@ -20,18 +20,18 @@
  */
 package org.dbunit.ext.oracle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.dataset.datatype.ClobDataType;
-import org.dbunit.dataset.datatype.TypeCastException;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.dbunit.dataset.datatype.ClobDataType;
+import org.dbunit.dataset.datatype.TypeCastException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Manuel Laflamme
@@ -45,82 +45,58 @@ public class OracleClobDataType extends ClobDataType
     /**
      * Logger for this class
      */
-    private static final Logger logger = LoggerFactory.getLogger(OracleClobDataType.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(OracleClobDataType.class);
 
     public Object getSqlValue(int column, ResultSet resultSet)
             throws SQLException, TypeCastException
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("getSqlValue(column={}, resultSet={}) - start",
+                    new Integer(column), resultSet);
+        }
 
         return typeCast(resultSet.getClob(column));
     }
 
-    public void setSqlValue(Object value, int column, PreparedStatement statement)
-            throws SQLException, TypeCastException
+    public void setSqlValue(Object value, int column,
+            PreparedStatement statement) throws SQLException, TypeCastException
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-    				new Object[]{value, new Integer(column), statement} );
+        if (logger.isDebugEnabled())
+        {
+            logger.debug(
+                    "setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] {value, new Integer(column), statement});
+        }
 
         statement.setObject(column, getClob(value, statement.getConnection()));
     }
 
-    protected Object getClob(Object value, Connection connection) throws TypeCastException
+    protected Object getClob(Object value, Connection connection)
+            throws TypeCastException
     {
-        logger.debug("getClob(value={}, connection={}) - start", value, connection);
+        logger.debug("getClob(value={}, connection={}) - start", value,
+                connection);
 
-        oracle.sql.CLOB tempClob = null;
+        Writer tempClobWriter = null;
         try
         {
-            tempClob = oracle.sql.CLOB.createTemporary(connection, true, oracle.sql.CLOB.DURATION_SESSION);
-            tempClob.open(oracle.sql.CLOB.MODE_READWRITE);
-            Writer tempClobWriter = tempClob.getCharacterOutputStream();
+            java.sql.Clob tempClob = connection.createClob();
+            tempClobWriter = tempClob.setCharacterStream(1);
 
             // Write the data into the temporary CLOB
-            tempClobWriter.write((String)typeCast(value));
+            tempClobWriter.write((String) typeCast(value));
 
             // Flush and close the stream
             tempClobWriter.flush();
-            tempClobWriter.close();
-
-            // Close the temporary CLOB
-            tempClob.close();
-        }
-        catch (IOException e)
+            return tempClob;
+        } catch (IOException | SQLException e)
         {
-            // JH_TODO: shouldn't freeTemporary be called in finally {} ?
-            // It wasn't done like that in the original reflection-styled DbUnit code.
-            freeTemporaryClob(tempClob);
             throw new TypeCastException(value, this, e);
-        }
-        catch (SQLException e)
+        } finally
         {
-            freeTemporaryClob(tempClob);
-            throw new TypeCastException(value, this, e);
-        }
-
-        return tempClob;
-    }
-
-
-    protected void freeTemporaryClob(oracle.sql.CLOB tempClob) throws TypeCastException
-    {
-        logger.debug("freeTemporaryClob(tempClob={}) - start", tempClob);
-
-        if (tempClob == null)
-        {
-            return;
-        }
-
-        try
-        {
-            tempClob.freeTemporary();
-        }
-        catch (SQLException e)
-        {
-            throw new TypeCastException("error freeing Oracle CLOB", e);
+            IOUtils.closeQuietly(tempClobWriter);
         }
     }
-
 }

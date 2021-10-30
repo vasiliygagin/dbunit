@@ -13,7 +13,8 @@
   </properties>
 
   <body>
-    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection, Timestamp DST, UUID NPE">
+    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection, Timestamp DST, UUID NPE, OracleClobDataType CCE">
+      <action dev="jeffjensen" type="update" issue="240" system="sffeatures" due-to="bambaro">OracleClobDataType: Use non-deprecated CLOB; also prevents ClassCastException</action>
       <action dev="jeffjensen" type="fix" issue="439" system="sfbugs" due-to="xobotun">Nullable UUID column in PostgreSQL caused NPE</action>
       <action dev="jeffjensen" type="fix" issue="438" system="sfbugs" due-to="jammule">Timestamp conversion for instants during daylight saving time is off</action>
       <action dev="jeffjensen" type="fix" issue="436" system="sfbugs" due-to="sfranson">Unwrap PGConnection instead of casting to it</action>
