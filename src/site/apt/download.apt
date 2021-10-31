@@ -15,4 +15,4 @@ Download from Maven Central
 
   If you need to manually download dbUnit, please obtain it from Maven Central.
 
-  Please refer to the {{{http://dbunit.sourceforge.net/repos.html} dbUnit Maven Repositories}} page for more information.
+  Please refer to the {{{http://dbunit.sourceforge.net/dbunit/repos.html} dbUnit Maven Repositories}} page for more information.
