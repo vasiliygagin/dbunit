@@ -25,7 +25,7 @@ Releases
 
 Snapshots
 
-  {{{https://oss.sonatype.org/content/repositories/snapshots/org/dbunit} The Sonatype OSS snapshot repository has the dbUnit snapshots}}.
+  {{{https://oss.sonatype.org/#nexus-search;gav~org.dbunit~~~~} The Sonatype OSS snapshot repository has the dbUnit snapshots}}.
   To use it, define the repository:
 
 ---
