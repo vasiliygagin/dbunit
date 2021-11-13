@@ -112,7 +112,7 @@
   </scm>
   <issueManagement>
     <system>SourceForge2</system>
-    <url>http://sourceforge.net/p/dbunit/bugs/</url>
+    <url>https://sourceforge.net/p/dbunit/_list/tickets</url>
   </issueManagement>
   <ciManagement>
     <system>gitlab</system>
