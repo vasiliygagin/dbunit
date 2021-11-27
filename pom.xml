@@ -66,6 +66,7 @@
     <sitePluginVersion>3.7.1</sitePluginVersion>
     <sourcePluginVersion>3.0.1</sourcePluginVersion>
     <surefirePluginVersion>2.21.0</surefirePluginVersion>
+    <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
 
     <!-- Framework versions -->
     <antTestUtilVersion>1.7.0</antTestUtilVersion>
@@ -841,6 +842,14 @@ enable this to generate coverage report HTML files during build (same as site)
                 <value>${dbunit.profile.multiLineSupport}</value>
               </property>
             </systemProperties>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${versionsMavenPluginVersion}</version>
+          <configuration>
+            <rulesUri>file:///${project.basedir}/versions-maven-plugin-rules.xml</rulesUri>
           </configuration>
         </plugin>
       </plugins>
