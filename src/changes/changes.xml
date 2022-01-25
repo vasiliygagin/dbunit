@@ -13,13 +13,14 @@
   </properties>
 
   <body>
-    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection, Timestamp DST, UUID NPE, OracleClobDataType CCE, multiple datasets">
+    <release version="2.7.3-SNAPSHOT" date="TBD" description="new ValueComparers, unwrap PGConnection, Timestamp DST, UUID NPE, OracleClobDataType CCE, Operation multiple dataset sources, PostGIS 2021.1.0">
       <action dev="jeffjensen" type="add" issue="5" system="sfplugintickets" due-to="bjornbeskow">Enable composing an Operation dataset from multiple source files.</action>
       <action dev="jeffjensen" type="update" issue="240" system="sffeatures" due-to="bambaro">OracleClobDataType: Use non-deprecated CLOB; also prevents ClassCastException</action>
       <action dev="jeffjensen" type="fix" issue="439" system="sfbugs" due-to="xobotun">Nullable UUID column in PostgreSQL caused NPE</action>
       <action dev="jeffjensen" type="fix" issue="438" system="sfbugs" due-to="jammule">Timestamp conversion for instants during daylight saving time is off</action>
       <action dev="jeffjensen" type="fix" issue="436" system="sfbugs" due-to="sfranson">Unwrap PGConnection instead of casting to it</action>
       <action dev="jeffjensen" type="add" issue="250" system="sffeatures" due-to="jeffjensen">Add 'actual is null' and 'actual is not null' ValueComparers</action>
+      <action dev="jeffjensen" type="update" issue="251" system="sffeatures" due-to="mprins">Upgrade PostGIS JDBC driver to 2021.1.0</action>
     </release>
     <release version="2.7.2" date="Jul 27, 2021" description="DefaultPrepAndExpectedTestCase getConnection(), more case sensitive tables">
       <action dev="jeffjensen" type="fix" issue="441" system="sfbugs" due-to="jeffjensen">DefaultPrepAndExpectedTestCase must use correct getConnection() to initialize DatabaseConfig </action>

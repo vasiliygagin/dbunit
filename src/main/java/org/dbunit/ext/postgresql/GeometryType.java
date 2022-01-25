@@ -36,7 +36,7 @@ public class GeometryType extends AbstractDataType {
         Object tempgeom = null;
 
         try {
-            Class aPGIntervalClass = super.loadClass("org.postgis.PGgeometry",
+            Class aPGIntervalClass = super.loadClass("net.postgis.jdbc.PGgeometry",
                     connection);
             Constructor ct = aPGIntervalClass
                     .getConstructor(new Class[] { String.class });

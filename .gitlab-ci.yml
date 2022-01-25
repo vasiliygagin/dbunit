@@ -101,7 +101,7 @@ oracle-ojdbc8-integration-test-job:
 postgresql-integration-test-job:
   extends: .integration-test-base
   services:
-    - name: postgres:9.6
+    - name: postgres:14.1
       alias: postgres
   variables:
     POSTGRES_DB: dbunit
