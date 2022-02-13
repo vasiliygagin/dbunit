@@ -30,19 +30,17 @@
 
     <section name="News">
       <table border="1">
-<!--
         <tr>
-          <td>2021-07-29</td>
+          <td>SET ME</td>
           <td> 
-            Please try the 2.7.3-SNAPSHOT snapshot build and let us know how it works!
+            Please try the 2.7.4-SNAPSHOT snapshot build and let us know how it works!
             <br/>
-            Refer to the <a href="changes-report.html#a2.7.3-SNAPSHOT">changes report</a>,
-            the <a href="https://sourceforge.net/p/dbunit/feature-requests/milestone/2.7.3/">feature list</a>,
-            and the <a href="https://sourceforge.net/p/dbunit/bugs/fixed_release/2.7.3/">bug list</a>
+            Refer to the <a href="changes-report.html#a2.7.4-SNAPSHOT">changes report</a>,
+            the <a href="https://sourceforge.net/p/dbunit/feature-requests/milestone/2.7.4/">feature list</a>,
+            and the <a href="https://sourceforge.net/p/dbunit/bugs/fixed_release/2.7.4/">bug list</a>
             for the snapshot contents (and any subsequent updates).
           </td>
         </tr>
--->
         <tr>
           <td>2022-02-12</td>
           <td> 
