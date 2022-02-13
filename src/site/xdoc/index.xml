@@ -30,6 +30,7 @@
 
     <section name="News">
       <table border="1">
+<!--
         <tr>
           <td>2021-07-29</td>
           <td> 
@@ -39,6 +40,17 @@
             the <a href="https://sourceforge.net/p/dbunit/feature-requests/milestone/2.7.3/">feature list</a>,
             and the <a href="https://sourceforge.net/p/dbunit/bugs/fixed_release/2.7.3/">bug list</a>
             for the snapshot contents (and any subsequent updates).
+          </td>
+        </tr>
+-->
+        <tr>
+          <td>2022-02-12</td>
+          <td> 
+            Release 2.7.3 available.
+            Refer to the <a href="changes-report.html#a2.7.3">changes report</a>,
+            the <a href="https://sourceforge.net/p/dbunit/feature-requests/milestone/2.7.3/">feature list</a>,
+            and the <a href="https://sourceforge.net/p/dbunit/bugs/fixed_release/2.7.3/">bug list</a>
+            for the release contents.
           </td>
         </tr>
         <tr>
