@@ -36,6 +36,8 @@
 
   <modules>
     <module>dbunit-core</module>
+    <module>spring-test-dbunit</module>
+    <module>spring-test-dbunit-sample</module>
   </modules>
 
 </project>
