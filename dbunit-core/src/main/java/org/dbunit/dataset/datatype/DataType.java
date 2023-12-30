@@ -25,9 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 
 import org.dbunit.util.RelativeDateTimeParser;
 import org.slf4j.Logger;
@@ -198,16 +195,16 @@ public abstract class DataType
      * type. See {@link java.sql.Types}.
      *
      */
-    public static DataType forSqlType(int sqlType) throws DataTypeException
+    public static DataType forSqlType(int sqlType)
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
+    	if(logger.isDebugEnabled()) {
+            logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
+        }
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            if (sqlType == TYPES[i].getSqlType())
+        for (DataType element : TYPES) {
+            if (sqlType == element.getSqlType())
             {
-                return TYPES[i];
+                return element;
             }
         }
 
@@ -220,16 +217,17 @@ public abstract class DataType
      *
      * @deprecated Should not be used anymore
      */
-    public static DataType forSqlTypeName(String sqlTypeName) throws DataTypeException
+    @Deprecated
+    public static DataType forSqlTypeName(String sqlTypeName)
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
+    	if(logger.isDebugEnabled()) {
+            logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
+        }
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            if (sqlTypeName.equals(TYPES[i].toString()))
+        for (DataType element : TYPES) {
+            if (sqlTypeName.equals(element.toString()))
             {
-                return TYPES[i];
+                return element;
             }
         }
 
@@ -250,12 +248,11 @@ public abstract class DataType
             return UNKNOWN;
         }
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            Class typeClass = TYPES[i].getTypeClass();
+        for (DataType element : TYPES) {
+            Class typeClass = element.getTypeClass();
             if (typeClass.isInstance(value))
             {
-                return TYPES[i];
+                return element;
             }
         }
 

@@ -47,7 +47,7 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		TransactionDbUnitTestExecutionListener.class, })
 @DbUnitConfiguration(databaseConnection = { "dataSource", "dataSource2" })
-@DatabaseSetup("/META-INF/db/insert.xml")
+@DatabaseSetup(connection = "dataSource", value = "/META-INF/db/insert.xml")
 @DatabaseSetup(connection = "dataSource2", value = "/META-INF/db/multi-insert.xml")
 @Transactional
 public class MultiConnectionTest {
@@ -68,7 +68,7 @@ public class MultiConnectionTest {
 	}
 
 	@Test
-	@DatabaseSetup(value = "/META-INF/db/refresh.xml", type = DatabaseOperation.REFRESH)
+    @DatabaseSetup(connection = "dataSource", value = "/META-INF/db/refresh.xml", type = DatabaseOperation.REFRESH)
 	@DatabaseSetup(connection = "dataSource2", value = "/META-INF/db/multi-refresh.xml", type = DatabaseOperation.REFRESH)
 	public void testRefresh() throws Exception {
 		this.entityAssert.assertValues("addedFromDbUnit", "replacedFromDbUnit");
@@ -85,7 +85,7 @@ public class MultiConnectionTest {
 	private void assertSecondDataSourceValues(String... expected) {
 		JdbcTemplate jdbc = new JdbcTemplate(this.dataSource);
 		List<String> actual = jdbc.queryForList("select value from second", String.class);
-		assertEquals(new HashSet<String>(Arrays.asList(expected)), new HashSet<String>(actual));
+		assertEquals(new HashSet<>(Arrays.asList(expected)), new HashSet<>(actual));
 	}
 
 }
