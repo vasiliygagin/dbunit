@@ -50,6 +50,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         super(name);
     }
 
+    @Override
     public void testToString() throws Exception
     {
         String[] expected = {
@@ -66,30 +67,31 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         }
     }
 
+    @Override
     public void testGetTypeClass() throws Exception
     {
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            assertEquals("class", byte[].class, TYPES[i].getTypeClass());
+        for (DataType element : TYPES) {
+            assertEquals("class", byte[].class, element.getTypeClass());
         }
     }
 
+    @Override
     public void testIsNumber() throws Exception
     {
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            assertEquals("is number", false, TYPES[i].isNumber());
+        for (DataType element : TYPES) {
+            assertEquals("is number", false, element.isNumber());
         }
     }
 
+    @Override
     public void testIsDateTime() throws Exception
     {
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            assertEquals("is date/time", false, TYPES[i].isDateTime());
+        for (DataType element : TYPES) {
+            assertEquals("is date/time", false, element.isDateTime());
         }
     }
 
+    @Override
     public void testTypeCast() throws Exception
     {
         Object[] values = {
@@ -116,11 +118,10 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
         assertEquals("actual vs expected count", values.length, expected.length);
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
+        for (DataType element : TYPES) {
             for (int j = 0; j < values.length; j++)
             {
-                byte[] actual = (byte[])TYPES[i].typeCast(values[j]);
+                byte[] actual = (byte[])element.typeCast(values[j]);
                 assertTrue("typecast " + j, Arrays.equals(expected[j], actual));
             }
         }
@@ -128,7 +129,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
     public void testTypeCastFileName() throws Exception
     {
-        File file = new File("LICENSE.txt");
+        File file = new File("../LICENSE.txt");
 
         Object[] values = {
             "[file]" + file.toString(),
@@ -142,25 +143,23 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
         assertEquals("exists", true, file.exists());
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            for (int j = 0; j < values.length; j++)
-            {
-                byte[] actual = (byte[])TYPES[i].typeCast(values[j]);
+        for (DataType element : TYPES) {
+            for (Object value : values) {
+                byte[] actual = (byte[])element.typeCast(value);
                 FileAsserts.assertEquals(new ByteArrayInputStream(actual), file);
             }
         }
     }
 
+    @Override
     public void testTypeCastNone() throws Exception
     {
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            DataType type = TYPES[i];
+        for (DataType type : TYPES) {
             assertEquals("typecast " + type, null, type.typeCast(ITable.NO_VALUE));
         }
     }
 
+    @Override
     public void testTypeCastInvalid() throws Exception
     {
         Object[] values = {
@@ -168,14 +167,12 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
             new Integer(1234),
         };
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
-            for (int j = 0; j < values.length; j++)
-            {
+        for (DataType element : TYPES) {
+            for (Object value : values) {
                 try
                 {
-                    TYPES[i].typeCast(values[j]);
-                    fail("Should throw TypeCastException: " + values[j]);
+                    element.typeCast(value);
+                    fail("Should throw TypeCastException: " + value);
                 }
                 catch (TypeCastException e)
                 {
@@ -184,6 +181,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         }
     }
 
+    @Override
     public void testCompareEquals() throws Exception
     {
         Object[] values1 = {
@@ -202,16 +200,16 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
         assertEquals("values count", values1.length, values2.length);
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
+        for (DataType element : TYPES) {
             for (int j = 0; j < values1.length; j++)
             {
-                assertEquals("compare1 " + j, 0, TYPES[i].compare(values1[j], values2[j]));
-                assertEquals("compare2 " + j, 0, TYPES[i].compare(values2[j], values1[j]));
+                assertEquals("compare1 " + j, 0, element.compare(values1[j], values2[j]));
+                assertEquals("compare2 " + j, 0, element.compare(values2[j], values1[j]));
             }
         }
     }
 
+    @Override
     public void testCompareInvalid() throws Exception
     {
         Object[] values1 = {
@@ -225,13 +223,12 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
         assertEquals("values count", values1.length, values2.length);
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
+        for (DataType element : TYPES) {
             for (int j = 0; j < values1.length; j++)
             {
                 try
                 {
-                    TYPES[i].compare(values1[j], values2[j]);
+                    element.compare(values1[j], values2[j]);
                     fail("Should throw TypeCastException");
                 }
                 catch (TypeCastException e)
@@ -240,7 +237,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
                 try
                 {
-                    TYPES[i].compare(values2[j], values1[j]);
+                    element.compare(values2[j], values1[j]);
                     fail("Should throw TypeCastException");
                 }
                 catch (TypeCastException e)
@@ -250,6 +247,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         }
     }
 
+    @Override
     public void testCompareDifferent() throws Exception
     {
         Object[] less = {
@@ -265,16 +263,16 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
 
         assertEquals("values count", less.length, greater.length);
 
-        for (int i = 0; i < TYPES.length; i++)
-        {
+        for (DataType element : TYPES) {
             for (int j = 0; j < less.length; j++)
             {
-                assertTrue("less " + j, TYPES[i].compare(less[j], greater[j]) < 0);
-                assertTrue("greater " + j, TYPES[i].compare(greater[j], less[j]) > 0);
+                assertTrue("less " + j, element.compare(less[j], greater[j]) < 0);
+                assertTrue("greater " + j, element.compare(greater[j], less[j]) > 0);
             }
         }
     }
 
+    @Override
     public void testSqlType() throws Exception
     {
         int[] sqlTypes = {
@@ -293,11 +291,13 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         }
     }
 
+    @Override
     public void testForObject() throws Exception
     {
         assertEquals(DataType.VARBINARY, DataType.forObject(new byte[0]));
     }
 
+    @Override
     public void testAsString() throws Exception
     {
         byte[][] values = {
@@ -318,6 +318,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest
         }
     }
 
+    @Override
     public void testGetSqlValue() throws Exception
     {
         byte[][] expected = {
