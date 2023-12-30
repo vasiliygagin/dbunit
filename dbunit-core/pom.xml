@@ -60,7 +60,6 @@
         <jacocoPluginVersion>0.8.3</jacocoPluginVersion>
         <japicmpPluginVersion>0.15.3</japicmpPluginVersion>
         <jarPluginVersion>3.0.2</jarPluginVersion>
-        <javadocPluginVersion>3.0.0</javadocPluginVersion>
         <jdependPluginVersion>2.0</jdependPluginVersion>
         <jxrPluginVersion>2.5</jxrPluginVersion>
         <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
@@ -576,18 +575,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${compilerPluginVersion}</version>
-                    <configuration>
-                        <source>${compileSource}</source>
-                        <target>${compileSource}</target>
-                        <compilerVersion>${compileSource}</compilerVersion>
-                        <debug>true</debug>
-                        <fork>true</fork>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${deployPluginVersion}</version>
                 </plugin>
@@ -716,19 +703,6 @@ enable this to generate coverage report HTML files during build (same as site)
                             <include>/LICENSE.txt</include>
                             <include>**</include>
                         </includes>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${javadocPluginVersion}</version>
-                    <!--
-            see https://sourceforge.net/p/dbunit/code.git/merge-requests/25/
-            FIXME remove -Xdoclint:none after JavaDoc cleanup.
-          -->
-                    <configuration>
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                        <doclint>none</doclint>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1317,7 +1291,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadocPluginVersion}</version>
                 <configuration>
                     <quiet>true</quiet>
                     <tags>
