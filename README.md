@@ -1,3 +1,10 @@
+Changes to original DBUnit
+==========================
+- If no database connections configured via DbUnitConfiguration, and no connections found with common names "dbUnitDatabaseConnection"
+ and "dataSource" then all Spring beans of types IDatabaseCnnection and DataSource are used as connections. In this case, if more then
+ one connection found, there will be no default connection, and all database operations will have to explicitly specify connection name.
+- Lookup of connections by common names can be bypassed by specifying DbUnitConfiguration.skipLegacyConnectionLookup = true
+
 Introduction
 ============
 Spring DBUnit provides integration between the Spring testing framework and the popular DBUnit project. It allows you
