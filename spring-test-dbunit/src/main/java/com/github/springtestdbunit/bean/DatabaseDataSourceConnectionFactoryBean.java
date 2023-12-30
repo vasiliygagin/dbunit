@@ -16,12 +16,13 @@
 
 package com.github.springtestdbunit.bean;
 
+import static com.github.springtestdbunit.TransactionAwareConnectionHelper.makeTransactionAware;
+
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
@@ -34,117 +35,103 @@ import org.springframework.util.Assert;
  */
 public class DatabaseDataSourceConnectionFactoryBean implements FactoryBean<DatabaseDataSourceConnection> {
 
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	private boolean transactionAware = true;
+    private boolean transactionAware = true;
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	private String schema;
+    private String schema;
 
-	private DatabaseConfigBean databaseConfig;
+    private DatabaseConfigBean databaseConfig;
 
-	public DatabaseDataSourceConnectionFactoryBean() {
-		super();
-	}
+    public DatabaseDataSourceConnectionFactoryBean() {
+    }
 
-	public DatabaseDataSourceConnectionFactoryBean(DataSource dataSource) {
-		super();
-		this.dataSource = dataSource;
-	}
+    public DatabaseDataSourceConnectionFactoryBean(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	public DatabaseDataSourceConnection getObject() throws Exception {
-		Assert.notNull(this.dataSource, "The dataSource is required");
-		DatabaseDataSourceConnection dataSourceConnection = new DatabaseDataSourceConnection(
-				makeTransactionAware(this.dataSource), this.schema, this.username, this.password);
-		if (this.databaseConfig != null) {
-			this.databaseConfig.apply(dataSourceConnection.getConfig());
-		}
-		return dataSourceConnection;
-	}
+    @Override
+    public DatabaseDataSourceConnection getObject() throws Exception {
+        Assert.notNull(this.dataSource, "The dataSource is required");
+        DatabaseDataSourceConnection dataSourceConnection = new DatabaseDataSourceConnection(makeTransactionAwareIfNeeded(this.dataSource),
+                this.schema, this.username, this.password);
+        if (this.databaseConfig != null) {
+            this.databaseConfig.apply(dataSourceConnection.getConfig());
+        }
+        return dataSourceConnection;
+    }
 
-	private DataSource makeTransactionAware(DataSource dataSource) {
-		if ((dataSource instanceof TransactionAwareDataSourceProxy) || !this.transactionAware) {
-			return dataSource;
-		}
-		return new TransactionAwareDataSourceProxy(dataSource);
-	}
+    private DataSource makeTransactionAwareIfNeeded(DataSource dataSource) {
+        if (!this.transactionAware) {
+            return dataSource;
+        }
+        return makeTransactionAware(dataSource);
+    }
 
-	public Class<?> getObjectType() {
-		return DatabaseDataSourceConnection.class;
-	}
+    @Override
+    public Class<?> getObjectType() {
+        return DatabaseDataSourceConnection.class;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
-	/**
-	 * Set the data source that will be used for the {@link DatabaseDataSourceConnection}. This value must be set before
-	 * the connection can be created.
-	 * @param dataSource the data source
-	 */
-	public void setDataSource(DataSource dataSource) {
-		Assert.notNull(dataSource, "The dataSource is required.");
-		this.dataSource = dataSource;
-	}
+    /**
+     * Set the data source that will be used for the {@link DatabaseDataSourceConnection}. This value must be set before
+     * the connection can be created.
+     * @param dataSource the data source
+     */
+    public void setDataSource(DataSource dataSource) {
+        Assert.notNull(dataSource, "The dataSource is required.");
+        this.dataSource = dataSource;
+    }
 
-	/**
-	 * Set the user name to use when accessing the data source.
-	 * @param username the user name or <tt>null</tt>
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * Set the user name to use when accessing the data source.
+     * @param username the user name or <tt>null</tt>
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	/**
-	 * Set the password to use when accessing the data source.
-	 * @param password the password or <tt>null</tt>
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * Set the password to use when accessing the data source.
+     * @param password the password or <tt>null</tt>
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	/**
-	 * Set the schema to use when accessing the data source.
-	 * @param schema the schema or <tt>null</tt>
-	 */
-	public void setSchema(String schema) {
-		this.schema = schema;
-	}
+    /**
+     * Set the schema to use when accessing the data source.
+     * @param schema the schema or <tt>null</tt>
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
-	/**
-	 * Set an optional {@link DatabaseConfigBean configuration} that will be applied to the newly created
-	 * {@link DatabaseDataSourceConnection}
-	 *
-	 * @param databaseConfig the database configuration or <tt>null</tt> if no additional configuration is required.
-	 */
-	public void setDatabaseConfig(DatabaseConfigBean databaseConfig) {
-		this.databaseConfig = databaseConfig;
-	}
+    /**
+     * Set an optional {@link DatabaseConfigBean configuration} that will be applied to the newly created
+     * {@link DatabaseDataSourceConnection}
+     *
+     * @param databaseConfig the database configuration or <tt>null</tt> if no additional configuration is required.
+     */
+    public void setDatabaseConfig(DatabaseConfigBean databaseConfig) {
+        this.databaseConfig = databaseConfig;
+    }
 
-	/**
-	 * Determines if the {@link IDatabaseConnection} created by this bean should be aware of Spring
-	 * {@link PlatformTransactionManager}s. Defaults to <tt>true</tt>
-	 * @param transactionAware If the connection should be transaction aware
-	 */
-	public void setTransactionAware(boolean transactionAware) {
-		this.transactionAware = transactionAware;
-	}
-
-	/**
-	 * Convenience method that can be used to construct a transaction aware {@link IDatabaseConnection} from a
-	 * {@link DataSource}.
-	 * @param dataSource The data source
-	 * @return A {@link IDatabaseConnection}
-	 */
-	public static IDatabaseConnection newConnection(DataSource dataSource) {
-		try {
-			return (new DatabaseDataSourceConnectionFactoryBean(dataSource)).getObject();
-		} catch (Exception ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
-
+    /**
+     * Determines if the {@link IDatabaseConnection} created by this bean should be aware of Spring
+     * {@link PlatformTransactionManager}s. Defaults to <tt>true</tt>
+     * @param transactionAware If the connection should be transaction aware
+     */
+    public void setTransactionAware(boolean transactionAware) {
+        this.transactionAware = transactionAware;
+    }
 }

@@ -47,11 +47,12 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[]{"derby"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList("derby");
 
     /**
      * @see IDbProductRelatable#getValidDbProducts()
      */
+    @Override
     public Collection getValidDbProducts()
     {
       return DATABASE_PRODUCTS;
@@ -60,10 +61,12 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
     /**
      * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int, java.lang.String)
      */
+    @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
+    	if(logger.isDebugEnabled()) {
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
+        }
 
         DataType dataType = DataType.UNKNOWN;
         if (sqlType != Types.OTHER)
@@ -91,11 +94,13 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
     /**
      * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int, java.lang.String, java.lang.String, java.lang.String)
      */
+    @Override
     public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName) throws DataTypeException
     {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start", 
-        		new Object[] {new Integer(sqlType), sqlTypeName, tableName, columnName} );
+    	if(logger.isDebugEnabled()) {
+            logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start", 
+        		new Integer(sqlType), sqlTypeName, tableName, columnName );
+        }
 
         if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL)
         {
@@ -103,14 +108,13 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
         	ToleratedDelta delta = _toleratedDeltaMap.findToleratedDelta(tableName, columnName);
             // Found a toleratedDelta object
             if(delta!=null) {
-                if(logger.isDebugEnabled())
+                if(logger.isDebugEnabled()) {
                     logger.debug("Creating NumberTolerantDataType for table={}, column={}, toleratedDelta={}", 
-            			new Object[]{tableName, columnName, delta.getToleratedDelta() });
+            			tableName, columnName, delta.getToleratedDelta());
+                }
                 
-                // Use a special data type to implement the tolerance for numbers (floating point things)
-                NumberTolerantDataType type = new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", 
+                return new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", 
                 		sqlType, delta.getToleratedDelta());
-                return type;
             }
         }
         
@@ -142,6 +146,7 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      * Returns a string representation of this {@link DefaultDataTypeFactory} instance
      * @since 2.4.6
      */
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();

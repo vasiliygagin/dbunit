@@ -16,16 +16,20 @@
 
 package com.github.springtestdbunit.bean;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.sql.Connection;
 
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseDataSourceConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -139,16 +143,4 @@ public class DatabaseDataSourceConnectionFactoryBeanTest {
 		Connection actual = dataSourceConnection.getConnection();
 		assertSame(connection, actual);
 	}
-
-	@Test
-	public void shouldSupportNewConnection() throws Exception {
-		DataSource dataSource = mock(DataSource.class);
-		Connection connection = mock(Connection.class);
-		given(dataSource.getConnection()).willReturn(connection);
-		IDatabaseConnection databaseConnection = DatabaseDataSourceConnectionFactoryBean.newConnection(dataSource);
-		assertNotNull(databaseConnection);
-		databaseConnection.getConnection().createStatement();
-		verify(dataSource).getConnection();
-	}
-
 }

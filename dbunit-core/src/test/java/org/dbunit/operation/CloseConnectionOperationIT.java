@@ -21,40 +21,32 @@
 
 package org.dbunit.operation;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.database.MockDatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
 
 /**
- * @author Manuel Laflamme
- * @version $Revision$
- * @since Mar 6, 2002
+ * @author Vasiliy Gagin
  */
-public class CloseConnectionOperationIT extends AbstractDatabaseIT
-{
-    public CloseConnectionOperationIT(String s)
-    {
+public class CloseConnectionOperationIT extends AbstractDatabaseIT {
+
+    public CloseConnectionOperationIT(String s) {
         super(s);
     }
 
-    public void testMockExecute() throws Exception
-    {
-        // setup mock objects
-        MockDatabaseOperation operation = new MockDatabaseOperation();
-        operation.setExpectedExecuteCalls(1);
+    public void testMockExecute() throws Exception {
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setExpectedCloseCalls(1);
+        DatabaseOperation operation = mock(DatabaseOperation.class);
+        IDatabaseConnection connection = mock(IDatabaseConnection.class);
+        IDataSet dataSet = mock(IDataSet.class);
 
-        // execute operation
-        new CloseConnectionOperation(operation).execute(connection, null);
+        new CloseConnectionOperation(operation).execute(connection, dataSet);
 
-        // verify
-        operation.verify();
-        connection.verify();
+        verify(operation).execute(connection, dataSet);
+        verify(connection).close();
     }
-
 }
-
-
-
 
