@@ -30,8 +30,8 @@
     </licenses>
 
     <scm>
-        <connection>https://github.com/vasiliygagin/dbunit.git</connection>
-        <developerConnection>git@github.com:vasiliygagin/dbunit.git</developerConnection>
+        <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
+        <developerConnection>scm:git:git//github.com:vasiliygagin/dbunit.git</developerConnection>
         <url>https://github.com/vasiliygagin/dbunit</url>
     </scm>
 
