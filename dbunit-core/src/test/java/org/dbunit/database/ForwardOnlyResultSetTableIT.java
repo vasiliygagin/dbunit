@@ -21,6 +21,7 @@
 package org.dbunit.database;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ForwardOnlyTableTest;
 import org.dbunit.dataset.ITable;
@@ -42,7 +43,7 @@ public class ForwardOnlyResultSetTableIT extends ForwardOnlyTableTest
 
     protected ITable createTable() throws Exception
     {
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         IDatabaseConnection connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
@@ -53,7 +54,7 @@ public class ForwardOnlyResultSetTableIT extends ForwardOnlyTableTest
 
     protected String convertString(String str) throws Exception
     {
-        return DatabaseEnvironment.getInstance().convertString(str);
+        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
 
     public void testGetMissingValue() throws Exception

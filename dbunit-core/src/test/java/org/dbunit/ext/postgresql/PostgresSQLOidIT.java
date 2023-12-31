@@ -2,6 +2,7 @@ package org.dbunit.ext.postgresql;
 
 import junit.framework.TestCase;
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.*;
@@ -31,7 +32,7 @@ public class PostgresSQLOidIT extends TestCase
     {
         super.setUp();
         // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = DatabaseEnvironment.getInstance().getConnection();
+        _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
     }
 
     protected void tearDown() throws Exception

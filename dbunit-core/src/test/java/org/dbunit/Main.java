@@ -157,7 +157,7 @@ public class Main
 
 //        System.setProperty("dbunit.name.escapePattern", "\"?\"");
         IDatabaseConnection connection =
-                DatabaseEnvironment.getInstance().getConnection();
+                DatabaseEnvironmentLoader.getInstance(null).getConnection();
 //        IDataSet dataSet = new XmlDataSet(new FileReader("dataSetTest.xml"));
 //        DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
 

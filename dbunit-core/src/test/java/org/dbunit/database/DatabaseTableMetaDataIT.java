@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
 import org.dbunit.HypersonicEnvironment;
 import org.dbunit.TestFeature;
@@ -66,7 +67,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT
 
     protected String convertString(String str) throws Exception
     {
-        return DatabaseEnvironment.getInstance().convertString(str);
+        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
 
     public void testGetPrimaryKeys() throws Exception
@@ -188,7 +189,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT
         expectedTypes.add(DataType.NUMERIC);
         expectedTypes.add(DataType.TIMESTAMP);
 
-    	DatabaseEnvironment environment = DatabaseEnvironment.getInstance();
+    	DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
         if (environment.support(TestFeature.VARBINARY)) {
             expectedNames.add("VARBINARY_COL");
             expectedTypes.add(DataType.VARBINARY);
@@ -346,7 +347,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT
      */
     public void testFullyQualifiedTableName() throws Exception
     {
-        DatabaseEnvironment environment = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
         String schema = environment.getProfile().getSchema();
         
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);

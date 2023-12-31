@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="ant-test" basedir="../../" default="all">
+<project name="ant-test" basedir="../" default="all">
 
   <property name="dbunit.profile" value="unknown"/>
   <property name="dbunit.profile.driverClass" value="unknown"/>
@@ -9,16 +9,16 @@
   <property name="dbunit.profile.user" value="unknown"/>
   <property name="dbunit.profile.password" value="unknown"/>
 
-  <property name="testDataSet" value="src/test/resources/xml/flatXmlDataSetTest.xml"/>
-  <property name="compositeDataSetFolder" value="src/test/resources/xml"/>
+  <property name="testDataSet" value="xml/flatXmlDataSetTest.xml"/>
+  <property name="compositeDataSetFolder" value="xml"/>
   <property name="compositeDataSet1" value="flatXmlCompositeDataSetTestPart1.xml"/>
   <property name="compositeDataSet2" value="flatXmlCompositeDataSetTestPart2.xml"/>
   <property name="compositeCombineDataSet1" value="flatXmlCompositeCombineDataSetTestPart1.xml"/>
   <property name="compositeCombineDataSet2" value="flatXmlCompositeCombineDataSetTestPart2.xml"/>
-  <property name="updateDataSet" value="src/test/resources/xml/antTestDataSet.xml"/>
+  <property name="updateDataSet" value="xml/antTestDataSet.xml"/>
   <property name="exportDataSet" value="target/xml/antExportDataSet.xml"/>
-  <property name="exportDtd" value="src/test/resources/xml/antExport.dtd"/>
-  <property name="exportCsv" value="src/test/resources/xml/antExportCsv"/>
+  <property name="exportDtd" value="xml/antExport.dtd"/>
+  <property name="exportCsv" value="xml/antExportCsv"/>
 
   <taskdef name="dbunit" classname="org.dbunit.ant.DbUnitTask" loaderref="dbunit"/>
   <typedef name="queryset" classname="org.dbunit.ant.QuerySet" loaderref="dbunit"/>

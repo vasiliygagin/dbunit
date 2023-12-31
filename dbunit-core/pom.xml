@@ -77,7 +77,6 @@
         <antTestUtilVersion>1.7.0</antTestUtilVersion>
         <antVersion>1.6.5</antVersion>
         <gsbaseVersion>2.0.1</gsbaseVersion>
-        <hamcrestVersion>1.3</hamcrestVersion>
         <junitAddonsVersion>1.4</junitAddonsVersion>
         <mmmockobjectsVersion>1.12.0</mmmockobjectsVersion>
         <mockObjectsVersion>0.09</mockObjectsVersion>
@@ -107,21 +106,6 @@
         <!-- Other versions -->
         <wagonSshVersion>2.10</wagonSshVersion>
     </properties>
-
-    <scm>
-        <connection>scm:git:http://git.code.sf.net/p/dbunit/code.git</connection>
-        <developerConnection>scm:git:https://git.code.sf.net/p/dbunit/code.git</developerConnection>
-        <url>http://sourceforge.net/p/dbunit/code.git/ci/master/tree/</url>
-        <tag>HEAD</tag>
-    </scm>
-    <issueManagement>
-        <system>SourceForge2</system>
-        <url>https://sourceforge.net/p/dbunit/_list/tickets</url>
-    </issueManagement>
-    <ciManagement>
-        <system>gitlab</system>
-        <url>https://gitlab.com/dbUnit/dbunit-extension/-/pipelines</url>
-    </ciManagement>
 
     <mailingLists>
         <mailingList>
@@ -412,9 +396,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrestVersion}</version>
-            <scope>test</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ant</groupId>

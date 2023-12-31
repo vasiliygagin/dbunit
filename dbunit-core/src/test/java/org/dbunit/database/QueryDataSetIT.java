@@ -22,6 +22,7 @@
 package org.dbunit.database;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -49,7 +50,7 @@ public class QueryDataSetIT extends AbstractDataSetTest
     {
         super.setUp();
 
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         _connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(_connection, env.getInitDataSet());

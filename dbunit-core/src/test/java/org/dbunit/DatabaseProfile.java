@@ -21,18 +21,22 @@
 
 package org.dbunit;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * @author Manuel Laflamme
- * @version $Revision$
- * @since Feb 20, 2002
+ * @author Vasiliy Gagin
  */
-public class DatabaseProfile
-{
-	private static final String[] EMPTY_ARRAY = new String[0];
-	
-    public static final String DATABASE_PROFILE = "dbunit.profile";
+public class DatabaseProfile {
+
+    private static final String[] EMPTY_ARRAY = new String[0];
+
+    private static final String DATABASE_PROFILE = "dbunit.profile";
+
     private static final String PROFILE_DRIVER_CLASS = "dbunit.profile.driverClass";
     private static final String PROFILE_URL = "dbunit.profile.url";
     private static final String PROFILE_SCHEMA = "dbunit.profile.schema";
@@ -42,74 +46,81 @@ public class DatabaseProfile
     private static final String PROFILE_DDL = "dbunit.profile.ddl";
     private static final String PROFILE_MULTILINE_SUPPORT = "dbunit.profile.multiLineSupport";
 
+    public final String profileName;
     private final Properties _properties;
 
-    public DatabaseProfile(Properties properties)
-    {
-        _properties = properties;
-//        ArrayList keys = new ArrayList(properties.keySet());
-//        for (int i = 0; i < keys.size(); i++) {
-//            System.out.println("key = " + keys.get(i) + ", value = " + properties.get(keys.get(i)));
-//        }
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseProfile.class);
 
+    public DatabaseProfile(String profileName) throws IOException {
+	_properties = getProperties(profileName);
+	this.profileName = _properties.getProperty(DATABASE_PROFILE);
     }
 
-    public String getActiveProfile()
-    {
-        return _properties.getProperty(DATABASE_PROFILE);
+    public String getDriverClass() {
+	return _properties.getProperty(PROFILE_DRIVER_CLASS);
     }
 
-    public String getDriverClass()
-    {
-        return _properties.getProperty(PROFILE_DRIVER_CLASS);
+    public String getConnectionUrl() {
+	return _properties.getProperty(PROFILE_URL);
     }
 
-    public String getConnectionUrl()
-    {
-        return _properties.getProperty(PROFILE_URL);
+    public String getSchema() {
+	return _properties.getProperty(PROFILE_SCHEMA, null);
     }
 
-    public String getSchema()
-    {
-        return _properties.getProperty(PROFILE_SCHEMA, null);
+    public String getUser() {
+	return _properties.getProperty(PROFILE_USER);
     }
 
-    public String getUser()
-    {
-        return _properties.getProperty(PROFILE_USER);
+    public String getPassword() {
+	return _properties.getProperty(PROFILE_PASSWORD);
     }
 
-    public String getPassword()
-    {
-        return _properties.getProperty(PROFILE_PASSWORD);
+    public String getProfileDdl() {
+	return _properties.getProperty(PROFILE_DDL);
     }
 
-    public String getProfileDdl()
-    {
-        return _properties.getProperty(PROFILE_DDL);
+    public boolean getProfileMultilineSupport() {
+	return Boolean.valueOf(_properties.getProperty(PROFILE_MULTILINE_SUPPORT));
     }
 
-    public boolean getProfileMultilineSupport()
-    {
-        return Boolean.valueOf(_properties.getProperty(PROFILE_MULTILINE_SUPPORT));
+    public String[] getUnsupportedFeatures() {
+	String property = _properties.getProperty(PROFILE_UNSUPPORTED_FEATURES);
+
+	// If property is not set return an empty array
+	if (property == null) {
+	    return EMPTY_ARRAY;
+	}
+
+	List<String> stringList = new ArrayList<String>();
+	StringTokenizer tokenizer = new StringTokenizer(property, ",");
+	while (tokenizer.hasMoreTokens()) {
+	    stringList.add(tokenizer.nextToken().trim());
+	}
+	return stringList.toArray(new String[stringList.size()]);
     }
 
-    public String[] getUnsupportedFeatures()
-    {
-        String property = _properties.getProperty(PROFILE_UNSUPPORTED_FEATURES);
-        
-        // If property is not set return an empty array
-        if(property == null){
-        	return EMPTY_ARRAY;
-        }
-        
-        List<String> stringList = new ArrayList<String>();
-        StringTokenizer tokenizer = new StringTokenizer(property, ",");
-        while(tokenizer.hasMoreTokens())
-        {
-            stringList.add(tokenizer.nextToken().trim());
-        }
-        return stringList.toArray(new String[stringList.size()]);
-    }
+    private static Properties getProperties(String profileName) throws IOException {
 
+	final Properties properties = System.getProperties();
+	if (profileName == null) {
+	    profileName = properties.getProperty(DATABASE_PROFILE);
+	}
+	if (profileName == null) {
+	    profileName = "hsqldb";
+	}
+	logger.info("Selected profile '{}'", profileName);
+
+	String fileName = profileName + "-dbunit.properties";
+
+	final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
+	if (inputStream != null) {
+	    properties.load(inputStream);
+	    logger.info("Loaded properties from file '{}'", fileName);
+	    inputStream.close();
+	} else {
+	    logger.warn("Properties file '{}' is not found", fileName);
+	}
+	return properties;
+    }
 }
