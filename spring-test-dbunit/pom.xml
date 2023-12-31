@@ -11,7 +11,7 @@
         <relativePath>../dbunit-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>spring-test-dbunit</artifactId>
+    <artifactId>dbunit-spring</artifactId>
     <packaging>jar</packaging>
     <name>Spring Test DBUnit</name>
 
