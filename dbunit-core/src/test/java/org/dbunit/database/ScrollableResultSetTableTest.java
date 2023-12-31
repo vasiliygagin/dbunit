@@ -23,6 +23,7 @@ package org.dbunit.database;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.AbstractTableTest;
 import org.dbunit.dataset.ITable;
@@ -46,7 +47,7 @@ public class ScrollableResultSetTableTest extends AbstractTableTest
     
     protected ITable createTable() throws Exception
     {
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         IDatabaseConnection connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());

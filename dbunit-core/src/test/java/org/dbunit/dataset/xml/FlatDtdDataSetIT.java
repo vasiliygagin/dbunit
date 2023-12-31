@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.FilteredDataSet;
@@ -118,7 +119,7 @@ public class FlatDtdDataSetIT extends AbstractDataSetTest
     public void testWriteFromDatabase() throws Exception
     {
         IDatabaseConnection connection =
-                DatabaseEnvironment.getInstance().getConnection();
+                DatabaseEnvironmentLoader.getInstance(null).getConnection();
         IDataSet dataSet = connection.createDataSet();
 
         File tempFile = File.createTempFile("flatXmlDocType", ".dtd");

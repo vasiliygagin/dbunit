@@ -50,7 +50,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase
 
     protected DatabaseEnvironment getEnvironment() throws Exception
    {
-      return DatabaseEnvironment.getInstance();
+      return DatabaseEnvironmentLoader.getInstance(null);
    }
 
    protected ITable createOrderedTable( String tableName, String orderByColumn ) throws Exception
@@ -133,7 +133,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase
    public static boolean environmentHasFeature( TestFeature feature )
    {
       try{
-         final DatabaseEnvironment environment = DatabaseEnvironment.getInstance();
+         final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
          final boolean runIt = environment.support( feature );
          return runIt;
       }

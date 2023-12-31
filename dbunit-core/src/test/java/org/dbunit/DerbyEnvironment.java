@@ -21,33 +21,18 @@
 
 package org.dbunit;
 
+import java.io.File;
+
 import org.dbunit.util.FileHelper;
 
-import java.io.File;
-import java.util.concurrent.Callable;
+public class DerbyEnvironment extends DatabaseEnvironment {
 
-/**
- * @author Manuel Laflamme
- * @version $Revision$
- * @since Feb 18, 2002
- */
-public class DerbyEnvironment extends DatabaseEnvironment
-{
+    public DerbyEnvironment(DatabaseProfile profile) throws Exception {
+	super(prepare(profile));
+    }
 
-	public DerbyEnvironment(DatabaseProfile profile) throws Exception
-	{
-		super(profile, new Callable<Void>() {
-            public Void call() throws Exception {
-                // Delete the old database if exists before creating a new one in "getConnection()"
-                // The name of the db is specified in the profile.properties and is created on the fly
-                // when the connection is retrieved the first time
-                FileHelper.deleteDirectory(new File("./target/derby_db"));
-
-                return null;
-            }
-        });
-	}
+    private static DatabaseProfile prepare(DatabaseProfile profile) {
+	FileHelper.deleteDirectory(new File("./target/derby_db"));
+	return profile;
+    }
 }
-
-
-

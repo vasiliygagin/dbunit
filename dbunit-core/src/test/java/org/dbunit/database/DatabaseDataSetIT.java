@@ -22,6 +22,7 @@
 package org.dbunit.database;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
@@ -56,7 +57,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest
     {
         super.setUp();
 
-        _connection = DatabaseEnvironment.getInstance().getConnection();
+        _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
     }
 
     protected void tearDown() throws Exception
@@ -72,7 +73,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest
 
     protected String convertString(String str) throws Exception
     {
-        return DatabaseEnvironment.getInstance().convertString(str);
+        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
 
     protected IDataSet createDataSet() throws Exception

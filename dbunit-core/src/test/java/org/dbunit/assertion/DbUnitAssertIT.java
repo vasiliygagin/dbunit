@@ -28,6 +28,7 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
@@ -287,7 +288,7 @@ public class DbUnitAssertIT extends TestCase
 
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualExcluded() throws Exception
     {
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         IDatabaseConnection connection = env.getConnection();
 
         IDataSet dataSet = env.getInitDataSet();
@@ -305,7 +306,7 @@ public class DbUnitAssertIT extends TestCase
     
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualNotExcluded() throws Exception
     {
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         IDatabaseConnection connection = env.getConnection();
 
         IDataSet dataSet = env.getInitDataSet();

@@ -48,7 +48,7 @@ public class DatabaseTestCaseIT extends TestCase
 	 */
 	public void testConfigureConnection() throws Exception
 	{
-	    DatabaseEnvironment dbEnv = DatabaseEnvironment.getInstance();
+	    DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
 	    final IDatabaseConnection conn = dbEnv.getConnection();
 	    
 	    DatabaseTestCase testSubject = new DatabaseTestCase() {

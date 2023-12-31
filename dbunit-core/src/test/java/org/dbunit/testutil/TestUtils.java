@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 
 /**
  * @author John Hurst (john.b.hurst@gmail.com)
@@ -36,7 +37,7 @@ public class TestUtils
 {
     private static String getProfileName() throws Exception
     {
-        return DatabaseEnvironment.getInstance().getProfile().getActiveProfile();
+        return DatabaseEnvironmentLoader.getInstance(null).getProfile().profileName;
     }
 
     public static String getFileName(String fileName)

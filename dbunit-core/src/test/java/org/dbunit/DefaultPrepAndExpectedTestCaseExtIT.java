@@ -123,7 +123,7 @@ public class DefaultPrepAndExpectedTestCaseExtIT
 
     protected IDatabaseTester makeDatabaseTester() throws Exception
     {
-        final DatabaseEnvironment dbEnv = DatabaseEnvironment.getInstance();
+        final DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
         final IDatabaseConnection connection = dbEnv.getConnection();
         return new DefaultDatabaseTester(connection);
     }

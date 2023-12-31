@@ -35,6 +35,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.Target;
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.database.DatabaseConfig;
@@ -78,7 +79,7 @@ public class DbUnitTaskIT extends BuildFileTest
     public void setUp() throws Exception
     {
         // This line ensure test database is initialized
-        DatabaseEnvironment.getInstance();
+        DatabaseEnvironmentLoader.getInstance(null);
 
         String filePath = BUILD_FILE_DIR + "/antTestBuildFile.xml";
         assertTrue("Buildfile not found", TestUtils.getFile(filePath).isFile());
@@ -523,7 +524,7 @@ public class DbUnitTaskIT extends BuildFileTest
 
     public void testReplaceOperation() throws Exception {
         String targetName = "test-replace";
-        final IDatabaseTester dbTest = DatabaseEnvironment.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -533,7 +534,7 @@ public class DbUnitTaskIT extends BuildFileTest
 
     public void testOrderedOperation() throws Exception {
         String targetName = "test-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironment.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -543,7 +544,7 @@ public class DbUnitTaskIT extends BuildFileTest
 
     public void testReplaceOrderedOperation() throws Exception {
         String targetName = "test-replace-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironment.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");

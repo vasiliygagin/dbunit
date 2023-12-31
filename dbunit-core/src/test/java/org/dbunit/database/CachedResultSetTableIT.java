@@ -21,6 +21,7 @@
 package org.dbunit.database;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.dataset.AbstractTableTest;
 import org.dbunit.dataset.ITable;
 import org.dbunit.operation.DatabaseOperation;
@@ -39,7 +40,7 @@ public class CachedResultSetTableIT extends AbstractTableTest
 
     protected ITable createTable() throws Exception
     {
-        DatabaseEnvironment env = DatabaseEnvironment.getInstance();
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
         IDatabaseConnection connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
@@ -51,7 +52,7 @@ public class CachedResultSetTableIT extends AbstractTableTest
 
     protected String convertString(String str) throws Exception
     {
-        return DatabaseEnvironment.getInstance().convertString(str);
+        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
 
     public void testGetMissingValue() throws Exception
