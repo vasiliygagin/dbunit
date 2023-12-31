@@ -1,3 +1,31 @@
+Introduction
+============
+This project was forked from latest dbUnit and spring-test-dbunit versions I found in Maven central:
+- org.dbunit:dbunit:2.7.3
+- com.github.springtestdbunit:spring-test-dbunit:1.3.0
+It seems that both projects are abandoned.
+I am giving them a throw grooming and some modernization.
+
+Initial releases of new forked artifacts are:
+
+        <dependency>
+            <groupId>com.github.vg</groupId>
+            <artifactId>dbunit-core</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+
+and
+
+        <dependency>
+            <groupId>com.github.vg</groupId>
+            <artifactId>dbunit-spring</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+
+Code in those artifacts is largely original. Though there are small changes in implementation details and tests, everything should be compatible.
+Currently I am working on cleaning and upgrading dependencies. Attempts will be made to maintain compatibility in the future.
+More artifacts will be split of original artifacts in the future releases. Like support for ant and junit 2 and junit 4 will probably moved to dbunit-ant, dbunit-junit2 and dbunit-junit4. So I can amputate those easier when time comes.
+
 Changes to original DBUnit
 ==========================
 - If no database connections configured via DbUnitConfiguration, and no connections found with common names "dbUnitDatabaseConnection"
@@ -5,8 +33,8 @@ Changes to original DBUnit
  one connection found, there will be no default connection, and all database operations will have to explicitly specify connection name.
 - Lookup of connections by common names can be bypassed by specifying DbUnitConfiguration.skipLegacyConnectionLookup = true
 
-Introduction
-============
+Old Spring Test DbUnit Introduction
+===================================
 Spring DBUnit provides integration between the Spring testing framework and the popular DBUnit project. It allows you
 to setup and teardown database tables using simple annotations as well as checking expected table contents once a test
 completes.
