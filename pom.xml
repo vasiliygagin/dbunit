@@ -31,7 +31,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
-        <developerConnection>scm:git:git//github.com:vasiliygagin/dbunit.git</developerConnection>
+        <developerConnection>scm:git:git://github.com:vasiliygagin/dbunit.git</developerConnection>
         <url>https://github.com/vasiliygagin/dbunit</url>
     </scm>
 
@@ -49,5 +49,21 @@
         <module>dbunit-spring</module>
         <module>dbunit-spring-sample</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <remoteTagging>false</remoteTagging>
+                    <updateWorkingCopyVersions>true</updateWorkingCopyVersions>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
