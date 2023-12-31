@@ -46,8 +46,8 @@
     <modules>
         <module>dbunit-parent</module>
         <module>dbunit-core</module>
-        <module>spring-test-dbunit</module>
-        <module>spring-test-dbunit-sample</module>
+        <module>dbunit-spring</module>
+        <module>dbunit-spring-sample</module>
     </modules>
 
 </project>
