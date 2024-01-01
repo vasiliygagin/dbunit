@@ -20,30 +20,68 @@
  */
 package org.dbunit.dataset;
 
-import org.dbunit.dataset.stream.AbstractProducerTest;
+import static org.mockito.Mockito.mock;
+
+import java.net.MalformedURLException;
+
 import org.dbunit.dataset.stream.DataSetProducerAdapter;
-import org.dbunit.dataset.stream.IDataSetProducer;
+import org.dbunit.dataset.stream.IDataSetConsumer;
+import org.dbunit.dataset.stream.IDataSetConsumerMockVerifyer;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
-import java.io.File;
+public class DataSetProducerAdapterTest {
 
-/**
- * @author Manuel Laflamme
- * @since Apr 17, 2003
- * @version $Revision$
- */
-public class DataSetProducerAdapterTest extends AbstractProducerTest {
-    private static final File DATASET_FILE = TestUtils.getFile("xml/flatXmlProducerTest.xml");
-
-    public DataSetProducerAdapterTest(String s) {
-        super(s);
+    private FlatXmlDataSet createDataSet() throws MalformedURLException, DataSetException {
+        return new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/flatXmlProducerTest.xml"));
     }
 
-    protected IDataSetProducer createProducer() throws Exception {
-        FlatXmlDataSet dataSet = new FlatXmlDataSetBuilder().build(DATASET_FILE);
-        return new DataSetProducerAdapter(dataSet);
+    @Test
+    public void testProduce() throws Exception {
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
+        FlatXmlDataSet dataSet = createDataSet();
+        DataSetProducerAdapter producer = new DataSetProducerAdapter(dataSet);
+        producer.setConsumer(consumer);
+
+        producer.produce();
+
+        // Produce and verify consumer
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+
+        verifyer.verifyStartTable(dataSet.getTableMetaData("DUPLICATE_TABLE"));
+        verifyer.verifyRow("row 0 col 0", "row 0 col 1", "row 0 col 2", "row 0 col 3");
+        verifyer.verifyEndTable();
+
+        verifyer.verifyStartTable(dataSet.getTableMetaData("SECOND_TABLE"));
+        verifyer.verifyRow("row 0 col 0", "row 0 col 1", "row 0 col 2", "row 0 col 3");
+        verifyer.verifyRow("row 1 col 0", "row 1 col 1", "row 1 col 2", "row 1 col 3");
+        verifyer.verifyEndTable();
+
+        verifyer.verifyStartTable(dataSet.getTableMetaData("TEST_TABLE"));
+        verifyer.verifyRow("row 0 col 0", "row 0 col 1", "row 0 col 2", "row 0 col 3");
+        verifyer.verifyRow("row 1 col 0", "row 1 col 1", "row 1 col 2", "row 1 col 3");
+        verifyer.verifyRow("row 2 col 0", "row 2 col 1", "row 2 col 2", "row 2 col 3");
+        verifyer.verifyEndTable();
+
+        verifyer.verifyStartTable(dataSet.getTableMetaData("NOT_NULL_TABLE"));
+        verifyer.verifyRow("row 0 col 0", "row 0 col 1", "row 0 col 2", "row 0 col 3");
+        verifyer.verifyEndTable();
+
+        verifyer.verifyStartTable(dataSet.getTableMetaData("EMPTY_TABLE"));
+        verifyer.verifyEndTable();
+
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
+    public void testProduceWithoutConsumer() throws Exception {
+        FlatXmlDataSet dataSet = createDataSet();
+        DataSetProducerAdapter producer = new DataSetProducerAdapter(dataSet);
+
+        producer.produce();
+    }
 }

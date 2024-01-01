@@ -59,30 +59,33 @@ public class DataSetProducerAdapter implements IDataSetProducer {
     public void produce() throws DataSetException {
         _consumer.startDataSet();
         while (_iterator.next()) {
-            ITable table = _iterator.getTable();
-            ITableMetaData metaData = table.getTableMetaData();
-
-            _consumer.startTable(metaData);
-            try {
-                Column[] columns = metaData.getColumns();
-                if (columns.length == 0) {
-                    _consumer.endTable();
-                    continue;
-                }
-
-                for (int i = 0;; i++) {
-                    produceRow(table, columns, i);
-                }
-            } catch (RowOutOfBoundsException e) {
-                // This exception occurs when records are exhausted
-                // and we reach the end of the table. Ignore this error
-                // and close table.
-
-                // end of table
-                _consumer.endTable();
-            }
+            produceTable(_iterator.getTable());
         }
         _consumer.endDataSet();
+    }
+
+    private void produceTable(ITable table) throws DataSetException {
+        ITableMetaData metaData = table.getTableMetaData();
+
+        _consumer.startTable(metaData);
+        try {
+            Column[] columns = metaData.getColumns();
+            if (columns.length == 0) {
+                _consumer.endTable();
+                return;
+            }
+
+            for (int i = 0;; i++) {
+                produceRow(table, columns, i);
+            }
+        } catch (RowOutOfBoundsException e) {
+            // This exception occurs when records are exhausted
+            // and we reach the end of the table. Ignore this error
+            // and close table.
+
+            // end of table
+            _consumer.endTable();
+        }
     }
 
     private void produceRow(ITable table, Column[] columns, int i) throws DataSetException {
