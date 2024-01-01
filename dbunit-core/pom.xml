@@ -342,42 +342,32 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${cleanPluginVersion}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${deployPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${enforcerPluginVersion}</version>
-                    <executions>
-                        <execution>
-                            <id>enforce-versions</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <rules>
-                            <!--
-              Links to rules:
-                1) http://maven.apache.org/enforcer/enforcer-rules/index.html
-                2) http://mojo.codehaus.org/extra-enforcer-rules/
-              -->
-                            <requireMavenVersion>
-                                <version>${mavenVersion}</version>
-                            </requireMavenVersion>
-                            <requireJavaVersion>
-                                <version>${compileSource}</version>
-                            </requireJavaVersion>
-                            <requirePluginVersions>
-                                <phases>compile</phases>
-                            </requirePluginVersions>
-                        </rules>
-                    </configuration>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
+<!--                    <version>${enforcerPluginVersion}</version>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <id>enforce-versions</id>-->
+<!--                            <goals>-->
+<!--                                <goal>enforce</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                    <configuration>-->
+<!--                        <rules>-->
+<!--                            <requireMavenVersion>-->
+<!--                                <version>${mavenVersion}</version>-->
+<!--                            </requireMavenVersion>-->
+<!--                            <requireJavaVersion>-->
+<!--                                <version>${compileSource}</version>-->
+<!--                            </requireJavaVersion>-->
+<!--                            <requirePluginVersions>-->
+<!--                                <phases>compile</phases>-->
+<!--                            </requirePluginVersions>-->
+<!--                        </rules>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -394,16 +384,6 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${gpgPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${installPluginVersion}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -491,16 +471,6 @@ enable this to generate coverage report HTML files during build (same as site)
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${releasePluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${resourcesPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${sitePluginVersion}</version>
                     <dependencies>
@@ -510,20 +480,6 @@ enable this to generate coverage report HTML files during build (same as site)
                             <version>${wagonSshVersion}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${sourcePluginVersion}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -605,10 +561,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.gaul</groupId>
                 <artifactId>modernizer-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -1072,15 +1024,6 @@ enable this to generate coverage report HTML files during build (same as site)
             </plugin>
         </plugins>
     </reporting>
-
-    <distributionManagement>
-        <!-- distribution repos specified in parent -->
-        <site>
-            <id>sourceforge</id>
-            <url>
-                scp://shell.sourceforge.net/home/project-web/dbunit/htdocs/dbunit/</url>
-        </site>
-    </distributionManagement>
 
     <profiles>
         <profile>
