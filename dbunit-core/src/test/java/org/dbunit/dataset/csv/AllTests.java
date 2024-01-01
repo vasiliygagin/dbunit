@@ -25,26 +25,20 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Created By:   fede
- * Date:         10-mar-2004
- * Time:         10.52.00
+ * Created By: fede Date: 10-mar-2004 Time: 10.52.00
  *
- * Last Checkin: $Author$
- * Date:         $Date$
- * Revision:     $Revision$
+ * Last Checkin: $Author$ Date: $Date$ Revision: $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(CsvParserTest.class));
-        suite.addTest(new TestSuite(CsvProducerTest.class));
-        suite.addTest(new TestSuite(CsvDataSetWriterTest.class));
-        suite.addTest(new TestSuite(CsvDataSetTest.class));
-        suite.addTest(new TestSuite(CsvURLDataSetTest.class));
-        suite.addTest(new TestSuite(CsvURLProducerTest.class));
-        
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(CsvParserTest.class));
+	suite.addTest(new TestSuite(CsvProducerTest.class));
+	suite.addTest(new TestSuite(CsvDataSetWriterTest.class));
+	suite.addTest(new TestSuite(CsvDataSetTest.class));
+	suite.addTest(new TestSuite(CsvURLDataSetTest.class));
+	suite.addTest(new TestSuite(CsvURLProducerTest.class));
+
+	return suite;
     }
 }

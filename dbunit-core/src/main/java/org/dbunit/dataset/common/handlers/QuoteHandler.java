@@ -39,95 +39,92 @@ public class QuoteHandler extends AbstractPipelineComponent {
 
     public static final char QUOTE_CHAR = '"';
 
-
-    
     private QuoteHandler() {
     }
 
     public static final PipelineComponent ACCEPT() {
-        logger.debug("ACCEPT() - start");
+	logger.debug("ACCEPT() - start");
 
-        return createPipelineComponent(new QuoteHandler(), new ACCEPT());
+	return createPipelineComponent(new QuoteHandler(), new ACCEPT());
     }
 
     public static final PipelineComponent IGNORE() {
-        logger.debug("IGNORE() - start");
+	logger.debug("IGNORE() - start");
 
-        return createPipelineComponent(new QuoteHandler(), new IGNORE());
+	return createPipelineComponent(new QuoteHandler(), new IGNORE());
     }
 
     public static final PipelineComponent QUOTE() {
-        logger.debug("QUOTE() - start");
+	logger.debug("QUOTE() - start");
 
-        return createPipelineComponent(new QuoteHandler(), new QUOTE());
+	return createPipelineComponent(new QuoteHandler(), new QUOTE());
     }
 
     public static final PipelineComponent UNQUOTE() {
-        logger.debug("UNQUOTE() - start");
+	logger.debug("UNQUOTE() - start");
 
-        return createPipelineComponent(new QuoteHandler(), new UNQUOTE());
+	return createPipelineComponent(new QuoteHandler(), new UNQUOTE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        if(logger.isDebugEnabled())
-            logger.debug("canHandle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-        if (c == QUOTE_CHAR) {
-            return true;
-        }
-        return false;
+	if (c == QUOTE_CHAR) {
+	    return true;
+	}
+	return false;
     }
-
 
     static protected class QUOTE extends Helper {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(QUOTE.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(QUOTE.class);
 
-        public void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
+	public void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-            getHandler().getPipeline().putFront(SeparatorHandler.ACCEPT());
-            getHandler().getPipeline().putFront(WhitespacesHandler.ACCEPT());
-            getHandler().getPipeline().putFront(IsAlnumHandler.ACCEPT());
-            getHandler().getPipeline().putFront(QuoteHandler.UNQUOTE());
-            getHandler().getPipeline().putFront(EscapeHandler.ESCAPE());
-            // ignore the char
-        }
+	    getHandler().getPipeline().putFront(SeparatorHandler.ACCEPT());
+	    getHandler().getPipeline().putFront(WhitespacesHandler.ACCEPT());
+	    getHandler().getPipeline().putFront(IsAlnumHandler.ACCEPT());
+	    getHandler().getPipeline().putFront(QuoteHandler.UNQUOTE());
+	    getHandler().getPipeline().putFront(EscapeHandler.ESCAPE());
+	    // ignore the char
+	}
 
     }
 
     static protected class UNQUOTE extends Helper {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(UNQUOTE.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(UNQUOTE.class);
 
-        public void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
+	public void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-            try {
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-            } catch (PipelineException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            // ignore the char
-        }
+	    try {
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+	    } catch (PipelineException e) {
+		throw new RuntimeException(e.getMessage());
+	    }
+	    // ignore the char
+	}
 
-        public boolean allowForNoMoreInput() {
-            logger.debug("allowForNoMoreInput() - start");
+	public boolean allowForNoMoreInput() {
+	    logger.debug("allowForNoMoreInput() - start");
 
-            throw new IllegalStateException("end of input while waiting for a closing quote");
-        }
+	    throw new IllegalStateException("end of input while waiting for a closing quote");
+	}
     }
 
 }

@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
  * @since Apr 9, 2003
  * @version $Revision$
  */
-public class ForwardOnlyTable implements ITable
-{
+public class ForwardOnlyTable implements ITable {
 
     /**
      * Logger for this class
@@ -39,35 +38,30 @@ public class ForwardOnlyTable implements ITable
     private final ITable _table;
     private int _lastRow = -1;
 
-    public ForwardOnlyTable(ITable table)
-    {
-        _table = table;
+    public ForwardOnlyTable(ITable table) {
+	_table = table;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
-    public ITableMetaData getTableMetaData()
-    {
-        return _table.getTableMetaData();
+    public ITableMetaData getTableMetaData() {
+	return _table.getTableMetaData();
     }
 
-    public int getRowCount()
-    {
-        throw new UnsupportedOperationException();
+    public int getRowCount() {
+	throw new UnsupportedOperationException();
     }
 
-    public Object getValue(int row, String column) throws DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+    public Object getValue(int row, String column) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-        if (row < _lastRow)
-        {
-            throw new UnsupportedOperationException("Cannot go backward!");
-        }
+	if (row < _lastRow) {
+	    throw new UnsupportedOperationException("Cannot go backward!");
+	}
 
-        _lastRow = row;
-        return _table.getValue(row, column);
+	_lastRow = row;
+	return _table.getValue(row, column);
     }
 }

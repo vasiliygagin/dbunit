@@ -53,38 +53,40 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
     private Connection _connection;
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema) throws NamingException {
-        this((DataSource) context.lookup(jndiName), schema, null, null);
+	this((DataSource) context.lookup(jndiName), schema, null, null);
     }
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema, String user, String password) throws NamingException {
-        this((DataSource) context.lookup(jndiName), schema, user, password);
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema, String user,
+	    String password) throws NamingException {
+	this((DataSource) context.lookup(jndiName), schema, user, password);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName) throws NamingException {
-        this(context, jndiName, null);
+	this(context, jndiName, null);
     }
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String user, String password) throws NamingException {
-        this(context, jndiName, null, user, password);
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String user, String password)
+	    throws NamingException {
+	this(context, jndiName, null, user, password);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource) {
-        this(dataSource, null, null, null);
+	this(dataSource, null, null, null);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, String user, String password) {
-        this(dataSource, null, user, password);
+	this(dataSource, null, user, password);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, String schema) {
-        this(dataSource, schema, null, null);
+	this(dataSource, schema, null, null);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, String schema, String user, String password) {
-        _dataSource = dataSource;
-        _schema = schema;
-        _user = user;
-        _password = password;
+	_dataSource = dataSource;
+	_schema = schema;
+	_user = user;
+	_password = password;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -92,35 +94,35 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
 
     @Override
     public Connection getConnection() throws SQLException {
-        logger.debug("getConnection() - start");
+	logger.debug("getConnection() - start");
 
-        if (_connection == null) {
-            try {
-                if (_user != null) {
-                    _connection = _dataSource.getConnection(_user, _password);
-                } else {
-                    _connection = _dataSource.getConnection();
-                }
-            } catch (SQLException e) {
-                logger.error("getConnection(): ", e);
-                throw e;
-            }
-        }
-        return _connection;
+	if (_connection == null) {
+	    try {
+		if (_user != null) {
+		    _connection = _dataSource.getConnection(_user, _password);
+		} else {
+		    _connection = _dataSource.getConnection();
+		}
+	    } catch (SQLException e) {
+		logger.error("getConnection(): ", e);
+		throw e;
+	    }
+	}
+	return _connection;
     }
 
     @Override
     public String getSchema() {
-        return _schema;
+	return _schema;
     }
 
     @Override
     public void close() throws SQLException {
-        logger.debug("close() - start");
+	logger.debug("close() - start");
 
-        if (_connection != null) {
-            _connection.close();
-            _connection = null;
-        }
+	if (_connection != null) {
+	    _connection.close();
+	    _connection = null;
+	}
     }
 }

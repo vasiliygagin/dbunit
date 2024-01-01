@@ -28,12 +28,11 @@ package org.dbunit.dataset;
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public interface IDataSet
-{
+public interface IDataSet {
     /**
      * Returns names of tables in this dataset in proper sequence. Multiple
-     * occurrence of the same name may be returned if multiple tables having
-     * the same name are present in the dataset.
+     * occurrence of the same name may be returned if multiple tables having the
+     * same name are present in the dataset.
      */
     public String[] getTableNames() throws DataSetException;
 
@@ -41,28 +40,29 @@ public interface IDataSet
      * Returns the specified table metadata.
      *
      * @throws AmbiguousTableNameException if dataset contains multiple tables
-     *      having the specified name. Use {@link #iterator} to access
-     *      to all tables.
-     * @throws NoSuchTableException if dataset do not contains the specified
-     *      table
+     *                                     having the specified name. Use
+     *                                     {@link #iterator} to access to all
+     *                                     tables.
+     * @throws NoSuchTableException        if dataset do not contains the specified
+     *                                     table
      */
-    public ITableMetaData getTableMetaData(String tableName)
-            throws DataSetException;
+    public ITableMetaData getTableMetaData(String tableName) throws DataSetException;
 
     /**
      * Returns the specified table.
      *
      * @throws AmbiguousTableNameException if dataset contains multiple tables
-     *      having the specified name. Use {@link #iterator} to access
-     *      to all tables.
-     * @throws NoSuchTableException if dataset do not contains the specified
-     *      table
+     *                                     having the specified name. Use
+     *                                     {@link #iterator} to access to all
+     *                                     tables.
+     * @throws NoSuchTableException        if dataset do not contains the specified
+     *                                     table
      */
     public ITable getTable(String tableName) throws DataSetException;
 
     /**
-     * Returns tables in this dataset in proper sequence. Multiple tables having
-     * the same name but different data may be returned.
+     * Returns tables in this dataset in proper sequence. Multiple tables having the
+     * same name but different data may be returned.
      *
      * @deprecated Use {@link #iterator} or {@link #reverseIterator} instead.
      */
@@ -77,18 +77,15 @@ public interface IDataSet
      * Returns an iterator over the tables in this dataset in reverse sequence.
      */
     public ITableIterator reverseIterator() throws DataSetException;
-    
+
     /**
-     * Whether or not this dataset handles table names in a case sensitive way or not.
-     * @return <code>true</code> if the case sensitivity of table names is used in this dataset.
+     * Whether or not this dataset handles table names in a case sensitive way or
+     * not.
+     * 
+     * @return <code>true</code> if the case sensitivity of table names is used in
+     *         this dataset.
      * @since 2.4.2
      */
     public boolean isCaseSensitiveTableNames();
 
 }
-
-
-
-
-
-

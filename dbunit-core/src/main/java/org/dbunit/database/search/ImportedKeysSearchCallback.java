@@ -17,7 +17,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- */package org.dbunit.database.search;
+ */
+package org.dbunit.database.search;
 
 import java.util.SortedSet;
 
@@ -27,16 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ISearchCallback implementation that get the nodes using direct foreign key 
- * dependency, i.e, if table A has a FK for a table B, then getNodes(A) will 
+ * ISearchCallback implementation that get the nodes using direct foreign key
+ * dependency, i.e, if table A has a FK for a table B, then getNodes(A) will
  * return B.
  * 
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Aug 25, 2005
  */
-public class ImportedKeysSearchCallback extends
-    AbstractMetaDataBasedSearchCallback {
+public class ImportedKeysSearchCallback extends AbstractMetaDataBasedSearchCallback {
 
     /**
      * Logger for this class
@@ -44,13 +44,13 @@ public class ImportedKeysSearchCallback extends
     private static final Logger logger = LoggerFactory.getLogger(ImportedKeysSearchCallback.class);
 
     public ImportedKeysSearchCallback(IDatabaseConnection connection) {
-        super(connection);
+	super(connection);
     }
 
     public SortedSet getEdges(Object node) throws SearchException {
-        logger.debug("getEdges(node={}) - start", node);
+	logger.debug("getEdges(node={}) - start", node);
 
-        return getNodesFromImportedKeys( node );
+	return getNodesFromImportedKeys(node);
     }
 
 }

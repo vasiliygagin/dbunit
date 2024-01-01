@@ -37,19 +37,21 @@ public class AllHandler extends AbstractPipelineComponent {
      */
     private static final Logger logger = LoggerFactory.getLogger(AllHandler.class);
 
-    private AllHandler () {}
-
-    public static final PipelineComponent ACCEPT () {
-        logger.debug("ACCEPT() - start");
-        return createPipelineComponent(new AllHandler(), new ACCEPT());
+    private AllHandler() {
     }
 
-    public static final PipelineComponent IGNORE () {
-        logger.debug("IGNORE() - start");
-        return createPipelineComponent(new AllHandler() {}, new IGNORE());
+    public static final PipelineComponent ACCEPT() {
+	logger.debug("ACCEPT() - start");
+	return createPipelineComponent(new AllHandler(), new ACCEPT());
+    }
+
+    public static final PipelineComponent IGNORE() {
+	logger.debug("IGNORE() - start");
+	return createPipelineComponent(new AllHandler() {
+	}, new IGNORE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        return true;
+	return true;
     }
 }

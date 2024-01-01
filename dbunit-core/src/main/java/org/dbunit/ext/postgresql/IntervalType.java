@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapter to handle conversion between Postgresql
- * native Interval type and Strings.
+ * Adapter to handle conversion between Postgresql native Interval type and
+ * Strings.
  *
  * @author James A. Russo (jr@halo3.net)
  * @author Last changed by: $Author$
@@ -50,45 +50,44 @@ public class IntervalType extends AbstractDataType {
      */
     private static final Logger logger = LoggerFactory.getLogger(IntervalType.class);
 
-
     public IntervalType() {
-        super("interval", Types.OTHER, String.class, false);
+	super("interval", Types.OTHER, String.class, false);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-        return resultSet.getString(column);
+	return resultSet.getString(column);
     }
 
-    public void setSqlValue(Object interval, int column,
-                            PreparedStatement statement) throws SQLException, TypeCastException {
-        statement.setObject(column,  getInterval(interval, statement.getConnection()));
+    public void setSqlValue(Object interval, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	statement.setObject(column, getInterval(interval, statement.getConnection()));
     }
 
     public Object typeCast(Object arg0) throws TypeCastException {
-        return arg0.toString();
+	return arg0.toString();
     }
 
-    private Object getInterval(Object value, Connection connection) throws TypeCastException { 
-        logger.debug("getInterval(value={}, connection={}) - start", value, connection);
+    private Object getInterval(Object value, Connection connection) throws TypeCastException {
+	logger.debug("getInterval(value={}, connection={}) - start", value, connection);
 
-        Object tempInterval = null;
+	Object tempInterval = null;
 
-        try {
-            Class aPGIntervalClass = super.loadClass("org.postgresql.util.PGInterval", connection);
-            Constructor ct = aPGIntervalClass.getConstructor(new Class[]{String.class});
-            tempInterval = ct.newInstance(new Object[]{value});
-        } catch (ClassNotFoundException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InvocationTargetException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (NoSuchMethodException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (IllegalAccessException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InstantiationException e) {
-            throw new TypeCastException(value, this, e);
-        }
+	try {
+	    Class aPGIntervalClass = super.loadClass("org.postgresql.util.PGInterval", connection);
+	    Constructor ct = aPGIntervalClass.getConstructor(new Class[] { String.class });
+	    tempInterval = ct.newInstance(new Object[] { value });
+	} catch (ClassNotFoundException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InvocationTargetException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (NoSuchMethodException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (IllegalAccessException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InstantiationException e) {
+	    throw new TypeCastException(value, this, e);
+	}
 
-        return tempInterval;
+	return tempInterval;
     }
 }

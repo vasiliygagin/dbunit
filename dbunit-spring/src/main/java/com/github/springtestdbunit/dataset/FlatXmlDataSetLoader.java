@@ -25,39 +25,40 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.springframework.core.io.Resource;
 
 /**
- * A {@link DataSetLoader data set loader} that can be used to load {@link FlatXmlDataSet FlatXmlDataSets}
+ * A {@link DataSetLoader data set loader} that can be used to load
+ * {@link FlatXmlDataSet FlatXmlDataSets}
  *
  * @author Phillip Webb
  */
 public class FlatXmlDataSetLoader extends AbstractDataSetLoader {
 
-	@Override
-	protected IDataSet createDataSet(Resource resource) throws Exception {
-		FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
-		builder.setColumnSensing(true);
-		return buildDataSet(builder, resource);
-	}
+    @Override
+    protected IDataSet createDataSet(Resource resource) throws Exception {
+	FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+	builder.setColumnSensing(true);
+	return buildDataSet(builder, resource);
+    }
 
-	private IDataSet buildDataSet(FlatXmlDataSetBuilder builder, Resource resource) throws Exception {
-		try {
-			// Prefer URL loading if possible so that DTDs can be resolved
-			return buildDataSetFromUrl(builder, resource.getURL());
-		} catch (Exception ex) {
-			return buildDataSetFromStream(builder, resource);
-		}
+    private IDataSet buildDataSet(FlatXmlDataSetBuilder builder, Resource resource) throws Exception {
+	try {
+	    // Prefer URL loading if possible so that DTDs can be resolved
+	    return buildDataSetFromUrl(builder, resource.getURL());
+	} catch (Exception ex) {
+	    return buildDataSetFromStream(builder, resource);
 	}
+    }
 
-	private IDataSet buildDataSetFromUrl(FlatXmlDataSetBuilder builder, URL url) throws Exception {
-		return builder.build(url);
-	}
+    private IDataSet buildDataSetFromUrl(FlatXmlDataSetBuilder builder, URL url) throws Exception {
+	return builder.build(url);
+    }
 
-	private IDataSet buildDataSetFromStream(FlatXmlDataSetBuilder builder, Resource resource) throws Exception {
-		InputStream inputStream = resource.getInputStream();
-		try {
-			return builder.build(inputStream);
-		} finally {
-			inputStream.close();
-		}
+    private IDataSet buildDataSetFromStream(FlatXmlDataSetBuilder builder, Resource resource) throws Exception {
+	InputStream inputStream = resource.getInputStream();
+	try {
+	    return builder.build(inputStream);
+	} finally {
+	    inputStream.close();
 	}
+    }
 
 }

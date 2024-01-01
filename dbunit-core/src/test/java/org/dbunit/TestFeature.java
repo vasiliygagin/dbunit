@@ -25,8 +25,7 @@ package org.dbunit;
  * @since Apr 11, 2003
  * @version $Revision$
  */
-public class TestFeature
-{
+public class TestFeature {
     public static final TestFeature BLOB = new TestFeature("BLOB");
     public static final TestFeature CLOB = new TestFeature("CLOB");
     public static final TestFeature VARBINARY = new TestFeature("VARBINARY");
@@ -39,13 +38,11 @@ public class TestFeature
 
     private final String _name;
 
-    private TestFeature(String name)
-    {
-        _name = name;
+    private TestFeature(String name) {
+	_name = name;
     }
 
-    public String toString()
-    {
-        return _name;
+    public String toString() {
+	return _name;
     }
 }

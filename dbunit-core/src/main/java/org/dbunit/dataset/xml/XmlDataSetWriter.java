@@ -44,8 +44,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 1.5.5 (Jun 13, 2003)
  */
-public class XmlDataSetWriter implements IDataSetConsumer
-{
+public class XmlDataSetWriter implements IDataSetConsumer {
 
     /**
      * Logger for this class
@@ -61,268 +60,225 @@ public class XmlDataSetWriter implements IDataSetConsumer
     private static final String NULL = "null";
     private static final String NONE = "none";
 
-    static char[] CDATA_DETECTION_CHARS = new char[] {
-        0x20, '\n', '\r', '\t',     // whitespace
-        '&', '<',                   // forbidden char
+    static char[] CDATA_DETECTION_CHARS = new char[] { 0x20, '\n', '\r', '\t', // whitespace
+	    '&', '<', // forbidden char
     };
 
     private XmlWriter _xmlWriter;
     private ITableMetaData _activeMetaData;
     private boolean includeColumnComments = false;
 
-
     /**
      * @param outputStream The stream to which the XML will be written.
-     * @param encoding The encoding to be used for the {@link XmlWriter}.
-     * Can be null. See {@link XmlWriter#XmlWriter(OutputStream, String)}.
+     * @param encoding     The encoding to be used for the {@link XmlWriter}. Can be
+     *                     null. See
+     *                     {@link XmlWriter#XmlWriter(OutputStream, String)}.
      * @throws UnsupportedEncodingException
      */
-    public XmlDataSetWriter(OutputStream outputStream, String encoding) 
-    throws UnsupportedEncodingException
-    {
-        _xmlWriter = new XmlWriter(outputStream, encoding);
-        _xmlWriter.enablePrettyPrint(true);
+    public XmlDataSetWriter(OutputStream outputStream, String encoding) throws UnsupportedEncodingException {
+	_xmlWriter = new XmlWriter(outputStream, encoding);
+	_xmlWriter.enablePrettyPrint(true);
     }
 
-    public XmlDataSetWriter(Writer writer)
-    {
-        _xmlWriter = new XmlWriter(writer);
-        _xmlWriter.enablePrettyPrint(true);
+    public XmlDataSetWriter(Writer writer) {
+	_xmlWriter = new XmlWriter(writer);
+	_xmlWriter.enablePrettyPrint(true);
     }
 
-    public XmlDataSetWriter(Writer writer, String encoding)
-    {
-        _xmlWriter = new XmlWriter(writer, encoding);
-        _xmlWriter.enablePrettyPrint(true);
+    public XmlDataSetWriter(Writer writer, String encoding) {
+	_xmlWriter = new XmlWriter(writer, encoding);
+	_xmlWriter.enablePrettyPrint(true);
     }
 
     /**
      * Enable or disable pretty print of the XML.
-     * @param enabled <code>true</code> to enable pretty print (which is the default). 
-     * <code>false</code> otherwise.
+     * 
+     * @param enabled <code>true</code> to enable pretty print (which is the
+     *                default). <code>false</code> otherwise.
      * @since 2.4
      */
-    public void setPrettyPrint(boolean enabled)
-    {
-        _xmlWriter.enablePrettyPrint(enabled);
+    public void setPrettyPrint(boolean enabled) {
+	_xmlWriter.enablePrettyPrint(enabled);
     }
 
     /**
      * Whether or not to write the column name as comment into the XML
-     * @param includeColumnComments Whether or not to write the column name as comment into the XML
+     * 
+     * @param includeColumnComments Whether or not to write the column name as
+     *                              comment into the XML
      */
-    public void setIncludeColumnComments(boolean includeColumnComments)
-    {
-      this.includeColumnComments = includeColumnComments;
+    public void setIncludeColumnComments(boolean includeColumnComments) {
+	this.includeColumnComments = includeColumnComments;
     }
 
     /**
      * Writes the given {@link IDataSet} using this writer.
+     * 
      * @param dataSet The {@link IDataSet} to be written
      * @throws DataSetException
      */
-    public void write(IDataSet dataSet) throws DataSetException
-    {
-        logger.trace("write(dataSet{}) - start", dataSet);
+    public void write(IDataSet dataSet) throws DataSetException {
+	logger.trace("write(dataSet{}) - start", dataSet);
 
-        DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
-        provider.setConsumer(this);
-        provider.produce();
+	DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
+	provider.setConsumer(this);
+	provider.produce();
     }
 
-    boolean needsCData(String text)
-    {
-        logger.trace("needsCData(text={}) - start", text);
+    boolean needsCData(String text) {
+	logger.trace("needsCData(text={}) - start", text);
 
-        if (text == null)
-        {
-            return false;
-        }
+	if (text == null) {
+	    return false;
+	}
 
-        for (int i = 0; i < text.length(); i++)
-        {
-            char c = text.charAt(i);
-            for (int j = 0; j < CDATA_DETECTION_CHARS.length; j++)
-            {
-                if (CDATA_DETECTION_CHARS[j] == c)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+	for (int i = 0; i < text.length(); i++) {
+	    char c = text.charAt(i);
+	    for (int j = 0; j < CDATA_DETECTION_CHARS.length; j++) {
+		if (CDATA_DETECTION_CHARS[j] == c) {
+		    return true;
+		}
+	    }
+	}
+	return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
-    public void startDataSet() throws DataSetException
-    {
-        logger.trace("startDataSet() - start");
+    public void startDataSet() throws DataSetException {
+	logger.trace("startDataSet() - start");
 
-        try
-        {
-            _xmlWriter.writeDeclaration();
-            _xmlWriter.writeElement(DATASET);
-        }
-        catch (IOException e)
-        {
-            throw new DataSetException(e);
-        }
+	try {
+	    _xmlWriter.writeDeclaration();
+	    _xmlWriter.writeElement(DATASET);
+	} catch (IOException e) {
+	    throw new DataSetException(e);
+	}
     }
 
-    public void endDataSet() throws DataSetException
-    {
-        logger.trace("endDataSet() - start");
+    public void endDataSet() throws DataSetException {
+	logger.trace("endDataSet() - start");
 
-        try
-        {
-            _xmlWriter.endElement();
-            _xmlWriter.close();
-        }
-        catch (IOException e)
-        {
-            throw new DataSetException(e);
-        }
+	try {
+	    _xmlWriter.endElement();
+	    _xmlWriter.close();
+	} catch (IOException e) {
+	    throw new DataSetException(e);
+	}
     }
 
-    public void startTable(ITableMetaData metaData) throws DataSetException
-    {
-        logger.trace("startTable(metaData={}) - start", metaData);
+    public void startTable(ITableMetaData metaData) throws DataSetException {
+	logger.trace("startTable(metaData={}) - start", metaData);
 
-        try
-        {
-            _activeMetaData = metaData;
+	try {
+	    _activeMetaData = metaData;
 
-            String tableName = _activeMetaData.getTableName();
-            _xmlWriter.writeElement(TABLE);
-            _xmlWriter.writeAttribute(NAME, tableName);
+	    String tableName = _activeMetaData.getTableName();
+	    _xmlWriter.writeElement(TABLE);
+	    _xmlWriter.writeAttribute(NAME, tableName);
 
-            Column[] columns = _activeMetaData.getColumns();
-            for (int i = 0; i < columns.length; i++)
-            {
-                String columnName = columns[i].getColumnName();
-                _xmlWriter.writeElementWithText(COLUMN, columnName);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new DataSetException(e);
-        }
+	    Column[] columns = _activeMetaData.getColumns();
+	    for (int i = 0; i < columns.length; i++) {
+		String columnName = columns[i].getColumnName();
+		_xmlWriter.writeElementWithText(COLUMN, columnName);
+	    }
+	} catch (IOException e) {
+	    throw new DataSetException(e);
+	}
 
     }
 
-    public void endTable() throws DataSetException
-    {
-        logger.trace("endTable() - start");
+    public void endTable() throws DataSetException {
+	logger.trace("endTable() - start");
 
-        try
-        {
-            _xmlWriter.endElement();
-            _activeMetaData = null;
-        }
-        catch (IOException e)
-        {
-            throw new DataSetException(e);
-        }
+	try {
+	    _xmlWriter.endElement();
+	    _activeMetaData = null;
+	} catch (IOException e) {
+	    throw new DataSetException(e);
+	}
     }
 
-    public void row(Object[] values) throws DataSetException
-    {
-        logger.trace("row(values={}) - start", values);
+    public void row(Object[] values) throws DataSetException {
+	logger.trace("row(values={}) - start", values);
 
-        try
-        {
-            _xmlWriter.writeElement(ROW);
+	try {
+	    _xmlWriter.writeElement(ROW);
 
-            Column[] columns = _activeMetaData.getColumns();
-            for (int i = 0; i < columns.length; i++)
-            {
-                String columnName = columns[i].getColumnName();
-                Object value = values[i];
-                
-                // null
-                if (value == null)
-                {
-                    _xmlWriter.writeEmptyElement(NULL);
-                }
-                // none
-                else if (value == ITable.NO_VALUE)
-                {
-                    _xmlWriter.writeEmptyElement(NONE);
-                }
-                // values
-                else
-                {
-                    try
-                    {
-                        String stringValue = DataType.asString(value);
+	    Column[] columns = _activeMetaData.getColumns();
+	    for (int i = 0; i < columns.length; i++) {
+		String columnName = columns[i].getColumnName();
+		Object value = values[i];
 
-                        _xmlWriter.writeElement(VALUE);
-                        if (needsCData(stringValue))
-                        {
-                            writeValueCData(stringValue);
-                        }
-                        else if (stringValue.length() > 0)
-                        {
-                            writeValue(stringValue);
-                        }
-                        _xmlWriter.endElement();
-                    }
-                    catch (TypeCastException e)
-                    {
-                        throw new DataSetException("table=" +
-                                _activeMetaData.getTableName() + ", row=" + i +
-                                ", column=" + columnName +
-                                ", value=" + value, e);
-                    }
-                }
-                if ( this.includeColumnComments ) {
-                  _xmlWriter.writeComment( columnName );
-                }
-            }
-            _xmlWriter.endElement();
-        }
-        catch (IOException e)
-        {
-            throw new DataSetException(e);
-        }
+		// null
+		if (value == null) {
+		    _xmlWriter.writeEmptyElement(NULL);
+		}
+		// none
+		else if (value == ITable.NO_VALUE) {
+		    _xmlWriter.writeEmptyElement(NONE);
+		}
+		// values
+		else {
+		    try {
+			String stringValue = DataType.asString(value);
+
+			_xmlWriter.writeElement(VALUE);
+			if (needsCData(stringValue)) {
+			    writeValueCData(stringValue);
+			} else if (stringValue.length() > 0) {
+			    writeValue(stringValue);
+			}
+			_xmlWriter.endElement();
+		    } catch (TypeCastException e) {
+			throw new DataSetException("table=" + _activeMetaData.getTableName() + ", row=" + i
+				+ ", column=" + columnName + ", value=" + value, e);
+		    }
+		}
+		if (this.includeColumnComments) {
+		    _xmlWriter.writeComment(columnName);
+		}
+	    }
+	    _xmlWriter.endElement();
+	} catch (IOException e) {
+	    throw new DataSetException(e);
+	}
     }
 
     /**
-     * Writes the given String as CDATA using the {@link XmlWriter}.
-     * Can be overridden to add custom behavior.
-     * This implementation just invokes {@link XmlWriter#writeCData(String)}
+     * Writes the given String as CDATA using the {@link XmlWriter}. Can be
+     * overridden to add custom behavior. This implementation just invokes
+     * {@link XmlWriter#writeCData(String)}
+     * 
      * @param stringValue The value to be written
      * @throws IOException
      * @since 2.4.4
      */
-    protected void writeValueCData(String stringValue) throws IOException
-    {
-        logger.trace("writeValueCData(stringValue={}) - start", stringValue);
-        _xmlWriter.writeCData(stringValue);
+    protected void writeValueCData(String stringValue) throws IOException {
+	logger.trace("writeValueCData(stringValue={}) - start", stringValue);
+	_xmlWriter.writeCData(stringValue);
     }
-    
+
     /**
-     * Writes the given String as normal text using the {@link XmlWriter}.
-     * Can be overridden to add custom behavior.
-     * This implementation just invokes {@link XmlWriter#writeText(String)}.
+     * Writes the given String as normal text using the {@link XmlWriter}. Can be
+     * overridden to add custom behavior. This implementation just invokes
+     * {@link XmlWriter#writeText(String)}.
+     * 
      * @param stringValue The value to be written
      * @throws IOException
      * @since 2.4.4
      */
-    protected void writeValue(String stringValue) throws IOException
-    {
-        logger.trace("writeValue(stringValue={}) - start", stringValue);
-        _xmlWriter.writeText(stringValue);
+    protected void writeValue(String stringValue) throws IOException {
+	logger.trace("writeValue(stringValue={}) - start", stringValue);
+	_xmlWriter.writeText(stringValue);
     }
 
     /**
      * @return The {@link XmlWriter} that is used for writing out XML.
      * @since 2.4.4
      */
-    protected final XmlWriter getXmlWriter()
-    {
-        return _xmlWriter;
+    protected final XmlWriter getXmlWriter() {
+	return _xmlWriter;
     }
 }

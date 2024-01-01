@@ -23,12 +23,15 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 
 /**
- * <code>TestExecutionListener</code> which provides support for {@link DatabaseSetup &#064;DatabaseSetup},
- * {@link DatabaseTearDown &#064;DatabaseTearDown} and {@link ExpectedDatabase &#064;ExpectedDatabase} annotations and
- * executed tests within {@link TransactionalTestExecutionListener transactions}.
+ * <code>TestExecutionListener</code> which provides support for
+ * {@link DatabaseSetup &#064;DatabaseSetup}, {@link DatabaseTearDown
+ * &#064;DatabaseTearDown} and {@link ExpectedDatabase &#064;ExpectedDatabase}
+ * annotations and executed tests within
+ * {@link TransactionalTestExecutionListener transactions}.
  * <p>
- * Transactions start before {@link DatabaseSetup &#064;DatabaseSetup} and end after {@link DatabaseTearDown
- * &#064;DatabaseTearDown} and {@link ExpectedDatabase &#064;ExpectedDatabase}.
+ * Transactions start before {@link DatabaseSetup &#064;DatabaseSetup} and end
+ * after {@link DatabaseTearDown &#064;DatabaseTearDown} and
+ * {@link ExpectedDatabase &#064;ExpectedDatabase}.
  *
  * @see TransactionalTestExecutionListener
  * @see DbUnitTestExecutionListener
@@ -36,12 +39,12 @@ import com.github.springtestdbunit.annotation.ExpectedDatabase;
  */
 public class TransactionDbUnitTestExecutionListener extends TestExecutionListenerChain {
 
-	private static final Class<?>[] CHAIN = { TransactionalTestExecutionListener.class,
-			DbUnitTestExecutionListener.class };
+    private static final Class<?>[] CHAIN = { TransactionalTestExecutionListener.class,
+	    DbUnitTestExecutionListener.class };
 
-	@Override
-	protected Class<?>[] getChain() {
-		return CHAIN;
-	}
+    @Override
+    protected Class<?>[] getChain() {
+	return CHAIN;
+    }
 
 }

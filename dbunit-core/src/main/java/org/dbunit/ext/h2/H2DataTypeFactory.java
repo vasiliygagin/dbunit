@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.2.1
  */
-public class H2DataTypeFactory extends DefaultDataTypeFactory
-{
+public class H2DataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Logger for this class
      */
@@ -46,33 +45,28 @@ public class H2DataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"h2"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "h2" });
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     @Override
-    public Collection getValidDbProducts()
-    {
-        return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
     @Override
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-        if(logger.isDebugEnabled())
-        {
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
-        }
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+	}
 
-        if (sqlTypeName.equals("BOOLEAN"))
-        {
-            return DataType.BOOLEAN;
-        } else if ("UUID".equals(sqlTypeName))
-        {
-            return DataType.NVARCHAR;
-        }
+	if (sqlTypeName.equals("BOOLEAN")) {
+	    return DataType.BOOLEAN;
+	} else if ("UUID".equals(sqlTypeName)) {
+	    return DataType.NVARCHAR;
+	}
 
-        return super.createDataType(sqlType, sqlTypeName);
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }

@@ -31,30 +31,24 @@ import org.dbunit.dataset.ITableMetaData;
  * @since Apr 29, 2003
  * @version $Revision$
  */
-public class DefaultConsumer implements IDataSetConsumer
-{
-    public void startDataSet() throws DataSetException
-    {
-        // no op
+public class DefaultConsumer implements IDataSetConsumer {
+    public void startDataSet() throws DataSetException {
+	// no op
     }
 
-    public void endDataSet() throws DataSetException
-    {
-        // no op
+    public void endDataSet() throws DataSetException {
+	// no op
     }
 
-    public void startTable(ITableMetaData metaData) throws DataSetException
-    {
-        // no op
+    public void startTable(ITableMetaData metaData) throws DataSetException {
+	// no op
     }
 
-    public void endTable() throws DataSetException
-    {
-        // no op
+    public void endTable() throws DataSetException {
+	// no op
     }
 
-    public void row(Object[] values) throws DataSetException
-    {
-        // no op
+    public void row(Object[] values) throws DataSetException {
+	// no op
     }
 }

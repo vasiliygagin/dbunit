@@ -36,6 +36,8 @@ import org.dbunit.dataset.common.handlers.PipelineException;
  */
 public interface CsvParser {
     List parse(File file) throws IOException, CsvParserException;
+
     List parse(URL url) throws IOException, CsvParserException;
+
     List parse(String csv) throws PipelineException, IllegalInputCharacterException;
 }

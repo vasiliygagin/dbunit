@@ -33,12 +33,9 @@ import java.sql.Connection;
  * @version $Revision$ $Date$
  * @since 2.2.1
  */
-public class H2Connection extends DatabaseConnection
-{
-    public H2Connection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new H2DataTypeFactory());
+public class H2Connection extends DatabaseConnection {
+    public H2Connection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
     }
 }

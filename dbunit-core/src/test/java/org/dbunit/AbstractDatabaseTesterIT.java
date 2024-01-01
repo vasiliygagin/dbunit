@@ -36,109 +36,95 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public abstract class AbstractDatabaseTesterIT extends TestCase
-{
-   protected IDatabaseConnection _connection;
-   protected IDatabaseTester _databaseTester;
+public abstract class AbstractDatabaseTesterIT extends TestCase {
+    protected IDatabaseConnection _connection;
+    protected IDatabaseTester _databaseTester;
 
-   protected final Logger logger = LoggerFactory.getLogger(AbstractDatabaseTesterIT.class);
+    protected final Logger logger = LoggerFactory.getLogger(AbstractDatabaseTesterIT.class);
 
-   public AbstractDatabaseTesterIT( String s )
-   {
-      super( s );
-   }
+    public AbstractDatabaseTesterIT(String s) {
+	super(s);
+    }
 
-    protected DatabaseEnvironment getEnvironment() throws Exception
-   {
-      return DatabaseEnvironmentLoader.getInstance(null);
-   }
+    protected DatabaseEnvironment getEnvironment() throws Exception {
+	return DatabaseEnvironmentLoader.getInstance(null);
+    }
 
-   protected ITable createOrderedTable( String tableName, String orderByColumn ) throws Exception
-   {
-      return new SortedTable( _connection.createDataSet()
-            .getTable( tableName ), new String[] { orderByColumn } );
-   }
+    protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
+	return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
+    }
 
-   // //////////////////////////////////////////////////////////////////////////
-   // TestCase class
+    // //////////////////////////////////////////////////////////////////////////
+    // TestCase class
 
-   protected void setUp() throws Exception
-   {
-      super.setUp();
+    protected void setUp() throws Exception {
+	super.setUp();
 
-      assertNotNull( "DatabaseTester is not set", getDatabaseTester() );
-      getDatabaseTester().setSetUpOperation( getSetUpOperation() );
-      getDatabaseTester().setDataSet( getDataSet() );
-      getDatabaseTester().onSetup();
+	assertNotNull("DatabaseTester is not set", getDatabaseTester());
+	getDatabaseTester().setSetUpOperation(getSetUpOperation());
+	getDatabaseTester().setDataSet(getDataSet());
+	getDatabaseTester().onSetup();
 
-      _connection = getDatabaseTester().getConnection();
-   }
+	_connection = getDatabaseTester().getConnection();
+    }
 
-   protected void tearDown() throws Exception
-   {
-      super.tearDown();
+    protected void tearDown() throws Exception {
+	super.tearDown();
 
-      assertNotNull( "DatabaseTester is not set", getDatabaseTester() );
-      getDatabaseTester().setTearDownOperation( getTearDownOperation() );
-      getDatabaseTester().setDataSet( getDataSet() );
-      getDatabaseTester().onTearDown();
+	assertNotNull("DatabaseTester is not set", getDatabaseTester());
+	getDatabaseTester().setTearDownOperation(getTearDownOperation());
+	getDatabaseTester().setDataSet(getDataSet());
+	getDatabaseTester().onTearDown();
 
-      DatabaseOperation.DELETE_ALL.execute( _connection, _connection.createDataSet() );
+	DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
 
-      _connection = null;
-   }
+	_connection = null;
+    }
 
-   // //////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
-   protected IDataSet getDataSet() throws Exception
-   {
-      return getEnvironment().getInitDataSet();
-   }
+    protected IDataSet getDataSet() throws Exception {
+	return getEnvironment().getInitDataSet();
+    }
 
-   protected DatabaseOperation getSetUpOperation()
-   {
-      return DatabaseOperation.CLEAN_INSERT;
-   }
+    protected DatabaseOperation getSetUpOperation() {
+	return DatabaseOperation.CLEAN_INSERT;
+    }
 
-   protected DatabaseOperation getTearDownOperation()
-   {
-      return DatabaseOperation.NONE;
-   }
+    protected DatabaseOperation getTearDownOperation() {
+	return DatabaseOperation.NONE;
+    }
 
-   protected abstract IDatabaseTester getDatabaseTester() throws Exception;
+    protected abstract IDatabaseTester getDatabaseTester() throws Exception;
 
-   /**
-    * This method is used so sub-classes can disable the tests according to some
-    * characteristics of the environment
-    * 
-    * @param testName name of the test to be checked
-    * @return flag indicating if the test should be executed or not
-    */
-   protected boolean runTest( String testName )
-   {
-      return true;
-   }
+    /**
+     * This method is used so sub-classes can disable the tests according to some
+     * characteristics of the environment
+     * 
+     * @param testName name of the test to be checked
+     * @return flag indicating if the test should be executed or not
+     */
+    protected boolean runTest(String testName) {
+	return true;
+    }
 
-   protected void runTest() throws Throwable
-   {
-      if( runTest( getName() ) ){
-         super.runTest();
-      }else{
-         if( logger.isDebugEnabled() ){
-            logger.debug( "Skipping test " + getClass().getName() + "." + getName() );
-         }
-      }
-   }
+    protected void runTest() throws Throwable {
+	if (runTest(getName())) {
+	    super.runTest();
+	} else {
+	    if (logger.isDebugEnabled()) {
+		logger.debug("Skipping test " + getClass().getName() + "." + getName());
+	    }
+	}
+    }
 
-   public static boolean environmentHasFeature( TestFeature feature )
-   {
-      try{
-         final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
-         final boolean runIt = environment.support( feature );
-         return runIt;
-      }
-      catch( Exception e ){
-         throw new DatabaseUnitRuntimeException( e );
-      }
-   }
+    public static boolean environmentHasFeature(TestFeature feature) {
+	try {
+	    final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+	    final boolean runIt = environment.support(feature);
+	    return runIt;
+	} catch (Exception e) {
+	    throw new DatabaseUnitRuntimeException(e);
+	}
+    }
 }

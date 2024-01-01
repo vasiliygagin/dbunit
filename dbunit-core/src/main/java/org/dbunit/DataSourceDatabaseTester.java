@@ -37,54 +37,50 @@ import org.dbunit.database.IDatabaseConnection;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class DataSourceDatabaseTester extends AbstractDatabaseTester
-{
+public class DataSourceDatabaseTester extends AbstractDatabaseTester {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(DataSourceDatabaseTester.class);
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceDatabaseTester.class);
 
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	/**
-	 * Creates a new DataSourceDatabaseTester with the specified DataSource.
-	 *
-	 * @param dataSource the DataSource to pull connections from
-	 */
-	public DataSourceDatabaseTester( DataSource dataSource )
-	{
-		super();
-
-        if (dataSource == null) {
-            throw new NullPointerException(
-                    "The parameter 'dataSource' must not be null");
-        }
-		this.dataSource = dataSource;
-	}
-
-	/**
-     * Creates a new DataSourceDatabaseTester with the specified DataSource and schema name.
+    /**
+     * Creates a new DataSourceDatabaseTester with the specified DataSource.
+     *
      * @param dataSource the DataSource to pull connections from
-	 * @param schema The schema name to be used for new dbunit connections
-	 * @since 2.4.5
-	 */
-	public DataSourceDatabaseTester(DataSource dataSource, String schema) 
-	{
-        super(schema);
-        
-        if (dataSource == null) {
-            throw new NullPointerException(
-                    "The parameter 'dataSource' must not be null");
-        }
-        this.dataSource = dataSource;
+     */
+    public DataSourceDatabaseTester(DataSource dataSource) {
+	super();
+
+	if (dataSource == null) {
+	    throw new NullPointerException("The parameter 'dataSource' must not be null");
+	}
+	this.dataSource = dataSource;
     }
 
-    public IDatabaseConnection getConnection() throws Exception
-	{
-		logger.debug("getConnection() - start");
+    /**
+     * Creates a new DataSourceDatabaseTester with the specified DataSource and
+     * schema name.
+     * 
+     * @param dataSource the DataSource to pull connections from
+     * @param schema     The schema name to be used for new dbunit connections
+     * @since 2.4.5
+     */
+    public DataSourceDatabaseTester(DataSource dataSource, String schema) {
+	super(schema);
 
-		assertTrue( "DataSource is not set", dataSource!=null );
-		return new DatabaseConnection( dataSource.getConnection(), getSchema() );
+	if (dataSource == null) {
+	    throw new NullPointerException("The parameter 'dataSource' must not be null");
 	}
+	this.dataSource = dataSource;
+    }
+
+    public IDatabaseConnection getConnection() throws Exception {
+	logger.debug("getConnection() - start");
+
+	assertTrue("DataSource is not set", dataSource != null);
+	return new DatabaseConnection(dataSource.getConnection(), getSchema());
+    }
 }

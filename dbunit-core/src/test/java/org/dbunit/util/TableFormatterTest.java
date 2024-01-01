@@ -30,38 +30,27 @@ import junit.framework.TestCase;
 
 /**
  * Unit test for the {@link TableFormatter}
+ * 
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.1
  */
-public class TableFormatterTest extends TestCase 
-{
+public class TableFormatterTest extends TestCase {
 
-    public void testFormatSimpleTable() throws Exception
-    {
-        Column[] cols = new Column[]{
-             new Column("COL1", DataType.VARCHAR),   
-             new Column("COL2", DataType.NUMERIC)   
-        };
-        DefaultTable table = new DefaultTable("MY_TABLE", cols);
-        table.addRow(new Object[]{
-           "my string value", new BigDecimal("39284.1")
-        });
-        table.addRow(new Object[]{
-            "my string value2", new BigDecimal("2")     
-         });
-        
-        TableFormatter formatter = new TableFormatter();
-        String actual = formatter.format(table);
-        
-        String expected = 
-            "****** table: MY_TABLE ** row count: 2 ******\n"+
-            "COL1                |COL2                |\n"+
-            "====================|====================|\n"+
-            "my string value     |39284.1             |\n"+
-            "my string value2    |2                   |\n";
-        assertEquals(expected, actual);
+    public void testFormatSimpleTable() throws Exception {
+	Column[] cols = new Column[] { new Column("COL1", DataType.VARCHAR), new Column("COL2", DataType.NUMERIC) };
+	DefaultTable table = new DefaultTable("MY_TABLE", cols);
+	table.addRow(new Object[] { "my string value", new BigDecimal("39284.1") });
+	table.addRow(new Object[] { "my string value2", new BigDecimal("2") });
+
+	TableFormatter formatter = new TableFormatter();
+	String actual = formatter.format(table);
+
+	String expected = "****** table: MY_TABLE ** row count: 2 ******\n"
+		+ "COL1                |COL2                |\n" + "====================|====================|\n"
+		+ "my string value     |39284.1             |\n" + "my string value2    |2                   |\n";
+	assertEquals(expected, actual);
 //        System.out.println(actual);
     }
 }

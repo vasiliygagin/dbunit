@@ -31,18 +31,18 @@ import com.github.springtestdbunit.sample.entity.Person;
 @Transactional
 public class PersonService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@SuppressWarnings("unchecked")
-	public List<Person> find(String name) {
-		Query query = this.entityManager.createNamedQuery("Person.find");
-		query.setParameter("name", "%" + name + "%");
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Person> find(String name) {
+	Query query = this.entityManager.createNamedQuery("Person.find");
+	query.setParameter("name", "%" + name + "%");
+	return query.getResultList();
+    }
 
-	public void remove(int personId) {
-		Person person = this.entityManager.find(Person.class, personId);
-		this.entityManager.remove(person);
-	}
+    public void remove(int personId) {
+	Person person = this.entityManager.find(Person.class, personId);
+	this.entityManager.remove(person);
+    }
 }

@@ -29,13 +29,11 @@ import java.sql.SQLException;
  * @since Aug 11, 2003
  * @version $Revision$
  */
-public class ExtendedMockMultiRowResultSet extends MockMultiRowResultSet
-{
+public class ExtendedMockMultiRowResultSet extends MockMultiRowResultSet {
     /**
      * Always returns false.
      */
-    public boolean wasNull() throws SQLException
-    {
-        return false;
+    public boolean wasNull() throws SQLException {
+	return false;
     }
 }

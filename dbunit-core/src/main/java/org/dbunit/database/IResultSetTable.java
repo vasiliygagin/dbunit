@@ -23,13 +23,11 @@ package org.dbunit.database;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 
-
 /**
  * @author Manuel Laflamme
  * @since Apr 10, 2003
  * @version $Revision$
  */
-public interface IResultSetTable extends ITable
-{
+public interface IResultSetTable extends ITable {
     public void close() throws DataSetException;
 }

@@ -28,31 +28,23 @@ import junit.framework.TestSuite;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(FlatDtdDataSetIT.class));
-        suite.addTest(new TestSuite(FlatDtdProducerTest.class));
-        suite.addTest(new TestSuite(FlatDtdWriterTest.class));
-        suite.addTest(new TestSuite(FlatXmlDataSetTest.class));
-        suite.addTest(new TestSuite(FlatXmlProducerTest.class));
-        suite.addTest(new TestSuite(FlatXmlTableTest.class));
-        suite.addTest(new TestSuite(FlatXmlTableWriteTest.class));
-        suite.addTest(new TestSuite(FlatXmlWriterTest.class));
-        suite.addTest(new TestSuite(XmlDataSetTest.class));
-        suite.addTest(new TestSuite(XmlDataSetWriterTest.class));
-        suite.addTest(new TestSuite(XmlProducerTest.class));
-        suite.addTest(new TestSuite(XmlTableTest.class));
-        suite.addTest(new TestSuite(XmlTableWriteTest.class));
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(FlatDtdDataSetIT.class));
+	suite.addTest(new TestSuite(FlatDtdProducerTest.class));
+	suite.addTest(new TestSuite(FlatDtdWriterTest.class));
+	suite.addTest(new TestSuite(FlatXmlDataSetTest.class));
+	suite.addTest(new TestSuite(FlatXmlProducerTest.class));
+	suite.addTest(new TestSuite(FlatXmlTableTest.class));
+	suite.addTest(new TestSuite(FlatXmlTableWriteTest.class));
+	suite.addTest(new TestSuite(FlatXmlWriterTest.class));
+	suite.addTest(new TestSuite(XmlDataSetTest.class));
+	suite.addTest(new TestSuite(XmlDataSetWriterTest.class));
+	suite.addTest(new TestSuite(XmlProducerTest.class));
+	suite.addTest(new TestSuite(XmlTableTest.class));
+	suite.addTest(new TestSuite(XmlTableWriteTest.class));
 
-        return suite;
+	return suite;
     }
 }
-
-
-
-
-
-

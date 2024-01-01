@@ -27,26 +27,21 @@ import org.dbunit.TestFeature;
  * @since Apr 13, 2003
  * @version $Revision$
  */
-public class TruncateTableOperationIT extends DeleteAllOperationIT
-{
-    public TruncateTableOperationIT(String s)
-    {
-        super(s);
+public class TruncateTableOperationIT extends DeleteAllOperationIT {
+    public TruncateTableOperationIT(String s) {
+	super(s);
     }
 
-    protected DatabaseOperation getDeleteAllOperation()
-    {
-        return new TruncateTableOperation();
+    protected DatabaseOperation getDeleteAllOperation() {
+	return new TruncateTableOperation();
     }
 
-    protected String getExpectedStament(String tableName)
-    {
-        return "truncate table " + tableName;
+    protected String getExpectedStament(String tableName) {
+	return "truncate table " + tableName;
     }
-    
+
     protected boolean runTest(String testName) {
-      return environmentHasFeature(TestFeature.TRUNCATE_TABLE);
+	return environmentHasFeature(TestFeature.TRUNCATE_TABLE);
     }
 
 }
-

@@ -34,8 +34,7 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class DatabaseOperation
-{
+public abstract class DatabaseOperation {
     /** @see DummyOperation */
     public static final DatabaseOperation NONE = new DummyOperation();
     /** @see UpdateOperation */
@@ -55,34 +54,31 @@ public abstract class DatabaseOperation
      * @see InsertOperation
      * @see CompositeOperation
      */
-    public static final DatabaseOperation CLEAN_INSERT = new CompositeOperation(
-            DELETE_ALL, INSERT);
+    public static final DatabaseOperation CLEAN_INSERT = new CompositeOperation(DELETE_ALL, INSERT);
 
     /** @see TransactionOperation */
     public static final DatabaseOperation TRANSACTION(DatabaseOperation operation) {
-        return new TransactionOperation(operation);
+	return new TransactionOperation(operation);
     }
 
     /** @see CloseConnectionOperation */
     public static final DatabaseOperation CLOSE_CONNECTION(DatabaseOperation operation) {
-        return new CloseConnectionOperation(operation);
+	return new CloseConnectionOperation(operation);
     }
 
     /**
-     * Executes this operation on the specified database using the specified
-     * dataset contents.
+     * Executes this operation on the specified database using the specified dataset
+     * contents.
      *
      * @param connection the database connection.
-     * @param dataSet the dataset to be used by this operation.
+     * @param dataSet    the dataset to be used by this operation.
      */
-    public abstract void execute(IDatabaseConnection connection,
-            IDataSet dataSet) throws DatabaseUnitException, SQLException;
+    public abstract void execute(IDatabaseConnection connection, IDataSet dataSet)
+	    throws DatabaseUnitException, SQLException;
 
-    private static class DummyOperation extends DatabaseOperation
-    {
-        @Override
-        public void execute(IDatabaseConnection connection, IDataSet dataSet)
-        {
-        }
+    private static class DummyOperation extends DatabaseOperation {
+	@Override
+	public void execute(IDatabaseConnection connection, IDataSet dataSet) {
+	}
     }
 }

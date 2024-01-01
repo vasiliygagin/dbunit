@@ -32,52 +32,53 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.filter.IColumnFilter;
 
 /**
- * Implements non-strict database assertion strategy : compares data sets ignoring all tables and columns which are not
- * specified in expected data set but possibly exist in actual data set.
+ * Implements non-strict database assertion strategy : compares data sets
+ * ignoring all tables and columns which are not specified in expected data set
+ * but possibly exist in actual data set.
  *
  * @author Mario Zagar
  * @author Sunitha Rajarathnam
  */
 class NonStrictDatabaseAssertion implements DatabaseAssertion {
 
-	public void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException {
-		for (String tableName : expectedDataSet.getTableNames()) {
-			ITable expectedTable = expectedDataSet.getTable(tableName);
-			ITable actualTable = actualDataSet.getTable(tableName);
-			assertEquals(expectedTable, actualTable, columnFilters);
-		}
+    public void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException {
+	for (String tableName : expectedDataSet.getTableNames()) {
+	    ITable expectedTable = expectedDataSet.getTable(tableName);
+	    ITable actualTable = actualDataSet.getTable(tableName);
+	    assertEquals(expectedTable, actualTable, columnFilters);
 	}
+    }
 
-	public void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException {
-		Set<String> ignoredColumns = getColumnsToIgnore(expectedTable.getTableMetaData(),
-				actualTable.getTableMetaData(), columnFilters);
-		Assertion.assertEqualsIgnoreCols(expectedTable, actualTable,
-				ignoredColumns.toArray(new String[ignoredColumns.size()]));
-	}
+    public void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException {
+	Set<String> ignoredColumns = getColumnsToIgnore(expectedTable.getTableMetaData(),
+		actualTable.getTableMetaData(), columnFilters);
+	Assertion.assertEqualsIgnoreCols(expectedTable, actualTable,
+		ignoredColumns.toArray(new String[ignoredColumns.size()]));
+    }
 
-	private Set<String> getColumnsToIgnore(ITableMetaData expectedMetaData, ITableMetaData actualMetaData,
-			List<IColumnFilter> columnFilters) throws DataSetException {
-		if (columnFilters.size() == 0) {
-			return getColumnsToIgnore(expectedMetaData, actualMetaData);
-		}
-		Set<String> ignoredColumns = new LinkedHashSet<String>();
-		for (IColumnFilter filter : columnFilters) {
-			FilteredTableMetaData filteredExpectedMetaData = new FilteredTableMetaData(expectedMetaData, filter);
-			ignoredColumns.addAll(getColumnsToIgnore(filteredExpectedMetaData, actualMetaData));
-		}
-		return ignoredColumns;
+    private Set<String> getColumnsToIgnore(ITableMetaData expectedMetaData, ITableMetaData actualMetaData,
+	    List<IColumnFilter> columnFilters) throws DataSetException {
+	if (columnFilters.size() == 0) {
+	    return getColumnsToIgnore(expectedMetaData, actualMetaData);
 	}
+	Set<String> ignoredColumns = new LinkedHashSet<String>();
+	for (IColumnFilter filter : columnFilters) {
+	    FilteredTableMetaData filteredExpectedMetaData = new FilteredTableMetaData(expectedMetaData, filter);
+	    ignoredColumns.addAll(getColumnsToIgnore(filteredExpectedMetaData, actualMetaData));
+	}
+	return ignoredColumns;
+    }
 
-	protected Set<String> getColumnsToIgnore(ITableMetaData expectedMetaData, ITableMetaData actualMetaData)
-			throws DataSetException {
-		Column[] notSpecifiedInExpected = Columns.getColumnDiff(expectedMetaData, actualMetaData).getActual();
-		Set<String> result = new LinkedHashSet<String>();
-		for (Column column : notSpecifiedInExpected) {
-			result.add(column.getColumnName());
-		}
-		return result;
+    protected Set<String> getColumnsToIgnore(ITableMetaData expectedMetaData, ITableMetaData actualMetaData)
+	    throws DataSetException {
+	Column[] notSpecifiedInExpected = Columns.getColumnDiff(expectedMetaData, actualMetaData).getActual();
+	Set<String> result = new LinkedHashSet<String>();
+	for (Column column : notSpecifiedInExpected) {
+	    result.add(column.getColumnName());
 	}
+	return result;
+    }
 
 }

@@ -23,63 +23,54 @@ package org.dbunit.dataset;
 
 import java.util.Arrays;
 
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public class DefaultTableMetaData extends AbstractTableMetaData
-{
+public class DefaultTableMetaData extends AbstractTableMetaData {
 
     private final String _tableName;
     private final Column[] _columns;
     private final Column[] _primaryKeys;
 
     public DefaultTableMetaData(String tableName, Column[] columns)
-            //throws DataSetException
+    // throws DataSetException
     {
-        this(tableName, columns, new String[0]);
+	this(tableName, columns, new String[0]);
     }
 
-    public DefaultTableMetaData(String tableName, Column[] columns,
-            String[] primaryKeys) //throws DataSetException
+    public DefaultTableMetaData(String tableName, Column[] columns, String[] primaryKeys) // throws DataSetException
     {
-        _tableName = tableName;
-        _columns = columns;
-        _primaryKeys = Columns.getColumns(primaryKeys, columns);
+	_tableName = tableName;
+	_columns = columns;
+	_primaryKeys = Columns.getColumns(primaryKeys, columns);
     }
 
-    public DefaultTableMetaData(String tableName, Column[] columns,
-            Column[] primaryKeys) //throws DataSetException
+    public DefaultTableMetaData(String tableName, Column[] columns, Column[] primaryKeys) // throws DataSetException
     {
-        _tableName = tableName;
-        _columns = columns;
-        _primaryKeys = primaryKeys;
+	_tableName = tableName;
+	_columns = columns;
+	_primaryKeys = primaryKeys;
     }
 
-    public String toString()
-    {
-        return "tableName=" + _tableName +
-                ", columns=" + Arrays.asList(_columns) +
-                ", keys=" + Arrays.asList(_primaryKeys) + "";
+    public String toString() {
+	return "tableName=" + _tableName + ", columns=" + Arrays.asList(_columns) + ", keys="
+		+ Arrays.asList(_primaryKeys) + "";
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
-    public String getTableName()
-    {
-        return _tableName;
+    public String getTableName() {
+	return _tableName;
     }
 
-    public Column[] getColumns()
-    {
-        return _columns;
+    public Column[] getColumns() {
+	return _columns;
     }
 
-    public Column[] getPrimaryKeys()
-    {
-        return _primaryKeys;
+    public Column[] getPrimaryKeys() {
+	return _primaryKeys;
     }
 }

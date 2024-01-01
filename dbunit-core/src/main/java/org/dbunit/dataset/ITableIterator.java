@@ -25,16 +25,15 @@ package org.dbunit.dataset;
  * @since Apr 5, 2003
  * @version $Revision$
  */
-public interface ITableIterator
-{
+public interface ITableIterator {
     /**
      * Position this iterator to the next table. The iterator is initially
-     * positioned before the first table; the first call to the method next
-     * makes the first table the current table; the second call makes the
-     * second table the current table, and so on.
+     * positioned before the first table; the first call to the method next makes
+     * the first table the current table; the second call makes the second table the
+     * current table, and so on.
      *
      * @return <code>true</code> if the new current table is valid;
-     * <code>false</code> if there are no more table
+     *         <code>false</code> if there are no more table
      */
     public boolean next() throws DataSetException;
 

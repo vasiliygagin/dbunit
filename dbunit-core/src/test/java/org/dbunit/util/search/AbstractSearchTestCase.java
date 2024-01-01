@@ -38,8 +38,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since Aug 25, 2005
  */
-public abstract class AbstractSearchTestCase extends TestCase
-{
+public abstract class AbstractSearchTestCase extends TestCase {
     protected static final String A = "A";
     protected static final String B = "B";
     protected static final String C = "C";
@@ -58,81 +57,63 @@ public abstract class AbstractSearchTestCase extends TestCase
 
     protected final DepthFirstSearch fSearch = new DepthFirstSearch();
 
-    protected void doIt() throws Exception
-    {
-        final Set actualOutput = fSearch.search(this.fInput, getCallback());
-        assertEquals(
-                "Input and output sets do not have the same number of members",
-                this.fExpectedOutput.size(), actualOutput.size());
-        assertEquals("Sets do not contain the same members",
-                this.fExpectedOutput, actualOutput);
+    protected void doIt() throws Exception {
+	final Set actualOutput = fSearch.search(this.fInput, getCallback());
+	assertEquals("Input and output sets do not have the same number of members", this.fExpectedOutput.size(),
+		actualOutput.size());
+	assertEquals("Sets do not contain the same members", this.fExpectedOutput, actualOutput);
     }
 
-    protected void setInput(final String[] nodes)
-    {
-        for (int i = 0; i < nodes.length; i++)
-        {
-            this.fInput.add(nodes[i]);
-        }
+    protected void setInput(final String[] nodes) {
+	for (int i = 0; i < nodes.length; i++) {
+	    this.fInput.add(nodes[i]);
+	}
     }
 
-    protected void setOutput(final String[] nodes)
-    {
-        for (int i = 0; i < nodes.length; i++)
-        {
-            this.fExpectedOutput.add(nodes[i]);
-        }
+    protected void setOutput(final String[] nodes) {
+	for (int i = 0; i < nodes.length; i++) {
+	    this.fExpectedOutput.add(nodes[i]);
+	}
     }
 
-    protected void addEdges(final String from, final String[] tos)
-    {
-        final Set tmpEdges = new TreeSet();
-        for (int i = 0; i < tos.length; i++)
-        {
-            final Edge edge = new Edge(from, tos[i]);
-            this.fAllEdgesSet.add(edge);
-            tmpEdges.add(edge);
-        }
-        this.fEdgesPerNodeMap.put(from, tmpEdges);
+    protected void addEdges(final String from, final String[] tos) {
+	final Set tmpEdges = new TreeSet();
+	for (int i = 0; i < tos.length; i++) {
+	    final Edge edge = new Edge(from, tos[i]);
+	    this.fAllEdgesSet.add(edge);
+	    tmpEdges.add(edge);
+	}
+	this.fEdgesPerNodeMap.put(from, tmpEdges);
     }
 
-    protected ISearchCallback getCallback()
-    {
-        return new ISearchCallback()
-        {
-            public SortedSet getEdges(final Object fromNode)
-            {
-                return getEdgesFromNode(fromNode);
-            };
+    protected ISearchCallback getCallback() {
+	return new ISearchCallback() {
+	    public SortedSet getEdges(final Object fromNode) {
+		return getEdgesFromNode(fromNode);
+	    };
 
-            public void nodeAdded(final Object fromNode)
-            {
-            }
+	    public void nodeAdded(final Object fromNode) {
+	    }
 
-            public boolean searchNode(final Object node)
-            {
-                return true;
-            }
-        };
+	    public boolean searchNode(final Object node) {
+		return true;
+	    }
+	};
     }
 
-    protected SortedSet getEdgesFromNode(final Object fromNode)
-    {
-        return (SortedSet) fEdgesPerNodeMap.get(fromNode);
+    protected SortedSet getEdgesFromNode(final Object fromNode) {
+	return (SortedSet) fEdgesPerNodeMap.get(fromNode);
     }
 
-    protected SortedSet getEdgesToNode(final Object toNode)
-    {
-        final TreeSet set = new TreeSet();
-        final Iterator iterator = this.fAllEdgesSet.iterator();
-        while (iterator.hasNext())
-        {
-            final Edge edge = (Edge) iterator.next();
-            if (edge.getTo().equals(toNode))
-            {
-                set.add(edge);
-            }
-        }
-        return set;
+    protected SortedSet getEdgesToNode(final Object toNode) {
+	final TreeSet set = new TreeSet();
+	final Iterator iterator = this.fAllEdgesSet.iterator();
+	while (iterator.hasNext()) {
+	    final Edge edge = (Edge) iterator.next();
+	    if (edge.getTo().equals(toNode)) {
+		set.add(edge);
+	    }
+	}
+	return set;
     };
 }

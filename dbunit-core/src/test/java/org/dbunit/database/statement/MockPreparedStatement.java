@@ -22,39 +22,33 @@ package org.dbunit.database.statement;
 
 import java.sql.SQLException;
 
-
 /**
  * @author gommma
  * @version $Revision$
  * @since 2.3.0
  */
-public class MockPreparedStatement extends
-		com.mockobjects.sql.MockPreparedStatement 
-{
-	// TODO Create a real mock that records all values in the future (when needed)
-	private int lastSetObjectParamIndex;
-	private Object lastSetObjectParamValue;
-	private int lastSetObjectTargetSqlType;
-	
-	public void setObject(int parameterIndex, Object value, int targetSqlType) 
-      	throws SQLException 
-  	{
-			this.lastSetObjectParamIndex=parameterIndex;
-			this.lastSetObjectParamValue=value;
-			this.lastSetObjectTargetSqlType=targetSqlType;
-	}
+public class MockPreparedStatement extends com.mockobjects.sql.MockPreparedStatement {
+    // TODO Create a real mock that records all values in the future (when needed)
+    private int lastSetObjectParamIndex;
+    private Object lastSetObjectParamValue;
+    private int lastSetObjectTargetSqlType;
 
-	public int getLastSetObjectParamIndex() {
-		return lastSetObjectParamIndex;
-	}
+    public void setObject(int parameterIndex, Object value, int targetSqlType) throws SQLException {
+	this.lastSetObjectParamIndex = parameterIndex;
+	this.lastSetObjectParamValue = value;
+	this.lastSetObjectTargetSqlType = targetSqlType;
+    }
 
-	public Object getLastSetObjectParamValue() {
-		return lastSetObjectParamValue;
-	}
+    public int getLastSetObjectParamIndex() {
+	return lastSetObjectParamIndex;
+    }
 
-	public int getLastSetObjectTargetSqlType() {
-		return lastSetObjectTargetSqlType;
-	}
+    public Object getLastSetObjectParamValue() {
+	return lastSetObjectParamValue;
+    }
 
+    public int getLastSetObjectTargetSqlType() {
+	return lastSetObjectTargetSqlType;
+    }
 
 }

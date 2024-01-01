@@ -29,17 +29,15 @@ import junit.framework.TestSuite;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(XlsDataSetTest.class));
-        suite.addTest(new TestSuite(XlsTableTest.class));
-        suite.addTest(new TestSuite(XlsTableWriteTest.class));
-        suite.addTest(new TestSuite(XlsxDataSetTest.class));
-        suite.addTest(new TestSuite(XlsxTableTest.class));
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(XlsDataSetTest.class));
+	suite.addTest(new TestSuite(XlsTableTest.class));
+	suite.addTest(new TestSuite(XlsTableWriteTest.class));
+	suite.addTest(new TestSuite(XlsxDataSetTest.class));
+	suite.addTest(new TestSuite(XlsxTableTest.class));
 
-        return suite;
+	return suite;
     }
 }

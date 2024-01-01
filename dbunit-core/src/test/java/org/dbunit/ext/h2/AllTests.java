@@ -26,13 +26,10 @@ import junit.framework.TestSuite;
 /**
  * @author Felipe Leme
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(H2DataTypeFactoryTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(H2DataTypeFactoryTest.class));
+	return suite;
     }
 }
-

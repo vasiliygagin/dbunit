@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper for collections-related methods.
- * <br>
+ * Helper for collections-related methods. <br>
+ * 
  * @author Felipe Leme (dbunit@felipeal.net)
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
@@ -45,54 +45,56 @@ public class CollectionsHelper {
     private static final Logger logger = LoggerFactory.getLogger(CollectionsHelper.class);
 
     // class is "static"
-    private CollectionsHelper() {}
+    private CollectionsHelper() {
+    }
 
     /**
-     * Returns a Set from an array of objects.
-     * Note the Iterator returned by this Set preserves the order of the array.
+     * Returns a Set from an array of objects. Note the Iterator returned by this
+     * Set preserves the order of the array.
+     * 
      * @param objects array of objects
      * @return Set with the elements of the array or null if entry is null
      */
-    public static Set objectsToSet( Object[] objects ) {
-        logger.debug("objectsToSet(objects={}) - start", objects);
+    public static Set objectsToSet(Object[] objects) {
+	logger.debug("objectsToSet(objects={}) - start", objects);
 
-        if ( objects == null ) {
-            return null;
-        }
-        return new LinkedHashSet(Arrays.asList(objects));
+	if (objects == null) {
+	    return null;
+	}
+	return new LinkedHashSet(Arrays.asList(objects));
     }
 
     /**
      * Returns an array of Objects from a Set.
-     * @param set a Set 
+     * 
+     * @param set a Set
      * @return array of Objects with the elements of the Set or null if set is null
      */
-    public static Object[] setToObjects( Set set ) {
-        logger.debug("setToObjects(set={}) - start", set);
+    public static Object[] setToObjects(Set set) {
+	logger.debug("setToObjects(set={}) - start", set);
 
-        if ( set == null ) {
-            return null;
-        }
-        else {
-            return set.toArray();
-        }
+	if (set == null) {
+	    return null;
+	} else {
+	    return set.toArray();
+	}
     }
 
     /**
      * Returns an array of Strings from a Set.
+     * 
      * @param set a Set of Strings
      * @return array of Strings with the elements of the Set or null if set is null
      */
-    public static String[] setToStrings( Set set ) {
-        logger.debug("setToStrings(set={}) - start", set);
+    public static String[] setToStrings(Set set) {
+	logger.debug("setToStrings(set={}) - start", set);
 
-        if ( set == null ) {
-            return null;
-        }
-        else {
-            String[] strings = (String[]) set.toArray(new String[0]);
-            return strings;
-        }
+	if (set == null) {
+	    return null;
+	} else {
+	    String[] strings = (String[]) set.toArray(new String[0]);
+	    return strings;
+	}
     };
 
 }

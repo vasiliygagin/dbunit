@@ -21,63 +21,56 @@
 
 package org.dbunit;
 
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class DatabaseUnitException extends Exception
-{
+public class DatabaseUnitException extends Exception {
 
     /**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 7597982895850877156L;
-
-
-    /**
-     * Constructs an <code>DatabaseUnitException</code> with no detail
-     * message and no encapsulated exception.
+     * 
      */
-    public DatabaseUnitException()
-    {
-        super();
+    private static final long serialVersionUID = 7597982895850877156L;
+
+    /**
+     * Constructs an <code>DatabaseUnitException</code> with no detail message and
+     * no encapsulated exception.
+     */
+    public DatabaseUnitException() {
+	super();
     }
 
     /**
      * Constructs an <code>DatabaseUnitException</code> with the specified detail
      * message and no encapsulated exception.
      */
-    public DatabaseUnitException(String msg)
-    {
-        super(msg);
+    public DatabaseUnitException(String msg) {
+	super(msg);
     }
 
     /**
      * Constructs an <code>DatabaseUnitException</code> with the specified detail
      * message and encapsulated exception.
      */
-    public DatabaseUnitException(String msg, Throwable e)
-    {
-        super(msg, e);
+    public DatabaseUnitException(String msg, Throwable e) {
+	super(msg, e);
     }
 
     /**
      * Constructs an <code>DatabaseUnitException</code> with the encapsulated
      * exception and use string representation as detail message.
      */
-    public DatabaseUnitException(Throwable e)
-    {
-        super(e);
+    public DatabaseUnitException(Throwable e) {
+	super(e);
     }
 
     /**
      * Returns the nested exception or <code>null</code> if none.
+     * 
      * @deprecated Use {@link #getCause()} to retrieve the nested exception
      */
-    public Throwable getException()
-    {
-        return super.getCause();
+    public Throwable getException() {
+	return super.getCause();
     }
 
 }

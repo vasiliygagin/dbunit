@@ -26,27 +26,29 @@ package org.dbunit.dataset.common.handlers;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class PipelineConfig 
-{
+public class PipelineConfig {
 
     private char separatorChar = SeparatorHandler.DEFAULT_SEPARATOR_CHAR;
     private char escapeChar = EscapeHandler.DEFAULT_ESCAPE_CHAR;
-    
+
     public PipelineConfig() {
-        
+
     }
-    
+
     public char getSeparatorChar() {
-        return separatorChar;
+	return separatorChar;
     }
+
     public void setSeparatorChar(char separatorChar) {
-        this.separatorChar = separatorChar;
+	this.separatorChar = separatorChar;
     }
+
     public char getEscapeChar() {
-        return escapeChar;
+	return escapeChar;
     }
+
     public void setEscapeChar(char escapeChar) {
-        this.escapeChar = escapeChar;
+	this.escapeChar = escapeChar;
     }
-    
+
 }

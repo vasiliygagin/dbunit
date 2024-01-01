@@ -29,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of {@link IMetadataHandler} which works for the most databases.
+ * Default implementation of {@link IMetadataHandler} which works for the most
+ * databases.
+ * 
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -42,111 +44,90 @@ public class DefaultMetadataHandler implements IMetadataHandler {
      */
     private static final Logger logger = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
-    public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName) 
-    throws SQLException 
-    {
-        if(logger.isTraceEnabled())
-            logger.trace("getColumns(databaseMetaData={}, schemaName={}, tableName={}) - start", 
-                    new Object[] {databaseMetaData, schemaName, tableName} );
-        
-        ResultSet resultSet = databaseMetaData.getColumns(
-                null, schemaName, tableName, "%");
-        return resultSet;
+    public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+	    throws SQLException {
+	if (logger.isTraceEnabled())
+	    logger.trace("getColumns(databaseMetaData={}, schemaName={}, tableName={}) - start",
+		    new Object[] { databaseMetaData, schemaName, tableName });
+
+	ResultSet resultSet = databaseMetaData.getColumns(null, schemaName, tableName, "%");
+	return resultSet;
     }
 
-    public boolean matches(ResultSet resultSet,
-            String schema, String table, boolean caseSensitive) 
-    throws SQLException 
-    {
-        return matches(resultSet, null, schema, table, null, caseSensitive);
+    public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
+	    throws SQLException {
+	return matches(resultSet, null, schema, table, null, caseSensitive);
     }
 
-    public boolean matches(ResultSet columnsResultSet, String catalog,
-            String schema, String table, String column,
-            boolean caseSensitive) throws SQLException 
-    {
-        if(logger.isTraceEnabled())
-            logger.trace("matches(columnsResultSet={}, catalog={}, schema={}," +
-            		" table={}, column={}, caseSensitive={}) - start", 
-                    new Object[] {columnsResultSet, catalog, schema, 
-                            table, column, Boolean.valueOf(caseSensitive)});
-        
-        String catalogName = columnsResultSet.getString(1);
-        String schemaName = columnsResultSet.getString(2);
-        String tableName = columnsResultSet.getString(3);
-        String columnName = columnsResultSet.getString(4);
+    public boolean matches(ResultSet columnsResultSet, String catalog, String schema, String table, String column,
+	    boolean caseSensitive) throws SQLException {
+	if (logger.isTraceEnabled())
+	    logger.trace(
+		    "matches(columnsResultSet={}, catalog={}, schema={},"
+			    + " table={}, column={}, caseSensitive={}) - start",
+		    new Object[] { columnsResultSet, catalog, schema, table, column, Boolean.valueOf(caseSensitive) });
 
-        if(logger.isDebugEnabled()){
-            logger.debug("Comparing the following values using caseSensitive={} (searched<=>actual): " +
-                    "catalog: {}<=>{} schema: {}<=>{} table: {}<=>{} column: {}<=>{}", 
-                    new Object[] {
-                        Boolean.valueOf(caseSensitive),
-                        catalog, catalogName,
-                        schema, schemaName,
-                        table, tableName,
-                        column, columnName
-                    });
-        }
-        
-        boolean areEqual = 
-                areEqualIgnoreNull(catalog, catalogName, caseSensitive) &&
-                areEqualIgnoreNull(schema, schemaName, caseSensitive) &&
-                areEqualIgnoreNull(table, tableName, caseSensitive) &&
-                areEqualIgnoreNull(column, columnName, caseSensitive);
-        return areEqual;
+	String catalogName = columnsResultSet.getString(1);
+	String schemaName = columnsResultSet.getString(2);
+	String tableName = columnsResultSet.getString(3);
+	String columnName = columnsResultSet.getString(4);
+
+	if (logger.isDebugEnabled()) {
+	    logger.debug(
+		    "Comparing the following values using caseSensitive={} (searched<=>actual): "
+			    + "catalog: {}<=>{} schema: {}<=>{} table: {}<=>{} column: {}<=>{}",
+		    new Object[] { Boolean.valueOf(caseSensitive), catalog, catalogName, schema, schemaName, table,
+			    tableName, column, columnName });
+	}
+
+	boolean areEqual = areEqualIgnoreNull(catalog, catalogName, caseSensitive)
+		&& areEqualIgnoreNull(schema, schemaName, caseSensitive)
+		&& areEqualIgnoreNull(table, tableName, caseSensitive)
+		&& areEqualIgnoreNull(column, columnName, caseSensitive);
+	return areEqual;
     }
 
-    private boolean areEqualIgnoreNull(String value1, String value2,
-            boolean caseSensitive) {
-        return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
+    private boolean areEqualIgnoreNull(String value1, String value2, boolean caseSensitive) {
+	return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
     }
 
     public String getSchema(ResultSet resultSet) throws SQLException {
-        if(logger.isTraceEnabled())
-            logger.trace("getColumns(resultSet={}) - start", resultSet);
+	if (logger.isTraceEnabled())
+	    logger.trace("getColumns(resultSet={}) - start", resultSet);
 
-        String schemaName = resultSet.getString(2);
-        return schemaName;
-    }
-    
-    public boolean tableExists(DatabaseMetaData metaData, String schemaName, String tableName) 
-    throws SQLException 
-    {
-        if(logger.isTraceEnabled())
-            logger.trace("tableExists(metaData={}, schemaName={}, tableName={}) - start", 
-                    new Object[] {metaData, schemaName, tableName} );
-        
-        ResultSet tableRs = metaData.getTables(null, schemaName, tableName, null);
-        try 
-        {
-            return tableRs.next();
-        }
-        finally
-        {
-            SQLHelper.close(tableRs);
-        }
+	String schemaName = resultSet.getString(2);
+	return schemaName;
     }
 
-    public ResultSet getTables(DatabaseMetaData metaData, String schemaName, String[] tableType) 
-    throws SQLException
-    {
-        if(logger.isTraceEnabled())
-            logger.trace("getTables(metaData={}, schemaName={}, tableType={}) - start", 
-                    new Object[] {metaData, schemaName, tableType} );
+    public boolean tableExists(DatabaseMetaData metaData, String schemaName, String tableName) throws SQLException {
+	if (logger.isTraceEnabled())
+	    logger.trace("tableExists(metaData={}, schemaName={}, tableName={}) - start",
+		    new Object[] { metaData, schemaName, tableName });
 
-        return metaData.getTables(null, schemaName, "%", tableType);
+	ResultSet tableRs = metaData.getTables(null, schemaName, tableName, null);
+	try {
+	    return tableRs.next();
+	} finally {
+	    SQLHelper.close(tableRs);
+	}
     }
 
-    public ResultSet getPrimaryKeys(DatabaseMetaData metaData, String schemaName, String tableName) 
-    throws SQLException
-    {
-        if(logger.isTraceEnabled())
-            logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start", 
-                    new Object[] {metaData, schemaName, tableName} );
+    public ResultSet getTables(DatabaseMetaData metaData, String schemaName, String[] tableType) throws SQLException {
+	if (logger.isTraceEnabled())
+	    logger.trace("getTables(metaData={}, schemaName={}, tableType={}) - start",
+		    new Object[] { metaData, schemaName, tableType });
 
-        ResultSet resultSet = metaData.getPrimaryKeys(
-                null, schemaName, tableName);
-        return resultSet;
+	return metaData.getTables(null, schemaName, "%", tableType);
+    }
+
+    public ResultSet getPrimaryKeys(DatabaseMetaData metaData, String schemaName, String tableName)
+	    throws SQLException {
+	if (logger.isTraceEnabled())
+	    logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start",
+		    new Object[] { metaData, schemaName, tableName });
+
+	ResultSet resultSet = metaData.getPrimaryKeys(null, schemaName, tableName);
+	return resultSet;
     }
 
 }

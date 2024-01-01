@@ -37,27 +37,26 @@ public class WhitespacesHandler extends AbstractPipelineComponent {
      */
     private static final Logger logger = LoggerFactory.getLogger(WhitespacesHandler.class);
 
-    private WhitespacesHandler() {}
-
-    public static final PipelineComponent IGNORE () {
-        logger.debug("IGNORE() - start");
-
-        return createPipelineComponent(new WhitespacesHandler(), new IGNORE());
+    private WhitespacesHandler() {
     }
 
-    public static final PipelineComponent ACCEPT () {
-        logger.debug("ACCEPT() - start");
+    public static final PipelineComponent IGNORE() {
+	logger.debug("IGNORE() - start");
 
-        return createPipelineComponent(new WhitespacesHandler(), new ACCEPT());
+	return createPipelineComponent(new WhitespacesHandler(), new IGNORE());
     }
 
+    public static final PipelineComponent ACCEPT() {
+	logger.debug("ACCEPT() - start");
+
+	return createPipelineComponent(new WhitespacesHandler(), new ACCEPT());
+    }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        if(logger.isDebugEnabled())
-            logger.debug("canHandle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-        return Character.isWhitespace(c) ? true : false;
+	return Character.isWhitespace(c) ? true : false;
     }
 
 }
-

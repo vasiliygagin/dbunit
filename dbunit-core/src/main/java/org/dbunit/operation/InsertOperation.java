@@ -42,113 +42,94 @@ import java.util.BitSet;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class InsertOperation extends AbstractBatchOperation
-{
+public class InsertOperation extends AbstractBatchOperation {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(InsertOperation.class);
 
-    InsertOperation()
-    {
+    InsertOperation() {
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractBatchOperation class
 
-    public OperationData getOperationData(ITableMetaData metaData,
-            BitSet ignoreMapping, IDatabaseConnection connection) throws DataSetException
-    {
-    	if (logger.isDebugEnabled())
-    	{
-    		logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start",
-    				new Object[]{ metaData, ignoreMapping, connection });
-    	}
+    public OperationData getOperationData(ITableMetaData metaData, BitSet ignoreMapping, IDatabaseConnection connection)
+	    throws DataSetException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start",
+		    new Object[] { metaData, ignoreMapping, connection });
+	}
 
-        Column[] columns = metaData.getColumns();
+	Column[] columns = metaData.getColumns();
 
-        // insert
-        StringBuffer sqlBuffer = new StringBuffer(128);
-        sqlBuffer.append("insert into ");
-        sqlBuffer.append(getQualifiedName(connection.getSchema(),
-                metaData.getTableName(), connection));
+	// insert
+	StringBuffer sqlBuffer = new StringBuffer(128);
+	sqlBuffer.append("insert into ");
+	sqlBuffer.append(getQualifiedName(connection.getSchema(), metaData.getTableName(), connection));
 
-        // columns
-        sqlBuffer.append(" (");
-        String columnSeparator = "";
-        for (int i = 0; i < columns.length; i++)
-        {
-            if (!ignoreMapping.get(i))
-            {
-                // escape column name
-                String columnName = getQualifiedName(null,
-                        columns[i].getColumnName(), connection);
-                sqlBuffer.append(columnSeparator);
-                sqlBuffer.append(columnName);
-                columnSeparator = ", ";
-            }
-        }
+	// columns
+	sqlBuffer.append(" (");
+	String columnSeparator = "";
+	for (int i = 0; i < columns.length; i++) {
+	    if (!ignoreMapping.get(i)) {
+		// escape column name
+		String columnName = getQualifiedName(null, columns[i].getColumnName(), connection);
+		sqlBuffer.append(columnSeparator);
+		sqlBuffer.append(columnName);
+		columnSeparator = ", ";
+	    }
+	}
 
-        // values
-        sqlBuffer.append(") values (");
-        String valueSeparator = "";
-        for (int i = 0; i < columns.length; i++)
-        {
-            if (!ignoreMapping.get(i))
-            {
-                sqlBuffer.append(valueSeparator);
-                sqlBuffer.append("?");
-                valueSeparator = ", ";
-            }
-        }
-        sqlBuffer.append(")");
+	// values
+	sqlBuffer.append(") values (");
+	String valueSeparator = "";
+	for (int i = 0; i < columns.length; i++) {
+	    if (!ignoreMapping.get(i)) {
+		sqlBuffer.append(valueSeparator);
+		sqlBuffer.append("?");
+		valueSeparator = ", ";
+	    }
+	}
+	sqlBuffer.append(")");
 
-        return new OperationData(sqlBuffer.toString(), columns);
+	return new OperationData(sqlBuffer.toString(), columns);
     }
 
-    protected BitSet getIgnoreMapping(ITable table, int row) throws DataSetException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getIgnoreMapping(table={}, row={}) - start", table, String.valueOf(row));
+    protected BitSet getIgnoreMapping(ITable table, int row) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getIgnoreMapping(table={}, row={}) - start", table, String.valueOf(row));
 
-        Column[] columns = table.getTableMetaData().getColumns();
+	Column[] columns = table.getTableMetaData().getColumns();
 
-        BitSet ignoreMapping = new BitSet();
-        for (int i = 0; i < columns.length; i++)
-        {
-            Column column = columns[i];
-            Object value = table.getValue(row, column.getColumnName());
-            if (value == ITable.NO_VALUE
-                || (value == null && column.isNotNullable() && column.hasDefaultValue()))
-            {
-                ignoreMapping.set(i);
-            }
-        }
-        return ignoreMapping;
+	BitSet ignoreMapping = new BitSet();
+	for (int i = 0; i < columns.length; i++) {
+	    Column column = columns[i];
+	    Object value = table.getValue(row, column.getColumnName());
+	    if (value == ITable.NO_VALUE || (value == null && column.isNotNullable() && column.hasDefaultValue())) {
+		ignoreMapping.set(i);
+	    }
+	}
+	return ignoreMapping;
     }
 
-    protected boolean equalsIgnoreMapping(BitSet ignoreMapping, ITable table,
-            int row) throws DataSetException
-    {
-    	if (logger.isDebugEnabled())
-    	{
-    		logger.debug("equalsIgnoreMapping(ignoreMapping={}, table={}, row={}) - start",
-    				new Object[]{ ignoreMapping, table, String.valueOf(row) });
-    	}
+    protected boolean equalsIgnoreMapping(BitSet ignoreMapping, ITable table, int row) throws DataSetException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("equalsIgnoreMapping(ignoreMapping={}, table={}, row={}) - start",
+		    new Object[] { ignoreMapping, table, String.valueOf(row) });
+	}
 
-        Column[] columns = table.getTableMetaData().getColumns();
+	Column[] columns = table.getTableMetaData().getColumns();
 
-        for (int i = 0; i < columns.length; i++)
-        {
-            boolean bit = ignoreMapping.get(i);
-            Object value = table.getValue(row, columns[i].getColumnName());
-            if ((bit && value != ITable.NO_VALUE) || (!bit && value == ITable.NO_VALUE))
-            {
-                return false;
-            }
-        }
+	for (int i = 0; i < columns.length; i++) {
+	    boolean bit = ignoreMapping.get(i);
+	    Object value = table.getValue(row, columns[i].getColumnName());
+	    if ((bit && value != ITable.NO_VALUE) || (!bit && value == ITable.NO_VALUE)) {
+		return false;
+	    }
+	}
 
-        return true;
+	return true;
     }
 }

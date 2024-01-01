@@ -46,74 +46,73 @@ public class Edge implements IEdge {
      * @param nodeTo
      */
     public Edge(Comparable nodeFrom, Comparable nodeTo) {
-        if (nodeFrom == null) {
-            throw new IllegalArgumentException("node from cannot be null");
-        }
-        if (nodeTo == null) {
-            throw new IllegalArgumentException("node to cannot be null");
-        }
-        this.nodeFrom = nodeFrom;
-        this.nodeTo = nodeTo;
+	if (nodeFrom == null) {
+	    throw new IllegalArgumentException("node from cannot be null");
+	}
+	if (nodeTo == null) {
+	    throw new IllegalArgumentException("node to cannot be null");
+	}
+	this.nodeFrom = nodeFrom;
+	this.nodeTo = nodeTo;
     }
 
     public Object getFrom() {
-        return this.nodeFrom;
+	return this.nodeFrom;
     }
 
     public Object getTo() {
-        return this.nodeTo;
+	return this.nodeTo;
     }
 
     public String toString() {
-        return this.nodeFrom + "->" + this.nodeTo;
+	return this.nodeFrom + "->" + this.nodeTo;
     }
 
     /**
-     * Compares this edge to the given one using 
-     * the <code>{@link #getFrom()}</code> nodes first. 
-     * If those are equal the <code>{@link #getTo()}}</code>
-     * is used for comparison.
+     * Compares this edge to the given one using the <code>{@link #getFrom()}</code>
+     * nodes first. If those are equal the <code>{@link #getTo()}}</code> is used
+     * for comparison.
+     * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
-        logger.debug("compareTo(o={}) - start", o);
+	logger.debug("compareTo(o={}) - start", o);
 
-        Edge otherEdge = (Edge) o;
-        int result = this.nodeFrom.compareTo(otherEdge.getFrom());
-        if ( result == 0 ) {
-            result = this.nodeTo.compareTo(otherEdge.getTo());
-        }
-        return result;
+	Edge otherEdge = (Edge) o;
+	int result = this.nodeFrom.compareTo(otherEdge.getFrom());
+	if (result == 0) {
+	    result = this.nodeTo.compareTo(otherEdge.getTo());
+	}
+	return result;
     }
 
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((nodeFrom == null) ? 0 : nodeFrom.hashCode());
-        result = prime * result + ((nodeTo == null) ? 0 : nodeTo.hashCode());
-        return result;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((nodeFrom == null) ? 0 : nodeFrom.hashCode());
+	result = prime * result + ((nodeTo == null) ? 0 : nodeTo.hashCode());
+	return result;
     }
 
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Edge other = (Edge) obj;
-        if (nodeFrom == null) {
-            if (other.nodeFrom != null)
-                return false;
-        } else if (!nodeFrom.equals(other.nodeFrom))
-            return false;
-        if (nodeTo == null) {
-            if (other.nodeTo != null)
-                return false;
-        } else if (!nodeTo.equals(other.nodeTo))
-            return false;
-        return true;
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Edge other = (Edge) obj;
+	if (nodeFrom == null) {
+	    if (other.nodeFrom != null)
+		return false;
+	} else if (!nodeFrom.equals(other.nodeFrom))
+	    return false;
+	if (nodeTo == null) {
+	    if (other.nodeTo != null)
+		return false;
+	} else if (!nodeTo.equals(other.nodeTo))
+	    return false;
+	return true;
     }
 
 }

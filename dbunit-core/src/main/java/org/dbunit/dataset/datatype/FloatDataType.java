@@ -36,72 +36,55 @@ import java.sql.Types;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class FloatDataType extends AbstractDataType
-{
+public class FloatDataType extends AbstractDataType {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(FloatDataType.class);
 
-    FloatDataType()
-    {
-        super("REAL", Types.REAL, Float.class, true);
+    FloatDataType() {
+	super("REAL", Types.REAL, Float.class, true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
-    public Object typeCast(Object value) throws TypeCastException
-    {
-        logger.debug("typeCast(value={}) - start", value);
+    public Object typeCast(Object value) throws TypeCastException {
+	logger.debug("typeCast(value={}) - start", value);
 
-        if (value == null || value == ITable.NO_VALUE)
-        {
-            return null;
-        }
+	if (value == null || value == ITable.NO_VALUE) {
+	    return null;
+	}
 
-        if (value instanceof Number)
-        {
-            return new Float(((Number)value).floatValue());
-        }
+	if (value instanceof Number) {
+	    return new Float(((Number) value).floatValue());
+	}
 
-        try
-        {
-            return typeCast(new BigDecimal(value.toString()));
-        }
-        catch (java.lang.NumberFormatException e)
-        {
-            throw new TypeCastException(value, this, e);
-        }
+	try {
+	    return typeCast(new BigDecimal(value.toString()));
+	} catch (java.lang.NumberFormatException e) {
+	    throw new TypeCastException(value, this, e);
+	}
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet)
-            throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-        float value = resultSet.getFloat(column);
-        if (resultSet.wasNull())
-        {
-            return null;
-        }
-        return new Float(value);
+	float value = resultSet.getFloat(column);
+	if (resultSet.wasNull()) {
+	    return null;
+	}
+	return new Float(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-            throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-        		new Object[]{value, new Integer(column), statement} );
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, new Integer(column), statement });
 
-        statement.setFloat(column, ((Number)typeCast(value)).floatValue());
+	statement.setFloat(column, ((Number) typeCast(value)).floatValue());
     }
 }
-
-
-
-
-

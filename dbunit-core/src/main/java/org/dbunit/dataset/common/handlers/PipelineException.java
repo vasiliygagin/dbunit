@@ -31,6 +31,6 @@ import org.dbunit.DatabaseUnitRuntimeException;
  */
 public class PipelineException extends DatabaseUnitRuntimeException {
     public PipelineException(String message) {
-        super(message);
+	super(message);
     }
 }

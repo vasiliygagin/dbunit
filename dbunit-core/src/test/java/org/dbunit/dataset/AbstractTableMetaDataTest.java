@@ -36,36 +36,33 @@ import com.mockobjects.sql.MockDatabaseMetaData;
  * @version $Revision: $ $Date: $
  * @since 2.4.6
  */
-public class AbstractTableMetaDataTest extends TestCase 
-{
+public class AbstractTableMetaDataTest extends TestCase {
 
-    public void testValidator() throws Exception
-    {
-        AbstractTableMetaData metaData = new AbstractTableMetaData(){
-            public Column[] getColumns() throws DataSetException {
-                return null;
-            }
+    public void testValidator() throws Exception {
+	AbstractTableMetaData metaData = new AbstractTableMetaData() {
+	    public Column[] getColumns() throws DataSetException {
+		return null;
+	    }
 
-            public Column[] getPrimaryKeys() throws DataSetException {
-                return null;
-            }
+	    public Column[] getPrimaryKeys() throws DataSetException {
+		return null;
+	    }
 
-            public String getTableName() {
-                return null;
-            }};
-        
+	    public String getTableName() {
+		return null;
+	    }
+	};
+
 //        DataTypeFactoryValidator validator = new DataTypeFactoryValidator();
-        IDataTypeFactory dataTypeFactory = new MsSqlDataTypeFactory();
-        DatabaseMetaData databaseMetaData = new MockDatabaseMetaData(){
-            public String getDatabaseProductName() throws SQLException {
-                return "Microsoft SQL Server";
-            }
-        };
-        String validationMessage = metaData.validateDataTypeFactory(dataTypeFactory, databaseMetaData);
-        assertEquals("Validation message should be null because DB product should be supported", null, validationMessage);
+	IDataTypeFactory dataTypeFactory = new MsSqlDataTypeFactory();
+	DatabaseMetaData databaseMetaData = new MockDatabaseMetaData() {
+	    public String getDatabaseProductName() throws SQLException {
+		return "Microsoft SQL Server";
+	    }
+	};
+	String validationMessage = metaData.validateDataTypeFactory(dataTypeFactory, databaseMetaData);
+	assertEquals("Validation message should be null because DB product should be supported", null,
+		validationMessage);
     }
-    
-    
-    
-    
+
 }

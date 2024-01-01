@@ -34,53 +34,38 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 20, 2002
  */
-public class PreparedStatementFactory extends AbstractStatementFactory
-{
+public class PreparedStatementFactory extends AbstractStatementFactory {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(PreparedStatementFactory.class);
 
-    public IBatchStatement createBatchStatement(IDatabaseConnection connection)
-            throws SQLException
-    {
+    public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
 
-    	logger.debug("createBatchStatement(connection={}) - start", connection);
+	logger.debug("createBatchStatement(connection={}) - start", connection);
 
-        if (supportBatchStatement(connection))
-        {
-            return new BatchStatement(connection.getConnection());
-        }
-        else
-        {
-            return new SimpleStatement(connection.getConnection());
-        }
+	if (supportBatchStatement(connection)) {
+	    return new BatchStatement(connection.getConnection());
+	} else {
+	    return new SimpleStatement(connection.getConnection());
+	}
     }
 
-    public IPreparedBatchStatement createPreparedBatchStatement(String sql,
-            IDatabaseConnection connection) throws SQLException
-    {
-    	if (logger.isDebugEnabled())
-    	{
-    		logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
-    	}
-    	
-    	Integer batchSize = (Integer)connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE);
+    public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
+	    throws SQLException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
+	}
 
-        IPreparedBatchStatement statement = null;
-        if (supportBatchStatement(connection))
-        {
-            statement = new PreparedBatchStatement(sql, connection.getConnection());
-        }
-        else
-        {
-            statement = new SimplePreparedStatement(sql, connection.getConnection());
-        }
-        return new AutomaticPreparedBatchStatement(statement, batchSize.intValue());
+	Integer batchSize = (Integer) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE);
+
+	IPreparedBatchStatement statement = null;
+	if (supportBatchStatement(connection)) {
+	    statement = new PreparedBatchStatement(sql, connection.getConnection());
+	} else {
+	    statement = new SimplePreparedStatement(sql, connection.getConnection());
+	}
+	return new AutomaticPreparedBatchStatement(statement, batchSize.intValue());
     }
 }
-
-
-
-

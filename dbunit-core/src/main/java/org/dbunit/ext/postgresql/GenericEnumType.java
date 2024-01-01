@@ -35,8 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapter to handle conversion between Postgresql
- * native Enum type and Strings.
+ * Adapter to handle conversion between Postgresql native Enum type and Strings.
  *
  * @author Jarvis Cochrane (jarvis@cochrane.com.au)
  * @author gommma (gommma AT users.sourceforge.net)
@@ -50,75 +49,69 @@ public class GenericEnumType extends AbstractDataType {
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(GenericEnumType.class);
-    
+
     private final String sqlTypeName;
 
     /**
-     * @param sqlTypeName The name of the enum type needed to invoke the "setType()" method on
-     * the PGObject class.
+     * @param sqlTypeName The name of the enum type needed to invoke the "setType()"
+     *                    method on the PGObject class.
      */
-    public GenericEnumType(String sqlTypeName) 
-    {
-        super(sqlTypeName, Types.OTHER, String.class, false);
-        
-        if (sqlTypeName == null) {
-            throw new NullPointerException(
-                    "The parameter 'sqlTypeName' must not be null");
-        }
-        this.sqlTypeName = sqlTypeName;
+    public GenericEnumType(String sqlTypeName) {
+	super(sqlTypeName, Types.OTHER, String.class, false);
+
+	if (sqlTypeName == null) {
+	    throw new NullPointerException("The parameter 'sqlTypeName' must not be null");
+	}
+	this.sqlTypeName = sqlTypeName;
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException 
-    {
-        return resultSet.getString(column);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	return resultSet.getString(column);
     }
 
-    public void setSqlValue(Object enumObject, int column,
-                            PreparedStatement statement) throws SQLException, TypeCastException 
-    {
-        statement.setObject(column, getEnum(enumObject, statement.getConnection()));
+    public void setSqlValue(Object enumObject, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	statement.setObject(column, getEnum(enumObject, statement.getConnection()));
     }
 
-    public Object typeCast(Object arg0) throws TypeCastException 
-    {
-        return arg0.toString();
+    public Object typeCast(Object arg0) throws TypeCastException {
+	return arg0.toString();
     }
 
     private Object getEnum(Object value, Connection connection) throws TypeCastException {
 
-        logger.debug("getEnum(value={}, connection={}) - start", value, connection);
+	logger.debug("getEnum(value={}, connection={}) - start", value, connection);
 
-        Object tempEnum = null;
+	Object tempEnum = null;
 
-        try {
-            Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
-            Constructor ct = aPGObjectClass.getConstructor(null);
-            tempEnum = ct.newInstance(null);
+	try {
+	    Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
+	    Constructor ct = aPGObjectClass.getConstructor(null);
+	    tempEnum = ct.newInstance(null);
 
-            Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[]{String.class});
-            setTypeMethod.invoke(tempEnum, new Object[]{this.sqlTypeName});
+	    Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
+	    setTypeMethod.invoke(tempEnum, new Object[] { this.sqlTypeName });
 
-            Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[]{String.class});
-            setValueMethod.invoke(tempEnum, new Object[]{value.toString()});
+	    Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[] { String.class });
+	    setValueMethod.invoke(tempEnum, new Object[] { value.toString() });
 
-        } catch (ClassNotFoundException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InvocationTargetException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (NoSuchMethodException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (IllegalAccessException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InstantiationException e) {
-            throw new TypeCastException(value, this, e);
-        }
+	} catch (ClassNotFoundException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InvocationTargetException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (NoSuchMethodException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (IllegalAccessException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InstantiationException e) {
+	    throw new TypeCastException(value, this, e);
+	}
 
-        return tempEnum;
+	return tempEnum;
     }
 
     public String getSqlTypeName() {
-        return sqlTypeName;
+	return sqlTypeName;
     }
-    
-    
+
 }

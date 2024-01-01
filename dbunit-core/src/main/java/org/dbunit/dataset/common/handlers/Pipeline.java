@@ -41,170 +41,168 @@ public class Pipeline implements Handler {
      */
     private static final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
-
     private LinkedList components;
     private List products;
     private StringBuffer currentProduct;
     private PipelineComponent noHandler;
 
     public Pipeline() {
-        setComponents(new LinkedList());
-        setProducts(new ArrayList());
+	setComponents(new LinkedList());
+	setProducts(new ArrayList());
 
+	// add a no handler as the last handler
+	setNoHandler(NoHandler.IGNORE());
+	getNoHandler().setSuccessor(null);
+	getComponents().addFirst(getNoHandler());
 
-        // add a no handler as the last handler
-        setNoHandler(NoHandler.IGNORE());
-        getNoHandler().setSuccessor(null);
-        getComponents().addFirst(getNoHandler());
+	// add a transparent handler as placeholder
+	// getComponents().addFirst(TransparentHandler.IGNORE);
 
-        // add a transparent handler as placeholder
-        //getComponents().addFirst(TransparentHandler.IGNORE);
-
-        //prepareNewPiece();
-        setCurrentProduct(new StringBuffer());
-        putFront(TransparentHandler.IGNORE());
+	// prepareNewPiece();
+	setCurrentProduct(new StringBuffer());
+	putFront(TransparentHandler.IGNORE());
     }
 
     public StringBuffer getCurrentProduct() {
-        logger.debug("getCurrentProduct() - start");
+	logger.debug("getCurrentProduct() - start");
 
-        return currentProduct;
+	return currentProduct;
     }
 
     public void setCurrentProduct(StringBuffer currentProduct) {
-        logger.debug("setCurrentProduct(currentProduct={}) - start", currentProduct);
+	logger.debug("setCurrentProduct(currentProduct={}) - start", currentProduct);
 
-        this.currentProduct = currentProduct;
+	this.currentProduct = currentProduct;
     }
 
     private void prepareNewPiece() {
-        logger.debug("prepareNewPiece() - start");
+	logger.debug("prepareNewPiece() - start");
 
-        setCurrentProduct(new StringBuffer());
+	setCurrentProduct(new StringBuffer());
 
-        // remove all the components down to a TrasparentHandler
-        try {
-            while (!(getComponents().getFirst() instanceof TransparentHandler)) {
-                removeFront();
-            }
-        } catch (PipelineException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+	// remove all the components down to a TrasparentHandler
+	try {
+	    while (!(getComponents().getFirst() instanceof TransparentHandler)) {
+		removeFront();
+	    }
+	} catch (PipelineException e) {
+	    throw new RuntimeException(e.getMessage());
+	}
 
     }
 
     public void thePieceIsDone() {
-        logger.debug("thePieceIsDone() - start");
+	logger.debug("thePieceIsDone() - start");
 
-        getProducts().add(getCurrentProduct().toString());
-        prepareNewPiece();
+	getProducts().add(getCurrentProduct().toString());
+	prepareNewPiece();
     }
 
     public List getProducts() {
-        logger.debug("getProducts() - start");
+	logger.debug("getProducts() - start");
 
-        return products;
+	return products;
     }
 
     protected void setProducts(List products) {
-        logger.debug("setProducts(products={}) - start", products);
+	logger.debug("setProducts(products={}) - start", products);
 
-        this.products = products;
+	this.products = products;
     }
 
     private LinkedList getComponents() {
-        logger.debug("getComponents() - start");
+	logger.debug("getComponents() - start");
 
-        return components;
+	return components;
     }
 
     private void setComponents(LinkedList components) {
-        logger.debug("setComponents(components={}) - start", components);
+	logger.debug("setComponents(components={}) - start", components);
 
-        this.components = components;
+	this.components = components;
     }
 
     public void putFront(PipelineComponent component) {
-        logger.debug("putFront(component={}) - start", component);
+	logger.debug("putFront(component={}) - start", component);
 
-        component.setSuccessor((PipelineComponent) getComponents().getFirst());
-        component.setPipeline(this);
-        getComponents().addFirst(component);
+	component.setSuccessor((PipelineComponent) getComponents().getFirst());
+	component.setPipeline(this);
+	getComponents().addFirst(component);
     }
 
     public PipelineComponent removeFront() throws PipelineException {
-        logger.debug("removeFront() - start");
+	logger.debug("removeFront() - start");
 
-        PipelineComponent first = (PipelineComponent) getComponents().getFirst();
-        remove(first);
-        return first;
+	PipelineComponent first = (PipelineComponent) getComponents().getFirst();
+	remove(first);
+	return first;
     }
 
     public void remove(PipelineComponent component) throws PipelineException {
-        logger.debug("remove(component={}) - start", component);
+	logger.debug("remove(component={}) - start", component);
 
-        if (component == getNoHandler()) {
-            throw new PipelineException("Cannot remove the last handler");
-        }
+	if (component == getNoHandler()) {
+	    throw new PipelineException("Cannot remove the last handler");
+	}
 
-        if (!getComponents().remove(component)) {
-            throw new PipelineException("Cannot remove a non existent component from a pipeline");
-        }
+	if (!getComponents().remove(component)) {
+	    throw new PipelineException("Cannot remove a non existent component from a pipeline");
+	}
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        if(logger.isDebugEnabled())
-            logger.debug("canHandle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-        return true;
+	return true;
     }
 
     public void handle(char c) throws IllegalInputCharacterException, PipelineException {
-        if(logger.isDebugEnabled())
-            logger.debug("handle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("handle(c={}) - start", String.valueOf(c));
 
-        ((Handler) getComponents().getFirst()).handle(c);
+	((Handler) getComponents().getFirst()).handle(c);
     }
 
     public boolean allowForNoMoreInput() {
-        logger.debug("allowForNoMoreInput() - start");
+	logger.debug("allowForNoMoreInput() - start");
 
-        throw new IllegalStateException("you cannot call Pipeline.allowForNoMoreInput");
+	throw new IllegalStateException("you cannot call Pipeline.allowForNoMoreInput");
     }
 
     private PipelineComponent getNoHandler() {
-        logger.debug("getNoHandler() - start");
+	logger.debug("getNoHandler() - start");
 
-        return noHandler;
+	return noHandler;
     }
 
     private void setNoHandler(PipelineComponent noHandler) {
-        logger.debug("setNoHandler(noHandler={}) - start", noHandler);
+	logger.debug("setNoHandler(noHandler={}) - start", noHandler);
 
-        this.noHandler = noHandler;
+	this.noHandler = noHandler;
     }
 
     public void resetProducts() {
-        logger.debug("resetProducts() - start");
+	logger.debug("resetProducts() - start");
 
-        setProducts(new ArrayList());
+	setProducts(new ArrayList());
     }
 
     public void noMoreInput() {
-        logger.debug("noMoreInput() - start");
+	logger.debug("noMoreInput() - start");
 
-        ((Handler) getComponents().getFirst()).noMoreInput();
-        //thePieceIsDone();
+	((Handler) getComponents().getFirst()).noMoreInput();
+	// thePieceIsDone();
     }
 
-    
     private PipelineConfig pipelineConfig = new PipelineConfig();
+
     public PipelineConfig getPipelineConfig() {
-        return pipelineConfig;
+	return pipelineConfig;
     }
 
     public void setPipelineConfig(PipelineConfig pipelineConfig) {
-        this.pipelineConfig = pipelineConfig;
+	this.pipelineConfig = pipelineConfig;
     }
 
 }

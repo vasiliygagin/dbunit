@@ -21,35 +21,24 @@
 
 package org.dbunit.dataset;
 
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 19, 2002
  */
-public class NoPrimaryKeyException extends DataSetException
-{
-    public NoPrimaryKeyException()
-    {
+public class NoPrimaryKeyException extends DataSetException {
+    public NoPrimaryKeyException() {
     }
 
-    public NoPrimaryKeyException(String msg)
-    {
-        super(msg);
+    public NoPrimaryKeyException(String msg) {
+	super(msg);
     }
 
-    public NoPrimaryKeyException(String msg, Throwable e)
-    {
-        super(msg, e);
+    public NoPrimaryKeyException(String msg, Throwable e) {
+	super(msg, e);
     }
 
-    public NoPrimaryKeyException(Throwable e)
-    {
-        super(e);
+    public NoPrimaryKeyException(Throwable e) {
+	super(e);
     }
 }
-
-
-
-
-

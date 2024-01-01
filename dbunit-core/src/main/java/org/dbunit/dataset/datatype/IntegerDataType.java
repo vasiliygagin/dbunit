@@ -35,87 +35,70 @@ import java.sql.SQLException;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class IntegerDataType extends AbstractDataType
-{
+public class IntegerDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(IntegerDataType.class);
 
-    IntegerDataType(String name, int sqlType)
-    {
-        super(name, sqlType, Integer.class, true);
+    IntegerDataType(String name, int sqlType) {
+	super(name, sqlType, Integer.class, true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
-    public Object typeCast(Object value) throws TypeCastException
-    {
-        logger.debug("typeCast(value={}) - start", value);
+    public Object typeCast(Object value) throws TypeCastException {
+	logger.debug("typeCast(value={}) - start", value);
 
-        if (value == null || value == ITable.NO_VALUE)
-        {
-            return null;
-        }
+	if (value == null || value == ITable.NO_VALUE) {
+	    return null;
+	}
 
-        if (value instanceof Number)
-        {
-            return new Integer(((Number)value).intValue());
-        }
+	if (value instanceof Number) {
+	    return new Integer(((Number) value).intValue());
+	}
 
-        // Treat "false" as 0, "true" as 1
-        if (value instanceof String)
-        {
-            String string = (String) value;
+	// Treat "false" as 0, "true" as 1
+	if (value instanceof String) {
+	    String string = (String) value;
 
-            if ("false".equalsIgnoreCase(string))
-            {
-                return new Integer(0);
-            }
+	    if ("false".equalsIgnoreCase(string)) {
+		return new Integer(0);
+	    }
 
-            if ("true".equalsIgnoreCase(string))
-            {
-                return new Integer(1);
-            }
-        }
+	    if ("true".equalsIgnoreCase(string)) {
+		return new Integer(1);
+	    }
+	}
 
-        // Bugfix in release 2.4.6
-        String stringValue = value.toString().trim();
-        if(stringValue.length()<=0)
-        {
-            return null;
-        }
-        
-        try
-        {
-            return typeCast(new BigDecimal(stringValue));
-        }
-        catch (java.lang.NumberFormatException e)
-        {
-            throw new TypeCastException(value, this, e);
-        }
+	// Bugfix in release 2.4.6
+	String stringValue = value.toString().trim();
+	if (stringValue.length() <= 0) {
+	    return null;
+	}
+
+	try {
+	    return typeCast(new BigDecimal(stringValue));
+	} catch (java.lang.NumberFormatException e) {
+	    throw new TypeCastException(value, this, e);
+	}
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet)
-            throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-        int value = resultSet.getInt(column);
-        if (resultSet.wasNull())
-        {
-            return null;
-        }
-        return new Integer(value);
+	int value = resultSet.getInt(column);
+	if (resultSet.wasNull()) {
+	    return null;
+	}
+	return new Integer(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-            throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-        		new Object[]{value, new Integer(column), statement} );
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, new Integer(column), statement });
 
-        statement.setInt(column, ((Integer)typeCast(value)).intValue());
+	statement.setInt(column, ((Integer) typeCast(value)).intValue());
     }
 }
-

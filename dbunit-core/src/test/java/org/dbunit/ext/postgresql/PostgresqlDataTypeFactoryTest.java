@@ -36,7 +36,7 @@ import java.sql.Types;
 public class PostgresqlDataTypeFactoryTest extends TestCase {
 
     public PostgresqlDataTypeFactoryTest(String testName) {
-        super(testName);
+	super(testName);
     }
 
     /**
@@ -44,92 +44,91 @@ public class PostgresqlDataTypeFactoryTest extends TestCase {
      */
     public void testCreateUuidType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        // Test UUID type created properly
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "uuid";
+	// Test UUID type created properly
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "uuid";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof UuidType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof UuidType);
     }
 
     public void testCreateIntervalType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        // Test interval type created properly
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "interval";
+	// Test interval type created properly
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "interval";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof IntervalType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof IntervalType);
     }
 
     public void testCreateInetType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        // Test inet type created properly
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "inet";
+	// Test inet type created properly
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "inet";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof InetType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof InetType);
     }
-
 
     public void testCreateCitextType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        // Test CITEXT type created properly
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "citext";
+	// Test CITEXT type created properly
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "citext";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof CitextType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof CitextType);
     }
 
     public void testCreateEnumType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory(){
-            public boolean isEnumType(String sqlTypeName) {
-                if(sqlTypeName.equalsIgnoreCase("abc_enum")){
-                    return true;
-                }
-                return false;
-            }
-        };
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory() {
+	    public boolean isEnumType(String sqlTypeName) {
+		if (sqlTypeName.equalsIgnoreCase("abc_enum")) {
+		    return true;
+		}
+		return false;
+	    }
+	};
 
-        // Test Enum type created properly
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "abc_enum";
+	// Test Enum type created properly
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "abc_enum";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof GenericEnumType);
-        assertEquals("abc_enum", ((GenericEnumType)result).getSqlTypeName());
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof GenericEnumType);
+	assertEquals("abc_enum", ((GenericEnumType) result).getSqlTypeName());
     }
 
     public void testCreateDefaultType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        int sqlType = Types.INTEGER;
-        String sqlTypeName = "int";
+	int sqlType = Types.INTEGER;
+	String sqlTypeName = "int";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof IntegerDataType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof IntegerDataType);
     }
 
     public void testPostgreSQLOidType() throws Exception {
 
-        PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
+	PostgresqlDataTypeFactory instance = new PostgresqlDataTypeFactory();
 
-        int sqlType = Types.BIGINT;
-        String sqlTypeName = "oid";
+	int sqlType = Types.BIGINT;
+	String sqlTypeName = "oid";
 
-        DataType result = instance.createDataType(sqlType, sqlTypeName);
-        assertTrue(result instanceof PostgreSQLOidDataType);
+	DataType result = instance.createDataType(sqlType, sqlTypeName);
+	assertTrue(result instanceof PostgreSQLOidDataType);
     }
 }

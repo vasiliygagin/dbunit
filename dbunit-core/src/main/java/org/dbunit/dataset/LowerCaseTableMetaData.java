@@ -24,7 +24,6 @@ package org.dbunit.dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Specialized ITableMetaData implementation that convert the table name and
  * column names to lower case. Used in DbUnit own test suite to verify that
@@ -34,8 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since Feb 14, 2003
  */
-public class LowerCaseTableMetaData extends AbstractTableMetaData
-{
+public class LowerCaseTableMetaData extends AbstractTableMetaData {
 
     /**
      * Logger for this class
@@ -47,71 +45,57 @@ public class LowerCaseTableMetaData extends AbstractTableMetaData
     private final Column[] _primaryKeys;
 
     public LowerCaseTableMetaData(String tableName, Column[] columns)
-            //throws DataSetException
+    // throws DataSetException
     {
-        this(tableName, columns, new Column[0]);
+	this(tableName, columns, new Column[0]);
     }
 
-    public LowerCaseTableMetaData(String tableName, Column[] columns,
-            String[] primaryKeys) //throws DataSetException
+    public LowerCaseTableMetaData(String tableName, Column[] columns, String[] primaryKeys) // throws DataSetException
     {
-        this(tableName, columns, Columns.getColumns(primaryKeys, columns) );
+	this(tableName, columns, Columns.getColumns(primaryKeys, columns));
     }
 
-    public LowerCaseTableMetaData(ITableMetaData metaData) throws DataSetException
-    {
-        this(metaData.getTableName(), metaData.getColumns(),
-                metaData.getPrimaryKeys());
+    public LowerCaseTableMetaData(ITableMetaData metaData) throws DataSetException {
+	this(metaData.getTableName(), metaData.getColumns(), metaData.getPrimaryKeys());
     }
 
-    public LowerCaseTableMetaData(String tableName, Column[] columns,
-            Column[] primaryKeys) //throws DataSetException
+    public LowerCaseTableMetaData(String tableName, Column[] columns, Column[] primaryKeys) // throws DataSetException
     {
-        _tableName = tableName.toLowerCase();
-        _columns = createLowerColumns(columns);
-        _primaryKeys = createLowerColumns(primaryKeys);
+	_tableName = tableName.toLowerCase();
+	_columns = createLowerColumns(columns);
+	_primaryKeys = createLowerColumns(primaryKeys);
     }
 
-    private Column[] createLowerColumns(Column[] columns)
-    {
-        logger.debug("createLowerColumns(columns={}) - start", columns);
+    private Column[] createLowerColumns(Column[] columns) {
+	logger.debug("createLowerColumns(columns={}) - start", columns);
 
-        Column[] lowerColumns = new Column[columns.length];
-        for (int i = 0; i < columns.length; i++)
-        {
-            lowerColumns[i] = createLowerColumn(columns[i]);
-        }
+	Column[] lowerColumns = new Column[columns.length];
+	for (int i = 0; i < columns.length; i++) {
+	    lowerColumns[i] = createLowerColumn(columns[i]);
+	}
 
-        return lowerColumns;
+	return lowerColumns;
     }
 
-    private Column createLowerColumn(Column column)
-    {
-        logger.debug("createLowerColumn(column={}) - start", column);
+    private Column createLowerColumn(Column column) {
+	logger.debug("createLowerColumn(column={}) - start", column);
 
-        return new Column(
-                column.getColumnName().toLowerCase(),
-                column.getDataType(),
-                column.getSqlTypeName(),
-                column.getNullable(),
-                column.getDefaultValue());
+	return new Column(column.getColumnName().toLowerCase(), column.getDataType(), column.getSqlTypeName(),
+		column.getNullable(), column.getDefaultValue());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
-    public String getTableName()
-    {
-        return _tableName;
+    public String getTableName() {
+	return _tableName;
     }
 
-    public Column[] getColumns()
-    {
-        return _columns;
+    public Column[] getColumns() {
+	return _columns;
     }
 
-    public Column[] getPrimaryKeys()
-    {
-        return _primaryKeys;
+    public Column[] getPrimaryKeys() {
+	return _primaryKeys;
     }
 }

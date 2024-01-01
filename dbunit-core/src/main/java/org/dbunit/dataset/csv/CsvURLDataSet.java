@@ -26,9 +26,9 @@ import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
 
 /**
- * This class constructs an IDataSet given a base URL containing CSV
- * files. It handles translations of "null" (the string), into null.
- * Based HEAVILY on {@link org.dbunit.dataset.csv.CsvDataSet} 
+ * This class constructs an IDataSet given a base URL containing CSV files. It
+ * handles translations of "null" (the string), into null. Based HEAVILY on
+ * {@link org.dbunit.dataset.csv.CsvDataSet}
  *
  * @author Lenny Marks (lenny@aps.org)
  * @author Dion Gillard (diongillard@users.sourceforge.net)
@@ -38,16 +38,15 @@ import org.dbunit.dataset.DataSetException;
  */
 public class CsvURLDataSet extends CachedDataSet {
 
-	/** base url that data can be found at */
+    /** base url that data can be found at */
 //	private URL base;
-	
-	/**
-	 * Create a Data Set from CSV files, using the base URL provided to find data.
-	 */
-	public CsvURLDataSet(URL base) throws DataSetException
-	{
-        super(new CsvURLProducer(base, CsvDataSet.TABLE_ORDERING_FILE));
+
+    /**
+     * Create a Data Set from CSV files, using the base URL provided to find data.
+     */
+    public CsvURLDataSet(URL base) throws DataSetException {
+	super(new CsvURLProducer(base, CsvDataSet.TABLE_ORDERING_FILE));
 //		this.base = base;
-	}
+    }
 
 }

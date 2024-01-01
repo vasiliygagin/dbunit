@@ -40,17 +40,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This dataset implementation can read and write MS Excel documents. Each
- * sheet represents a table. The first row of a sheet defines the columns names
- * and remaining rows contains the data.
+ * This dataset implementation can read and write MS Excel documents. Each sheet
+ * represents a table. The first row of a sheet defines the columns names and
+ * remaining rows contains the data.
  *
  * @author Manuel Laflamme
  * @since Feb 21, 2003
  * @version $Revision$
  */
-public class XlsDataSet extends AbstractDataSet
-{
-    
+public class XlsDataSet extends AbstractDataSet {
+
     /**
      * Logger for this class
      */
@@ -58,60 +57,50 @@ public class XlsDataSet extends AbstractDataSet
 
     private final OrderedTableNameMap _tables;
 
-
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
-    public XlsDataSet(File file) throws IOException, DataSetException
-    {
-        this(new FileInputStream(file));
+    public XlsDataSet(File file) throws IOException, DataSetException {
+	this(new FileInputStream(file));
     }
 
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
-    public XlsDataSet(InputStream in) throws IOException, DataSetException
-    {
-        _tables = super.createTableNameMap();
+    public XlsDataSet(InputStream in) throws IOException, DataSetException {
+	_tables = super.createTableNameMap();
 
-        Workbook workbook;
-        try {
-            workbook = WorkbookFactory.create(in);
-        } catch (EncryptedDocumentException e) {
-            throw new IOException(e);
-        }
-		
-        int sheetCount = workbook.getNumberOfSheets();
-        for (int i = 0; i < sheetCount; i++)
-        {
-            ITable table = new XlsTable(workbook.getSheetName(i),
-                    workbook.getSheetAt(i));
-            _tables.add(table.getTableMetaData().getTableName(), table);            
-        }
+	Workbook workbook;
+	try {
+	    workbook = WorkbookFactory.create(in);
+	} catch (EncryptedDocumentException e) {
+	    throw new IOException(e);
+	}
+
+	int sheetCount = workbook.getNumberOfSheets();
+	for (int i = 0; i < sheetCount; i++) {
+	    ITable table = new XlsTable(workbook.getSheetName(i), workbook.getSheetAt(i));
+	    _tables.add(table.getTableMetaData().getTableName(), table);
+	}
     }
 
     /**
      * Write the specified dataset to the specified Excel document.
      */
-    public static void write(IDataSet dataSet, OutputStream out)
-            throws IOException, DataSetException
-    {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+    public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
+	logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
 
-        new XlsDataSetWriter().write(dataSet, out);
+	new XlsDataSetWriter().write(dataSet, out);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
-    protected ITableIterator createIterator(boolean reversed)
-            throws DataSetException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-    	ITable[] tables = (ITable[]) _tables.orderedValues().toArray(new ITable[0]);
-        return new DefaultTableIterator(tables, reversed);
+	ITable[] tables = (ITable[]) _tables.orderedValues().toArray(new ITable[0]);
+	return new DefaultTableIterator(tables, reversed);
     }
 }

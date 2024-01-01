@@ -34,32 +34,27 @@ import java.io.FileReader;
  * @since Apr 11, 2003
  * @version $Revision$
  */
-public class StreamingTableTest extends ForwardOnlyTableTest
-{
+public class StreamingTableTest extends ForwardOnlyTableTest {
     private static final String TEST_TABLE = "TEST_TABLE";
 
-    public StreamingTableTest(String s)
-    {
-        super(s);
+    public StreamingTableTest(String s) {
+	super(s);
     }
 
-    protected ITable createTable() throws Exception
-    {
-        FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
+    protected ITable createTable() throws Exception {
+	FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
 
 //        IDataSetProducer source = new DataSetProducerAdapter(new FlatXmlDataSet(reader));
-        IDataSetProducer source = new FlatXmlProducer(new InputSource(reader));
-        ITableIterator iterator = new StreamingDataSet(source).iterator();
-        while(iterator.next())
-        {
-            ITable table = iterator.getTable();
-            String tableName = table.getTableMetaData().getTableName();
-            if (tableName.equals(TEST_TABLE))
-            {
-                return table;
-            }
-        }
+	IDataSetProducer source = new FlatXmlProducer(new InputSource(reader));
+	ITableIterator iterator = new StreamingDataSet(source).iterator();
+	while (iterator.next()) {
+	    ITable table = iterator.getTable();
+	    String tableName = table.getTableMetaData().getTableName();
+	    if (tableName.equals(TEST_TABLE)) {
+		return table;
+	    }
+	}
 
-        throw new IllegalStateException();
+	throw new IllegalStateException();
     }
 }

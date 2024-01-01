@@ -42,99 +42,98 @@ public abstract class AbstractPipelineComponent implements PipelineComponent {
     private Helper helper;
 
     protected PipelineComponent getSuccessor() {
-        return successor;
+	return successor;
     }
 
     public Pipeline getPipeline() {
-        return pipeline;
+	return pipeline;
     }
 
     public void setPipeline(Pipeline pipeline) {
-        logger.debug("setPipeline(pipeline={}) - start", pipeline);
-        this.pipeline = pipeline;
+	logger.debug("setPipeline(pipeline={}) - start", pipeline);
+	this.pipeline = pipeline;
     }
 
     protected PipelineConfig getPipelineConfig() {
-        if(this.getPipeline() != null) {
-            return this.getPipeline().getPipelineConfig();
-        }
-        else {
-            throw new IllegalStateException("The pipeline is not set for this component. Cannot proceed");
-        }
+	if (this.getPipeline() != null) {
+	    return this.getPipeline().getPipelineConfig();
+	} else {
+	    throw new IllegalStateException("The pipeline is not set for this component. Cannot proceed");
+	}
     }
 
     public void setSuccessor(PipelineComponent successor) {
-        logger.debug("setSuccessor(successor={}) - start", successor);
-        this.successor = successor;
+	logger.debug("setSuccessor(successor={}) - start", successor);
+	this.successor = successor;
     }
 
-
     private StringBuffer getThePiece() {
-        return getPipeline().getCurrentProduct();
+	return getPipeline().getCurrentProduct();
     }
 
     public void handle(char c) throws IllegalInputCharacterException, PipelineException {
-        if(logger.isDebugEnabled())
-            logger.debug("handle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("handle(c={}) - start", String.valueOf(c));
 
-        if (!canHandle(c)) {
-            getSuccessor().handle(c);
-        } else {
-            getHelper().helpWith(c);
-        }
+	if (!canHandle(c)) {
+	    getSuccessor().handle(c);
+	} else {
+	    getHelper().helpWith(c);
+	}
     }
 
     public void noMoreInput() {
-        logger.debug("noMoreInput() - start");
+	logger.debug("noMoreInput() - start");
 
-        if (allowForNoMoreInput()) {
-            if (getSuccessor()!= null)
-                getSuccessor().noMoreInput();
-        }
+	if (allowForNoMoreInput()) {
+	    if (getSuccessor() != null)
+		getSuccessor().noMoreInput();
+	}
     }
 
     public boolean allowForNoMoreInput() {
-        logger.debug("allowForNoMoreInput() - start");
+	logger.debug("allowForNoMoreInput() - start");
 
-        return getHelper().allowForNoMoreInput();
+	return getHelper().allowForNoMoreInput();
     }
 
     protected static PipelineComponent createPipelineComponent(AbstractPipelineComponent handler, Helper helper) {
-        logger.debug("createPipelineComponent(handler={}, helper={}) - start", handler, helper);
-        helper.setHandler(handler);
-        handler.setHelper(helper);
-        return handler;
+	logger.debug("createPipelineComponent(handler={}, helper={}) - start", handler, helper);
+	helper.setHandler(handler);
+	handler.setHelper(helper);
+	return handler;
     }
 
     /**
      * Method invoked when the character should be accepted
+     * 
      * @param c
      */
     public void accept(char c) {
-        getThePiece().append(c);
+	getThePiece().append(c);
     }
 
     protected Helper getHelper() {
-        return helper;
+	return helper;
     }
 
     private void setHelper(Helper helper) {
-        logger.debug("setHelper(helper={}) - start", helper);
-        this.helper = helper;
+	logger.debug("setHelper(helper={}) - start", helper);
+	this.helper = helper;
     }
 
     static protected class IGNORE extends Helper {
-        public void helpWith(char c) {
-            // IGNORE
-        }
+	public void helpWith(char c) {
+	    // IGNORE
+	}
     }
 
     static protected class ACCEPT extends Helper {
-        public void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
-            
-            getHandler().accept(c);
-        }
+	public void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
+
+	    getHandler().accept(c);
+	}
     }
 }

@@ -24,11 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link FailureHandler} that collects the {@link Difference}s that
- * were found without throwing an exception.
+ * A {@link FailureHandler} that collects the {@link Difference}s that were
+ * found without throwing an exception.
  * <p>
- * You can use it as follows:
- * <code><pre>
+ * You can use it as follows: <code><pre>
  * IDataSet dataSet = getDataSet();
  * DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
  * //invoke the assertion with the custom handler
@@ -46,31 +45,27 @@ import java.util.List;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DiffCollectingFailureHandler extends DefaultFailureHandler 
-{
+public class DiffCollectingFailureHandler extends DefaultFailureHandler {
     private final List diffList = new ArrayList();
-    
-    public void handle(Difference diff) 
-    {
-        // Simply collect the difference without throwing an exception
-        this.diffList.add(diff);
+
+    public void handle(Difference diff) {
+	// Simply collect the difference without throwing an exception
+	this.diffList.add(diff);
     }
 
     /**
      * @return The list of collected {@link Difference}s
      */
-    public List getDiffList() 
-    {
-        return diffList;
+    public List getDiffList() {
+	return diffList;
     }
 
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(super.toString());
-        sb.append(DiffCollectingFailureHandler.class.getName()).append("[");
-        sb.append("diffList=").append(diffList);
-        sb.append("]");
-        return sb.toString();
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(super.toString());
+	sb.append(DiffCollectingFailureHandler.class.getName()).append("[");
+	sb.append("diffList=").append(diffList);
+	sb.append("]");
+	return sb.toString();
     }
 }

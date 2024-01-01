@@ -32,19 +32,17 @@ import java.sql.Connection;
  * @since Sep 3, 2003
  * @version $Revision$
  */
-public class OracleConnection extends DatabaseConnection
-{
+public class OracleConnection extends DatabaseConnection {
     /**
-     * Creates a oracle connection. Beware that the given schema is passed in to the parent class
-     * as "upper case" string.
+     * Creates a oracle connection. Beware that the given schema is passed in to the
+     * parent class as "upper case" string.
+     * 
      * @param connection
-     * @param schema The schema name
+     * @param schema     The schema name
      * @throws DatabaseUnitException
      */
-    public OracleConnection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema != null ? schema.toUpperCase() : null);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new OracleDataTypeFactory());
+    public OracleConnection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema != null ? schema.toUpperCase() : null);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
     }
 }

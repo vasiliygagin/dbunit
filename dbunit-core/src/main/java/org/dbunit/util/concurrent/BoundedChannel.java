@@ -11,17 +11,20 @@
   11Jun1998  dl               Create public version
 */
 
-
 package org.dbunit.util.concurrent;
 
 /**
- * A channel that is known to have a capacity, signifying
- * that <code>put</code> operations may block when the
- * capacity is reached. Various implementations may have
- * intrinsically hard-wired capacities, capacities that are fixed upon
+ * A channel that is known to have a capacity, signifying that <code>put</code>
+ * operations may block when the capacity is reached. Various implementations
+ * may have intrinsically hard-wired capacities, capacities that are fixed upon
  * construction, or dynamically adjustable capacities.
+ * 
  * @see DefaultChannelCapacity
- * <p>[<a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html"> Introduction to this package. </a>] <p>
+ *      <p>
+ *      [<a href=
+ *      "http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html">
+ *      Introduction to this package. </a>]
+ *      <p>
  * 
  * @author Doug Lea
  * @author Last changed by: $Author$
@@ -30,9 +33,10 @@ package org.dbunit.util.concurrent;
  * 
  */
 public interface BoundedChannel extends Channel {
-  /** 
-   * Return the maximum number of elements that can be held.
-   * @return the capacity of this channel.
-   **/
-  public int capacity();
+    /**
+     * Return the maximum number of elements that can be held.
+     * 
+     * @return the capacity of this channel.
+     **/
+    public int capacity();
 }

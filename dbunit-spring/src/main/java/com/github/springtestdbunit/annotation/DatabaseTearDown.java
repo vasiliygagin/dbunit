@@ -27,8 +27,9 @@ import java.lang.annotation.Target;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
- * Test annotation which indicates how to put a database into a know state after tests have run. This annotation can be
- * placed on a class or on methods. When placed on a class the setup is applied after each test methods is executed.
+ * Test annotation which indicates how to put a database into a know state after
+ * tests have run. This annotation can be placed on a class or on methods. When
+ * placed on a class the setup is applied after each test methods is executed.
  *
  * @see DatabaseSetup
  * @see ExpectedDatabase
@@ -44,25 +45,30 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @Repeatable(DatabaseTearDowns.class)
 public @interface DatabaseTearDown {
 
-	/**
-	 * The name of the connection that should be used. Can refer to a connection specified in
-	 * {@link DbUnitConfiguration @DbUnitConfiguration} or left blank to use the default connection.
-	 * @return the connection
-	 */
-	String connection() default "";
+    /**
+     * The name of the connection that should be used. Can refer to a connection
+     * specified in {@link DbUnitConfiguration @DbUnitConfiguration} or left blank
+     * to use the default connection.
+     * 
+     * @return the connection
+     */
+    String connection() default "";
 
-	/**
-	 * Determines the type of {@link DatabaseOperation operation} that will be used to reset the database.
-	 * @return The type of operation used to reset the database
-	 */
-	DatabaseOperation type() default DatabaseOperation.CLEAN_INSERT;
+    /**
+     * Determines the type of {@link DatabaseOperation operation} that will be used
+     * to reset the database.
+     * 
+     * @return The type of operation used to reset the database
+     */
+    DatabaseOperation type() default DatabaseOperation.CLEAN_INSERT;
 
-	/**
-	 * Provides the locations of the datasets that will be used to reset the database. If no locations are specified the
-	 * full database dataset is used.
-	 * @return The dataset locations
-	 * @see DbUnitConfiguration#dataSetLoader()
-	 */
-	String[] value() default {};
+    /**
+     * Provides the locations of the datasets that will be used to reset the
+     * database. If no locations are specified the full database dataset is used.
+     * 
+     * @return The dataset locations
+     * @see DbUnitConfiguration#dataSetLoader()
+     */
+    String[] value() default {};
 
 }

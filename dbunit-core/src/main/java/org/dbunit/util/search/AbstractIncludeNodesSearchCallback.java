@@ -28,17 +28,16 @@ import java.util.Set;
  * @since Aug 25, 2005
  * 
  */
-public abstract class AbstractIncludeNodesSearchCallback extends
-    AbstractNodesFilterSearchCallback {
+public abstract class AbstractIncludeNodesSearchCallback extends AbstractNodesFilterSearchCallback {
 
-  public AbstractIncludeNodesSearchCallback(Set allowedNodes) {
-    super();
-    setAllowedNodes(allowedNodes);
-  }
+    public AbstractIncludeNodesSearchCallback(Set allowedNodes) {
+	super();
+	setAllowedNodes(allowedNodes);
+    }
 
-  public AbstractIncludeNodesSearchCallback(Object[] allowedNodes) {
-    super();
-    setAllowedNodes(allowedNodes);
-  }
+    public AbstractIncludeNodesSearchCallback(Object[] allowedNodes) {
+	super();
+	setAllowedNodes(allowedNodes);
+    }
 
 }

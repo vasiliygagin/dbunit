@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class HsqldbDataTypeFactory extends DefaultDataTypeFactory
-{
+public class HsqldbDataTypeFactory extends DefaultDataTypeFactory {
 
     /**
      * Logger for this class
@@ -47,26 +46,23 @@ public class HsqldbDataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"hsql"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "hsql" });
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts()
-    {
-      return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        if (sqlTypeName.equals("BOOLEAN"))
-        {
-            return DataType.BOOLEAN;
-        }
+	if (sqlTypeName.equals("BOOLEAN")) {
+	    return DataType.BOOLEAN;
+	}
 
-        return super.createDataType(sqlType, sqlTypeName);
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }

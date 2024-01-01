@@ -26,22 +26,24 @@ import org.dbunit.dataset.ReplacementDataSet;
  */
 public interface DataSetModifier {
 
-	/**
-	 * No-op {@link DataSetModifier}.
-	 */
-	public static final DataSetModifier NONE = new DataSetModifier() {
+    /**
+     * No-op {@link DataSetModifier}.
+     */
+    public static final DataSetModifier NONE = new DataSetModifier() {
 
-		public IDataSet modify(IDataSet dataSet) {
-			return dataSet;
-		}
+	public IDataSet modify(IDataSet dataSet) {
+	    return dataSet;
+	}
 
-	};
+    };
 
-	/**
-	 * Modify the given {@link IDataSet}, for example by wrapping it with a {@link ReplacementDataSet}.
-	 * @param dataSet the {@link IDataSet} to modify
-	 * @return the modified {@link IDataSet}
-	 */
-	IDataSet modify(IDataSet dataSet);
+    /**
+     * Modify the given {@link IDataSet}, for example by wrapping it with a
+     * {@link ReplacementDataSet}.
+     * 
+     * @param dataSet the {@link IDataSet} to modify
+     * @return the modified {@link IDataSet}
+     */
+    IDataSet modify(IDataSet dataSet);
 
 }

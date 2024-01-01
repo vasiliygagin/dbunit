@@ -28,17 +28,14 @@ import org.dbunit.testutil.TestUtils;
  * @since 2015/01/27
  * @version $Revision$
  */
-public class XlsxDataSetTest extends XlsDataSetTest
-{
-    public XlsxDataSetTest(String s)
-    {
-        super(s);
+public class XlsxDataSetTest extends XlsDataSetTest {
+    public XlsxDataSetTest(String s) {
+	super(s);
     }
 
     @Override
-    protected IDataSet createDataSet() throws Exception
-    {
-        return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xlsx"));
+    protected IDataSet createDataSet() throws Exception {
+	return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xlsx"));
     }
 
 }

@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since Apr 6, 2003
  */
-public class SequenceTableIterator implements ITableIterator
-{
+public class SequenceTableIterator implements ITableIterator {
 
     /**
      * Logger for this class
@@ -46,34 +45,30 @@ public class SequenceTableIterator implements ITableIterator
     private final IDataSet _dataSet;
     private int _index = -1;
 
-    public SequenceTableIterator(String[] tableNames, IDataSet dataSet)
-    {
-        _tableNames = tableNames;
-        _dataSet = dataSet;
+    public SequenceTableIterator(String[] tableNames, IDataSet dataSet) {
+	_tableNames = tableNames;
+	_dataSet = dataSet;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
-    public boolean next() throws DataSetException
-    {
-        logger.debug("next() - start");
+    public boolean next() throws DataSetException {
+	logger.debug("next() - start");
 
-        _index++;
-        return _index < _tableNames.length;
+	_index++;
+	return _index < _tableNames.length;
     }
 
-    public ITableMetaData getTableMetaData() throws DataSetException
-    {
-        logger.debug("getTableMetaData() - start");
+    public ITableMetaData getTableMetaData() throws DataSetException {
+	logger.debug("getTableMetaData() - start");
 
-        return _dataSet.getTableMetaData(_tableNames[_index]);
+	return _dataSet.getTableMetaData(_tableNames[_index]);
     }
 
-    public ITable getTable() throws DataSetException
-    {
-        logger.debug("getTable() - start");
+    public ITable getTable() throws DataSetException {
+	logger.debug("getTable() - start");
 
-        return _dataSet.getTable(_tableNames[_index]);
+	return _dataSet.getTable(_tableNames[_index]);
     }
 }

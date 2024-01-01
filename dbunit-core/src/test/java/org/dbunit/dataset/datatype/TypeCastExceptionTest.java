@@ -27,21 +27,18 @@ import junit.framework.TestCase;
  * @version $Revision$
  * @since 2.3.0
  */
-public class TypeCastExceptionTest extends TestCase 
-{
+public class TypeCastExceptionTest extends TestCase {
 
-	public void testCreationWithNullValue()
-	{
-		TypeCastException exception = new TypeCastException(null, DataType.BIGINT);
-		assertEquals("Unable to typecast value <null> of type <null> to BIGINT", exception.getMessage());
-	}
-	
-	public void testCreationWithNullDatatype()
-	{
-		String value = "myStringObject";
-		TypeCastException exception = new TypeCastException(value, (DataType)null);
-		assertEquals("Unable to typecast value <"+value+"> of type <java.lang.String> to null", exception.getMessage());
-	}
+    public void testCreationWithNullValue() {
+	TypeCastException exception = new TypeCastException(null, DataType.BIGINT);
+	assertEquals("Unable to typecast value <null> of type <null> to BIGINT", exception.getMessage());
+    }
+
+    public void testCreationWithNullDatatype() {
+	String value = "myStringObject";
+	TypeCastException exception = new TypeCastException(value, (DataType) null);
+	assertEquals("Unable to typecast value <" + value + "> of type <java.lang.String> to null",
+		exception.getMessage());
+    }
 
 }
-

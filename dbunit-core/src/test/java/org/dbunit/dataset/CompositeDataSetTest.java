@@ -35,72 +35,53 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$ $Date$
  * @since 1.0 (Feb 22, 2002)
  */
-public class CompositeDataSetTest extends AbstractDataSetTest
-{
-    public CompositeDataSetTest(String s)
-    {
-        super(s);
+public class CompositeDataSetTest extends AbstractDataSetTest {
+    public CompositeDataSetTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        IDataSet dataSet1 = new XmlDataSet(
-                TestUtils.getFileReader("xml/compositeDataSetTest1.xml"));
-        assertTrue("count before combine (1)",
-                dataSet1.getTableNames().length < getExpectedNames().length);
+    protected IDataSet createDataSet() throws Exception {
+	IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/compositeDataSetTest1.xml"));
+	assertTrue("count before combine (1)", dataSet1.getTableNames().length < getExpectedNames().length);
 
-        IDataSet dataSet2 = new XmlDataSet(
-                TestUtils.getFileReader("xml/compositeDataSetTest2.xml"));
-        assertTrue("count before combine (2)",
-                dataSet2.getTableNames().length < getExpectedNames().length);
+	IDataSet dataSet2 = new XmlDataSet(TestUtils.getFileReader("xml/compositeDataSetTest2.xml"));
+	assertTrue("count before combine (2)", dataSet2.getTableNames().length < getExpectedNames().length);
 
-        return new CompositeDataSet(dataSet1, dataSet2);
+	return new CompositeDataSet(dataSet1, dataSet2);
     }
 
-    protected IDataSet createDuplicateDataSet() throws Exception
-    {
-        return createCompositeDataSet(false, false);
+    protected IDataSet createDuplicateDataSet() throws Exception {
+	return createCompositeDataSet(false, false);
     }
 
-    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception 
-    {
-        return createCompositeDataSet(false, true);
+    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
+	return createCompositeDataSet(false, true);
     }
 
-    
-    public void testCombineTables() throws Exception
-    {
-        CompositeDataSet combinedDataSet = createCompositeDataSet(true, false);
-        String[] tableNames = combinedDataSet.getTableNames();
-        assertEquals("table count combined", 2, tableNames.length);
-        assertEquals("DUPLICATE_TABLE", tableNames[0]);
-        assertEquals("EMPTY_TABLE", tableNames[1]);
+    public void testCombineTables() throws Exception {
+	CompositeDataSet combinedDataSet = createCompositeDataSet(true, false);
+	String[] tableNames = combinedDataSet.getTableNames();
+	assertEquals("table count combined", 2, tableNames.length);
+	assertEquals("DUPLICATE_TABLE", tableNames[0]);
+	assertEquals("EMPTY_TABLE", tableNames[1]);
     }
 
-    
-    private CompositeDataSet createCompositeDataSet(boolean combined, boolean multipleCase) 
-    throws DataSetException, FileNotFoundException, IOException 
-    {
-        IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(
-                TestUtils.getFileReader("xml/compositeDataSetDuplicateTest1.xml"));
-        assertTrue("count before combine (1)",
-                dataSet1.getTableNames().length < getExpectedDuplicateNames().length);
+    private CompositeDataSet createCompositeDataSet(boolean combined, boolean multipleCase)
+	    throws DataSetException, FileNotFoundException, IOException {
+	IDataSet dataSet1 = new FlatXmlDataSetBuilder()
+		.build(TestUtils.getFileReader("xml/compositeDataSetDuplicateTest1.xml"));
+	assertTrue("count before combine (1)", dataSet1.getTableNames().length < getExpectedDuplicateNames().length);
 
-        IDataSet dataSet2 = new FlatXmlDataSetBuilder().build(
-                TestUtils.getFileReader("xml/compositeDataSetDuplicateTest2.xml"));
-        assertTrue("count before combine (2)",
-                dataSet2.getTableNames().length < getExpectedDuplicateNames().length);
+	IDataSet dataSet2 = new FlatXmlDataSetBuilder()
+		.build(TestUtils.getFileReader("xml/compositeDataSetDuplicateTest2.xml"));
+	assertTrue("count before combine (2)", dataSet2.getTableNames().length < getExpectedDuplicateNames().length);
 
-        if(multipleCase){
-            dataSet2 = new LowerCaseDataSet(dataSet2);
-        }
-        
-        CompositeDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2, combined);
-        return dataSet;
+	if (multipleCase) {
+	    dataSet2 = new LowerCaseDataSet(dataSet2);
+	}
+
+	CompositeDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2, combined);
+	return dataSet;
     }
 
 }
-
-
-
-

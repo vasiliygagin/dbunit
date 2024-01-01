@@ -21,7 +21,6 @@
 
 package org.dbunit.dataset;
 
-
 /**
  * A table represents a collection of tabular data.
  *
@@ -29,8 +28,7 @@ package org.dbunit.dataset;
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public interface ITable
-{
+public interface ITable {
     public static final Object NO_VALUE = new Object();
 
     /**
@@ -45,20 +43,15 @@ public interface ITable
 
     /**
      * Returns this table value for the specified row and column.
-     * @param row The row index, starting with 0
+     * 
+     * @param row    The row index, starting with 0
      * @param column The name of the column
      * @return The value
      *
-     * @throws NoSuchColumnException if specified column name do not exist in
-     * this table
-     * @throws RowOutOfBoundsException if specified row is less than zero or
-     * equals or greater than <code>getRowCount</code>
+     * @throws NoSuchColumnException   if specified column name do not exist in this
+     *                                 table
+     * @throws RowOutOfBoundsException if specified row is less than zero or equals
+     *                                 or greater than <code>getRowCount</code>
      */
     public Object getValue(int row, String column) throws DataSetException;
 }
-
-
-
-
-
-

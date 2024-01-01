@@ -28,15 +28,11 @@ import junit.framework.TestSuite;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(BatchStatementDecoratorTest.class));
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(BatchStatementDecoratorTest.class));
 
-        return suite;
+	return suite;
     }
 }
-
-

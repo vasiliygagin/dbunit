@@ -21,8 +21,6 @@
 
 package org.dbunit.dataset.common.handlers;
 
-
-
 /**
  * @author fede
  * @author Last changed by: $Author$
@@ -31,13 +29,14 @@ package org.dbunit.dataset.common.handlers;
  */
 public class NoHandler extends AbstractPipelineComponent {
 
-    private NoHandler() {}
+    private NoHandler() {
+    }
 
-    public static final PipelineComponent IGNORE () {
-        return createPipelineComponent(new NoHandler(), new ACCEPT());
+    public static final PipelineComponent IGNORE() {
+	return createPipelineComponent(new NoHandler(), new ACCEPT());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        throw new IllegalInputCharacterException("No character can be handled. Seen: '" + c + "'");
+	throw new IllegalInputCharacterException("No character can be handled. Seen: '" + c + "'");
     }
 }

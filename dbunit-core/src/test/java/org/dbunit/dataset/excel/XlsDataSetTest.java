@@ -40,93 +40,75 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 22, 2003
  * @version $Revision$
  */
-public class XlsDataSetTest extends AbstractDataSetTest
-{
-    public XlsDataSetTest(String s)
-    {
-        super(s);
+public class XlsDataSetTest extends AbstractDataSetTest {
+    public XlsDataSetTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xls"));
+    protected IDataSet createDataSet() throws Exception {
+	return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xls"));
     }
 
-    protected IDataSet createDuplicateDataSet() throws Exception
-    {
-        return new XlsDataSet(
-                TestUtils.getFile("xml/dataSetDuplicateTest.xls"));
+    protected IDataSet createDuplicateDataSet() throws Exception {
+	return new XlsDataSet(TestUtils.getFile("xml/dataSetDuplicateTest.xls"));
     }
 
-    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception 
-    {
-        throw new UnsupportedOperationException("Excel does not support the same sheet name with different cases in one file");
+    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
+	throw new UnsupportedOperationException(
+		"Excel does not support the same sheet name with different cases in one file");
     }
 
-    public void testCreateMultipleCaseDuplicateDataSet() throws Exception 
-    {
-        // Not supported
+    public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
+	// Not supported
     }
 
-    public void testWrite() throws Exception
-    {
-        IDataSet expectedDataSet = createDataSet();
-        File tempFile = File.createTempFile("xlsDataSetTest", ".xls");
-        try
-        {
-            OutputStream out = new FileOutputStream(tempFile);
+    public void testWrite() throws Exception {
+	IDataSet expectedDataSet = createDataSet();
+	File tempFile = File.createTempFile("xlsDataSetTest", ".xls");
+	try {
+	    OutputStream out = new FileOutputStream(tempFile);
 
-            // write dataset in temp file
-            try
-            {
-                XlsDataSet.write(expectedDataSet, out);
-            }
-            finally
-            {
-                out.close();
-            }
+	    // write dataset in temp file
+	    try {
+		XlsDataSet.write(expectedDataSet, out);
+	    } finally {
+		out.close();
+	    }
 
-            // load new dataset from temp file
-            InputStream in = new FileInputStream(tempFile);
-            try
-            {
-                IDataSet actualDataSet = new XlsDataSet(in);
+	    // load new dataset from temp file
+	    InputStream in = new FileInputStream(tempFile);
+	    try {
+		IDataSet actualDataSet = new XlsDataSet(in);
 
-                // verify table count
-                assertEquals("table count", expectedDataSet.getTableNames().length,
-                        actualDataSet.getTableNames().length);
+		// verify table count
+		assertEquals("table count", expectedDataSet.getTableNames().length,
+			actualDataSet.getTableNames().length);
 
-                // verify each table
-                ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-                ITable[] actual = DataSetUtils.getTables(actualDataSet);
-                assertEquals("table count", expected.length, actual.length);
-                for (int i = 0; i < expected.length; i++)
-                {
-                    String expectedName = expected[i].getTableMetaData().getTableName();
-                    String actualName = actual[i].getTableMetaData().getTableName();
-                    assertEquals("table name", expectedName, actualName);
+		// verify each table
+		ITable[] expected = DataSetUtils.getTables(expectedDataSet);
+		ITable[] actual = DataSetUtils.getTables(actualDataSet);
+		assertEquals("table count", expected.length, actual.length);
+		for (int i = 0; i < expected.length; i++) {
+		    String expectedName = expected[i].getTableMetaData().getTableName();
+		    String actualName = actual[i].getTableMetaData().getTableName();
+		    assertEquals("table name", expectedName, actualName);
 
-                    assertTrue("not same instance", expected[i] != actual[i]);
-                    Assertion.assertEquals(expected[i], actual[i]);
-                }
-            }
-            finally
-            {
-                in.close();
-            }
-        }
-        finally
-        {
-            tempFile.delete();
-        }
+		    assertTrue("not same instance", expected[i] != actual[i]);
+		    Assertion.assertEquals(expected[i], actual[i]);
+		}
+	    } finally {
+		in.close();
+	    }
+	} finally {
+	    tempFile.delete();
+	}
     }
 
-    public void testColumnNameWithSpace() throws Exception
-    {
-    		IDataSet dataSet = new XlsDataSet(TestUtils.getFileInputStream("xml/contactor.xls"));
-    		ITable customerTable = dataSet.getTable("customer");
-            Column column = Columns.getColumn("name",  customerTable.getTableMetaData().getColumns());
-            assertNotNull(column);
+    public void testColumnNameWithSpace() throws Exception {
+	IDataSet dataSet = new XlsDataSet(TestUtils.getFileInputStream("xml/contactor.xls"));
+	ITable customerTable = dataSet.getTable("customer");
+	Column column = Columns.getColumn("name", customerTable.getTableMetaData().getColumns());
+	assertNotNull(column);
     }
 
 }

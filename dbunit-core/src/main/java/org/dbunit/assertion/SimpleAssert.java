@@ -32,62 +32,58 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class SimpleAssert 
-{
+public class SimpleAssert {
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(SimpleAssert.class);
 
     private FailureHandler failureHandler;
-    
-    public SimpleAssert(FailureHandler failureHandler)
-    {
-        if (failureHandler == null) {
-            throw new NullPointerException(
-                    "The parameter 'failureHandler' must not be null");
-        }
-        this.failureHandler = failureHandler;
-    }
-    
-    /**
-     * Asserts that propertyName is not a null String and has a length greater
-     * than zero.
-     */
-    protected void assertNotNullNorEmpty( String propertyName, String property )
-    {
-        logger.debug("assertNotNullNorEmpty(propertyName={}, property={}) - start", propertyName, property);
 
-        assertTrue( propertyName + " is null", property != null );
-        assertTrue( "Invalid " + propertyName, property.trim()
-                .length() > 0 );
+    public SimpleAssert(FailureHandler failureHandler) {
+	if (failureHandler == null) {
+	    throw new NullPointerException("The parameter 'failureHandler' must not be null");
+	}
+	this.failureHandler = failureHandler;
+    }
+
+    /**
+     * Asserts that propertyName is not a null String and has a length greater than
+     * zero.
+     */
+    protected void assertNotNullNorEmpty(String propertyName, String property) {
+	logger.debug("assertNotNullNorEmpty(propertyName={}, property={}) - start", propertyName, property);
+
+	assertTrue(propertyName + " is null", property != null);
+	assertTrue("Invalid " + propertyName, property.trim().length() > 0);
     }
 
     public void assertTrue(boolean condition) {
-        assertTrue(null, condition);
+	assertTrue(null, condition);
     }
-    
+
     /**
      * Evaluate if the given condition is <code>true</code> or not.
-     * @param message message displayed if assertion is false
+     * 
+     * @param message   message displayed if assertion is false
      * @param condition condition to be tested
      */
     public void assertTrue(String message, boolean condition) {
-        if (!condition) {
-            fail( message );
-        }
+	if (!condition) {
+	    fail(message);
+	}
     }
 
     public void assertNotNull(Object object) {
-        assertTrue(null, object!=null);
+	assertTrue(null, object != null);
     }
 
     public void assertNotNull(String message, Object object) {
-        assertTrue(message, object!=null);
+	assertTrue(message, object != null);
     }
-    
+
     public void fail(String message) {
-        throw failureHandler.createFailure(message);
+	throw failureHandler.createFailure(message);
     }
 
 }

@@ -33,40 +33,35 @@ import org.dbunit.database.statement.MockPreparedStatement;
  * @version $Revision$
  * @since 2.3.0
  */
-public class BlobDataTypeTest extends TestCase 
-{
-	private DataType TYPE = DataType.BLOB;
+public class BlobDataTypeTest extends TestCase {
+    private DataType TYPE = DataType.BLOB;
 
-	public BlobDataTypeTest(String name) {
-		super(name);
-	}
+    public BlobDataTypeTest(String name) {
+	super(name);
+    }
 
-	public void testGetSqlType()
-	{
-		assertEquals(Types.BLOB, TYPE.getSqlType());
-	}
+    public void testGetSqlType() {
+	assertEquals(Types.BLOB, TYPE.getSqlType());
+    }
 
-	public void testSetSqlValue() throws Exception
-	{
-		// Create a hsqldb specific blob
-		byte[] byteArray = new byte[]{1, 2, 3, 4, 5, 6};
-		Blob blob = new TestBlob(byteArray);
-		MockPreparedStatement statement = new MockPreparedStatement();
-		TYPE.setSqlValue(blob, 1, statement);
-		assertEquals(1, statement.getLastSetObjectParamIndex());
-		assertEquals(Types.BLOB, statement.getLastSetObjectTargetSqlType());
-		assertEquals(byte[].class, statement.getLastSetObjectParamValue().getClass());
-		ArrayAssert.assertEquals(byteArray, (byte[])statement.getLastSetObjectParamValue());
-	}
+    public void testSetSqlValue() throws Exception {
+	// Create a hsqldb specific blob
+	byte[] byteArray = new byte[] { 1, 2, 3, 4, 5, 6 };
+	Blob blob = new TestBlob(byteArray);
+	MockPreparedStatement statement = new MockPreparedStatement();
+	TYPE.setSqlValue(blob, 1, statement);
+	assertEquals(1, statement.getLastSetObjectParamIndex());
+	assertEquals(Types.BLOB, statement.getLastSetObjectTargetSqlType());
+	assertEquals(byte[].class, statement.getLastSetObjectParamValue().getClass());
+	ArrayAssert.assertEquals(byteArray, (byte[]) statement.getLastSetObjectParamValue());
+    }
 
-	
-	public void testAsString() throws Exception {
-        assertEquals("name", "BLOB", TYPE.toString());
-	}
+    public void testAsString() throws Exception {
+	assertEquals("name", "BLOB", TYPE.toString());
+    }
 
-	public void testGetTypeClass() throws Exception {
-		assertEquals("class", byte[].class, TYPE.getTypeClass());
-	}
-
+    public void testGetTypeClass() throws Exception {
+	assertEquals("class", byte[].class, TYPE.getTypeClass());
+    }
 
 }

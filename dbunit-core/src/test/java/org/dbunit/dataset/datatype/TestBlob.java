@@ -30,69 +30,56 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since 2.4.8
  */
-public class TestBlob implements Blob
-{
+public class TestBlob implements Blob {
     private byte[] data = new byte[0];
 
-    public TestBlob(byte[] data)
-    {
-        this.data = data;
+    public TestBlob(byte[] data) {
+	this.data = data;
     }
 
-    public long length() throws SQLException
-    { // used in DbUnit
-        return data.length;
+    public long length() throws SQLException { // used in DbUnit
+	return data.length;
     }
 
-    public byte[] getBytes(long pos, int length) throws SQLException
-    { // used in DbUnit
-        byte[] result = new byte[length];
-        System.arraycopy(data, (int) pos - 1, result, 0, length);
-        return result;
+    public byte[] getBytes(long pos, int length) throws SQLException { // used in DbUnit
+	byte[] result = new byte[length];
+	System.arraycopy(data, (int) pos - 1, result, 0, length);
+	return result;
     }
 
-    public InputStream getBinaryStream() throws SQLException
-    {
-        throw new SQLException("TestBlob does not support getBinaryStream()");
+    public InputStream getBinaryStream() throws SQLException {
+	throw new SQLException("TestBlob does not support getBinaryStream()");
     }
 
-    public long position(byte[] pattern, long start) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support position(byte[], long)");
+    public long position(byte[] pattern, long start) throws SQLException {
+	throw new SQLException("TestBlob does not support position(byte[], long)");
     }
 
-    public long position(Blob pattern, long start) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support position(Blob, long)");
+    public long position(Blob pattern, long start) throws SQLException {
+	throw new SQLException("TestBlob does not support position(Blob, long)");
     }
 
-    public int setBytes(long pos, byte[] bytes) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support setBytes(long, byte[])");
+    public int setBytes(long pos, byte[] bytes) throws SQLException {
+	throw new SQLException("TestBlob does not support setBytes(long, byte[])");
     }
 
-    public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support setBytes(long, byte[], int, int)");
+    public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
+	throw new SQLException("TestBlob does not support setBytes(long, byte[], int, int)");
     }
 
-    public OutputStream setBinaryStream(long pos) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support setBinaryStream(long)");
+    public OutputStream setBinaryStream(long pos) throws SQLException {
+	throw new SQLException("TestBlob does not support setBinaryStream(long)");
     }
 
-    public void truncate(long len) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support truncate(long)");
+    public void truncate(long len) throws SQLException {
+	throw new SQLException("TestBlob does not support truncate(long)");
     }
 
-    public void free() throws SQLException
-    {
-        throw new SQLException("TestBlob does not support free()");
+    public void free() throws SQLException {
+	throw new SQLException("TestBlob does not support free()");
     }
 
-    public InputStream getBinaryStream(long pos, long length) throws SQLException
-    {
-        throw new SQLException("TestBlob does not support getBinaryStream(long, long)");
+    public InputStream getBinaryStream(long pos, long length) throws SQLException {
+	throw new SQLException("TestBlob does not support getBinaryStream(long, long)");
     }
 }

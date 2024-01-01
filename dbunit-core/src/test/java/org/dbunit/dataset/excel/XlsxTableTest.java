@@ -28,17 +28,14 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$ $Date$
  * @since 2015/01/27
  */
-public class XlsxTableTest extends XlsTableTest
-{
-    
-    public XlsxTableTest(String s)
-    {
-        super(s);
+public class XlsxTableTest extends XlsTableTest {
+
+    public XlsxTableTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        return new XlsDataSet(TestUtils.getFile("xml/tableTest.xlsx"));
+    protected IDataSet createDataSet() throws Exception {
+	return new XlsDataSet(TestUtils.getFile("xml/tableTest.xlsx"));
     }
 
 }

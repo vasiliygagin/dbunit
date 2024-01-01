@@ -32,7 +32,8 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.DataSetModifier;
 
 /**
- * Test annotation that can be used to assert that a database is in given state after tests have run.
+ * Test annotation that can be used to assert that a database is in given state
+ * after tests have run.
  *
  * @see DbUnitTestExecutionListener
  *
@@ -46,59 +47,72 @@ import com.github.springtestdbunit.dataset.DataSetModifier;
 @Repeatable(ExpectedDatabases.class)
 public @interface ExpectedDatabase {
 
-	/**
-	 * The name of the connection that should be used when verifying data. Can refer to a connection specified in
-	 * {@link DbUnitConfiguration @DbUnitConfiguration} or left blank to use the default connection.
-	 * @return the connection
-	 */
-	String connection() default "";
+    /**
+     * The name of the connection that should be used when verifying data. Can refer
+     * to a connection specified in {@link DbUnitConfiguration @DbUnitConfiguration}
+     * or left blank to use the default connection.
+     * 
+     * @return the connection
+     */
+    String connection() default "";
 
-	/**
-	 * Provides the location of the dataset that will be used to test the database.
-	 * @return The dataset locations
-	 * @see DbUnitConfiguration#dataSetLoader()
-	 */
-	String value() default "";
+    /**
+     * Provides the location of the dataset that will be used to test the database.
+     * 
+     * @return The dataset locations
+     * @see DbUnitConfiguration#dataSetLoader()
+     */
+    String value() default "";
 
-	/**
-	 * Database assertion mode to use. Default is {@link DatabaseAssertionMode#DEFAULT}.
-	 * @return Database assertion mode to use
-	 */
-	DatabaseAssertionMode assertionMode() default DatabaseAssertionMode.DEFAULT;
+    /**
+     * Database assertion mode to use. Default is
+     * {@link DatabaseAssertionMode#DEFAULT}.
+     * 
+     * @return Database assertion mode to use
+     */
+    DatabaseAssertionMode assertionMode() default DatabaseAssertionMode.DEFAULT;
 
-	/**
-	 * Optional table name that can be used to limit the comparison to a specific table.
-	 * @return the table name
-	 */
-	String table() default "";
+    /**
+     * Optional table name that can be used to limit the comparison to a specific
+     * table.
+     * 
+     * @return the table name
+     */
+    String table() default "";
 
-	/**
-	 * Optional SQL to retrieve the actual subset of the table rows from the database. NOTE: a {@link #table() table
-	 * name} must also be specified when using a query.
-	 * @return the SQL Query
-	 */
-	String query() default "";
+    /**
+     * Optional SQL to retrieve the actual subset of the table rows from the
+     * database. NOTE: a {@link #table() table name} must also be specified when
+     * using a query.
+     * 
+     * @return the SQL Query
+     */
+    String query() default "";
 
-	/**
-	 * If this expectation overrides any others that have been defined at a higher level. Defaults to {@code true}
-	 * @return if this annotation overrides any others
-	 */
-	boolean override() default true;
+    /**
+     * If this expectation overrides any others that have been defined at a higher
+     * level. Defaults to {@code true}
+     * 
+     * @return if this annotation overrides any others
+     */
+    boolean override() default true;
 
-	/**
-	 * A set of {@link DataSetModifier} that will be applied to the {@link IDataSet} before it is used. Can refer to a
-	 * static or inner class of the test.
-	 * @return the modifiers to apply
-	 */
-	Class<? extends DataSetModifier>[] modifiers() default {};
+    /**
+     * A set of {@link DataSetModifier} that will be applied to the {@link IDataSet}
+     * before it is used. Can refer to a static or inner class of the test.
+     * 
+     * @return the modifiers to apply
+     */
+    Class<? extends DataSetModifier>[] modifiers() default {};
 
-	/**
-	 * A set of {@link org.dbunit.dataset.filter.IColumnFilter} that will be applied to column comparison when using
-	 * non-strict {@link DatabaseAssertionMode}.
-	 * <p>
-	 * Specify this when you want to use DTD with your expected dataset XML file but want to exclude some columns from
-	 * comparison.
-	 * @return column filters to apply
-	 */
-	Class<? extends IColumnFilter>[] columnFilters() default {};
+    /**
+     * A set of {@link org.dbunit.dataset.filter.IColumnFilter} that will be applied
+     * to column comparison when using non-strict {@link DatabaseAssertionMode}.
+     * <p>
+     * Specify this when you want to use DTD with your expected dataset XML file but
+     * want to exclude some columns from comparison.
+     * 
+     * @return column filters to apply
+     */
+    Class<? extends IColumnFilter>[] columnFilters() default {};
 }

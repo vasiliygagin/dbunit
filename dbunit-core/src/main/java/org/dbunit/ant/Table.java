@@ -28,13 +28,12 @@ import org.slf4j.LoggerFactory;
  * The <code>Table</code> class is just a step placeholder for a table name
  * within an <code>Export</code>.
  *
- * @author Timothy Ruppert 
+ * @author Timothy Ruppert
  * @author Ben Cox
  * @version $Revision$
  * @since Jun 10, 2002
  */
-public class Table
-{
+public class Table {
 
     /**
      * Logger for this class
@@ -43,41 +42,23 @@ public class Table
 
     private String name;
 
-    public Table()
-    {
+    public Table() {
     }
 
-    public String getName()
-    {
-        return name;
+    public String getName() {
+	return name;
     }
 
-    public void setName(String name)
-    {
-        logger.debug("setName(name={}) - start", name);
-        this.name = name;
+    public void setName(String name) {
+	logger.debug("setName(name={}) - start", name);
+	this.name = name;
     }
 
+    public String toString() {
+	StringBuffer result = new StringBuffer();
+	result.append("Table: ");
+	result.append(" name=" + name);
 
-    public String toString()
-    {
-        StringBuffer result = new StringBuffer();
-        result.append("Table: ");
-        result.append(" name=" + name);
-
-        return result.toString();
+	return result.toString();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

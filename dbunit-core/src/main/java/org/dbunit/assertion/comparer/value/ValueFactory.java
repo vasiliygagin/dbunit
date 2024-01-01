@@ -9,20 +9,16 @@ import org.dbunit.dataset.ITable;
  *
  * @author Jeff Jensen
  *
- * @param <T>
- *            The resulting type, possibly the primary key type.
+ * @param <T> The resulting type, possibly the primary key type.
  * @since 2.6.0
  */
 @FunctionalInterface
-public interface ValueFactory<T>
-{
+public interface ValueFactory<T> {
     /**
      * Make the instance from the row in the table.
      *
-     * @param table
-     *            The table containing the data.
-     * @param rowNum
-     *            The row number to make the value for.
+     * @param table  The table containing the data.
+     * @param rowNum The row number to make the value for.
      * @return The type.
      * @throws DataSetException
      */

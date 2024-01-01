@@ -30,18 +30,19 @@ import org.dbunit.util.RelativeDateTimeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Data type that maps {@link java.sql.Types} objects to their
- * java counterparts. It also provides immutable constants for the most common data types.
+ * Data type that maps {@link java.sql.Types} objects to their java
+ * counterparts. It also provides immutable constants for the most common data
+ * types.
  * 
- * @see <a href="http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/mapping.html#table1">sun JDBC object mapping</a>
+ * @see <a href=
+ *      "http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/mapping.html#table1">sun
+ *      JDBC object mapping</a>
  * 
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public abstract class DataType
-{
+public abstract class DataType {
 
     /**
      * Logger for this class
@@ -50,77 +51,59 @@ public abstract class DataType
 
     public static final DataType UNKNOWN = new UnknownDataType();
 
-    public static final DataType CHAR = new StringDataType(
-            "CHAR", Types.CHAR);
-    public static final DataType VARCHAR = new StringDataType(
-            "VARCHAR", Types.VARCHAR);
-    public static final DataType LONGVARCHAR = new StringDataType(
-            "LONGVARCHAR", Types.LONGVARCHAR);
+    public static final DataType CHAR = new StringDataType("CHAR", Types.CHAR);
+    public static final DataType VARCHAR = new StringDataType("VARCHAR", Types.VARCHAR);
+    public static final DataType LONGVARCHAR = new StringDataType("LONGVARCHAR", Types.LONGVARCHAR);
     public static final DataType CLOB = new ClobDataType();
 
-    public static final DataType NUMERIC = new NumberDataType(
-            "NUMERIC", Types.NUMERIC);
-    public static final DataType DECIMAL = new NumberDataType(
-            "DECIMAL", Types.DECIMAL);
+    public static final DataType NUMERIC = new NumberDataType("NUMERIC", Types.NUMERIC);
+    public static final DataType DECIMAL = new NumberDataType("DECIMAL", Types.DECIMAL);
 
     public static final DataType BOOLEAN = new BooleanDataType();
     public static final DataType BIT = new BitDataType();
 
-    public static final DataType TINYINT = new IntegerDataType(
-            "TINYINT", Types.TINYINT);
-    public static final DataType SMALLINT = new IntegerDataType(
-            "SMALLINT", Types.SMALLINT);
-    public static final DataType INTEGER = new IntegerDataType(
-            "INTEGER", Types.INTEGER);
+    public static final DataType TINYINT = new IntegerDataType("TINYINT", Types.TINYINT);
+    public static final DataType SMALLINT = new IntegerDataType("SMALLINT", Types.SMALLINT);
+    public static final DataType INTEGER = new IntegerDataType("INTEGER", Types.INTEGER);
 
 //    public static final DataType BIGINT = new LongDataType();
     public static final DataType BIGINT = new BigIntegerDataType();
     /**
-     * Auxiliary for the BIGINT type using a long. Is currently only
-     * needed for method {@link DataType#forObject(Object)}.
+     * Auxiliary for the BIGINT type using a long. Is currently only needed for
+     * method {@link DataType#forObject(Object)}.
      */
     public static final DataType BIGINT_AUX_LONG = new LongDataType();
 
     public static final DataType REAL = new FloatDataType();
 
-    public static final DataType FLOAT = new DoubleDataType(
-            "FLOAT", Types.FLOAT);
-    public static final DataType DOUBLE = new DoubleDataType(
-            "DOUBLE", Types.DOUBLE);
+    public static final DataType FLOAT = new DoubleDataType("FLOAT", Types.FLOAT);
+    public static final DataType DOUBLE = new DoubleDataType("DOUBLE", Types.DOUBLE);
 
     // To calculate consistent relative date and time.
-    public static final RelativeDateTimeParser RELATIVE_DATE_TIME_PARSER = new RelativeDateTimeParser(); 
+    public static final RelativeDateTimeParser RELATIVE_DATE_TIME_PARSER = new RelativeDateTimeParser();
     public static final DataType DATE = new DateDataType();
     public static final DataType TIME = new TimeDataType();
     public static final DataType TIMESTAMP = new TimestampDataType();
 
-    public static final DataType BINARY = new UuidAwareBytesDataType(
-            "BINARY", Types.BINARY);
-    public static final DataType VARBINARY = new UuidAwareBytesDataType(
-            "VARBINARY", Types.VARBINARY);
-    public static final DataType LONGVARBINARY = new UuidAwareBytesDataType(
-            "LONGVARBINARY", Types.LONGVARBINARY);
+    public static final DataType BINARY = new UuidAwareBytesDataType("BINARY", Types.BINARY);
+    public static final DataType VARBINARY = new UuidAwareBytesDataType("VARBINARY", Types.VARBINARY);
+    public static final DataType LONGVARBINARY = new UuidAwareBytesDataType("LONGVARBINARY", Types.LONGVARBINARY);
     public static final DataType BLOB = new BlobDataType();
 
-    //New JDBC 4.0 types:
-    //todo: ROWID = -8, NCLOB = 2011, SQLXML = 2009.
+    // New JDBC 4.0 types:
+    // todo: ROWID = -8, NCLOB = 2011, SQLXML = 2009.
 
-    public static final DataType NCHAR = new StringDataType(
-            "NCHAR", -15);
+    public static final DataType NCHAR = new StringDataType("NCHAR", -15);
 
-    public static final DataType NVARCHAR = new StringDataType(
-            "NVARCHAR", -9);
+    public static final DataType NVARCHAR = new StringDataType("NVARCHAR", -9);
 
-    public static final DataType LONGNVARCHAR = new StringDataType(
-            "LONGNVARCHAR", -16);
+    public static final DataType LONGNVARCHAR = new StringDataType("LONGNVARCHAR", -16);
 
-    private static final DataType[] TYPES = {
-        VARCHAR, CHAR, LONGVARCHAR, NCHAR, NVARCHAR, LONGNVARCHAR, CLOB, NUMERIC, DECIMAL, BOOLEAN, BIT, INTEGER,
-        TINYINT, SMALLINT, BIGINT, REAL, DOUBLE, FLOAT, DATE, TIME, TIMESTAMP,
-        VARBINARY, BINARY, LONGVARBINARY, BLOB,
-        //auxiliary types at the very end
-        BIGINT_AUX_LONG
-    };
+    private static final DataType[] TYPES = { VARCHAR, CHAR, LONGVARCHAR, NCHAR, NVARCHAR, LONGNVARCHAR, CLOB, NUMERIC,
+	    DECIMAL, BOOLEAN, BIT, INTEGER, TINYINT, SMALLINT, BIGINT, REAL, DOUBLE, FLOAT, DATE, TIME, TIMESTAMP,
+	    VARBINARY, BINARY, LONGVARBINARY, BLOB,
+	    // auxiliary types at the very end
+	    BIGINT_AUX_LONG };
 
     /**
      * Returns the specified value typecasted to this <code>DataType</code>
@@ -128,13 +111,13 @@ public abstract class DataType
     public abstract Object typeCast(Object value) throws TypeCastException;
 
     /**
-     * Returns a negative integer, zero, or a positive integer as the first
-     * argument is less than, equal to, or greater than the second.
+     * Returns a negative integer, zero, or a positive integer as the first argument
+     * is less than, equal to, or greater than the second.
      * <p>
      * The two values are typecast to this DataType before being compared.
      *
-     * @throws TypeCastException  if the arguments' types prevent them from
-     * being compared by this Comparator.
+     * @throws TypeCastException if the arguments' types prevent them from being
+     *                           compared by this Comparator.
      */
     public abstract int compare(Object o1, Object o2) throws TypeCastException;
 
@@ -151,135 +134,111 @@ public abstract class DataType
     /**
      * Returns the SQL type name for user types (null for basic SQL types)
      */
-    public String getSqlTypeName()
-    {
-        return null;
+    public String getSqlTypeName() {
+	return null;
     }
 
     /**
-     * Returns <code>true</code> if this <code>DataType</code> represents a
-     * number.
+     * Returns <code>true</code> if this <code>DataType</code> represents a number.
      */
     public abstract boolean isNumber();
 
     /**
-     * Returns <code>true</code> if this <code>DataType</code> represents a
-     * date and/or time.
+     * Returns <code>true</code> if this <code>DataType</code> represents a date
+     * and/or time.
      */
     public abstract boolean isDateTime();
 
     /**
      * Returns the specified column value from the specified resultset object.
      */
-    public abstract Object getSqlValue(int column, ResultSet resultSet)
-            throws SQLException, TypeCastException;
+    public abstract Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException;
 
     /**
      * Set the specified value to the specified prepared statement object.
      */
-    public abstract void setSqlValue(Object value, int column,
-            PreparedStatement statement) throws SQLException, TypeCastException;
+    public abstract void setSqlValue(Object value, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException;
 
     /**
      * Typecast the specified value to string.
      */
-    public static String asString(Object value) throws TypeCastException
-    {
-        logger.debug("asString(value={}) - start", value);
+    public static String asString(Object value) throws TypeCastException {
+	logger.debug("asString(value={}) - start", value);
 
-        return (String)DataType.VARCHAR.typeCast(value);
+	return (String) DataType.VARCHAR.typeCast(value);
     }
 
     /**
-     * Returns the <code>DataType</code> corresponding to the specified Sql
-     * type. See {@link java.sql.Types}.
+     * Returns the <code>DataType</code> corresponding to the specified Sql type.
+     * See {@link java.sql.Types}.
      *
      */
-    public static DataType forSqlType(int sqlType)
-    {
-    	if(logger.isDebugEnabled()) {
-            logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
-        }
+    public static DataType forSqlType(int sqlType) {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
+	}
 
-        for (DataType element : TYPES) {
-            if (sqlType == element.getSqlType())
-            {
-                return element;
-            }
-        }
+	for (DataType element : TYPES) {
+	    if (sqlType == element.getSqlType()) {
+		return element;
+	    }
+	}
 
-        return UNKNOWN;
+	return UNKNOWN;
     }
 
     /**
-     * Returns the <code>DataType</code> corresponding to the specified Sql
-     * type name.
+     * Returns the <code>DataType</code> corresponding to the specified Sql type
+     * name.
      *
      * @deprecated Should not be used anymore
      */
     @Deprecated
-    public static DataType forSqlTypeName(String sqlTypeName)
-    {
-    	if(logger.isDebugEnabled()) {
-            logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
-        }
+    public static DataType forSqlTypeName(String sqlTypeName) {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
+	}
 
-        for (DataType element : TYPES) {
-            if (sqlTypeName.equals(element.toString()))
-            {
-                return element;
-            }
-        }
+	for (DataType element : TYPES) {
+	    if (sqlTypeName.equals(element.toString())) {
+		return element;
+	    }
+	}
 
-        return UNKNOWN;
+	return UNKNOWN;
     }
 
     /**
      * Returns the <code>DataType</code> corresponding to the specified value
-     * runtime class. This method returns <code>DataType.UNKNOWN</code>
-     * if the value is <code>null</code> or runtime class not recognized.
+     * runtime class. This method returns <code>DataType.UNKNOWN</code> if the value
+     * is <code>null</code> or runtime class not recognized.
      */
-    public static DataType forObject(Object value)
-    {
-        logger.debug("forObject(value={}) - start", value);
+    public static DataType forObject(Object value) {
+	logger.debug("forObject(value={}) - start", value);
 
-        if (value == null)
-        {
-            return UNKNOWN;
-        }
+	if (value == null) {
+	    return UNKNOWN;
+	}
 
-        for (DataType element : TYPES) {
-            Class typeClass = element.getTypeClass();
-            if (typeClass.isInstance(value))
-            {
-                return element;
-            }
-        }
+	for (DataType element : TYPES) {
+	    Class typeClass = element.getTypeClass();
+	    if (typeClass.isInstance(value)) {
+		return element;
+	    }
+	}
 
-        return UNKNOWN;
+	return UNKNOWN;
     }
 
     /**
-     * Performs a quick check to test if the specified string uses extended
-     * syntax.
+     * Performs a quick check to test if the specified string uses extended syntax.
      * 
-     * @param input
-     *            a string to check.
+     * @param input a string to check.
      * @return {@code true} if the input uses extended syntax; {@code false}
      *         otherwise.
      */
-    protected static boolean isExtendedSyntax(String input)
-    {
-        return !input.isEmpty() && input.charAt(0) == '[';
+    protected static boolean isExtendedSyntax(String input) {
+	return !input.isEmpty() && input.charAt(0) == '[';
     }
 }
-
-
-
-
-
-
-
-
-
-

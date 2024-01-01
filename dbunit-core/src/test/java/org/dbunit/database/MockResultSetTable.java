@@ -32,50 +32,41 @@ import org.dbunit.dataset.ITableMetaData;
  * @since Apr 12, 2003
  * @version $Revision$
  */
-public class MockResultSetTable implements IResultSetTable, Verifiable
-{
-    private final ExpectationCounter _closeCalls =
-            new ExpectationCounter("MockResultSetTable.close");
+public class MockResultSetTable implements IResultSetTable, Verifiable {
+    private final ExpectationCounter _closeCalls = new ExpectationCounter("MockResultSetTable.close");
     private ITableMetaData _metaData;
 
-    public void setupTableMetaData(String tableName)
-    {
-        _metaData = new DefaultTableMetaData(tableName, new Column[0]);
+    public void setupTableMetaData(String tableName) {
+	_metaData = new DefaultTableMetaData(tableName, new Column[0]);
     }
 
-    public void setExpectedCloseCalls(int callsCount)
-    {
-        _closeCalls.setExpected(callsCount);
+    public void setExpectedCloseCalls(int callsCount) {
+	_closeCalls.setExpected(callsCount);
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
-    public void verify()
-    {
-        _closeCalls.verify();
+    public void verify() {
+	_closeCalls.verify();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IResultSetTable interface
 
-    public Object getValue(int row, String column) throws DataSetException
-    {
-        return null;
+    public Object getValue(int row, String column) throws DataSetException {
+	return null;
     }
 
-    public int getRowCount()
-    {
-        return 0;
+    public int getRowCount() {
+	return 0;
     }
 
-    public ITableMetaData getTableMetaData()
-    {
-        return _metaData;
+    public ITableMetaData getTableMetaData() {
+	return _metaData;
     }
 
-    public void close() throws DataSetException
-    {
-        _closeCalls.inc();
+    public void close() throws DataSetException {
+	_closeCalls.inc();
     }
 }

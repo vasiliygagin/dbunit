@@ -29,12 +29,10 @@ import junit.framework.TestSuite;
  * @version $Revision$ $Date$
  * @since 2.3.0
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(XmlWriterTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(XmlWriterTest.class));
+	return suite;
     }
 }

@@ -40,60 +40,52 @@ import java.sql.SQLException;
  * @since May 19, 2003
  * @version $Revision$
  */
-public class MsSqlConnection extends DatabaseConnection
-{
+public class MsSqlConnection extends DatabaseConnection {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(MsSqlConnection.class);
 
-    private final ITableFilter _filter = new ExcludeTableFilter(
-            new String[] {"dtproperties"});
+    private final ITableFilter _filter = new ExcludeTableFilter(new String[] { "dtproperties" });
 
     /**
      * Creates a new <code>MsSqlConnection</code>.
      *
      * @param connection the adapted JDBC connection
-     * @param schema the database schema
-     * @throws DatabaseUnitException 
+     * @param schema     the database schema
+     * @throws DatabaseUnitException
      */
-    public MsSqlConnection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new MsSqlDataTypeFactory());
+    public MsSqlConnection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     /**
      * Creates a new <code>MsSqlConnection</code>.
      *
      * @param connection the adapted JDBC connection
-     * @throws DatabaseUnitException 
+     * @throws DatabaseUnitException
      */
-    public MsSqlConnection(Connection connection) throws DatabaseUnitException
-    {
-        super(connection);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new MsSqlDataTypeFactory());
+    public MsSqlConnection(Connection connection) throws DatabaseUnitException {
+	super(connection);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection
 
-    public IDataSet createDataSet() throws SQLException
-    {
-        logger.debug("createDataSet() - start");
+    public IDataSet createDataSet() throws SQLException {
+	logger.debug("createDataSet() - start");
 
-        IDataSet dataSet = super.createDataSet();
-        return new FilteredDataSet(_filter, dataSet);
+	IDataSet dataSet = super.createDataSet();
+	return new FilteredDataSet(_filter, dataSet);
     }
 
-    public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException
-    {
-        logger.debug("createDataSet(tableNames={}) - start", tableNames);
+    public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException {
+	logger.debug("createDataSet(tableNames={}) - start", tableNames);
 
-        IDataSet dataSet = super.createDataSet(tableNames);
-        return new FilteredDataSet(_filter, dataSet);
+	IDataSet dataSet = super.createDataSet(tableNames);
+	return new FilteredDataSet(_filter, dataSet);
     }
 }

@@ -22,10 +22,9 @@ package org.dbunit.util.search;
 
 /**
  * A bidirectional edge on the graph to be searched.<br>
- * It must implement <code>Comparable</code> so the
- * <code>ISearchCallback</code> can properly order the dependencies of a node
- * (so, typically, the implementations will compare the <code>getTo()</code>
- * node).
+ * It must implement <code>Comparable</code> so the <code>ISearchCallback</code>
+ * can properly order the dependencies of a node (so, typically, the
+ * implementations will compare the <code>getTo()</code> node).
  * 
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
@@ -33,18 +32,18 @@ package org.dbunit.util.search;
  */
 public interface IEdge extends Comparable {
 
-  /**
-   * Get the node this edge originates from.
-   * 
-   * @return node this edge originates from.
-   */
-  Object getFrom();
+    /**
+     * Get the node this edge originates from.
+     * 
+     * @return node this edge originates from.
+     */
+    Object getFrom();
 
-  /**
-   * Get the node this edge points to.
-   * 
-   * @return node this edge points to.
-   */
-  Object getTo();
+    /**
+     * Get the node this edge points to.
+     * 
+     * @return node this edge points to.
+     */
+    Object getTo();
 
 }

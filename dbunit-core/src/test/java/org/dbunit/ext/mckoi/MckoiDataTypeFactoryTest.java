@@ -33,23 +33,20 @@ import java.sql.Types;
  * @since 2.4.8
  *
  */
-public class MckoiDataTypeFactoryTest extends AbstractDataTypeFactoryTest
-{
-    public MckoiDataTypeFactoryTest(String s)
-    {
-        super(s);
+public class MckoiDataTypeFactoryTest extends AbstractDataTypeFactoryTest {
+    public MckoiDataTypeFactoryTest(String s) {
+	super(s);
     }
 
-    public IDataTypeFactory createFactory() throws Exception
-    {
-        return new MckoiDataTypeFactory();
+    public IDataTypeFactory createFactory() throws Exception {
+	return new MckoiDataTypeFactory();
     }
-    public void testCreateJavaObjectDataType() throws Exception
-    {
-        DataType expected = null, actual = null;
-        int sqlType = Types.DISTINCT;
-        expected = DataType.forSqlType(Types.JAVA_OBJECT);
-        actual = this.createFactory().createDataType(sqlType,"JAVA_OBJECT");
-        assertSame("type", expected, actual);
+
+    public void testCreateJavaObjectDataType() throws Exception {
+	DataType expected = null, actual = null;
+	int sqlType = Types.DISTINCT;
+	expected = DataType.forSqlType(Types.JAVA_OBJECT);
+	actual = this.createFactory().createDataType(sqlType, "JAVA_OBJECT");
+	assertSame("type", expected, actual);
     }
 }

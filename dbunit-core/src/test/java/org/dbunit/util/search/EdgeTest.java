@@ -30,27 +30,26 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class EdgeTest extends TestCase 
-{
+public class EdgeTest extends TestCase {
 
-    public void testEqualsHashCode()
-    {
-        Edge e1 = new Edge("table1", "table2");
-        Edge e2 = new Edge("table1", "table2");
-        Edge eNotEqual = new Edge("table1", "tableOther");
-        Edge eEqualSubclass = new Edge("table1", "table2") {};
-        
-        // Use gsbase "EqualsTester" library for this - easier and less code for equals/hashCode test
-        new EqualsTester(e1, e2, eNotEqual, eEqualSubclass);
+    public void testEqualsHashCode() {
+	Edge e1 = new Edge("table1", "table2");
+	Edge e2 = new Edge("table1", "table2");
+	Edge eNotEqual = new Edge("table1", "tableOther");
+	Edge eEqualSubclass = new Edge("table1", "table2") {
+	};
+
+	// Use gsbase "EqualsTester" library for this - easier and less code for
+	// equals/hashCode test
+	new EqualsTester(e1, e2, eNotEqual, eEqualSubclass);
     }
-   
-    public void testCompare()
-    {
-        Edge e1 = new Edge("table1", "table2");
-        Edge e2 = new Edge("table1", "table2");
-        Edge eNotEqual = new Edge("table1", "tableOther");
-        
-        assertEquals(0, e1.compareTo(e2));
-        assertEquals(-29, e1.compareTo(eNotEqual));
+
+    public void testCompare() {
+	Edge e1 = new Edge("table1", "table2");
+	Edge e2 = new Edge("table1", "table2");
+	Edge eNotEqual = new Edge("table1", "tableOther");
+
+	assertEquals(0, e1.compareTo(e2));
+	assertEquals(-29, e1.compareTo(eNotEqual));
     }
 }

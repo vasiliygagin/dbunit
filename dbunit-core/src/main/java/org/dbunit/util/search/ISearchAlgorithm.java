@@ -33,14 +33,14 @@ import java.util.Set;
  */
 public interface ISearchAlgorithm {
 
-  /**
-   * Search all nodes that originates from a set of nodes.
-   * 
-   * @param nodesFrom input nodes
-   * @param callback helper callback
-   * @return all nodes, in the right dependent order (like a LinkedHashSet)
-   * @throws Exception exception wrapper
-   */
+    /**
+     * Search all nodes that originates from a set of nodes.
+     * 
+     * @param nodesFrom input nodes
+     * @param callback  helper callback
+     * @return all nodes, in the right dependent order (like a LinkedHashSet)
+     * @throws Exception exception wrapper
+     */
     Set search(Set nodesFrom, ISearchCallback callback) throws SearchException;
 
 }

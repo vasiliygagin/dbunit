@@ -19,9 +19,11 @@ package com.github.springtestdbunit.dataset;
 import org.dbunit.dataset.IDataSet;
 
 /**
- * Strategy interface for {@link #loadDataSet loading} a {@link IDataSet dataset}.
+ * Strategy interface for {@link #loadDataSet loading} a {@link IDataSet
+ * dataset}.
  * <p>
- * Concrete implementations must provide a <code>public</code> no-args constructor.
+ * Concrete implementations must provide a <code>public</code> no-args
+ * constructor.
  *
  * @author Phillip Webb
  *
@@ -29,14 +31,15 @@ import org.dbunit.dataset.IDataSet;
  */
 public interface DataSetLoader {
 
-	/**
-	 * Load and return {@link IDataSet dataset} from the specified. If the dataset cannot be found <tt>null</tt> may be
-	 * returned.
-	 * @param testClass The class under test
-	 * @param location The location to load
-	 * @return a {@link IDataSet dataset} or <tt>null</tt>
-	 * @throws Exception If the {@link IDataSet dataset} cannot be loaded
-	 */
-	public IDataSet loadDataSet(Class<?> testClass, String location) throws Exception;
+    /**
+     * Load and return {@link IDataSet dataset} from the specified. If the dataset
+     * cannot be found <tt>null</tt> may be returned.
+     * 
+     * @param testClass The class under test
+     * @param location  The location to load
+     * @return a {@link IDataSet dataset} or <tt>null</tt>
+     * @throws Exception If the {@link IDataSet dataset} cannot be loaded
+     */
+    public IDataSet loadDataSet(Class<?> testClass, String location) throws Exception;
 
 }

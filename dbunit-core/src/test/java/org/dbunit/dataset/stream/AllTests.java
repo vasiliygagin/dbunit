@@ -28,19 +28,12 @@ import junit.framework.TestSuite;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(BufferedConsumerTest.class));
-        suite.addTest(new TestSuite(StreamingDataSetTest.class));
-        suite.addTest(new TestSuite(StreamingTableTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(BufferedConsumerTest.class));
+	suite.addTest(new TestSuite(StreamingDataSetTest.class));
+	suite.addTest(new TestSuite(StreamingTableTest.class));
+	return suite;
     }
 }
-
-
-
-
-

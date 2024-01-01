@@ -19,10 +19,11 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface DatabaseSetups {
 
-	/**
-	 * The {@link DatabaseSetup} annotations to apply.
-	 * @return the {@link DatabaseSetup} annotations
-	 */
-	DatabaseSetup[] value();
+    /**
+     * The {@link DatabaseSetup} annotations to apply.
+     * 
+     * @return the {@link DatabaseSetup} annotations
+     */
+    DatabaseSetup[] value();
 
 }

@@ -28,16 +28,14 @@ import junit.framework.TestSuite;
  * @version $Revision$
  * @since Aug 25, 2005
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(BiDirectionalEdgesDepthFirstSearchTest.class));
-        suite.addTest(new TestSuite(DepthFirstSearchTest.class));
-        suite.addTest(new TestSuite(EdgeTest.class));
-        suite.addTest(new TestSuite(ExcludeNodesSearchCallbackTest.class));
-        suite.addTest(new TestSuite(IncludeNodesSearchCallbackTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(BiDirectionalEdgesDepthFirstSearchTest.class));
+	suite.addTest(new TestSuite(DepthFirstSearchTest.class));
+	suite.addTest(new TestSuite(EdgeTest.class));
+	suite.addTest(new TestSuite(ExcludeNodesSearchCallbackTest.class));
+	suite.addTest(new TestSuite(IncludeNodesSearchCallbackTest.class));
+	return suite;
     }
 }

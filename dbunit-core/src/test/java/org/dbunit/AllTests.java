@@ -28,36 +28,26 @@ import junit.framework.TestSuite;
  * @author Manuel Laflamme
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(org.dbunit.ant.AllTests.suite());
-        suite.addTest(org.dbunit.assertion.AllTests.suite());
-        suite.addTest(org.dbunit.database.AllTests.suite());
-        suite.addTest(org.dbunit.database.search.AllTests.suite());
-        suite.addTest(org.dbunit.dataset.AllTests.suite());
-        suite.addTest(org.dbunit.ext.AllTests.suite());
-        suite.addTest(org.dbunit.operation.AllTests.suite());
-        suite.addTest(org.dbunit.util.AllTests.suite());
-        suite.addTest(org.dbunit.util.search.AllTests.suite());
-        suite.addTest(new TestSuite(DatabaseUnitExceptionTest.class));
-        suite.addTest(new TestSuite(DatabaseTestCaseIT.class));
-        suite.addTest(new TestSuite(DBTestCaseIT.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() throws Exception {
+	TestSuite suite = new TestSuite();
+	suite.addTest(org.dbunit.ant.AllTests.suite());
+	suite.addTest(org.dbunit.assertion.AllTests.suite());
+	suite.addTest(org.dbunit.database.AllTests.suite());
+	suite.addTest(org.dbunit.database.search.AllTests.suite());
+	suite.addTest(org.dbunit.dataset.AllTests.suite());
+	suite.addTest(org.dbunit.ext.AllTests.suite());
+	suite.addTest(org.dbunit.operation.AllTests.suite());
+	suite.addTest(org.dbunit.util.AllTests.suite());
+	suite.addTest(org.dbunit.util.search.AllTests.suite());
+	suite.addTest(new TestSuite(DatabaseUnitExceptionTest.class));
+	suite.addTest(new TestSuite(DatabaseTestCaseIT.class));
+	suite.addTest(new TestSuite(DBTestCaseIT.class));
+	return suite;
     }
 
-    public static void main(String args[]) throws Exception
-    {
-        junit.textui.TestRunner.run(suite());
-        System.exit(0);
+    public static void main(String args[]) throws Exception {
+	junit.textui.TestRunner.run(suite());
+	System.exit(0);
     }
 }
-
-
-
-
-
-
-

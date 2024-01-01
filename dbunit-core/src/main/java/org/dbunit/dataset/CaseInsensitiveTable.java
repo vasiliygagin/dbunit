@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Mar 27, 2002
- * @deprecated All IDataSet implementations are case insensitive since DbUnit 1.5
+ * @deprecated All IDataSet implementations are case insensitive since DbUnit
+ *             1.5
  */
-public class CaseInsensitiveTable implements ITable
-{
+public class CaseInsensitiveTable implements ITable {
 
     /**
      * Logger for this class
@@ -40,51 +40,40 @@ public class CaseInsensitiveTable implements ITable
 
     private final ITable _table;
 
-    public CaseInsensitiveTable(ITable table)
-    {
-        _table = table;
+    public CaseInsensitiveTable(ITable table) {
+	_table = table;
     }
 
-    private String getInternalColumnName(String columnName)
-            throws DataSetException
-    {
-        logger.debug("getInternalColumnName(columnName={}) - start", columnName);
+    private String getInternalColumnName(String columnName) throws DataSetException {
+	logger.debug("getInternalColumnName(columnName={}) - start", columnName);
 
-        Column[] columns = _table.getTableMetaData().getColumns();
+	Column[] columns = _table.getTableMetaData().getColumns();
 
-        for (int i = 0; i < columns.length; i++)
-        {
-            Column column = columns[i];
-            if (columnName.equalsIgnoreCase(column.getColumnName()))
-            {
-                return column.getColumnName();
-            }
-        }
+	for (int i = 0; i < columns.length; i++) {
+	    Column column = columns[i];
+	    if (columnName.equalsIgnoreCase(column.getColumnName())) {
+		return column.getColumnName();
+	    }
+	}
 
-        throw new NoSuchColumnException(_table.getTableMetaData().getTableName(), columnName);
+	throw new NoSuchColumnException(_table.getTableMetaData().getTableName(), columnName);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
-    public ITableMetaData getTableMetaData()
-    {
-        return _table.getTableMetaData();
+    public ITableMetaData getTableMetaData() {
+	return _table.getTableMetaData();
     }
 
-    public int getRowCount()
-    {
-        return _table.getRowCount();
+    public int getRowCount() {
+	return _table.getRowCount();
     }
 
-    public Object getValue(int row, String column) throws DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+    public Object getValue(int row, String column) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-        return _table.getValue(row, getInternalColumnName(column));
+	return _table.getValue(row, getInternalColumnName(column));
     }
 }
-
-
-

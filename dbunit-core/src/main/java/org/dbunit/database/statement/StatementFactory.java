@@ -33,39 +33,28 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 15, 2002
  */
-public class StatementFactory extends AbstractStatementFactory
-{
+public class StatementFactory extends AbstractStatementFactory {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(StatementFactory.class);
 
-    public IBatchStatement createBatchStatement(IDatabaseConnection connection)
-            throws SQLException
-    {
-        logger.debug("createBatchStatement(connection={}) - start", connection);
+    public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
+	logger.debug("createBatchStatement(connection={}) - start", connection);
 
-        if (supportBatchStatement(connection))
-        {
-            return new BatchStatement(connection.getConnection());
-        }
-        else
-        {
-            return new SimpleStatement(connection.getConnection());
-        }
+	if (supportBatchStatement(connection)) {
+	    return new BatchStatement(connection.getConnection());
+	} else {
+	    return new SimpleStatement(connection.getConnection());
+	}
     }
 
-    public IPreparedBatchStatement createPreparedBatchStatement(String sql,
-            IDatabaseConnection connection) throws SQLException
-    {
-        logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
+    public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
+	    throws SQLException {
+	logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
 
-        return new BatchStatementDecorator(sql, createBatchStatement(connection));
+	return new BatchStatementDecorator(sql, createBatchStatement(connection));
     }
 
 }
-
-
-
-

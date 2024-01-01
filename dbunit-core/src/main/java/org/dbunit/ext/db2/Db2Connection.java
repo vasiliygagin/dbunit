@@ -28,23 +28,19 @@ import org.dbunit.database.DatabaseConnection;
 import java.sql.Connection;
 
 /**
- * Database connection for DB2 that pre-configures all properties required to successfully
- * use dbunit with DB2.
+ * Database connection for DB2 that pre-configures all properties required to
+ * successfully use dbunit with DB2.
  * 
  * @author Federico Spinazzi
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 1.5.5 (Jul 17, 2003)
  */
-public class Db2Connection extends DatabaseConnection
-{
+public class Db2Connection extends DatabaseConnection {
 
-    public Db2Connection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new Db2DataTypeFactory());
-        getConfig().setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, 
-                new Db2MetadataHandler());
+    public Db2Connection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Db2DataTypeFactory());
+	getConfig().setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, new Db2MetadataHandler());
     }
 }

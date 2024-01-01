@@ -19,10 +19,11 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface DatabaseTearDowns {
 
-	/**
-	 * The {@link DatabaseTearDown} annotations to apply.
-	 * @return the {@link DatabaseTearDown} annotations
-	 */
-	DatabaseTearDown[] value();
+    /**
+     * The {@link DatabaseTearDown} annotations to apply.
+     * 
+     * @return the {@link DatabaseTearDown} annotations
+     */
+    DatabaseTearDown[] value();
 
 }

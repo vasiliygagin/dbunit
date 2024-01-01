@@ -25,7 +25,6 @@ import org.dbunit.database.AmbiguousTableNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Simple implementation of a dataset backed by {@link ITable} objects which can
  * be added dynamically.
@@ -35,110 +34,97 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 1.0 (Feb 18, 2002)
  */
-public class DefaultDataSet extends AbstractDataSet
-{
+public class DefaultDataSet extends AbstractDataSet {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(DefaultDataSet.class);
 
-    public DefaultDataSet()
-    {
-    	super();
+    public DefaultDataSet() {
+	super();
     }
 
     /**
      * Creates a default dataset which is empty initially
+     * 
      * @param caseSensitiveTableNames
      * @since 2.4.2
      */
-    public DefaultDataSet(boolean caseSensitiveTableNames)
-    {
-        super(caseSensitiveTableNames);
+    public DefaultDataSet(boolean caseSensitiveTableNames) {
+	super(caseSensitiveTableNames);
     }
 
-    public DefaultDataSet(ITable table) throws AmbiguousTableNameException
-    {
-        this(new ITable[]{table});
+    public DefaultDataSet(ITable table) throws AmbiguousTableNameException {
+	this(new ITable[] { table });
     }
 
-    public DefaultDataSet(ITable table1, ITable table2) throws AmbiguousTableNameException
-    {
-        this(new ITable[] {table1, table2});
+    public DefaultDataSet(ITable table1, ITable table2) throws AmbiguousTableNameException {
+	this(new ITable[] { table1, table2 });
     }
 
-    public DefaultDataSet(ITable[] tables) throws AmbiguousTableNameException
-    {
-        this(tables, false);
+    public DefaultDataSet(ITable[] tables) throws AmbiguousTableNameException {
+	this(tables, false);
     }
-    
+
     /**
      * Creates a default dataset which consists of the given tables
+     * 
      * @param caseSensitiveTableNames
      * @since 2.4.2
      */
-    public DefaultDataSet(ITable[] tables, boolean caseSensitiveTableNames) throws AmbiguousTableNameException
-    {
-        super(caseSensitiveTableNames);
-        
-        for (int i = 0; i < tables.length; i++)
-        {
-            addTable(tables[i]);
-        }
+    public DefaultDataSet(ITable[] tables, boolean caseSensitiveTableNames) throws AmbiguousTableNameException {
+	super(caseSensitiveTableNames);
+
+	for (int i = 0; i < tables.length; i++) {
+	    addTable(tables[i]);
+	}
     }
 
     /**
      * Add a new table in this dataset.
-     * @throws AmbiguousTableNameException 
+     * 
+     * @throws AmbiguousTableNameException
      */
-    public void addTable(ITable table) throws AmbiguousTableNameException
-    {
-        logger.debug("addTable(table={}) - start", table);
-        
-        this.initialize();
-        
-        super._orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
+    public void addTable(ITable table) throws AmbiguousTableNameException {
+	logger.debug("addTable(table={}) - start", table);
+
+	this.initialize();
+
+	super._orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
     }
 
     /**
-     * Initializes the {@link _orderedTableNameMap} of the parent class if it is not initialized yet.
+     * Initializes the {@link _orderedTableNameMap} of the parent class if it is not
+     * initialized yet.
+     * 
      * @throws DataSetException
      * @since 2.4.6
      */
-    protected void initialize()
-    {
-        logger.debug("initialize() - start");
-        
-        if(_orderedTableNameMap != null)
-        {
-            logger.debug("The table name map has already been initialized.");
-            // already initialized
-            return;
-        }
-       
-        // Gather all tables in the OrderedTableNameMap which also makes the duplicate check
-        _orderedTableNameMap = this.createTableNameMap();
+    protected void initialize() {
+	logger.debug("initialize() - start");
+
+	if (_orderedTableNameMap != null) {
+	    logger.debug("The table name map has already been initialized.");
+	    // already initialized
+	    return;
+	}
+
+	// Gather all tables in the OrderedTableNameMap which also makes the duplicate
+	// check
+	_orderedTableNameMap = this.createTableNameMap();
 
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
-    protected ITableIterator createIterator(boolean reversed)
-            throws DataSetException
-    {
-        logger.debug("createIterator(reversed={}) - start", Boolean.toString(reversed));
-        
-        this.initialize();
-        
-        ITable[] tables = (ITable[])_orderedTableNameMap.orderedValues().toArray(new ITable[0]);
-        return new DefaultTableIterator(tables, reversed);
+    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
+	logger.debug("createIterator(reversed={}) - start", Boolean.toString(reversed));
+
+	this.initialize();
+
+	ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+	return new DefaultTableIterator(tables, reversed);
     }
 }
-
-
-
-
-
-

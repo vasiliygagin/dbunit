@@ -32,14 +32,10 @@ import java.sql.Connection;
  * @since Sep 4, 2003
  * @version $Revision$
  */
-public class MySqlConnection extends DatabaseConnection
-{
-    public MySqlConnection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new MySqlDataTypeFactory());
-        getConfig().setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, 
-                new MySqlMetadataHandler());
+public class MySqlConnection extends DatabaseConnection {
+    public MySqlConnection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+	getConfig().setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, new MySqlMetadataHandler());
     }
 }

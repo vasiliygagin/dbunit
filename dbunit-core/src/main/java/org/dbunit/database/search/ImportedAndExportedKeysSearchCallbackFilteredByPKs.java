@@ -33,67 +33,61 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extension of the ImportedAndExportedKeysSearchCallback, where each new edge is 
- * added to a PrimaryKeyFilter.
+ * Extension of the ImportedAndExportedKeysSearchCallback, where each new edge
+ * is added to a PrimaryKeyFilter.
  * 
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Sep 9, 2005
  */
-public class ImportedAndExportedKeysSearchCallbackFilteredByPKs extends ImportedAndExportedKeysSearchCallback
-{
+public class ImportedAndExportedKeysSearchCallbackFilteredByPKs extends ImportedAndExportedKeysSearchCallback {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger	logger = LoggerFactory.getLogger(ImportedAndExportedKeysSearchCallbackFilteredByPKs.class);
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = LoggerFactory
+	    .getLogger(ImportedAndExportedKeysSearchCallbackFilteredByPKs.class);
 
-	// primary key filter associated with the call back
-	private final PrimaryKeyFilter pksFilter;
+    // primary key filter associated with the call back
+    private final PrimaryKeyFilter pksFilter;
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param connection
-	 *            database connection
-	 * @param allowedPKs
-	 *            map of allowed rows, based on the primary keys (key is the
-	 *            name of a table; value is a Set with allowed primary keys for
-	 *            that table)
-	 */
-	public ImportedAndExportedKeysSearchCallbackFilteredByPKs(IDatabaseConnection connection, PkTableMap allowedPKs)
-	{
-		super(connection);
-		this.pksFilter = new PrimaryKeyFilter(connection, allowedPKs, true);
+    /**
+     * Default constructor.
+     * 
+     * @param connection database connection
+     * @param allowedPKs map of allowed rows, based on the primary keys (key is the
+     *                   name of a table; value is a Set with allowed primary keys
+     *                   for that table)
+     */
+    public ImportedAndExportedKeysSearchCallbackFilteredByPKs(IDatabaseConnection connection, PkTableMap allowedPKs) {
+	super(connection);
+	this.pksFilter = new PrimaryKeyFilter(connection, allowedPKs, true);
+    }
+
+    /**
+     * Get the primary key filter associated with the call back
+     * 
+     * @return primary key filter associated with the call back
+     */
+    public ITableFilter getFilter() {
+	return this.pksFilter;
+    }
+
+    public void nodeAdded(Object node) throws SearchException {
+	logger.debug("nodeAdded(node={}) - start", node);
+	this.pksFilter.nodeAdded(node);
+    }
+
+    protected IEdge newEdge(ResultSet rs, int type, String from, String to, String fkColumn, String pkColumn)
+	    throws SearchException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
+		    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
 	}
 
-	/**
-	 * Get the primary key filter associated with the call back
-	 * 
-	 * @return primary key filter associated with the call back
-	 */
-	public ITableFilter getFilter()
-	{
-		return this.pksFilter;
-	}
-
-	public void nodeAdded(Object node) throws SearchException
-	{
-		logger.debug("nodeAdded(node={}) - start", node);
-		this.pksFilter.nodeAdded(node);
-	}
-
-	protected IEdge newEdge(ResultSet rs, int type, String from, String to, String fkColumn, String pkColumn) throws SearchException
-	{
-		if (logger.isDebugEnabled())
-		{
-			logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-				new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
-		}
-
-		ForeignKeyRelationshipEdge edge = createFKEdge(rs, type, from, to, fkColumn, pkColumn);
-		this.pksFilter.edgeAdded(edge);
-		return edge;
-	}
+	ForeignKeyRelationshipEdge edge = createFKEdge(rs, type, from, to, fkColumn, pkColumn);
+	this.pksFilter.edgeAdded(edge);
+	return edge;
+    }
 
 }

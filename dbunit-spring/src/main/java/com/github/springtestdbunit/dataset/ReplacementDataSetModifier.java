@@ -10,14 +10,14 @@ import org.dbunit.dataset.ReplacementDataSet;
  */
 public abstract class ReplacementDataSetModifier implements DataSetModifier {
 
-	public IDataSet modify(IDataSet dataSet) {
-		if (!(dataSet instanceof ReplacementDataSet)) {
-			dataSet = new ReplacementDataSet(dataSet);
-		}
-		addReplacements((ReplacementDataSet) dataSet);
-		return dataSet;
+    public IDataSet modify(IDataSet dataSet) {
+	if (!(dataSet instanceof ReplacementDataSet)) {
+	    dataSet = new ReplacementDataSet(dataSet);
 	}
+	addReplacements((ReplacementDataSet) dataSet);
+	return dataSet;
+    }
 
-	protected abstract void addReplacements(ReplacementDataSet dataSet);
+    protected abstract void addReplacements(ReplacementDataSet dataSet);
 
 }

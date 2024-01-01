@@ -13,8 +13,7 @@ import org.dbunit.assertion.comparer.value.ValueComparer;
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public class ColumnValueComparerMapBuilder
-{
+public class ColumnValueComparerMapBuilder {
     private Map<String, ValueComparer> comparers = new HashMap<>();
 
     /**
@@ -22,16 +21,13 @@ public class ColumnValueComparerMapBuilder
      *
      * @return this for fluent syntax.
      */
-    public ColumnValueComparerMapBuilder add(final String columnName,
-            final ValueComparer valueComparer)
-    {
-        comparers.put(columnName, valueComparer);
-        return this;
+    public ColumnValueComparerMapBuilder add(final String columnName, final ValueComparer valueComparer) {
+	comparers.put(columnName, valueComparer);
+	return this;
     }
 
     /** @return The assembled map. */
-    public Map<String, ValueComparer> build()
-    {
-        return Collections.unmodifiableMap(comparers);
+    public Map<String, ValueComparer> build() {
+	return Collections.unmodifiableMap(comparers);
     }
 }

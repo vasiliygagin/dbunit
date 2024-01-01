@@ -35,44 +35,38 @@ import java.sql.Blob;
  * @version $Revision$
  * @since Jan 12, 2004
  */
-public class BlobDataType extends BytesDataType
-{
+public class BlobDataType extends BytesDataType {
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(BlobDataType.class);
 
-    public BlobDataType()
-    {
-        super("BLOB", Types.BLOB);
+    public BlobDataType() {
+	super("BLOB", Types.BLOB);
     }
 
-    public BlobDataType(String name, int sqlType)
-    {
-        super(name, sqlType);
+    public BlobDataType(String name, int sqlType) {
+	super(name, sqlType);
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getSqlValue(column={}, resultSet={}) - start", String.valueOf(column), resultSet);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getSqlValue(column={}, resultSet={}) - start", String.valueOf(column), resultSet);
 
-        Blob value = resultSet.getBlob(column);
-        if (value == null || resultSet.wasNull())
-        {
-            return null;
-        }
-        return typeCast(value);
+	Blob value = resultSet.getBlob(column);
+	if (value == null || resultSet.wasNull()) {
+	    return null;
+	}
+	return typeCast(value);
     }
 
-    public void setSqlValue(Object value, int column, PreparedStatement statement) throws SQLException, TypeCastException
-    {
-    	if (logger.isDebugEnabled())
-    	{
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-    				new Object[]{ value, String.valueOf(column), statement});
-    	}
+    public void setSqlValue(Object value, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, String.valueOf(column), statement });
+	}
 
-    	statement.setObject(column, typeCast(value), super.getSqlType());
+	statement.setObject(column, typeCast(value), super.getSqlType());
     }
 }

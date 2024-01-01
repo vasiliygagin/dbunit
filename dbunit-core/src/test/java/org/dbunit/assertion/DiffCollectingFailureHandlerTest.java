@@ -34,36 +34,31 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DiffCollectingFailureHandlerTest extends TestCase
-{
+public class DiffCollectingFailureHandlerTest extends TestCase {
     private DbUnitAssert assertion = new DbUnitAssert();
 
-    public DiffCollectingFailureHandlerTest(String s)
-    {
-        super(s);
+    public DiffCollectingFailureHandlerTest(String s) {
+	super(s);
     }
 
-    private IDataSet getDataSet() throws Exception
-    {
-        return new FlatXmlDataSet(TestUtils.getFileReader(DbUnitAssertIT.FILE_PATH));
+    private IDataSet getDataSet() throws Exception {
+	return new FlatXmlDataSet(TestUtils.getFileReader(DbUnitAssertIT.FILE_PATH));
     }
 
-    public void testAssertTablesWithDifferentValues() throws Exception
-    {
-        IDataSet dataSet = getDataSet();
+    public void testAssertTablesWithDifferentValues() throws Exception {
+	IDataSet dataSet = getDataSet();
 
-        DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
-        
-        assertion.assertEquals(dataSet.getTable("TEST_TABLE"),
-                                dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), 
-                                myHandler);
-        
-        List diffList = myHandler.getDiffList();
-        assertEquals(1, diffList.size());
-        Difference diff = (Difference)diffList.get(0);
-        assertEquals("COLUMN2", diff.getColumnName());
-        assertEquals("row 1 col 2", diff.getExpectedValue());
-        assertEquals("wrong value", diff.getActualValue());
+	DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
+
+	assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
+		myHandler);
+
+	List diffList = myHandler.getDiffList();
+	assertEquals(1, diffList.size());
+	Difference diff = (Difference) diffList.get(0);
+	assertEquals("COLUMN2", diff.getColumnName());
+	assertEquals("row 1 col 2", diff.getExpectedValue());
+	assertEquals("wrong value", diff.getActualValue());
     }
 
 }

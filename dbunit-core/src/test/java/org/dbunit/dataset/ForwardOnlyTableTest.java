@@ -25,93 +25,69 @@ package org.dbunit.dataset;
  * @since Apr 11, 2003
  * @version $Revision$
  */
-public class ForwardOnlyTableTest extends DefaultTableTest
-{
-    public ForwardOnlyTableTest(String s)
-    {
-        super(s);
+public class ForwardOnlyTableTest extends DefaultTableTest {
+    public ForwardOnlyTableTest(String s) {
+	super(s);
     }
 
-    protected ITable createTable() throws Exception
-    {
-        return new ForwardOnlyTable(super.createTable());
+    protected ITable createTable() throws Exception {
+	return new ForwardOnlyTable(super.createTable());
     }
 
-    public void testGetRowCount() throws Exception
-    {
-        try
-        {
-            createTable().getRowCount();
-            fail("Should have throw UnsupportedOperationException");
-        }
-        catch (UnsupportedOperationException e)
-        {
+    public void testGetRowCount() throws Exception {
+	try {
+	    createTable().getRowCount();
+	    fail("Should have throw UnsupportedOperationException");
+	} catch (UnsupportedOperationException e) {
 
-        }
+	}
     }
 
-    public void testGetValueRowBounds() throws Exception
-    {
-        int[] rows = new int[]{ROW_COUNT, ROW_COUNT + 1};
-        ITable table = createTable();
-        String columnName = table.getTableMetaData().getColumns()[0].getColumnName();
+    public void testGetValueRowBounds() throws Exception {
+	int[] rows = new int[] { ROW_COUNT, ROW_COUNT + 1 };
+	ITable table = createTable();
+	String columnName = table.getTableMetaData().getColumns()[0].getColumnName();
 
-        for (int i = 0; i < rows.length; i++)
-        {
-            try
-            {
-                table.getValue(rows[i], columnName);
-                fail("Should throw a RowOutOfBoundsException!");
-            }
-            catch (RowOutOfBoundsException e)
-            {
-            }
-        }
+	for (int i = 0; i < rows.length; i++) {
+	    try {
+		table.getValue(rows[i], columnName);
+		fail("Should throw a RowOutOfBoundsException!");
+	    } catch (RowOutOfBoundsException e) {
+	    }
+	}
     }
 
-    public void testGetValueIterateBackward() throws Exception
-    {
-        ITable table = createTable();
-        for (int i = 0; i < ROW_COUNT; i++)
-        {
-            for (int j = 0; j < COLUMN_COUNT; j++)
-            {
-                String columnName = "COLUMN" + j;
-                String expected = "row " + i + " col " + j;
-                Object value = table.getValue(i, columnName);
-                assertEquals("value", expected, value);
-            }
+    public void testGetValueIterateBackward() throws Exception {
+	ITable table = createTable();
+	for (int i = 0; i < ROW_COUNT; i++) {
+	    for (int j = 0; j < COLUMN_COUNT; j++) {
+		String columnName = "COLUMN" + j;
+		String expected = "row " + i + " col " + j;
+		Object value = table.getValue(i, columnName);
+		assertEquals("value", expected, value);
+	    }
 
-            // Try access values from previous row
-            for (int j = 0; j < COLUMN_COUNT; j++)
-            {
-                String columnName = "COLUMN" + j;
-                try
-                {
-                    table.getValue(i - 1, columnName);
-                }
-                catch (UnsupportedOperationException e)
-                {
+	    // Try access values from previous row
+	    for (int j = 0; j < COLUMN_COUNT; j++) {
+		String columnName = "COLUMN" + j;
+		try {
+		    table.getValue(i - 1, columnName);
+		} catch (UnsupportedOperationException e) {
 
-                }
-            }
-        }
+		}
+	    }
+	}
     }
 
-    public void testGetValueOnEmptyTable() throws Exception
-    {
-        MockTableMetaData metaData =
-                new MockTableMetaData("TABLE", new String[] {"C1"});
-        ITable table = new ForwardOnlyTable(new DefaultTable(metaData));
-        try
-        {
-            table.getValue(0, "C1");
-            fail("Should have throw RowOutOfBoundsException");
-        }
-        catch (RowOutOfBoundsException e)
-        {
+    public void testGetValueOnEmptyTable() throws Exception {
+	MockTableMetaData metaData = new MockTableMetaData("TABLE", new String[] { "C1" });
+	ITable table = new ForwardOnlyTable(new DefaultTable(metaData));
+	try {
+	    table.getValue(0, "C1");
+	    fail("Should have throw RowOutOfBoundsException");
+	} catch (RowOutOfBoundsException e) {
 
-        }
+	}
     }
 
 }

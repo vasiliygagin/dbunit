@@ -32,45 +32,36 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$ $Date$
  * @since 1.0 (Mar 27, 2002)
  */
-public class CaseInsensitiveDataSetTest extends AbstractDataSetTest
-{
-    public CaseInsensitiveDataSetTest(String s)
-    {
-        super(s);
+public class CaseInsensitiveDataSetTest extends AbstractDataSetTest {
+    public CaseInsensitiveDataSetTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        return new CaseInsensitiveDataSet(new XmlDataSet(TestUtils.getFileReader(
-                "xml/caseInsensitiveDataSetTest.xml")));
+    protected IDataSet createDataSet() throws Exception {
+	return new CaseInsensitiveDataSet(
+		new XmlDataSet(TestUtils.getFileReader("xml/caseInsensitiveDataSetTest.xml")));
     }
 
-    protected IDataSet createDuplicateDataSet() throws Exception
-    {
-        throw new UnsupportedOperationException();
+    protected IDataSet createDuplicateDataSet() throws Exception {
+	throw new UnsupportedOperationException();
     }
 
-    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception 
-    {
-        throw new UnsupportedOperationException();
+    protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
+	throw new UnsupportedOperationException();
     }
 
-    protected void assertEqualsTableName(String message, String expected,
-            String actual)
-    {
-        assertEqualsIgnoreCase(message, expected, actual);
-    }
-    
-    public void testCreateDuplicateDataSet() throws Exception 
-    {
-        // No op. This dataSet is only a wrapper for another dataSet which is why duplicates cannot occur.
+    protected void assertEqualsTableName(String message, String expected, String actual) {
+	assertEqualsIgnoreCase(message, expected, actual);
     }
 
-    public void testCreateMultipleCaseDuplicateDataSet() throws Exception 
-    {
-        // No op. This dataSet is only a wrapper for another dataSet which is why duplicates cannot occur.
+    public void testCreateDuplicateDataSet() throws Exception {
+	// No op. This dataSet is only a wrapper for another dataSet which is why
+	// duplicates cannot occur.
+    }
+
+    public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
+	// No op. This dataSet is only a wrapper for another dataSet which is why
+	// duplicates cannot occur.
     }
 
 }
-
-

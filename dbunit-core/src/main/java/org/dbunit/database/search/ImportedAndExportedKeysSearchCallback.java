@@ -30,31 +30,28 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.util.search.SearchException;
 
 /**
- * ISearchCallback implementation that get the nodes using both direct and reverse 
- * foreign key dependency, i.e, if table C has a FK for a table A and table A has 
- * a FK for a table B, then getNodes(A) will return B and C.
+ * ISearchCallback implementation that get the nodes using both direct and
+ * reverse foreign key dependency, i.e, if table C has a FK for a table A and
+ * table A has a FK for a table B, then getNodes(A) will return B and C.
  * 
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Aug 25, 2005
  */
-public class ImportedAndExportedKeysSearchCallback extends AbstractMetaDataBasedSearchCallback 
-{
+public class ImportedAndExportedKeysSearchCallback extends AbstractMetaDataBasedSearchCallback {
 
     /**
-	 * Logger for this class
-	 */
-	private static final Logger	logger = LoggerFactory.getLogger(ImportedAndExportedKeysSearchCallback.class);
+     * Logger for this class
+     */
+    private static final Logger logger = LoggerFactory.getLogger(ImportedAndExportedKeysSearchCallback.class);
 
-	public ImportedAndExportedKeysSearchCallback(IDatabaseConnection connection)
-	{
-		super(connection);
-	}
+    public ImportedAndExportedKeysSearchCallback(IDatabaseConnection connection) {
+	super(connection);
+    }
 
-	public SortedSet getEdges(Object node) throws SearchException
-	{
-		logger.debug("getEdges(node={}) - start", node);
-		return getNodesFromImportAndExportKeys(node);
-	}
+    public SortedSet getEdges(Object node) throws SearchException {
+	logger.debug("getEdges(node={}) - start", node);
+	return getNodesFromImportAndExportKeys(node);
+    }
 
 }

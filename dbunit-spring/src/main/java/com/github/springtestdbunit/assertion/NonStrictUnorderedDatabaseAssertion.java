@@ -25,9 +25,11 @@ import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.filter.IColumnFilter;
 
 /**
- * Implements non-strict unordered database assertion strategy : compares data sets ignoring all tables and columns
- * which are not specified in expected data set but possibly exist in actual data set and sorting rows in expected and
- * actual data sets with column order in expected data set to ignore row orders in expected and actual data sets.
+ * Implements non-strict unordered database assertion strategy : compares data
+ * sets ignoring all tables and columns which are not specified in expected data
+ * set but possibly exist in actual data set and sorting rows in expected and
+ * actual data sets with column order in expected data set to ignore row orders
+ * in expected and actual data sets.
  *
  * @author Mario Zagar
  * @author Sunitha Rajarathnam
@@ -35,13 +37,13 @@ import org.dbunit.dataset.filter.IColumnFilter;
  */
 class NonStrictUnorderedDatabaseAssertion extends NonStrictDatabaseAssertion {
 
-	@Override
-	public void assertEquals(ITable expectedSortedTable, ITable actualSortedTable, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException {
-		Column[] expectedColumns = expectedSortedTable.getTableMetaData().getColumns();
-		expectedSortedTable = new SortedTable(expectedSortedTable, expectedColumns);
-		actualSortedTable = new SortedTable(actualSortedTable, expectedColumns);
-		super.assertEquals(expectedSortedTable, actualSortedTable, columnFilters);
-	}
+    @Override
+    public void assertEquals(ITable expectedSortedTable, ITable actualSortedTable, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException {
+	Column[] expectedColumns = expectedSortedTable.getTableMetaData().getColumns();
+	expectedSortedTable = new SortedTable(expectedSortedTable, expectedColumns);
+	actualSortedTable = new SortedTable(actualSortedTable, expectedColumns);
+	super.assertEquals(expectedSortedTable, actualSortedTable, columnFilters);
+    }
 
 }

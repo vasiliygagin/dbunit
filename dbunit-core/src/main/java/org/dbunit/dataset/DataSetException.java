@@ -31,29 +31,19 @@ import org.dbunit.DatabaseUnitException;
  * @version $Revision$ $Date$
  * @since Feb 17, 2002
  */
-public class DataSetException extends DatabaseUnitException
-{
-    public DataSetException()
-    {
+public class DataSetException extends DatabaseUnitException {
+    public DataSetException() {
     }
 
-    public DataSetException(String msg)
-    {
-        super(msg);
+    public DataSetException(String msg) {
+	super(msg);
     }
 
-    public DataSetException(String msg, Throwable e)
-    {
-        super(msg, e);
+    public DataSetException(String msg, Throwable e) {
+	super(msg, e);
     }
 
-    public DataSetException(Throwable e)
-    {
-        super(e);
+    public DataSetException(Throwable e) {
+	super(e);
     }
 }
-
-
-
-
-

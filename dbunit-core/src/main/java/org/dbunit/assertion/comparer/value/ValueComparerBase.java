@@ -13,16 +13,14 @@ import org.slf4j.LoggerFactory;
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public abstract class ValueComparerBase implements ValueComparer
-{
+public abstract class ValueComparerBase implements ValueComparer {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
-     * Format String for consistent fail message; substitution strings are:
-     * actual, fail phrase, expected.
+     * Format String for consistent fail message; substitution strings are: actual,
+     * fail phrase, expected.
      */
-    public static final String BASE_FAIL_MSG =
-            "Actual value='%s' is %s expected value='%s'";
+    public static final String BASE_FAIL_MSG = "Actual value='%s' is %s expected value='%s'";
 
     /**
      * {@inheritDoc}
@@ -30,22 +28,17 @@ public abstract class ValueComparerBase implements ValueComparer
      * This implementation calls
      * {@link #doCompare(ITable, ITable, int, String, DataType, Object, Object)}.
      */
-    public String compare(final ITable expectedTable, final ITable actualTable,
-            final int rowNum, final String columnName, final DataType dataType,
-            final Object expectedValue, final Object actualValue)
-            throws DatabaseUnitException
-    {
-        final String failMessage;
+    public String compare(final ITable expectedTable, final ITable actualTable, final int rowNum,
+	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+	    throws DatabaseUnitException {
+	final String failMessage;
 
-        failMessage = doCompare(expectedTable, actualTable, rowNum, columnName,
-                dataType, expectedValue, actualValue);
+	failMessage = doCompare(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue, actualValue);
 
-        log.debug(
-                "compare: rowNum={}, columnName={}, expectedValue={},"
-                        + " actualValue={}, failMessage={}",
-                rowNum, columnName, expectedValue, actualValue, failMessage);
+	log.debug("compare: rowNum={}, columnName={}, expectedValue={}," + " actualValue={}, failMessage={}", rowNum,
+		columnName, expectedValue, actualValue, failMessage);
 
-        return failMessage;
+	return failMessage;
     }
 
     /**
@@ -54,14 +47,12 @@ public abstract class ValueComparerBase implements ValueComparer
      * @see ValueComparer#compare(ITable, ITable, int, String, DataType, Object,
      *      Object)
      */
-    protected abstract String doCompare(final ITable expectedTable,
-            final ITable actualTable, final int rowNum, final String columnName,
-            final DataType dataType, final Object expectedValue,
-            final Object actualValue) throws DatabaseUnitException;
+    protected abstract String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
+	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+	    throws DatabaseUnitException;
 
     @Override
-    public String toString()
-    {
-        return getClass().getName();
+    public String toString() {
+	return getClass().getName();
     }
 }

@@ -32,59 +32,46 @@ import org.dbunit.testutil.TestUtils;
  * @since Mar 17, 2003
  * @version $Revision$
  */
-public class ReplacementDataSetTest extends AbstractDataSetDecoratorTest
-{
-    public ReplacementDataSetTest(String s)
-    {
-        super(s);
+public class ReplacementDataSetTest extends AbstractDataSetDecoratorTest {
+    public ReplacementDataSetTest(String s) {
+	super(s);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSetTest class
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        return new ReplacementDataSet(new FlatXmlDataSetBuilder().build(new FileReader(
-                FlatXmlDataSetTest.DATASET_FILE)));
+    protected IDataSet createDataSet() throws Exception {
+	return new ReplacementDataSet(
+		new FlatXmlDataSetBuilder().build(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
     }
 
-    public void testConstructor_DataSetHasCaseSensitive_ReplacementSetHasCaseSensitive()
-            throws Exception
-    {
-        FileReader xmlReader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
-        FlatXmlDataSet flatDataSet = new FlatXmlDataSetBuilder()
-                .setCaseSensitiveTableNames(true).build(xmlReader);
-        ReplacementDataSet dataSet = new ReplacementDataSet(flatDataSet);
+    public void testConstructor_DataSetHasCaseSensitive_ReplacementSetHasCaseSensitive() throws Exception {
+	FileReader xmlReader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
+	FlatXmlDataSet flatDataSet = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true).build(xmlReader);
+	ReplacementDataSet dataSet = new ReplacementDataSet(flatDataSet);
 
-        assertTrue(dataSet.isCaseSensitiveTableNames());
+	assertTrue(dataSet.isCaseSensitiveTableNames());
     }
 
-    public void testConstructor_DifferentCaseTableNames_CaseSensitiveMatch()
-            throws Exception
-    {
-        FileReader fileReader = TestUtils
-                .getFileReader("/xml/replacementDataSetCaseSensitive.xml");
-        IDataSet originalDataSet = new FlatXmlDataSetBuilder()
-                .setCaseSensitiveTableNames(true).build(fileReader);
-        assertCaseSensitiveTables(originalDataSet);
+    public void testConstructor_DifferentCaseTableNames_CaseSensitiveMatch() throws Exception {
+	FileReader fileReader = TestUtils.getFileReader("/xml/replacementDataSetCaseSensitive.xml");
+	IDataSet originalDataSet = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true).build(fileReader);
+	assertCaseSensitiveTables(originalDataSet);
 
-        IDataSet replacementDataSet = new ReplacementDataSet(originalDataSet);
-        assertCaseSensitiveTables(replacementDataSet);
+	IDataSet replacementDataSet = new ReplacementDataSet(originalDataSet);
+	assertCaseSensitiveTables(replacementDataSet);
     }
 
-    private void assertCaseSensitiveTables(IDataSet dataSet) throws DataSetException
-    {
-        ITable[] tables = dataSet.getTables();
-        assertEquals(
-                "Should be 2 tables with case-sensitive table names; 1 without.",
-                2, tables.length);
+    private void assertCaseSensitiveTables(IDataSet dataSet) throws DataSetException {
+	ITable[] tables = dataSet.getTables();
+	assertEquals("Should be 2 tables with case-sensitive table names; 1 without.", 2, tables.length);
 
-        String tableName0 = tables[0].getTableMetaData().getTableName();
-        String tableName1 = tables[1].getTableMetaData().getTableName();
+	String tableName0 = tables[0].getTableMetaData().getTableName();
+	String tableName1 = tables[1].getTableMetaData().getTableName();
 
-        assertEquals("TEST_TABLE", tableName0);
-        assertEquals("test_table", tableName1);
-        assertEquals("row 0 col 0", tables[0].getValue(0, "COLUMN0"));
-        assertEquals("row 1 col 0", tables[1].getValue(0, "COLUMN0"));
+	assertEquals("TEST_TABLE", tableName0);
+	assertEquals("test_table", tableName1);
+	assertEquals("row 0 col 0", tables[0].getValue(0, "COLUMN0"));
+	assertEquals("row 1 col 0", tables[1].getValue(0, "COLUMN0"));
     }
 }

@@ -31,136 +31,121 @@ import java.sql.Types;
  * @since Aug 13, 2003
  * @version $Revision$
  */
-public class OracleDataTypeFactoryTest extends AbstractDataTypeFactoryTest
-{
-    public OracleDataTypeFactoryTest(String s)
-    {
-        super(s);
+public class OracleDataTypeFactoryTest extends AbstractDataTypeFactoryTest {
+    public OracleDataTypeFactoryTest(String s) {
+	super(s);
     }
 
-    public IDataTypeFactory createFactory() throws Exception
-    {
-        return new OracleDataTypeFactory();
+    public IDataTypeFactory createFactory() throws Exception {
+	return new OracleDataTypeFactory();
     }
 
-    public void testCreateBlobDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "BLOB";
+    public void testCreateBlobDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "BLOB";
 
-        DataType expected = OracleDataTypeFactory.ORACLE_BLOB;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = OracleDataTypeFactory.ORACLE_BLOB;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateClobDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "CLOB";
+    public void testCreateClobDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "CLOB";
 
-        DataType expected = OracleDataTypeFactory.ORACLE_CLOB;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = OracleDataTypeFactory.ORACLE_CLOB;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateNClobDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "NCLOB";
+    public void testCreateNClobDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "NCLOB";
 
-        DataType expected = OracleDataTypeFactory.ORACLE_NCLOB;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = OracleDataTypeFactory.ORACLE_NCLOB;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateLongRawDataType() throws Exception
-    {
-        int sqlType = Types.LONGVARBINARY;
-        String sqlTypeName = "LONG RAW";
+    public void testCreateLongRawDataType() throws Exception {
+	int sqlType = Types.LONGVARBINARY;
+	String sqlTypeName = "LONG RAW";
 
-        DataType expected = OracleDataTypeFactory.LONG_RAW;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = OracleDataTypeFactory.LONG_RAW;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateTimestampDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "TIMESTAMP(6)";
+    public void testCreateTimestampDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "TIMESTAMP(6)";
 
-        DataType expected = DataType.TIMESTAMP;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.TIMESTAMP;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateDateDataType() throws Exception
-    {
-        int sqlType = Types.DATE;
-        String sqlTypeName = "DATE";
+    public void testCreateDateDataType() throws Exception {
+	int sqlType = Types.DATE;
+	String sqlTypeName = "DATE";
 
-        DataType expected = DataType.TIMESTAMP;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.TIMESTAMP;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateNChar2DataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "NCHAR2";
+    public void testCreateNChar2DataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "NCHAR2";
 
-        DataType expected = DataType.CHAR;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.CHAR;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateNVarChar2DataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "NVARCHAR2";
+    public void testCreateNVarChar2DataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "NVARCHAR2";
 
-        DataType expected = DataType.VARCHAR;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.VARCHAR;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateFloatDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "FLOAT";
+    public void testCreateFloatDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "FLOAT";
 
-        DataType expected = DataType.FLOAT;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.FLOAT;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateBinaryDoubleDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "BINARY_DOUBLE";
+    public void testCreateBinaryDoubleDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "BINARY_DOUBLE";
 
-        DataType expected = DataType.DOUBLE;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.DOUBLE;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateBinaryFloatDataType() throws Exception
-    {
-        int sqlType = Types.OTHER;
-        String sqlTypeName = "BINARY_FLOAT";
+    public void testCreateBinaryFloatDataType() throws Exception {
+	int sqlType = Types.OTHER;
+	String sqlTypeName = "BINARY_FLOAT";
 
-        DataType expected = DataType.FLOAT;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = DataType.FLOAT;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateSdoGeometryDataType() throws Exception
-    {
-        int sqlType = Types.STRUCT;
-        String sqlTypeName = "SDO_GEOMETRY";
+    public void testCreateSdoGeometryDataType() throws Exception {
+	int sqlType = Types.STRUCT;
+	String sqlTypeName = "SDO_GEOMETRY";
 
-        DataType expected = OracleDataTypeFactory.ORACLE_SDO_GEOMETRY_TYPE;
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType expected = OracleDataTypeFactory.ORACLE_SDO_GEOMETRY_TYPE;
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
 }
