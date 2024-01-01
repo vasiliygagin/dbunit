@@ -9,7 +9,7 @@ I am giving them a throw grooming and some modernization.
 Initial releases of new forked artifacts are:
 
         <dependency>
-            <groupId>com.github.vasiliygagin</groupId>
+            <groupId>com.github.vasiliygagin.dbunit</groupId>
             <artifactId>dbunit-core</artifactId>
             <version>2.8.0</version>
         </dependency>
@@ -17,7 +17,7 @@ Initial releases of new forked artifacts are:
 and
 
         <dependency>
-            <groupId>com.github.vasiliygagin</groupId>
+            <groupId>com.github.vasiliygagin.dbunit</groupId>
             <artifactId>dbunit-spring</artifactId>
             <version>2.8.0</version>
         </dependency>
