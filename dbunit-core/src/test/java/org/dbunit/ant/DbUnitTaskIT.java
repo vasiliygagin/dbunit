@@ -21,10 +21,16 @@
 
 package org.dbunit.ant;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -32,6 +38,7 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.MagicTestNames;
@@ -56,11 +63,9 @@ import org.dbunit.ext.oracle.OracleDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junitx.framework.ArrayAssert;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Ant-based test class for the Dbunit ant task definition.
@@ -71,21 +76,22 @@ import junitx.framework.ArrayAssert;
  * @version $Revision$ $Date$
  * @since Jun 10, 2002
  * @see org.dbunit.ant.AntTest
+ * 
+ *      Comment from {@link BuildFileTest}: 0deprecated as of 1.9.4. Use
+ *      BuildFileRule, Assert, AntAssert and JUnit4 annotations to drive tests
+ *      instead
+ * @see org.apache.tools.ant.BuildFileRule
  */
-public class DbUnitTaskIT extends TestCase {
+public class DbUnitTaskIT {
 
-    static protected Class classUnderTest = DbUnitTaskIT.class;
+    private static Class<DbUnitTaskIT> classUnderTest = DbUnitTaskIT.class;
 
     private static final String BUILD_FILE_DIR = "xml";
     private static final String OUTPUT_DIR = "target/xml";
 
     private File outputDir;
 
-    public DbUnitTaskIT(String name) {
-	super(name);
-    }
-
-    @Override
+    @Before
     public void setUp() throws Exception {
 	// This line ensure test database is initialized
 	DatabaseEnvironmentLoader.getInstance(null);
@@ -98,30 +104,35 @@ public class DbUnitTaskIT extends TestCase {
 	outputDir.mkdirs();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
 	super_tearDown();
 
 	outputDir = new File(getProjectDir(), OUTPUT_DIR);
 	FileHelper.deleteDirectory(outputDir);
     }
 
+    @Test
     public void testNoDriver() {
 	expectBuildException("no-driver", "Should have required a driver attribute.");
     }
 
+    @Test
     public void testNoDbUrl() {
 	expectBuildException("no-db-url", "Should have required a url attribute.");
     }
 
+    @Test
     public void testNoUserid() {
 	expectBuildException("no-userid", "Should have required a userid attribute.");
     }
 
+    @Test
     public void testNoPassword() {
 	expectBuildException("no-password", "Should have required a password attribute.");
     }
 
+    @Test
     public void testInvalidDatabaseInformation() {
 	Throwable sql = null;
 	try {
@@ -134,6 +145,7 @@ public class DbUnitTaskIT extends TestCase {
 	}
     }
 
+    @Test
     public void testInvalidOperationType() {
 	Throwable iae = null;
 	try {
@@ -146,6 +158,7 @@ public class DbUnitTaskIT extends TestCase {
 	}
     }
 
+    @Test
     public void testSetFlatFalse() {
 	String targetName = "set-format-xml";
 	Operation operation = (Operation) getFirstStepFromTarget(targetName);
@@ -153,6 +166,7 @@ public class DbUnitTaskIT extends TestCase {
 		operation.getFormat().equalsIgnoreCase("xml"));
     }
 
+    @Test
     public void testResolveOperationTypes() {
 	assertOperationType("Should have been a NONE operation", "test-type-none", DatabaseOperation.NONE);
 	assertOperationType("Should have been an DELETE_ALL operation", "test-type-delete-all",
@@ -175,16 +189,19 @@ public class DbUnitTaskIT extends TestCase {
 		InsertIdentityOperation.CLEAN_INSERT);
     }
 
+    @Test
     public void testInvalidCompositeOperationSrc() {
 	expectBuildException("invalid-composite-operation-src",
 		"Should have objected to nested operation src attribute " + "being set.");
     }
 
+    @Test
     public void testInvalidCompositeOperationFlat() {
 	expectBuildException("invalid-composite-operation-format-flat",
 		"Should have objected to nested operation format attribute " + "being set.");
     }
 
+    @Test
     public void testExportFull() {
 	String targetName = "test-export-full";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -195,6 +212,7 @@ public class DbUnitTaskIT extends TestCase {
 		tables.size() == 0);
     }
 
+    @Test
     public void testExportPartial() {
 	String targetName = "test-export-partial";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -208,6 +226,7 @@ public class DbUnitTaskIT extends TestCase {
 		pkTable.getName().equals("PK_TABLE"));
     }
 
+    @Test
     public void testExportWithForwardOnlyResultSetTable() throws SQLException, DatabaseUnitException {
 	String targetName = "test-export-forward-only-result-set-table-via-config";
 
@@ -220,12 +239,14 @@ public class DbUnitTaskIT extends TestCase {
 		.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName());
     }
 
+    @Test
     public void testExportFlat() {
 	String targetName = "test-export-format-flat";
 	Export export = (Export) getFirstStepFromTarget(targetName);
 	assertEquals("format", "flat", export.getFormat());
     }
 
+    @Test
     public void testExportFlatWithDocytpe() {
 	String targetName = "test-export-format-flat-with-doctype";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -233,6 +254,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("doctype", "dataset.dtd", export.getDoctype());
     }
 
+    @Test
     public void testExportFlatWithEncoding() {
 	String targetName = "test-export-format-flat-with-encoding";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -240,6 +262,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("encoding", "ISO-8859-1", export.getEncoding());
     }
 
+    @Test
     public void testExportXml() {
 	String targetName = "test-export-format-xml";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -247,6 +270,7 @@ public class DbUnitTaskIT extends TestCase {
 		export.getFormat().equalsIgnoreCase("xml"));
     }
 
+    @Test
     public void testExportCsv() {
 	String targetName = "test-export-format-csv";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -254,6 +278,7 @@ public class DbUnitTaskIT extends TestCase {
 		export.getFormat().equalsIgnoreCase("csv"));
     }
 
+    @Test
     public void testExportDtd() {
 	String targetName = "test-export-format-dtd";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -261,10 +286,12 @@ public class DbUnitTaskIT extends TestCase {
 		export.getFormat().equalsIgnoreCase("dtd"));
     }
 
+    @Test
     public void testInvalidExportFormat() {
 	expectBuildException("invalid-export-format", "Should have objected to invalid format attribute.");
     }
 
+    @Test
     public void testExportXmlOrdered() throws Exception {
 	String targetName = "test-export-format-xml-ordered";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -280,6 +307,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals(dataSetToBeExported.getClass(), FilteredDataSet.class);
     }
 
+    @Test
     public void testExportQuery() {
 	String targetName = "test-export-query";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -297,6 +325,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("sql", "SELECT * FROM PK_TABLE", pkTable.getSql());
     }
 
+    @Test
     public void testExportWithQuerySet() {
 	String targetName = "test-export-with-queryset";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -331,6 +360,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("name", "EMPTY_TABLE", emptyTable.getName());
     }
 
+    @Test
     public void testWithBadQuerySet() {
 	try {
 	    expectBuildException("invalid-queryset",
@@ -341,6 +371,7 @@ public class DbUnitTaskIT extends TestCase {
 	}
     }
 
+    @Test
     public void testWithReferenceQuerySet() {
 	String targetName = "test-queryset-reference";
 
@@ -363,6 +394,7 @@ public class DbUnitTaskIT extends TestCase {
 
     }
 
+    @Test
     public void testExportQueryMixed() {
 	String targetName = "test-export-query-mixed";
 	Export export = (Export) getFirstStepFromTarget(targetName);
@@ -384,6 +416,7 @@ public class DbUnitTaskIT extends TestCase {
      * Tests the exception that is thrown when the compare fails because the source
      * format was different from the previous "export" task's write format.
      */
+    @Test
     public void testExportAndCompareFormatMismatch() {
 	String targetName = "test-export-and-compare-format-mismatch";
 
@@ -403,6 +436,7 @@ public class DbUnitTaskIT extends TestCase {
 	}
     }
 
+    @Test
     public void testDataTypeFactory() throws Exception {
 	String targetName = "test-datatypefactory";
 	DbUnitTask task = getFirstTargetTask(targetName);
@@ -411,10 +445,11 @@ public class DbUnitTaskIT extends TestCase {
 	IDataTypeFactory factory = (IDataTypeFactory) connection.getConfig()
 		.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
 
-	Class expectedClass = OracleDataTypeFactory.class;
+	Class<OracleDataTypeFactory> expectedClass = OracleDataTypeFactory.class;
 	assertEquals("factory", expectedClass, factory.getClass());
     }
 
+    @Test
     public void testEscapePattern() throws Exception {
 	String targetName = "test-escapepattern";
 	DbUnitTask task = getFirstTargetTask(targetName);
@@ -426,6 +461,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("factory", expectedPattern, actualPattern);
     }
 
+    @Test
     public void testDataTypeFactoryViaGenericConfig() throws Exception {
 	String targetName = "test-datatypefactory-via-generic-config";
 	DbUnitTask task = getFirstTargetTask(targetName);
@@ -435,17 +471,18 @@ public class DbUnitTaskIT extends TestCase {
 	DatabaseConfig config = connection.getConfig();
 
 	IDataTypeFactory factory = (IDataTypeFactory) config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
-	Class expectedClass = OracleDataTypeFactory.class;
+	Class<OracleDataTypeFactory> expectedClass = OracleDataTypeFactory.class;
 	assertEquals("factory", expectedClass, factory.getClass());
 
 	String[] actualTableType = (String[]) config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE);
-	ArrayAssert.assertEquals("tableType", new String[] { "TABLE", "SYNONYM" }, actualTableType);
+	assertArrayEquals("tableType", new String[] { "TABLE", "SYNONYM" }, actualTableType);
 	assertTrue("batched statements feature should be true",
 		connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
 	assertTrue("qualified tablenames feature should be true",
 		connection.getConfig().getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES));
     }
 
+    @Test
     public void testClasspath() throws Exception {
 	String targetName = "test-classpath";
 
@@ -459,6 +496,7 @@ public class DbUnitTaskIT extends TestCase {
 
     }
 
+    @Test
     public void testDriverNotInClasspath() throws Exception {
 	String targetName = "test-drivernotinclasspath";
 
@@ -471,6 +509,7 @@ public class DbUnitTaskIT extends TestCase {
 	}
     }
 
+    @Test
     public void testReplaceOperation() throws Exception {
 	String targetName = "test-replace";
 	final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
@@ -481,6 +520,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("row 1", table.getValue(1, "NORMAL0"));
     }
 
+    @Test
     public void testOrderedOperation() throws Exception {
 	String targetName = "test-ordered";
 	final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
@@ -491,6 +531,7 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("row 1", table.getValue(1, "NORMAL0"));
     }
 
+    @Test
     public void testReplaceOrderedOperation() throws Exception {
 	String targetName = "test-replace-ordered";
 	final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
@@ -501,13 +542,13 @@ public class DbUnitTaskIT extends TestCase {
 	assertEquals("row 1", table.getValue(1, "NORMAL0"));
     }
 
-    protected void assertOperationType(String failMessage, String targetName, DatabaseOperation expected) {
+    private void assertOperationType(String failMessage, String targetName, DatabaseOperation expected) {
 	Operation oper = (Operation) getFirstStepFromTarget(targetName);
 	DatabaseOperation dbOper = oper.getDbOperation();
 	assertTrue(failMessage + ", but was: " + dbOper, expected.equals(dbOper));
     }
 
-    protected int getQueryCount(List tables) {
+    private int getQueryCount(List tables) {
 	int count = 0;
 	for (Iterator it = tables.iterator(); it.hasNext();) {
 	    if (it.next() instanceof Query) {
@@ -518,7 +559,7 @@ public class DbUnitTaskIT extends TestCase {
 	return count;
     }
 
-    protected int getTableCount(List tables) {
+    private int getTableCount(List tables) {
 	int count = 0;
 	for (Iterator it = tables.iterator(); it.hasNext();) {
 	    if (it.next() instanceof Table) {
@@ -529,7 +570,7 @@ public class DbUnitTaskIT extends TestCase {
 	return count;
     }
 
-    protected int getQuerySetCount(List tables) {
+    private int getQuerySetCount(List tables) {
 	int count = 0;
 	for (Iterator it = tables.iterator(); it.hasNext();) {
 	    if (it.next() instanceof QuerySet) {
@@ -540,11 +581,11 @@ public class DbUnitTaskIT extends TestCase {
 	return count;
     }
 
-    protected DbUnitTaskStep getFirstStepFromTarget(String targetName) {
+    private DbUnitTaskStep getFirstStepFromTarget(String targetName) {
 	return getStepFromTarget(targetName, 0);
     }
 
-    protected DbUnitTaskStep getStepFromTarget(String targetName, int index) {
+    private DbUnitTaskStep getStepFromTarget(String targetName, int index) {
 	DbUnitTask task = getFirstTargetTask(targetName);
 	List steps = task.getSteps();
 	if (steps == null || steps.size() == 0) {
@@ -554,9 +595,9 @@ public class DbUnitTaskIT extends TestCase {
     }
 
     private DbUnitTask getFirstTargetTask(String targetName) {
-	Hashtable targets = project.getTargets();
+	Hashtable<String, Target> targets = project.getTargets();
 	executeTarget(targetName);
-	Target target = (Target) targets.get(targetName);
+	Target target = targets.get(targetName);
 
 	Task[] tasks = target.getTasks();
 	for (int i = 0; i < tasks.length; i++) {
@@ -574,27 +615,12 @@ public class DbUnitTaskIT extends TestCase {
 	return null;
     }
 
-    public static Test suite() {
-	TestSuite suite = new TestSuite(classUnderTest);
-	return suite;
-    }
-
-    public static void main(String args[]) {
-	if (args.length > 0 && args[0].equals("-gui")) {
-	    System.err.println("JUnit Swing-GUI is no longer supported.");
-	    System.err.println("Starting textversion.");
-	}
-
-	junit.textui.TestRunner.run(suite());
-    }
-
-    protected Project project;
+    private Project project;
 
     private StringBuffer logBuffer;
     private StringBuffer fullLogBuffer;
     private StringBuffer outBuffer;
     private StringBuffer errBuffer;
-    private BuildException buildException;
 
     /**
      * Automatically calls the target called "tearDown" from the build file tested
@@ -608,7 +634,7 @@ public class DbUnitTaskIT extends TestCase {
      *                   added it to the signature so that subclasses can throw
      *                   whatever they need.
      */
-    protected void super_tearDown() throws Exception {
+    private void super_tearDown() throws Exception {
 	if (project == null) {
 	    /*
 	     * Maybe the BuildFileTest was subclassed and there is no initialized project.
@@ -629,205 +655,8 @@ public class DbUnitTaskIT extends TestCase {
      * @param target target to run
      * @param cause  information string to reader of report
      */
-    public void expectBuildException(String target, String cause) {
+    private void expectBuildException(String target, String cause) {
 	expectSpecificBuildException(target, cause, null);
-    }
-
-    /**
-     * Assert that only the given message has been logged with a priority &lt;= INFO
-     * when running the given target.
-     *
-     * @param target String
-     * @param log    String
-     */
-    public void expectLog(String target, String log) {
-	executeTarget(target);
-	String realLog = getLog();
-	assertEquals(log, realLog);
-    }
-
-    /**
-     * Assert that the given substring is in the log messages.
-     *
-     * @param substring String
-     */
-    public void assertLogContaining(String substring) {
-	String realLog = getLog();
-	assertTrue("expecting log to contain \"" + substring + "\" log was \"" + realLog + "\"",
-		realLog.contains(substring));
-    }
-
-    /**
-     * Assert that the given substring is not in the log messages.
-     *
-     * @param substring String
-     */
-    public void assertLogNotContaining(String substring) {
-	String realLog = getLog();
-	assertFalse("didn't expect log to contain \"" + substring + "\" log was \"" + realLog + "\"",
-		realLog.contains(substring));
-    }
-
-    /**
-     * Assert that the given substring is in the output messages.
-     *
-     * @param substring String
-     * @since Ant1.7
-     */
-    public void assertOutputContaining(String substring) {
-	assertOutputContaining(null, substring);
-    }
-
-    /**
-     * Assert that the given substring is in the output messages.
-     *
-     * @param message   Print this message if the test fails. Defaults to a
-     *                  meaningful text if <code>null</code> is passed.
-     * @param substring String
-     * @since Ant1.7
-     */
-    public void assertOutputContaining(String message, String substring) {
-	String realOutput = getOutput();
-	String realMessage = (message != null) ? message
-		: "expecting output to contain \"" + substring + "\" output was \"" + realOutput + "\"";
-	assertTrue(realMessage, realOutput.contains(substring));
-    }
-
-    /**
-     * Assert that the given substring is not in the output messages.
-     *
-     * @param message   Print this message if the test fails. Defaults to a
-     *                  meaningful text if <code>null</code> is passed.
-     * @param substring String
-     * @since Ant1.7
-     */
-    public void assertOutputNotContaining(String message, String substring) {
-	String realOutput = getOutput();
-	String realMessage = (message != null) ? message
-		: "expecting output to not contain \"" + substring + "\" output was \"" + realOutput + "\"";
-	assertFalse(realMessage, realOutput.contains(substring));
-    }
-
-    /**
-     * Assert that the given message has been logged with a priority &lt;= INFO when
-     * running the given target.
-     *
-     * @param target String
-     * @param log    String
-     */
-    public void expectLogContaining(String target, String log) {
-	executeTarget(target);
-	assertLogContaining(log);
-    }
-
-    /**
-     * Assert that the given message has not been logged with a priority &lt;= INFO
-     * when running the given target.
-     *
-     * @param target String
-     * @param log    String
-     */
-    public void expectLogNotContaining(String target, String log) {
-	executeTarget(target);
-	assertLogNotContaining(log);
-    }
-
-    /**
-     * Gets the log the BuildFileTest object. Only valid if configureProject() has
-     * been called.
-     *
-     * @pre logBuffer!=null
-     * @return The log value
-     */
-    public String getLog() {
-	return logBuffer.toString();
-    }
-
-    /**
-     * Assert that the given message has been logged with a priority &gt;= VERBOSE
-     * when running the given target.
-     *
-     * @param target String
-     * @param log    String
-     */
-    public void expectDebuglog(String target, String log) {
-	executeTarget(target);
-	String realLog = getFullLog();
-	assertEquals(log, realLog);
-    }
-
-    /**
-     * Assert that the given substring is in the log messages.
-     *
-     * @param substring String
-     */
-    public void assertDebuglogContaining(String substring) {
-	String realLog = getFullLog();
-	assertTrue("expecting debug log to contain \"" + substring + "\" log was \"" + realLog + "\"",
-		realLog.contains(substring));
-    }
-
-    /**
-     * Gets the log the BuildFileTest object.
-     *
-     * Only valid if configureProject() has been called.
-     *
-     * @pre fullLogBuffer!=null
-     * @return The log value
-     */
-    public String getFullLog() {
-	return fullLogBuffer.toString();
-    }
-
-    /**
-     * execute the target, verify output matches expectations
-     *
-     * @param target target to execute
-     * @param output output to look for
-     */
-    public void expectOutput(String target, String output) {
-	executeTarget(target);
-	String realOutput = getOutput();
-	assertEquals(output, realOutput.trim());
-    }
-
-    /**
-     * Executes the target, verify output matches expectations and that we got the
-     * named error at the end
-     *
-     * @param target target to execute
-     * @param output output to look for
-     * @param error  Description of Parameter
-     */
-    public void expectOutputAndError(String target, String output, String error) {
-	executeTarget(target);
-	String realOutput = getOutput();
-	assertEquals(output, realOutput);
-	String realError = getError();
-	assertEquals(error, realError);
-    }
-
-    public String getOutput() {
-	return cleanBuffer(outBuffer);
-    }
-
-    public String getError() {
-	return cleanBuffer(errBuffer);
-    }
-
-    public BuildException getBuildException() {
-	return buildException;
-    }
-
-    private String cleanBuffer(StringBuffer buffer) {
-	StringBuilder cleanedBuffer = new StringBuilder();
-	for (int i = 0; i < buffer.length(); i++) {
-	    char ch = buffer.charAt(i);
-	    if (ch != '\r') {
-		cleanedBuffer.append(ch);
-	    }
-	}
-	return cleanedBuffer.toString();
     }
 
     /**
@@ -835,7 +664,7 @@ public class DbUnitTaskIT extends TestCase {
      *
      * @param filename name of project file to run
      */
-    public void configureProject(String filename) throws BuildException {
+    private void configureProject(String filename) throws BuildException {
 	configureProject(filename, Project.MSG_DEBUG);
     }
 
@@ -845,7 +674,7 @@ public class DbUnitTaskIT extends TestCase {
      * @param filename name of project file to run
      * @param logLevel int
      */
-    public void configureProject(String filename, int logLevel) throws BuildException {
+    private void configureProject(String filename, int logLevel) throws BuildException {
 	logBuffer = new StringBuffer();
 	fullLogBuffer = new StringBuffer();
 	project = new Project();
@@ -869,7 +698,7 @@ public class DbUnitTaskIT extends TestCase {
      * @pre configureProject has been called
      * @param targetName target to run
      */
-    public void executeTarget(String targetName) {
+    private void executeTarget(String targetName) {
 	PrintStream sysOut = System.out;
 	PrintStream sysErr = System.err;
 	try {
@@ -883,7 +712,6 @@ public class DbUnitTaskIT extends TestCase {
 	    System.setErr(err);
 	    logBuffer = new StringBuffer();
 	    fullLogBuffer = new StringBuffer();
-	    buildException = null;
 	    project.executeTarget(targetName);
 	} finally {
 	    System.setOut(sysOut);
@@ -893,31 +721,12 @@ public class DbUnitTaskIT extends TestCase {
     }
 
     /**
-     * Get the project which has been configured for a test.
-     *
-     * @return the Project instance for this test.
-     */
-    public Project getProject() {
-	return project;
-    }
-
-    /**
      * Gets the directory of the project.
      *
      * @return the base dir of the project
      */
-    public File getProjectDir() {
+    private File getProjectDir() {
 	return project.getBaseDir();
-    }
-
-    /**
-     * get location of temporary directory pointed to by property "output"
-     * 
-     * @return location of temporary directory pointed to by property "output"
-     * @since Ant 1.9.4
-     */
-    public File getOutputDir() {
-	return new File(project.getProperty("output"));
     }
 
     /**
@@ -928,11 +737,10 @@ public class DbUnitTaskIT extends TestCase {
      * @param msg    the message value of the build exception we are waiting for set
      *               to null for any build exception to be valid
      */
-    public void expectSpecificBuildException(String target, String cause, String msg) {
+    private void expectSpecificBuildException(String target, String cause, String msg) {
 	try {
 	    executeTarget(target);
 	} catch (BuildException ex) {
-	    buildException = ex;
 	    assertTrue("Should throw BuildException because '" + cause + "' with message '" + msg
 		    + "' (actual message '" + ex.getMessage() + "' instead)",
 		    msg == null || ex.getMessage().equals(msg));
@@ -942,107 +750,9 @@ public class DbUnitTaskIT extends TestCase {
     }
 
     /**
-     * run a target, expect an exception string containing the substring we look for
-     * (case sensitive match)
-     *
-     * @param target   target to run
-     * @param cause    information string to reader of report
-     * @param contains substring of the build exception to look for
-     */
-    public void expectBuildExceptionContaining(String target, String cause, String contains) {
-	try {
-	    executeTarget(target);
-	} catch (BuildException ex) {
-	    buildException = ex;
-	    assertTrue(
-		    "Should throw BuildException because '" + cause + "' with message containing '" + contains
-			    + "' (actual message '" + ex.getMessage() + "' instead)",
-		    null == contains || ex.getMessage().contains(contains));
-	    return;
-	}
-	fail("Should throw BuildException because: " + cause);
-    }
-
-    /**
-     * call a target, verify property is as expected
-     *
-     * @param target   build file target
-     * @param property property name
-     * @param value    expected value
-     */
-    public void expectPropertySet(String target, String property, String value) {
-	executeTarget(target);
-	assertPropertyEquals(property, value);
-    }
-
-    /**
-     * assert that a property equals a value; comparison is case sensitive.
-     *
-     * @param property property name
-     * @param value    expected value
-     */
-    public void assertPropertyEquals(String property, String value) {
-	String result = project.getProperty(property);
-	assertEquals("property " + property, value, result);
-    }
-
-    /**
-     * assert that a property equals "true".
-     *
-     * @param property property name
-     */
-    public void assertPropertySet(String property) {
-	assertPropertyEquals(property, "true");
-    }
-
-    /**
-     * assert that a property is null.
-     *
-     * @param property property name
-     */
-    public void assertPropertyUnset(String property) {
-	String result = project.getProperty(property);
-	assertNull("Expected property " + property + " to be unset, but it is set to the value: " + result, result);
-    }
-
-    /**
-     * call a target, verify named property is "true".
-     *
-     * @param target   build file target
-     * @param property property name
-     */
-    public void expectPropertySet(String target, String property) {
-	expectPropertySet(target, property, "true");
-    }
-
-    /**
-     * Call a target, verify property is null.
-     *
-     * @param target   build file target
-     * @param property property name
-     */
-    public void expectPropertyUnset(String target, String property) {
-	expectPropertySet(target, property, null);
-    }
-
-    /**
-     * Retrieve a resource from the caller classloader to avoid assuming a vm
-     * working directory. The resource path must be relative to the package name or
-     * absolute from the root path.
-     *
-     * @param resource the resource to retrieve its url.
-     * @return URL ditto
-     */
-    public URL getResource(String resource) {
-	URL url = getClass().getResource(resource);
-	assertNotNull("Could not find resource :" + resource, url);
-	return url;
-    }
-
-    /**
      * an output stream which saves stuff to our buffer.
      */
-    protected static class AntOutputStream extends OutputStream {
+    private static class AntOutputStream extends OutputStream {
 	private StringBuffer buffer;
 
 	public AntOutputStream(StringBuffer buffer) {
