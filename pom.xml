@@ -4,7 +4,7 @@
 
     <groupId>io.github.vasiliygagin</groupId>
     <artifactId>dbunit</artifactId>
-    <version>2.8.2-SNAPSHOT</version>
+    <version>2.8.2</version>
     <packaging>pom</packaging>
 
     <name>dbUnit JUnit Extension Aggregate Project</name>
@@ -31,7 +31,7 @@
         <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
         <developerConnection>scm:git:git://github.com/vasiliygagin/dbunit.git</developerConnection>
         <url>https://github.com/vasiliygagin/dbunit</url>
-        <tag>2.8.1</tag>
+        <tag>2.8.2</tag>
     </scm>
 
     <modules>
