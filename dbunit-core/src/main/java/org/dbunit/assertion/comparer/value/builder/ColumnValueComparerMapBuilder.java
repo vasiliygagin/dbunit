@@ -22,12 +22,12 @@ public class ColumnValueComparerMapBuilder {
      * @return this for fluent syntax.
      */
     public ColumnValueComparerMapBuilder add(final String columnName, final ValueComparer valueComparer) {
-	comparers.put(columnName, valueComparer);
-	return this;
+        comparers.put(columnName, valueComparer);
+        return this;
     }
 
     /** @return The assembled map. */
     public Map<String, ValueComparer> build() {
-	return Collections.unmodifiableMap(comparers);
+        return Collections.unmodifiableMap(comparers);
     }
 }

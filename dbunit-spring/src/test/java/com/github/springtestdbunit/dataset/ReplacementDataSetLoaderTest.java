@@ -17,24 +17,24 @@ import com.github.springtestdbunit.testutils.ExtendedTestContextManager;
  */
 public class ReplacementDataSetLoaderTest {
 
-	private TestContext testContext;
+    private TestContext testContext;
 
-	private ReplacementDataSetLoader loader;
+    private ReplacementDataSetLoader loader;
 
-	@Before
-	public void setup() throws Exception {
-		this.loader = new ReplacementDataSetLoader();
-		ExtendedTestContextManager manager = new ExtendedTestContextManager(getClass());
-		this.testContext = manager.accessTestContext();
-	}
+    @Before
+    public void setup() throws Exception {
+        this.loader = new ReplacementDataSetLoader();
+        ExtendedTestContextManager manager = new ExtendedTestContextManager(getClass());
+        this.testContext = manager.accessTestContext();
+    }
 
-	@Test
-	public void shouldReplaceNulls() throws Exception {
-		IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test-replacement.xml");
-		assertEquals("Sample", dataset.getTableNames()[0]);
-		ITable table = dataset.getTable("Sample");
-		assertEquals(1, table.getRowCount());
-		assertNull(table.getValue(0, "value"));
-	}
+    @Test
+    public void shouldReplaceNulls() throws Exception {
+        IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test-replacement.xml");
+        assertEquals("Sample", dataset.getTableNames()[0]);
+        ITable table = dataset.getTable("Sample");
+        assertEquals(1, table.getRowCount());
+        assertNull(table.getValue(0, "value"));
+    }
 
 }

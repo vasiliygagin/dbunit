@@ -33,23 +33,23 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @Transactional
 public class TruncateSetupOnMethodTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@DatabaseSetup(type = DatabaseOperation.TRUNCATE_TABLE, value = "/META-INF/db/delete.xml")
-	public void test() throws Exception {
-		this.entityAssert.assertValues();
-	}
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.TRUNCATE_TABLE, value = "/META-INF/db/delete.xml")
+    public void test() throws Exception {
+        this.entityAssert.assertValues();
+    }
 
-	@Test
-	@DatabaseSetup(type = DatabaseOperation.TRUNCATE_TABLE)
-	public void testAllTables() throws Exception {
-		this.entityAssert.assertValues();
-	}
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.TRUNCATE_TABLE)
+    public void testAllTables() throws Exception {
+        this.entityAssert.assertValues();
+    }
 
 }

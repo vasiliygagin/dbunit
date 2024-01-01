@@ -17,5 +17,5 @@ public interface ExpectedDataSetAndVerifyTableDefinitionVerifier {
      * agree.
      */
     void verify(VerifyTableDefinition[] verifyTableDefinitions, IDataSet expectedDataSet, DatabaseConfig config)
-	    throws DataSetException;
+            throws DataSetException;
 }

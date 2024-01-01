@@ -100,10 +100,10 @@ public abstract class DataType {
     public static final DataType LONGNVARCHAR = new StringDataType("LONGNVARCHAR", -16);
 
     private static final DataType[] TYPES = { VARCHAR, CHAR, LONGVARCHAR, NCHAR, NVARCHAR, LONGNVARCHAR, CLOB, NUMERIC,
-	    DECIMAL, BOOLEAN, BIT, INTEGER, TINYINT, SMALLINT, BIGINT, REAL, DOUBLE, FLOAT, DATE, TIME, TIMESTAMP,
-	    VARBINARY, BINARY, LONGVARBINARY, BLOB,
-	    // auxiliary types at the very end
-	    BIGINT_AUX_LONG };
+            DECIMAL, BOOLEAN, BIT, INTEGER, TINYINT, SMALLINT, BIGINT, REAL, DOUBLE, FLOAT, DATE, TIME, TIMESTAMP,
+            VARBINARY, BINARY, LONGVARBINARY, BLOB,
+            // auxiliary types at the very end
+            BIGINT_AUX_LONG };
 
     /**
      * Returns the specified value typecasted to this <code>DataType</code>
@@ -135,7 +135,7 @@ public abstract class DataType {
      * Returns the SQL type name for user types (null for basic SQL types)
      */
     public String getSqlTypeName() {
-	return null;
+        return null;
     }
 
     /**
@@ -158,15 +158,15 @@ public abstract class DataType {
      * Set the specified value to the specified prepared statement object.
      */
     public abstract void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException;
+            throws SQLException, TypeCastException;
 
     /**
      * Typecast the specified value to string.
      */
     public static String asString(Object value) throws TypeCastException {
-	logger.debug("asString(value={}) - start", value);
+        logger.debug("asString(value={}) - start", value);
 
-	return (String) DataType.VARCHAR.typeCast(value);
+        return (String) DataType.VARCHAR.typeCast(value);
     }
 
     /**
@@ -175,17 +175,17 @@ public abstract class DataType {
      *
      */
     public static DataType forSqlType(int sqlType) {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("forSqlType(sqlType={}) - start", new Integer(sqlType));
+        }
 
-	for (DataType element : TYPES) {
-	    if (sqlType == element.getSqlType()) {
-		return element;
-	    }
-	}
+        for (DataType element : TYPES) {
+            if (sqlType == element.getSqlType()) {
+                return element;
+            }
+        }
 
-	return UNKNOWN;
+        return UNKNOWN;
     }
 
     /**
@@ -196,17 +196,17 @@ public abstract class DataType {
      */
     @Deprecated
     public static DataType forSqlTypeName(String sqlTypeName) {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("forSqlTypeName(sqlTypeName=" + sqlTypeName + ") - start");
+        }
 
-	for (DataType element : TYPES) {
-	    if (sqlTypeName.equals(element.toString())) {
-		return element;
-	    }
-	}
+        for (DataType element : TYPES) {
+            if (sqlTypeName.equals(element.toString())) {
+                return element;
+            }
+        }
 
-	return UNKNOWN;
+        return UNKNOWN;
     }
 
     /**
@@ -215,20 +215,20 @@ public abstract class DataType {
      * is <code>null</code> or runtime class not recognized.
      */
     public static DataType forObject(Object value) {
-	logger.debug("forObject(value={}) - start", value);
+        logger.debug("forObject(value={}) - start", value);
 
-	if (value == null) {
-	    return UNKNOWN;
-	}
+        if (value == null) {
+            return UNKNOWN;
+        }
 
-	for (DataType element : TYPES) {
-	    Class typeClass = element.getTypeClass();
-	    if (typeClass.isInstance(value)) {
-		return element;
-	    }
-	}
+        for (DataType element : TYPES) {
+            Class typeClass = element.getTypeClass();
+            if (typeClass.isInstance(value)) {
+                return element;
+            }
+        }
 
-	return UNKNOWN;
+        return UNKNOWN;
     }
 
     /**
@@ -239,6 +239,6 @@ public abstract class DataType {
      *         otherwise.
      */
     protected static boolean isExtendedSyntax(String input) {
-	return !input.isEmpty() && input.charAt(0) == '[';
+        return !input.isEmpty() && input.charAt(0) == '[';
     }
 }

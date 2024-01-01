@@ -36,14 +36,14 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 @Transactional
 public class ExpectedFailureOnMethodWithRepeatableReverseTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@ExpectedDatabases({ @ExpectedDatabase("/META-INF/db/expectedsuccess.xml"),
-			@ExpectedDatabase("/META-INF/db/expectedfail.xml") })
-	public void test() throws Exception {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    @ExpectedDatabases({ @ExpectedDatabase("/META-INF/db/expectedsuccess.xml"),
+            @ExpectedDatabase("/META-INF/db/expectedfail.xml") })
+    public void test() throws Exception {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
 }

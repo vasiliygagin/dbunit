@@ -59,10 +59,10 @@ public class DefaultFailureHandler implements FailureHandler {
      *                             assertion failed.
      */
     public DefaultFailureHandler(final Column[] additionalColumnInfo) {
-	// Null-safe access
-	if (additionalColumnInfo != null) {
-	    this._additionalColumnInfo = Columns.getColumnNames(additionalColumnInfo);
-	}
+        // Null-safe access
+        if (additionalColumnInfo != null) {
+            this._additionalColumnInfo = Columns.getColumnNames(additionalColumnInfo);
+        }
     }
 
     /**
@@ -73,7 +73,7 @@ public class DefaultFailureHandler implements FailureHandler {
      *                             assertion failed.
      */
     public DefaultFailureHandler(final String[] additionalColumnInfo) {
-	this._additionalColumnInfo = additionalColumnInfo;
+        this._additionalColumnInfo = additionalColumnInfo;
     }
 
     /**
@@ -81,86 +81,86 @@ public class DefaultFailureHandler implements FailureHandler {
      *                       assertion errors.
      */
     public void setFailureFactory(final FailureFactory failureFactory) {
-	if (failureFactory == null) {
-	    throw new NullPointerException("The parameter 'failureFactory' must not be null");
-	}
-	this.failureFactory = failureFactory;
+        if (failureFactory == null) {
+            throw new NullPointerException("The parameter 'failureFactory' must not be null");
+        }
+        this.failureFactory = failureFactory;
     }
 
     public Error createFailure(final String message, final String expected, final String actual) {
-	return this.failureFactory.createFailure(message, expected, actual);
+        return this.failureFactory.createFailure(message, expected, actual);
     }
 
     public Error createFailure(final String message) {
-	return this.failureFactory.createFailure(message);
+        return this.failureFactory.createFailure(message);
     }
 
     public String getAdditionalInfo(final ITable expectedTable, final ITable actualTable, final int row,
-	    final String columnName) {
-	// add custom column values information for better identification of
-	// mismatching rows
-	return buildAdditionalColumnInfo(expectedTable, actualTable, row);
+            final String columnName) {
+        // add custom column values information for better identification of
+        // mismatching rows
+        return buildAdditionalColumnInfo(expectedTable, actualTable, row);
     }
 
     private String buildAdditionalColumnInfo(final ITable expectedTable, final ITable actualTable, final int rowIndex) {
-	if (logger.isDebugEnabled()) {
-	    logger.debug(
-		    "buildAdditionalColumnInfo(expectedTable={}, actualTable={}, rowIndex={}, "
-			    + "additionalColumnInfo={}) - start",
-		    new Object[] { expectedTable, actualTable, new Integer(rowIndex), _additionalColumnInfo });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug(
+                    "buildAdditionalColumnInfo(expectedTable={}, actualTable={}, rowIndex={}, "
+                            + "additionalColumnInfo={}) - start",
+                    new Object[] { expectedTable, actualTable, new Integer(rowIndex), _additionalColumnInfo });
+        }
 
-	// No columns specified
-	if (_additionalColumnInfo == null || _additionalColumnInfo.length <= 0) {
-	    return null;
-	}
+        // No columns specified
+        if (_additionalColumnInfo == null || _additionalColumnInfo.length <= 0) {
+            return null;
+        }
 
-	final StringBuilder sb = new StringBuilder();
-	sb.append("Additional row info:");
-	for (int j = 0; j < _additionalColumnInfo.length; j++) {
-	    final String columnName = _additionalColumnInfo[j];
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Additional row info:");
+        for (int j = 0; j < _additionalColumnInfo.length; j++) {
+            final String columnName = _additionalColumnInfo[j];
 
-	    final Object expectedKeyValue = getColumnValue(expectedTable, rowIndex, columnName);
-	    final Object actualKeyValue = getColumnValue(actualTable, rowIndex, columnName);
+            final Object expectedKeyValue = getColumnValue(expectedTable, rowIndex, columnName);
+            final Object actualKeyValue = getColumnValue(actualTable, rowIndex, columnName);
 
-	    sb.append(" ('");
-	    sb.append(columnName);
-	    sb.append("': expected=<");
-	    sb.append(expectedKeyValue);
-	    sb.append(">, actual=<");
-	    sb.append(actualKeyValue);
-	    sb.append(">)");
-	}
+            sb.append(" ('");
+            sb.append(columnName);
+            sb.append("': expected=<");
+            sb.append(expectedKeyValue);
+            sb.append(">, actual=<");
+            sb.append(actualKeyValue);
+            sb.append(">)");
+        }
 
-	return sb.toString();
+        return sb.toString();
     }
 
     protected Object getColumnValue(final ITable table, final int rowIndex, final String columnName) {
-	Object value = null;
-	try {
-	    // Get the ITable object to be used for showing the column values
-	    // (needed in case of Filtered tables)
-	    final ITable tableForCol = getTableForColumn(table, columnName);
-	    value = tableForCol.getValue(rowIndex, columnName);
-	} catch (final DataSetException e) {
-	    value = makeAdditionalColumnInfoErrorMessage(columnName, e);
-	}
-	return value;
+        Object value = null;
+        try {
+            // Get the ITable object to be used for showing the column values
+            // (needed in case of Filtered tables)
+            final ITable tableForCol = getTableForColumn(table, columnName);
+            value = tableForCol.getValue(rowIndex, columnName);
+        } catch (final DataSetException e) {
+            value = makeAdditionalColumnInfoErrorMessage(columnName, e);
+        }
+        return value;
     }
 
     protected String makeAdditionalColumnInfoErrorMessage(final String columnName, final DataSetException e) {
-	final StringBuilder sb = new StringBuilder();
-	sb.append("Exception creating more info for column '");
-	sb.append(columnName);
-	sb.append("': ");
-	sb.append(e.getClass().getName());
-	sb.append(": ");
-	sb.append(e.getMessage());
-	final String msg = sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Exception creating more info for column '");
+        sb.append(columnName);
+        sb.append("': ");
+        sb.append(e.getClass().getName());
+        sb.append(": ");
+        sb.append(e.getMessage());
+        final String msg = sb.toString();
 
-	logger.warn(msg, e);
+        logger.warn(msg, e);
 
-	return " (!!!!! " + msg + ")";
+        return " (!!!!! " + msg + ")";
     }
 
     /**
@@ -171,86 +171,86 @@ public class DefaultFailureHandler implements FailureHandler {
      *                          given name
      */
     private ITable getTableForColumn(final ITable table, final String columnName) throws DataSetException {
-	final ITableMetaData tableMetaData = table.getTableMetaData();
-	try {
-	    tableMetaData.getColumnIndex(columnName);
-	    // if the column index was resolved the table contains the given
-	    // column. So just use this table
-	    return table;
-	} catch (final NoSuchColumnException e) {
-	    // If the column was not found check for filtered table
-	    if (table instanceof ColumnFilterTable) {
-		final ITableMetaData originalMetaData = ((ColumnFilterTable) table).getOriginalMetaData();
-		originalMetaData.getColumnIndex(columnName);
-		// If we get here the column exists - return the table since it
-		// is not filtered in the CompositeTable.
-		return table;
-	    } else {
-		// Column not available in the table - rethrow the exception
-		throw e;
-	    }
-	}
+        final ITableMetaData tableMetaData = table.getTableMetaData();
+        try {
+            tableMetaData.getColumnIndex(columnName);
+            // if the column index was resolved the table contains the given
+            // column. So just use this table
+            return table;
+        } catch (final NoSuchColumnException e) {
+            // If the column was not found check for filtered table
+            if (table instanceof ColumnFilterTable) {
+                final ITableMetaData originalMetaData = ((ColumnFilterTable) table).getOriginalMetaData();
+                originalMetaData.getColumnIndex(columnName);
+                // If we get here the column exists - return the table since it
+                // is not filtered in the CompositeTable.
+                return table;
+            } else {
+                // Column not available in the table - rethrow the exception
+                throw e;
+            }
+        }
     }
 
     public void handle(final Difference diff) {
-	final String msg = buildMessage(diff);
+        final String msg = buildMessage(diff);
 
-	final Error err = this.createFailure(msg, String.valueOf(diff.getExpectedValue()),
-		String.valueOf(diff.getActualValue()));
-	// Throw the assertion error
-	throw err;
+        final Error err = this.createFailure(msg, String.valueOf(diff.getExpectedValue()),
+                String.valueOf(diff.getActualValue()));
+        // Throw the assertion error
+        throw err;
     }
 
     protected String buildMessage(final Difference diff) {
-	final StringBuilder builder = new StringBuilder(200);
+        final StringBuilder builder = new StringBuilder(200);
 
-	final int rowNum = diff.getRowIndex();
-	final String columnName = diff.getColumnName();
-	final ITable expectedTable = diff.getExpectedTable();
-	final ITable actualTable = diff.getActualTable();
+        final int rowNum = diff.getRowIndex();
+        final String columnName = diff.getColumnName();
+        final ITable expectedTable = diff.getExpectedTable();
+        final ITable actualTable = diff.getActualTable();
 
-	addFailMessage(diff, builder);
+        addFailMessage(diff, builder);
 
-	final String expectedTableName = expectedTable.getTableMetaData().getTableName();
+        final String expectedTableName = expectedTable.getTableMetaData().getTableName();
 
-	// example message:
-	// "value (table=MYTAB, row=232, column=MYCOL, Additional row info:
-	// (column=MyIdCol, expected=444, actual=555)): expected:<123> but
-	// was:<1234>"
-	builder.append("value (table=").append(expectedTableName);
-	builder.append(", row=").append(rowNum);
-	builder.append(", col=").append(columnName);
+        // example message:
+        // "value (table=MYTAB, row=232, column=MYCOL, Additional row info:
+        // (column=MyIdCol, expected=444, actual=555)): expected:<123> but
+        // was:<1234>"
+        builder.append("value (table=").append(expectedTableName);
+        builder.append(", row=").append(rowNum);
+        builder.append(", col=").append(columnName);
 
-	final String additionalInfo = this.getAdditionalInfo(expectedTable, actualTable, rowNum, columnName);
-	if (additionalInfo != null && !additionalInfo.trim().equals("")) {
-	    builder.append(", ").append(additionalInfo);
-	}
+        final String additionalInfo = this.getAdditionalInfo(expectedTable, actualTable, rowNum, columnName);
+        if (additionalInfo != null && !additionalInfo.trim().equals("")) {
+            builder.append(", ").append(additionalInfo);
+        }
 
-	builder.append(")");
+        builder.append(")");
 
-	return builder.toString();
+        return builder.toString();
     }
 
     protected void addFailMessage(final Difference diff, final StringBuilder builder) {
-	final String failMessage = diff.getFailMessage();
-	final boolean isFailMessage = isFailMessage(failMessage);
-	if (isFailMessage) {
-	    builder.append(failMessage).append(": ");
-	}
+        final String failMessage = diff.getFailMessage();
+        final boolean isFailMessage = isFailMessage(failMessage);
+        if (isFailMessage) {
+            builder.append(failMessage).append(": ");
+        }
     }
 
     protected boolean isFailMessage(final String failMessage) {
-	return failMessage != null && !failMessage.isEmpty();
+        return failMessage != null && !failMessage.isEmpty();
     }
 
     @Override
     public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append(DefaultFailureHandler.class.getName()).append("[");
-	sb.append("_additionalColumnInfo=")
-		.append(_additionalColumnInfo == null ? "null" : Arrays.asList(_additionalColumnInfo).toString());
-	sb.append("]");
-	return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(DefaultFailureHandler.class.getName()).append("[");
+        sb.append("_additionalColumnInfo=")
+                .append(_additionalColumnInfo == null ? "null" : Arrays.asList(_additionalColumnInfo).toString());
+        sb.append("]");
+        return sb.toString();
     }
 
     /**
@@ -263,14 +263,14 @@ public class DefaultFailureHandler implements FailureHandler {
      * @since 2.4.0
      */
     public static class DefaultFailureFactory implements FailureFactory {
-	public Error createFailure(final String message, final String expected, final String actual) {
-	    // Return dbunit's own comparison failure object
-	    return new DbComparisonFailure(message, expected, actual);
-	}
+        public Error createFailure(final String message, final String expected, final String actual) {
+            // Return dbunit's own comparison failure object
+            return new DbComparisonFailure(message, expected, actual);
+        }
 
-	public Error createFailure(final String message) {
-	    // Return dbunit's own failure object
-	    return new DbAssertionFailedError(message);
-	}
+        public Error createFailure(final String message) {
+            // Return dbunit's own failure object
+            return new DbAssertionFailedError(message);
+        }
     }
 }

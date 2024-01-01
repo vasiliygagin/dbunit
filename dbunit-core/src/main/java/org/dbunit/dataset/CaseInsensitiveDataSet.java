@@ -49,80 +49,80 @@ public class CaseInsensitiveDataSet extends AbstractDataSet {
     private OrderedTableNameMap orderedTableMap;
 
     public CaseInsensitiveDataSet(IDataSet dataSet) throws AmbiguousTableNameException, DataSetException {
-	_dataSet = dataSet;
+        _dataSet = dataSet;
 
-	// Check for duplicates using the OrderedTableNameMap as helper
-	orderedTableMap = new OrderedTableNameMap(false);
-	ITableIterator tableIterator = _dataSet.iterator();
-	while (tableIterator.next()) {
-	    ITable table = (ITable) tableIterator.getTable();
-	    String tableName = table.getTableMetaData().getTableName();
-	    orderedTableMap.add(tableName.toUpperCase(), tableName);
-	}
+        // Check for duplicates using the OrderedTableNameMap as helper
+        orderedTableMap = new OrderedTableNameMap(false);
+        ITableIterator tableIterator = _dataSet.iterator();
+        while (tableIterator.next()) {
+            ITable table = (ITable) tableIterator.getTable();
+            String tableName = table.getTableMetaData().getTableName();
+            orderedTableMap.add(tableName.toUpperCase(), tableName);
+        }
     }
 
     private String getInternalTableName(String tableName) throws DataSetException {
-	logger.debug("getInternalTableName(tableName={}) - start", tableName);
+        logger.debug("getInternalTableName(tableName={}) - start", tableName);
 
-	String originalTableName = (String) orderedTableMap.get(tableName.toUpperCase());
-	if (originalTableName == null) {
-	    throw new NoSuchTableException(tableName);
-	} else {
-	    return originalTableName;
-	}
+        String originalTableName = (String) orderedTableMap.get(tableName.toUpperCase());
+        if (originalTableName == null) {
+            throw new NoSuchTableException(tableName);
+        } else {
+            return originalTableName;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-	return new CaseInsensitiveIterator(reversed ? _dataSet.reverseIterator() : _dataSet.iterator());
+        return new CaseInsensitiveIterator(reversed ? _dataSet.reverseIterator() : _dataSet.iterator());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
     public String[] getTableNames() throws DataSetException {
-	return _dataSet.getTableNames();
+        return _dataSet.getTableNames();
     }
 
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
-	logger.debug("getTableMetaData(tableName={}) - start", tableName);
-	return _dataSet.getTableMetaData(getInternalTableName(tableName));
+        logger.debug("getTableMetaData(tableName={}) - start", tableName);
+        return _dataSet.getTableMetaData(getInternalTableName(tableName));
     }
 
     public ITable getTable(String tableName) throws DataSetException {
-	logger.debug("getTable(tableName={}) - start", tableName);
-	ITable table = _dataSet.getTable(getInternalTableName(tableName));
-	return new CaseInsensitiveTable(table);
+        logger.debug("getTable(tableName={}) - start", tableName);
+        ITable table = _dataSet.getTable(getInternalTableName(tableName));
+        return new CaseInsensitiveTable(table);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // CaseInsensitiveIterator class
 
     private class CaseInsensitiveIterator implements ITableIterator {
-	private final ITableIterator _iterator;
+        private final ITableIterator _iterator;
 
-	public CaseInsensitiveIterator(ITableIterator iterator) {
-	    _iterator = iterator;
-	}
+        public CaseInsensitiveIterator(ITableIterator iterator) {
+            _iterator = iterator;
+        }
 
-	////////////////////////////////////////////////////////////////////////
-	// ITableIterator interface
+        ////////////////////////////////////////////////////////////////////////
+        // ITableIterator interface
 
-	public boolean next() throws DataSetException {
-	    return _iterator.next();
-	}
+        public boolean next() throws DataSetException {
+            return _iterator.next();
+        }
 
-	public ITableMetaData getTableMetaData() throws DataSetException {
-	    return _iterator.getTableMetaData();
-	}
+        public ITableMetaData getTableMetaData() throws DataSetException {
+            return _iterator.getTableMetaData();
+        }
 
-	public ITable getTable() throws DataSetException {
-	    return new CaseInsensitiveTable(_iterator.getTable());
-	}
+        public ITable getTable() throws DataSetException {
+            return new CaseInsensitiveTable(_iterator.getTable());
+        }
     }
 }

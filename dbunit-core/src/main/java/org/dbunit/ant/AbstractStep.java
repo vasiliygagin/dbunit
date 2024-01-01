@@ -72,109 +72,109 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
     private boolean ordered = false;
 
     protected IDataSet getDatabaseDataSet(IDatabaseConnection connection, List tables) throws DatabaseUnitException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getDatabaseDataSet(connection={}, tables={}) - start", new Object[] { connection, tables });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getDatabaseDataSet(connection={}, tables={}) - start", new Object[] { connection, tables });
+        }
 
-	try {
-	    DatabaseConfig config = connection.getConfig();
+        try {
+            DatabaseConfig config = connection.getConfig();
 
-	    // Retrieve the complete database if no tables or queries specified.
-	    if (tables.size() == 0) {
-		logger.debug("Retrieving the whole database because tables/queries have not been specified");
-		return connection.createDataSet();
-	    }
+            // Retrieve the complete database if no tables or queries specified.
+            if (tables.size() == 0) {
+                logger.debug("Retrieving the whole database because tables/queries have not been specified");
+                return connection.createDataSet();
+            }
 
-	    List queryDataSets = createQueryDataSet(tables, connection);
+            List queryDataSets = createQueryDataSet(tables, connection);
 
-	    IDataSet[] dataSetsArray = null;
-	    if (config.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName()
-		    .equals("org.dbunit.database.ForwardOnlyResultSetTableFactory")) {
-		dataSetsArray = (IDataSet[]) createForwardOnlyDataSetArray(queryDataSets);
-	    } else {
-		dataSetsArray = (IDataSet[]) queryDataSets.toArray(new IDataSet[queryDataSets.size()]);
-	    }
-	    return new CompositeDataSet(dataSetsArray);
-	} catch (SQLException e) {
-	    throw new DatabaseUnitException(e);
-	}
+            IDataSet[] dataSetsArray = null;
+            if (config.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName()
+                    .equals("org.dbunit.database.ForwardOnlyResultSetTableFactory")) {
+                dataSetsArray = (IDataSet[]) createForwardOnlyDataSetArray(queryDataSets);
+            } else {
+                dataSetsArray = (IDataSet[]) queryDataSets.toArray(new IDataSet[queryDataSets.size()]);
+            }
+            return new CompositeDataSet(dataSetsArray);
+        } catch (SQLException e) {
+            throw new DatabaseUnitException(e);
+        }
     }
 
     private ForwardOnlyDataSet[] createForwardOnlyDataSetArray(List<QueryDataSet> dataSets)
-	    throws DataSetException, SQLException {
-	ForwardOnlyDataSet[] forwardOnlyDataSets = new ForwardOnlyDataSet[dataSets.size()];
+            throws DataSetException, SQLException {
+        ForwardOnlyDataSet[] forwardOnlyDataSets = new ForwardOnlyDataSet[dataSets.size()];
 
-	for (int i = 0; i < dataSets.size(); i++) {
-	    forwardOnlyDataSets[i] = new ForwardOnlyDataSet(dataSets.get(i));
-	}
+        for (int i = 0; i < dataSets.size(); i++) {
+            forwardOnlyDataSets[i] = new ForwardOnlyDataSet(dataSets.get(i));
+        }
 
-	return forwardOnlyDataSets;
+        return forwardOnlyDataSets;
     }
 
     private List createQueryDataSet(List tables, IDatabaseConnection connection) throws DataSetException, SQLException {
-	logger.debug("createQueryDataSet(tables={}, connection={})", tables, connection);
+        logger.debug("createQueryDataSet(tables={}, connection={})", tables, connection);
 
-	List queryDataSets = new ArrayList();
+        List queryDataSets = new ArrayList();
 
-	QueryDataSet queryDataSet = new QueryDataSet(connection);
+        QueryDataSet queryDataSet = new QueryDataSet(connection);
 
-	for (Iterator it = tables.iterator(); it.hasNext();) {
-	    Object item = it.next();
+        for (Iterator it = tables.iterator(); it.hasNext();) {
+            Object item = it.next();
 
-	    if (item instanceof QuerySet) {
-		if (queryDataSet.getTableNames().length > 0)
-		    queryDataSets.add(queryDataSet);
+            if (item instanceof QuerySet) {
+                if (queryDataSet.getTableNames().length > 0)
+                    queryDataSets.add(queryDataSet);
 
-		QueryDataSet newQueryDataSet = (((QuerySet) item).getQueryDataSet(connection));
-		queryDataSets.add(newQueryDataSet);
-		queryDataSet = new QueryDataSet(connection);
-	    } else if (item instanceof Query) {
-		Query queryItem = (Query) item;
-		queryDataSet.addTable(queryItem.getName(), queryItem.getSql());
-	    } else if (item instanceof Table) {
-		Table tableItem = (Table) item;
-		queryDataSet.addTable(tableItem.getName());
-	    } else {
-		throw new IllegalArgumentException("Unsupported element type " + item.getClass().getName() + ".");
-	    }
-	}
+                QueryDataSet newQueryDataSet = (((QuerySet) item).getQueryDataSet(connection));
+                queryDataSets.add(newQueryDataSet);
+                queryDataSet = new QueryDataSet(connection);
+            } else if (item instanceof Query) {
+                Query queryItem = (Query) item;
+                queryDataSet.addTable(queryItem.getName(), queryItem.getSql());
+            } else if (item instanceof Table) {
+                Table tableItem = (Table) item;
+                queryDataSet.addTable(tableItem.getName());
+            } else {
+                throw new IllegalArgumentException("Unsupported element type " + item.getClass().getName() + ".");
+            }
+        }
 
-	if (queryDataSet.getTableNames().length > 0)
-	    queryDataSets.add(queryDataSet);
+        if (queryDataSet.getTableNames().length > 0)
+            queryDataSets.add(queryDataSet);
 
-	return queryDataSets;
+        return queryDataSets;
     }
 
     protected IDataSet getSrcDataSet(File src, String format, boolean forwardonly) throws DatabaseUnitException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getSrcDataSet(src={}, format={}, forwardonly={}) - start",
-		    new Object[] { src, format, String.valueOf(forwardonly) });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getSrcDataSet(src={}, format={}, forwardonly={}) - start",
+                    new Object[] { src, format, String.valueOf(forwardonly) });
+        }
 
-	try {
-	    IDataSetProducer producer = null;
-	    if (format.equalsIgnoreCase(FORMAT_XML)) {
-		producer = new XmlProducer(getInputSource(src));
-	    } else if (format.equalsIgnoreCase(FORMAT_CSV)) {
-		producer = new CsvProducer(src);
-	    } else if (format.equalsIgnoreCase(FORMAT_FLAT)) {
-		producer = new FlatXmlProducer(getInputSource(src), true, true);
-	    } else if (format.equalsIgnoreCase(FORMAT_DTD)) {
-		producer = new FlatDtdProducer(getInputSource(src));
-	    } else if (format.equalsIgnoreCase(FORMAT_XLS)) {
-		return new CachedDataSet(new XlsDataSet(src));
-	    } else {
-		throw new IllegalArgumentException(
-			"Type must be either 'flat'(default), 'xml', 'csv', 'xls' or 'dtd' but was: " + format);
-	    }
+        try {
+            IDataSetProducer producer = null;
+            if (format.equalsIgnoreCase(FORMAT_XML)) {
+                producer = new XmlProducer(getInputSource(src));
+            } else if (format.equalsIgnoreCase(FORMAT_CSV)) {
+                producer = new CsvProducer(src);
+            } else if (format.equalsIgnoreCase(FORMAT_FLAT)) {
+                producer = new FlatXmlProducer(getInputSource(src), true, true);
+            } else if (format.equalsIgnoreCase(FORMAT_DTD)) {
+                producer = new FlatDtdProducer(getInputSource(src));
+            } else if (format.equalsIgnoreCase(FORMAT_XLS)) {
+                return new CachedDataSet(new XlsDataSet(src));
+            } else {
+                throw new IllegalArgumentException(
+                        "Type must be either 'flat'(default), 'xml', 'csv', 'xls' or 'dtd' but was: " + format);
+            }
 
-	    if (forwardonly) {
-		return new StreamingDataSet(producer);
-	    }
-	    return new CachedDataSet(producer);
-	} catch (IOException e) {
-	    throw new DatabaseUnitException(e);
-	}
+            if (forwardonly) {
+                return new StreamingDataSet(producer);
+            }
+            return new CachedDataSet(producer);
+        } catch (IOException e) {
+            throw new DatabaseUnitException(e);
+        }
     }
 
     /**
@@ -188,14 +188,14 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
      * @since 2.4
      */
     public boolean isDataFormat(String format) {
-	logger.debug("isDataFormat(format={}) - start", format);
+        logger.debug("isDataFormat(format={}) - start", format);
 
-	if (format.equalsIgnoreCase(FORMAT_FLAT) || format.equalsIgnoreCase(FORMAT_XML)
-		|| format.equalsIgnoreCase(FORMAT_CSV) || format.equalsIgnoreCase(FORMAT_XLS)) {
-	    return true;
-	} else {
-	    return false;
-	}
+        if (format.equalsIgnoreCase(FORMAT_FLAT) || format.equalsIgnoreCase(FORMAT_XML)
+                || format.equalsIgnoreCase(FORMAT_CSV) || format.equalsIgnoreCase(FORMAT_XLS)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -209,12 +209,12 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
      * @since 2.4
      */
     protected void checkDataFormat(String format) {
-	logger.debug("checkDataFormat(format={}) - start", format);
+        logger.debug("checkDataFormat(format={}) - start", format);
 
-	if (!isDataFormat(format)) {
-	    throw new IllegalArgumentException(
-		    "format must be either 'flat'(default), 'xml', 'csv' or 'xls' but was: " + format);
-	}
+        if (!isDataFormat(format)) {
+            throw new IllegalArgumentException(
+                    "format must be either 'flat'(default), 'xml', 'csv' or 'xls' but was: " + format);
+        }
     }
 
     /**
@@ -225,23 +225,23 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
      * @throws MalformedURLException
      */
     public static InputSource getInputSource(File file) throws MalformedURLException {
-	InputSource source = FileHelper.createInputSource(file);
-	return source;
+        InputSource source = FileHelper.createInputSource(file);
+        return source;
     }
 
     public boolean isOrdered() {
-	return ordered;
+        return ordered;
     }
 
     public void setOrdered(boolean ordered) {
-	this.ordered = ordered;
+        this.ordered = ordered;
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer();
-	result.append("AbstractStep: ");
-	result.append("ordered=").append(this.ordered);
-	return result.toString();
+        StringBuffer result = new StringBuffer();
+        result.append("AbstractStep: ");
+        result.append("ordered=").append(this.ordered);
+        return result.toString();
     }
 
 }

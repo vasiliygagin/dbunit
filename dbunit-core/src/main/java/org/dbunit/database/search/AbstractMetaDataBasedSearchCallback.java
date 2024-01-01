@@ -63,7 +63,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @param connection connection where the edges will be calculated from
      */
     public AbstractMetaDataBasedSearchCallback(IDatabaseConnection connection) {
-	this.connection = connection;
+        this.connection = connection;
     }
 
     /**
@@ -72,7 +72,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @return the connection where the edges will be calculated from
      */
     public IDatabaseConnection getConnection() {
-	return connection;
+        return connection;
     }
 
     protected static final int IMPORT = 0;
@@ -95,9 +95,9 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @throws SearchException
      */
     protected SortedSet getNodesFromImportedKeys(Object node) throws SearchException {
-	logger.debug("getNodesFromImportedKeys(node={}) - start", node);
+        logger.debug("getNodesFromImportedKeys(node={}) - start", node);
 
-	return getNodes(IMPORT, node);
+        return getNodes(IMPORT, node);
     }
 
     /**
@@ -114,9 +114,9 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @throws SearchException
      */
     protected SortedSet getNodesFromExportedKeys(Object node) throws SearchException {
-	logger.debug("getNodesFromExportedKeys(node={}) - start", node);
+        logger.debug("getNodesFromExportedKeys(node={}) - start", node);
 
-	return getNodes(EXPORT, node);
+        return getNodes(EXPORT, node);
     }
 
     /**
@@ -129,99 +129,99 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @throws SearchException
      */
     protected SortedSet getNodesFromImportAndExportKeys(Object node) throws SearchException {
-	logger.debug("getNodesFromImportAndExportKeys(node={}) - start", node);
+        logger.debug("getNodesFromImportAndExportKeys(node={}) - start", node);
 
-	SortedSet importedNodes = getNodesFromImportedKeys(node);
-	SortedSet exportedNodes = getNodesFromExportedKeys(node);
-	importedNodes.addAll(exportedNodes);
-	return importedNodes;
+        SortedSet importedNodes = getNodesFromImportedKeys(node);
+        SortedSet exportedNodes = getNodesFromExportedKeys(node);
+        importedNodes.addAll(exportedNodes);
+        return importedNodes;
     }
 
     private SortedSet getNodes(int type, Object node) throws SearchException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getNodes(type={}, node={}) - start", Integer.toString(type), node);
+        if (logger.isDebugEnabled())
+            logger.debug("getNodes(type={}, node={}) - start", Integer.toString(type), node);
 
-	try {
-	    Connection conn = this.connection.getConnection();
-	    String schema = this.connection.getSchema();
-	    DatabaseMetaData metaData = conn.getMetaData();
-	    SortedSet edges = new TreeSet();
-	    getNodes(type, node, conn, schema, metaData, edges);
-	    return edges;
-	} catch (SQLException e) {
-	    throw new SearchException(e);
-	} catch (NoSuchTableException e) {
-	    throw new SearchException(e);
-	}
+        try {
+            Connection conn = this.connection.getConnection();
+            String schema = this.connection.getSchema();
+            DatabaseMetaData metaData = conn.getMetaData();
+            SortedSet edges = new TreeSet();
+            getNodes(type, node, conn, schema, metaData, edges);
+            return edges;
+        } catch (SQLException e) {
+            throw new SearchException(e);
+        } catch (NoSuchTableException e) {
+            throw new SearchException(e);
+        }
     }
 
     private void getNodes(int type, Object node, Connection conn, String schema, DatabaseMetaData metaData,
-	    SortedSet edges) throws SearchException, NoSuchTableException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getNodes(type={}, node={}, conn={}, schema={}, metaData={}, edges={}) - start",
-		    new Object[] { String.valueOf(type), node, conn, schema, metaData, edges });
-	    logger.debug("Getting edges for node " + node);
-	}
+            SortedSet edges) throws SearchException, NoSuchTableException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getNodes(type={}, node={}, conn={}, schema={}, metaData={}, edges={}) - start",
+                    new Object[] { String.valueOf(type), node, conn, schema, metaData, edges });
+            logger.debug("Getting edges for node " + node);
+        }
 
-	if (!(node instanceof String)) {
-	    throw new IllegalArgumentException(
-		    "node '" + node + "' should be a String, not a " + node.getClass().getName());
-	}
-	String tableName = (String) node;
+        if (!(node instanceof String)) {
+            throw new IllegalArgumentException(
+                    "node '" + node + "' should be a String, not a " + node.getClass().getName());
+        }
+        String tableName = (String) node;
 
-	QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, schema);
-	schema = qualifiedTableName.getSchema();
-	tableName = qualifiedTableName.getTable();
+        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, schema);
+        schema = qualifiedTableName.getSchema();
+        tableName = qualifiedTableName.getTable();
 
-	ResultSet rs = null;
-	try {
-	    IMetadataHandler metadataHandler = (IMetadataHandler) this.connection.getConfig()
-		    .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
-	    // Validate if the table exists
-	    if (!metadataHandler.tableExists(metaData, schema, tableName)) {
-		throw new NoSuchTableException(
-			"The table '" + tableName + "' does not exist in schema '" + schema + "'");
-	    }
+        ResultSet rs = null;
+        try {
+            IMetadataHandler metadataHandler = (IMetadataHandler) this.connection.getConfig()
+                    .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+            // Validate if the table exists
+            if (!metadataHandler.tableExists(metaData, schema, tableName)) {
+                throw new NoSuchTableException(
+                        "The table '" + tableName + "' does not exist in schema '" + schema + "'");
+            }
 
-	    switch (type) {
-	    case IMPORT:
-		rs = metaData.getImportedKeys(null, schema, tableName);
-		break;
-	    case EXPORT:
-		rs = metaData.getExportedKeys(null, schema, tableName);
-		break;
-	    }
+            switch (type) {
+            case IMPORT:
+                rs = metaData.getImportedKeys(null, schema, tableName);
+                break;
+            case EXPORT:
+                rs = metaData.getExportedKeys(null, schema, tableName);
+                break;
+            }
 
-	    DatabaseConfig dbConfig = this.connection.getConfig();
-	    while (rs.next()) {
-		int index = TABLENAME_INDEXES[type];
-		int schemaindex = SCHEMANAME_INDEXES[type];
-		String dependentTableName = rs.getString(index);
-		String dependentSchemaName = rs.getString(schemaindex);
-		String pkColumn = rs.getString(PK_INDEXES[type]);
-		String fkColumn = rs.getString(FK_INDEXES[type]);
+            DatabaseConfig dbConfig = this.connection.getConfig();
+            while (rs.next()) {
+                int index = TABLENAME_INDEXES[type];
+                int schemaindex = SCHEMANAME_INDEXES[type];
+                String dependentTableName = rs.getString(index);
+                String dependentSchemaName = rs.getString(schemaindex);
+                String pkColumn = rs.getString(PK_INDEXES[type]);
+                String fkColumn = rs.getString(FK_INDEXES[type]);
 
-		// set the schema in front if there is none ("SCHEMA.TABLE") - depending on the
-		// "qualified table names" feature
-		tableName = new QualifiedTableName(tableName, schema).getQualifiedNameIfEnabled(dbConfig);
-		dependentTableName = new QualifiedTableName(dependentTableName, dependentSchemaName)
-			.getQualifiedNameIfEnabled(dbConfig);
+                // set the schema in front if there is none ("SCHEMA.TABLE") - depending on the
+                // "qualified table names" feature
+                tableName = new QualifiedTableName(tableName, schema).getQualifiedNameIfEnabled(dbConfig);
+                dependentTableName = new QualifiedTableName(dependentTableName, dependentSchemaName)
+                        .getQualifiedNameIfEnabled(dbConfig);
 
-		IEdge edge = newEdge(rs, type, tableName, dependentTableName, fkColumn, pkColumn);
-		if (logger.isDebugEnabled()) {
-		    logger.debug("Adding edge " + edge);
-		}
-		edges.add(edge);
-	    }
-	} catch (SQLException e) {
-	    throw new SearchException(e);
-	} finally {
-	    try {
-		SQLHelper.close(rs);
-	    } catch (SQLException e) {
-		throw new SearchException(e);
-	    }
-	}
+                IEdge edge = newEdge(rs, type, tableName, dependentTableName, fkColumn, pkColumn);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Adding edge " + edge);
+                }
+                edges.add(edge);
+            }
+        } catch (SQLException e) {
+            throw new SearchException(e);
+        } finally {
+            try {
+                SQLHelper.close(rs);
+            } catch (SQLException e) {
+                throw new SearchException(e);
+            }
+        }
     }
 
     /**
@@ -238,14 +238,14 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @throws SearchException not thrown in this method (but might on sub-classes)
      */
     protected static ForeignKeyRelationshipEdge createFKEdge(ResultSet rs, int type, String from, String to,
-	    String fkColumn, String pkColumn) throws SearchException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("createFKEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-		    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
-	}
+            String fkColumn, String pkColumn) throws SearchException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("createFKEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
+                    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
+        }
 
-	return type == IMPORT ? new ForeignKeyRelationshipEdge(from, to, fkColumn, pkColumn)
-		: new ForeignKeyRelationshipEdge(to, from, fkColumn, pkColumn);
+        return type == IMPORT ? new ForeignKeyRelationshipEdge(from, to, fkColumn, pkColumn)
+                : new ForeignKeyRelationshipEdge(to, from, fkColumn, pkColumn);
     }
 
     /**
@@ -264,12 +264,12 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * @throws SearchException not thrown in this method (but might on sub-classes)
      */
     protected IEdge newEdge(ResultSet rs, int type, String from, String to, String fkColumn, String pkColumn)
-	    throws SearchException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-		    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
-	}
+            throws SearchException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
+                    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
+        }
 
-	return createFKEdge(rs, type, from, to, fkColumn, pkColumn);
+        return createFKEdge(rs, type, from, to, fkColumn, pkColumn);
     }
 }

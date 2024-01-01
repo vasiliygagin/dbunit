@@ -47,51 +47,51 @@ public class InetType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(InetType.class);
 
     public InetType() {
-	super("inet", Types.OTHER, String.class, false);
+        super("inet", Types.OTHER, String.class, false);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	return resultSet.getString(column);
+        return resultSet.getString(column);
     }
 
     public void setSqlValue(Object uuid, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	statement.setObject(column, getInet(uuid, statement.getConnection()));
+            throws SQLException, TypeCastException {
+        statement.setObject(column, getInet(uuid, statement.getConnection()));
     }
 
     public Object typeCast(Object arg0) throws TypeCastException {
-	return arg0.toString();
+        return arg0.toString();
     }
 
     private Object getInet(Object value, Connection connection) throws TypeCastException {
 
-	logger.debug("getInet(value={}, connection={}) - start", value, connection);
+        logger.debug("getInet(value={}, connection={}) - start", value, connection);
 
-	Object tempInet = null;
+        Object tempInet = null;
 
-	try {
-	    Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
-	    Constructor ct = aPGObjectClass.getConstructor(null);
-	    tempInet = ct.newInstance(null);
+        try {
+            Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
+            Constructor ct = aPGObjectClass.getConstructor(null);
+            tempInet = ct.newInstance(null);
 
-	    Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
-	    setTypeMethod.invoke(tempInet, new Object[] { "inet" });
+            Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
+            setTypeMethod.invoke(tempInet, new Object[] { "inet" });
 
-	    Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[] { String.class });
-	    setValueMethod.invoke(tempInet, new Object[] { value.toString() });
+            Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[] { String.class });
+            setValueMethod.invoke(tempInet, new Object[] { value.toString() });
 
-	} catch (ClassNotFoundException e) {
-	    throw new TypeCastException(value, this, e);
-	} catch (InvocationTargetException e) {
-	    throw new TypeCastException(value, this, e);
-	} catch (NoSuchMethodException e) {
-	    throw new TypeCastException(value, this, e);
-	} catch (IllegalAccessException e) {
-	    throw new TypeCastException(value, this, e);
-	} catch (InstantiationException e) {
-	    throw new TypeCastException(value, this, e);
-	}
+        } catch (ClassNotFoundException e) {
+            throw new TypeCastException(value, this, e);
+        } catch (InvocationTargetException e) {
+            throw new TypeCastException(value, this, e);
+        } catch (NoSuchMethodException e) {
+            throw new TypeCastException(value, this, e);
+        } catch (IllegalAccessException e) {
+            throw new TypeCastException(value, this, e);
+        } catch (InstantiationException e) {
+            throw new TypeCastException(value, this, e);
+        }
 
-	return tempInet;
+        return tempInet;
     }
 }

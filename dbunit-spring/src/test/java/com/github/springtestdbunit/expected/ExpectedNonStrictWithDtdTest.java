@@ -38,22 +38,22 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @Transactional
 public class ExpectedNonStrictWithDtdTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_nonstrict_with_dtd.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, columnFilters = {
-			SampleEntityIdExclusionFilter.class })
-	public void shouldNotFailEvenThoughExpectedTableDoesNotSpecifyAllColumns() {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_nonstrict_with_dtd.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, columnFilters = {
+            SampleEntityIdExclusionFilter.class })
+    public void shouldNotFailEvenThoughExpectedTableDoesNotSpecifyAllColumns() {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
-	public static class SampleEntityIdExclusionFilter implements IColumnFilter {
+    public static class SampleEntityIdExclusionFilter implements IColumnFilter {
 
-		public boolean accept(String tableName, Column column) {
-			return !(tableName.equals("SampleEntity") && column.getColumnName().equals("id"));
-		}
+        public boolean accept(String tableName, Column column) {
+            return !(tableName.equals("SampleEntity") && column.getColumnName().equals("id"));
+        }
 
-	}
+    }
 
 }

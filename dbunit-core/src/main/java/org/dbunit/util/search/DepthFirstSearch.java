@@ -73,7 +73,7 @@ public class DepthFirstSearch implements ISearchAlgorithm {
      * recursing over the nodes.
      */
     public DepthFirstSearch() {
-	super();
+        super();
     }
 
     /**
@@ -84,11 +84,11 @@ public class DepthFirstSearch implements ISearchAlgorithm {
      * @since 2.4
      */
     public DepthFirstSearch(int searchDepth) {
-	super();
-	if (searchDepth <= 0) {
-	    throw new IllegalArgumentException("The searchDepth must be > 0. Given: " + searchDepth);
-	}
-	this.searchDepth = searchDepth;
+        super();
+        if (searchDepth <= 0) {
+            throw new IllegalArgumentException("The searchDepth must be > 0. Given: " + searchDepth);
+        }
+        this.searchDepth = searchDepth;
     }
 
     /**
@@ -98,78 +98,78 @@ public class DepthFirstSearch implements ISearchAlgorithm {
      * @see ISearchAlgorithm
      */
     public Set search(Object[] nodesFrom, ISearchCallback callback) throws SearchException {
-	if (logger.isDebugEnabled())
-	    logger.debug("search(nodesFrom={}, callback={}) - start", nodesFrom, callback);
+        if (logger.isDebugEnabled())
+            logger.debug("search(nodesFrom={}, callback={}) - start", nodesFrom, callback);
 
-	return search(CollectionsHelper.objectsToSet(nodesFrom), callback);
+        return search(CollectionsHelper.objectsToSet(nodesFrom), callback);
     }
 
     /**
      * @see ISearchAlgorithm
      */
     public Set search(Set nodesFrom, ISearchCallback callback) throws SearchException {
-	if (logger.isDebugEnabled())
-	    logger.debug("search(nodesFrom={}, callback={}) - start", nodesFrom, callback);
+        if (logger.isDebugEnabled())
+            logger.debug("search(nodesFrom={}, callback={}) - start", nodesFrom, callback);
 
-	synchronized (this) {
-	    if (searching) {
-		throw new IllegalStateException("already searching/searched");
-	    }
-	    this.searching = true;
-	}
+        synchronized (this) {
+            if (searching) {
+                throw new IllegalStateException("already searching/searched");
+            }
+            this.searching = true;
+        }
 
-	// set of tables that will be returned (i.e, the declared tables and its
-	// dependencies)
-	this.result = new LinkedHashSet();
+        // set of tables that will be returned (i.e, the declared tables and its
+        // dependencies)
+        this.result = new LinkedHashSet();
 
-	// callback used to help the search
-	this.callback = callback;
+        // callback used to help the search
+        this.callback = callback;
 
-	this.nodesFrom = new LinkedHashSet();
+        this.nodesFrom = new LinkedHashSet();
 
-	int sizeNodesFromBefore = 0;
-	int sizeResultBefore = 0;
-	boolean keepSearching = true;
-	this.scannedNodes = new HashSet();
-	this.reverseScannedNodes = new HashSet();
-	this.scannedNodes = new HashSet();
-	do {
+        int sizeNodesFromBefore = 0;
+        int sizeResultBefore = 0;
+        boolean keepSearching = true;
+        this.scannedNodes = new HashSet();
+        this.reverseScannedNodes = new HashSet();
+        this.scannedNodes = new HashSet();
+        do {
 
-	    // In a traditional depth-first search, the getEdges() method should return only
-	    // edges where this node is the 'from' vertex, as the graph is known in advance.
-	    // But in our case, the graph is built 'on the fly', so it's possible that the
-	    // getEdges() also returns edges where the node is the 'to' vertex.
-	    // So, before we do the "real" search, we need to do a reverse search to find
-	    // out
-	    // all the nodes that should be part of the input.
-	    Iterator iterator = nodesFrom.iterator();
-	    while (iterator.hasNext()) {
-		Object node = iterator.next();
-		reverseSearch(node, 0);
-	    }
+            // In a traditional depth-first search, the getEdges() method should return only
+            // edges where this node is the 'from' vertex, as the graph is known in advance.
+            // But in our case, the graph is built 'on the fly', so it's possible that the
+            // getEdges() also returns edges where the node is the 'to' vertex.
+            // So, before we do the "real" search, we need to do a reverse search to find
+            // out
+            // all the nodes that should be part of the input.
+            Iterator iterator = nodesFrom.iterator();
+            while (iterator.hasNext()) {
+                Object node = iterator.next();
+                reverseSearch(node, 0);
+            }
 //        this.nodesFrom = nodesFrom;
 
-	    // now that the input is adjusted, do the search
-	    iterator = this.nodesFrom.iterator();
+            // now that the input is adjusted, do the search
+            iterator = this.nodesFrom.iterator();
 
-	    while (iterator.hasNext()) {
-		Object node = iterator.next();
-		search(node, 0);
-	    }
+            while (iterator.hasNext()) {
+                Object node = iterator.next();
+                search(node, 0);
+            }
 
-	    nodesFrom = new HashSet(this.result);
+            nodesFrom = new HashSet(this.result);
 
-	    // decides if we continue searching
-	    boolean sizesDontMatch = this.result.size() != this.nodesFrom.size();
-	    boolean resultChanged = this.result.size() != sizeResultBefore;
-	    boolean nodesFromChanged = this.nodesFrom.size() != sizeNodesFromBefore;
-	    sizeNodesFromBefore = this.nodesFrom.size();
-	    sizeResultBefore = this.result.size();
-	    keepSearching = sizesDontMatch && (resultChanged || nodesFromChanged);
+            // decides if we continue searching
+            boolean sizesDontMatch = this.result.size() != this.nodesFrom.size();
+            boolean resultChanged = this.result.size() != sizeResultBefore;
+            boolean nodesFromChanged = this.nodesFrom.size() != sizeNodesFromBefore;
+            sizeNodesFromBefore = this.nodesFrom.size();
+            sizeResultBefore = this.result.size();
+            keepSearching = sizesDontMatch && (resultChanged || nodesFromChanged);
 
-	} while (keepSearching);
+        } while (keepSearching);
 
-	return this.result;
+        return this.result;
 
     }
 
@@ -182,50 +182,50 @@ public class DepthFirstSearch implements ISearchAlgorithm {
      * @throws Exception if an exception occurs while getting the edges
      */
     private boolean search(Object node, int currentSearchDepth) throws SearchException {
-	if (this.logger.isDebugEnabled()) {
-	    this.logger.debug("search:" + node);
-	}
-	if (this.scannedNodes.contains(node)) {
-	    if (this.logger.isDebugEnabled()) {
-		this.logger.debug("already searched; returning true");
-	    }
-	    return true;
-	}
-	if (!this.callback.searchNode(node)) {
-	    if (this.logger.isDebugEnabled()) {
-		this.logger.debug("Callback handler blocked search for node " + node);
-	    }
-	    return true;
-	}
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("search:" + node);
+        }
+        if (this.scannedNodes.contains(node)) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("already searched; returning true");
+            }
+            return true;
+        }
+        if (!this.callback.searchNode(node)) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Callback handler blocked search for node " + node);
+            }
+            return true;
+        }
 
-	if (this.logger.isDebugEnabled()) {
-	    this.logger.debug("Pushing " + node);
-	}
-	this.scannedNodes.add(node);
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Pushing " + node);
+        }
+        this.scannedNodes.add(node);
 
-	if (currentSearchDepth < this.searchDepth) {
-	    // first, search the nodes the node depends on
-	    SortedSet edges = this.callback.getEdges(node);
-	    if (edges != null) {
-		Iterator iterator = edges.iterator();
-		while (iterator.hasNext()) {
-		    // and recursively search these nodes
-		    IEdge edge = (IEdge) iterator.next();
-		    Object toNode = edge.getTo();
-		    search(toNode, currentSearchDepth++);
-		}
-	    }
-	}
+        if (currentSearchDepth < this.searchDepth) {
+            // first, search the nodes the node depends on
+            SortedSet edges = this.callback.getEdges(node);
+            if (edges != null) {
+                Iterator iterator = edges.iterator();
+                while (iterator.hasNext()) {
+                    // and recursively search these nodes
+                    IEdge edge = (IEdge) iterator.next();
+                    Object toNode = edge.getTo();
+                    search(toNode, currentSearchDepth++);
+                }
+            }
+        }
 
-	// finally, add the node to the result
-	if (this.logger.isDebugEnabled()) {
-	    this.logger.debug("Adding node " + node + " to the final result");
-	}
-	// notify the callback a node was added
-	this.callback.nodeAdded(node);
-	result.add(node);
+        // finally, add the node to the result
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Adding node " + node + " to the final result");
+        }
+        // notify the callback a node was added
+        this.callback.nodeAdded(node);
+        result.add(node);
 
-	return false;
+        return false;
     }
 
     /**
@@ -238,49 +238,49 @@ public class DepthFirstSearch implements ISearchAlgorithm {
      * @throws Exception if an exception occurs while getting the edges
      */
     private boolean reverseSearch(Object node, int currentSearchDepth) throws SearchException {
-	if (this.logger.isDebugEnabled()) {
-	    this.logger.debug("reverseSearch:" + node);
-	}
-	if (this.reverseScannedNodes.contains(node)) {
-	    if (this.logger.isDebugEnabled()) {
-		this.logger.debug("already searched; returning true");
-	    }
-	    return true;
-	}
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("reverseSearch:" + node);
+        }
+        if (this.reverseScannedNodes.contains(node)) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("already searched; returning true");
+            }
+            return true;
+        }
 
-	if (!this.callback.searchNode(node)) {
-	    if (this.logger.isDebugEnabled()) {
-		this.logger.debug("callback handler blocked reverse search for node " + node);
-	    }
-	    return true;
-	}
+        if (!this.callback.searchNode(node)) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("callback handler blocked reverse search for node " + node);
+            }
+            return true;
+        }
 
-	if (this.logger.isDebugEnabled()) {
-	    this.logger.debug("Pushing (reverse) " + node);
-	}
-	this.reverseScannedNodes.add(node);
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Pushing (reverse) " + node);
+        }
+        this.reverseScannedNodes.add(node);
 
-	if (currentSearchDepth < this.searchDepth) {
-	    // first, search the nodes the node depends on
-	    SortedSet edges = this.callback.getEdges(node);
-	    if (edges != null) {
-		Iterator iterator = edges.iterator();
-		while (iterator.hasNext()) {
-		    // and recursively search these nodes if we find a match
-		    IEdge edge = (IEdge) iterator.next();
-		    Object toNode = edge.getTo();
-		    if (toNode.equals(node)) {
-			Object fromNode = edge.getFrom();
-			reverseSearch(fromNode, currentSearchDepth++);
-		    }
-		}
-	    }
-	}
+        if (currentSearchDepth < this.searchDepth) {
+            // first, search the nodes the node depends on
+            SortedSet edges = this.callback.getEdges(node);
+            if (edges != null) {
+                Iterator iterator = edges.iterator();
+                while (iterator.hasNext()) {
+                    // and recursively search these nodes if we find a match
+                    IEdge edge = (IEdge) iterator.next();
+                    Object toNode = edge.getTo();
+                    if (toNode.equals(node)) {
+                        Object fromNode = edge.getFrom();
+                        reverseSearch(fromNode, currentSearchDepth++);
+                    }
+                }
+            }
+        }
 
-	// finally, add the node to the input
-	this.nodesFrom.add(node);
+        // finally, add the node to the input
+        this.nodesFrom.add(node);
 
-	return false;
+        return false;
 
     }
 

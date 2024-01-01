@@ -52,18 +52,18 @@ public class Oracle10DataTypeFactory extends OracleDataTypeFactory {
     protected static final DataType BLOB_AS_STREAM = new BinaryStreamDataType("BLOB", Types.BLOB);
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	// BLOB
-	if ("BLOB".equals(sqlTypeName)) {
-	    return BLOB_AS_STREAM;
-	}
+        // BLOB
+        if ("BLOB".equals(sqlTypeName)) {
+            return BLOB_AS_STREAM;
+        }
 
-	// CLOB
-	if ("CLOB".equals(sqlTypeName)) {
-	    return CLOB_AS_STRING;
-	}
-	return super.createDataType(sqlType, sqlTypeName);
+        // CLOB
+        if ("CLOB".equals(sqlTypeName)) {
+            return CLOB_AS_STRING;
+        }
+        return super.createDataType(sqlType, sqlTypeName);
     }
 }

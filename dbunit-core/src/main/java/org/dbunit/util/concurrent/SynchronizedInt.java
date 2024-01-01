@@ -43,8 +43,8 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * internal lock.
      **/
     public SynchronizedInt(int initialValue) {
-	super();
-	value_ = initialValue;
+        super();
+        value_ = initialValue;
     }
 
     /**
@@ -52,17 +52,17 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * supplied lock.
      **/
     public SynchronizedInt(int initialValue, Object lock) {
-	super(lock);
-	value_ = initialValue;
+        super(lock);
+        value_ = initialValue;
     }
 
     /**
      * Return the current value
      **/
     public final int get() {
-	synchronized (lock_) {
-	    return value_;
-	}
+        synchronized (lock_) {
+            return value_;
+        }
     }
 
     /**
@@ -72,13 +72,13 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      **/
 
     public int set(int newValue) {
-	logger.debug("set(newValue={}) - start", String.valueOf(newValue));
+        logger.debug("set(newValue={}) - start", String.valueOf(newValue));
 
-	synchronized (lock_) {
-	    int old = value_;
-	    value_ = newValue;
-	    return old;
-	}
+        synchronized (lock_) {
+            int old = value_;
+            value_ = newValue;
+            return old;
+        }
     }
 
     /**
@@ -87,15 +87,15 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return true if successful
      **/
     public boolean commit(int assumedValue, int newValue) {
-	logger.debug("commit(assumedValue={}, newValue={}) - start", String.valueOf(assumedValue),
-		String.valueOf(newValue));
+        logger.debug("commit(assumedValue={}, newValue={}) - start", String.valueOf(assumedValue),
+                String.valueOf(newValue));
 
-	synchronized (lock_) {
-	    boolean success = (assumedValue == value_);
-	    if (success)
-		value_ = newValue;
-	    return success;
-	}
+        synchronized (lock_) {
+            boolean success = (assumedValue == value_);
+            if (success)
+                value_ = newValue;
+            return success;
+        }
     }
 
     /**
@@ -109,22 +109,22 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      **/
 
     public int swap(SynchronizedInt other) {
-	logger.debug("swap(other={}) - start", other);
+        logger.debug("swap(other={}) - start", other);
 
-	if (other == this)
-	    return get();
-	SynchronizedInt fst = this;
-	SynchronizedInt snd = other;
-	if (System.identityHashCode(fst) > System.identityHashCode(snd)) {
-	    fst = other;
-	    snd = this;
-	}
-	synchronized (fst.lock_) {
-	    synchronized (snd.lock_) {
-		fst.set(snd.set(fst.get()));
-		return get();
-	    }
-	}
+        if (other == this)
+            return get();
+        SynchronizedInt fst = this;
+        SynchronizedInt snd = other;
+        if (System.identityHashCode(fst) > System.identityHashCode(snd)) {
+            fst = other;
+            snd = this;
+        }
+        synchronized (fst.lock_) {
+            synchronized (snd.lock_) {
+                fst.set(snd.set(fst.get()));
+                return get();
+            }
+        }
     }
 
     /**
@@ -133,9 +133,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int increment() {
-	synchronized (lock_) {
-	    return ++value_;
-	}
+        synchronized (lock_) {
+            return ++value_;
+        }
     }
 
     /**
@@ -144,9 +144,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int decrement() {
-	synchronized (lock_) {
-	    return --value_;
-	}
+        synchronized (lock_) {
+            return --value_;
+        }
     }
 
     /**
@@ -155,9 +155,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int add(int amount) {
-	synchronized (lock_) {
-	    return value_ += amount;
-	}
+        synchronized (lock_) {
+            return value_ += amount;
+        }
     }
 
     /**
@@ -166,9 +166,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int subtract(int amount) {
-	synchronized (lock_) {
-	    return value_ -= amount;
-	}
+        synchronized (lock_) {
+            return value_ -= amount;
+        }
     }
 
     /**
@@ -177,9 +177,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public synchronized int multiply(int factor) {
-	synchronized (lock_) {
-	    return value_ *= factor;
-	}
+        synchronized (lock_) {
+            return value_ *= factor;
+        }
     }
 
     /**
@@ -188,9 +188,9 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int divide(int factor) {
-	synchronized (lock_) {
-	    return value_ /= factor;
-	}
+        synchronized (lock_) {
+            return value_ /= factor;
+        }
     }
 
     /**
@@ -199,10 +199,10 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int negate() {
-	synchronized (lock_) {
-	    value_ = -value_;
-	    return value_;
-	}
+        synchronized (lock_) {
+            value_ = -value_;
+            return value_;
+        }
     }
 
     /**
@@ -211,10 +211,10 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int complement() {
-	synchronized (lock_) {
-	    value_ = ~value_;
-	    return value_;
-	}
+        synchronized (lock_) {
+            value_ = ~value_;
+            return value_;
+        }
     }
 
     /**
@@ -223,10 +223,10 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int and(int b) {
-	synchronized (lock_) {
-	    value_ = value_ & b;
-	    return value_;
-	}
+        synchronized (lock_) {
+            value_ = value_ & b;
+            return value_;
+        }
     }
 
     /**
@@ -235,10 +235,10 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int or(int b) {
-	synchronized (lock_) {
-	    value_ = value_ | b;
-	    return value_;
-	}
+        synchronized (lock_) {
+            value_ = value_ | b;
+            return value_;
+        }
     }
 
     /**
@@ -247,42 +247,42 @@ public class SynchronizedInt extends SynchronizedVariable implements Comparable,
      * @return the new value
      **/
     public int xor(int b) {
-	synchronized (lock_) {
-	    value_ = value_ ^ b;
-	    return value_;
-	}
+        synchronized (lock_) {
+            value_ = value_ ^ b;
+            return value_;
+        }
     }
 
     public int compareTo(int other) {
-	logger.debug("compareTo(other={}) - start", String.valueOf(other));
-	int val = get();
-	return (val < other) ? -1 : (val == other) ? 0 : 1;
+        logger.debug("compareTo(other={}) - start", String.valueOf(other));
+        int val = get();
+        return (val < other) ? -1 : (val == other) ? 0 : 1;
     }
 
     public int compareTo(SynchronizedInt other) {
-	logger.debug("compareTo(other={}) - start", other);
-	return compareTo(other.get());
+        logger.debug("compareTo(other={}) - start", other);
+        return compareTo(other.get());
     }
 
     public int compareTo(Object other) {
-	logger.debug("compareTo(other={}) - start", other);
-	return compareTo((SynchronizedInt) other);
+        logger.debug("compareTo(other={}) - start", other);
+        return compareTo((SynchronizedInt) other);
     }
 
     public boolean equals(Object other) {
-	logger.debug("equals(other={}) - start", other);
-	if (other != null && other instanceof SynchronizedInt)
-	    return get() == ((SynchronizedInt) other).get();
-	else
-	    return false;
+        logger.debug("equals(other={}) - start", other);
+        if (other != null && other instanceof SynchronizedInt)
+            return get() == ((SynchronizedInt) other).get();
+        else
+            return false;
     }
 
     public int hashCode() {
-	return get();
+        return get();
     }
 
     public String toString() {
-	return String.valueOf(get());
+        return String.valueOf(get());
     }
 
 }

@@ -59,33 +59,33 @@ public class MsSqlDataTypeFactory extends DefaultDataTypeFactory {
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	// TODO : Process MS SQL Server custom datatype here
-	if (sqlType == Types.CHAR) {
-	    if (UniqueIdentifierType.UNIQUE_IDENTIFIER_TYPE.equals(sqlTypeName)) {
-		return new UniqueIdentifierType();
-	    }
-	}
+        // TODO : Process MS SQL Server custom datatype here
+        if (sqlType == Types.CHAR) {
+            if (UniqueIdentifierType.UNIQUE_IDENTIFIER_TYPE.equals(sqlTypeName)) {
+                return new UniqueIdentifierType();
+            }
+        }
 
-	switch (sqlType) {
-	case NCHAR:
-	    return DataType.CHAR; // nchar
-	case NVARCHAR:
-	    return DataType.VARCHAR; // nvarchar
-	case NTEXT:
-	    return DataType.LONGVARCHAR; // ntext
-	case NTEXT_MSSQL_2005:
-	    return DataType.LONGVARCHAR; // ntext
-	case DateTimeOffsetType.TYPE:
-	    return DATE_TIME_OFFSET_TYPE;
-	default:
-	    return super.createDataType(sqlType, sqlTypeName);
-	}
+        switch (sqlType) {
+        case NCHAR:
+            return DataType.CHAR; // nchar
+        case NVARCHAR:
+            return DataType.VARCHAR; // nvarchar
+        case NTEXT:
+            return DataType.LONGVARCHAR; // ntext
+        case NTEXT_MSSQL_2005:
+            return DataType.LONGVARCHAR; // ntext
+        case DateTimeOffsetType.TYPE:
+            return DATE_TIME_OFFSET_TYPE;
+        default:
+            return super.createDataType(sqlType, sqlTypeName);
+        }
     }
 }

@@ -46,31 +46,31 @@ public class Query {
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	logger.debug("setName(name={}) - start", name);
+        logger.debug("setName(name={}) - start", name);
 
-	this.name = name;
+        this.name = name;
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer();
-	result.append("Query: ");
-	result.append(" name=" + name);
-	result.append(" sql=" + sql);
+        StringBuffer result = new StringBuffer();
+        result.append("Query: ");
+        result.append(" name=" + name);
+        result.append(" sql=" + sql);
 
-	return result.toString();
+        return result.toString();
     }
 
     public String getSql() {
-	return sql;
+        return sql;
     }
 
     public void setSql(String sql) {
-	logger.debug("setSql(sql={}) - start", sql);
+        logger.debug("setSql(sql={}) - start", sql);
 
-	this.sql = sql;
+        this.sql = sql;
     }
 }

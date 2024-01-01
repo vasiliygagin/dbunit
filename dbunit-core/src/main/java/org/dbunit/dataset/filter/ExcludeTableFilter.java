@@ -54,10 +54,10 @@ public class ExcludeTableFilter extends AbstractTableFilter implements ITableFil
      * Create a new ExcludeTableFilter which prevent access to specified tables.
      */
     public ExcludeTableFilter(String[] tableNames) {
-	for (int i = 0; i < tableNames.length; i++) {
-	    String tableName = tableNames[i];
-	    excludeTable(tableName);
-	}
+        for (int i = 0; i < tableNames.length; i++) {
+            String tableName = tableNames[i];
+            excludeTable(tableName);
+        }
     }
 
     /**
@@ -65,23 +65,23 @@ public class ExcludeTableFilter extends AbstractTableFilter implements ITableFil
      * supported: '*' matches zero or more characters, '?' matches one character.
      */
     public void excludeTable(String patternName) {
-	logger.debug("excludeTable(patternName=" + patternName + ") - start");
+        logger.debug("excludeTable(patternName=" + patternName + ") - start");
 
-	_patternMatcher.addPattern(patternName);
+        _patternMatcher.addPattern(patternName);
     }
 
     public boolean isEmpty() {
-	logger.debug("isEmpty() - start");
+        logger.debug("isEmpty() - start");
 
-	return _patternMatcher.isEmpty();
+        return _patternMatcher.isEmpty();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
     public boolean isValidName(String tableName) throws DataSetException {
-	logger.debug("isValidName(tableName=" + tableName + ") - start");
+        logger.debug("isValidName(tableName=" + tableName + ") - start");
 
-	return !_patternMatcher.accept(tableName);
+        return !_patternMatcher.accept(tableName);
     }
 }

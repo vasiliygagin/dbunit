@@ -45,23 +45,23 @@ public abstract class DBTestCase extends DatabaseTestCase {
     private static final Logger logger = LoggerFactory.getLogger(DBTestCase.class);
 
     public DBTestCase() {
-	super();
+        super();
     }
 
     public DBTestCase(String name) {
-	super(name);
+        super(name);
     }
 
     protected final IDatabaseConnection getConnection() throws Exception {
-	logger.debug("getConnection() - start");
+        logger.debug("getConnection() - start");
 
-	final IDatabaseTester databaseTester = getDatabaseTester();
-	assertNotNull("DatabaseTester is not set", databaseTester);
-	IDatabaseConnection connection = databaseTester.getConnection();
-	// Ensure that users have the possibility to configure the connection's
-	// configuration
-	setUpDatabaseConfig(connection.getConfig());
-	return connection;
+        final IDatabaseTester databaseTester = getDatabaseTester();
+        assertNotNull("DatabaseTester is not set", databaseTester);
+        IDatabaseConnection connection = databaseTester.getConnection();
+        // Ensure that users have the possibility to configure the connection's
+        // configuration
+        setUpDatabaseConfig(connection.getConfig());
+        return connection;
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class DBTestCase extends DatabaseTestCase {
      * {@link PropertiesBasedJdbcDatabaseTester}.
      */
     protected IDatabaseTester newDatabaseTester() throws Exception {
-	return new PropertiesBasedJdbcDatabaseTester();
+        return new PropertiesBasedJdbcDatabaseTester();
     }
 
 }

@@ -25,11 +25,11 @@ import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
 
 public class MsSqlEnvironment extends DatabaseEnvironment {
     public MsSqlEnvironment(DatabaseProfile profile) throws Exception {
-	super(profile);
+        super(profile);
     }
 
     protected void setupDatabaseConfig(DatabaseConfig config) {
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     /**
@@ -39,6 +39,6 @@ public class MsSqlEnvironment extends DatabaseEnvironment {
      */
     @Override
     public String convertString(final String str) {
-	return str;
+        return str;
     }
 }

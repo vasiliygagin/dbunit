@@ -42,36 +42,36 @@ public class DbComparisonFailure extends AssertionError {
      * @param actual   The actual value
      */
     public DbComparisonFailure(String reason, String expected, String actual) {
-	super(reason);
-	this.reason = reason;
-	this.expected = expected;
-	this.actual = actual;
+        super(reason);
+        this.reason = reason;
+        this.expected = expected;
+        this.actual = actual;
     }
 
     public String getMessage() {
-	return buildMessage(this.reason, this.expected, this.actual);
+        return buildMessage(this.reason, this.expected, this.actual);
     }
 
     public String getReason() {
-	return reason;
+        return reason;
     }
 
     public String getExpected() {
-	return expected;
+        return expected;
     }
 
     public String getActual() {
-	return actual;
+        return actual;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append(reason);
-	sb.append("expected:<").append(expected);
-	sb.append(">but was:<").append(actual).append(">");
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append(reason);
+        sb.append("expected:<").append(expected);
+        sb.append(">but was:<").append(actual).append(">");
+        sb.append("]");
+        return sb.toString();
     }
 
     /**
@@ -83,11 +83,11 @@ public class DbComparisonFailure extends AssertionError {
      * @return The formatted message
      */
     public static final String buildMessage(String reason, String expected, String actual) {
-	StringBuffer sb = new StringBuffer();
-	sb.append(reason);
-	sb.append(" expected:<").append(expected).append(">");
-	sb.append(" but was:<").append(actual).append(">");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(reason);
+        sb.append(" expected:<").append(expected).append(">");
+        sb.append(" but was:<").append(actual).append(">");
+        return sb.toString();
 
     }
 }

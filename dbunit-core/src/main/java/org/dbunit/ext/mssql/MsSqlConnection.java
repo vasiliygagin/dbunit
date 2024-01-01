@@ -57,8 +57,8 @@ public class MsSqlConnection extends DatabaseConnection {
      * @throws DatabaseUnitException
      */
     public MsSqlConnection(Connection connection, String schema) throws DatabaseUnitException {
-	super(connection, schema);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        super(connection, schema);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     /**
@@ -68,24 +68,24 @@ public class MsSqlConnection extends DatabaseConnection {
      * @throws DatabaseUnitException
      */
     public MsSqlConnection(Connection connection) throws DatabaseUnitException {
-	super(connection);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        super(connection);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection
 
     public IDataSet createDataSet() throws SQLException {
-	logger.debug("createDataSet() - start");
+        logger.debug("createDataSet() - start");
 
-	IDataSet dataSet = super.createDataSet();
-	return new FilteredDataSet(_filter, dataSet);
+        IDataSet dataSet = super.createDataSet();
+        return new FilteredDataSet(_filter, dataSet);
     }
 
     public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException {
-	logger.debug("createDataSet(tableNames={}) - start", tableNames);
+        logger.debug("createDataSet(tableNames={}) - start", tableNames);
 
-	IDataSet dataSet = super.createDataSet(tableNames);
-	return new FilteredDataSet(_filter, dataSet);
+        IDataSet dataSet = super.createDataSet(tableNames);
+        return new FilteredDataSet(_filter, dataSet);
     }
 }

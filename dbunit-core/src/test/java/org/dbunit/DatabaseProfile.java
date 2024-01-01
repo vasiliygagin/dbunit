@@ -52,75 +52,75 @@ public class DatabaseProfile {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseProfile.class);
 
     public DatabaseProfile(String profileName) throws IOException {
-	_properties = getProperties(profileName);
-	this.profileName = _properties.getProperty(DATABASE_PROFILE);
+        _properties = getProperties(profileName);
+        this.profileName = _properties.getProperty(DATABASE_PROFILE);
     }
 
     public String getDriverClass() {
-	return _properties.getProperty(PROFILE_DRIVER_CLASS);
+        return _properties.getProperty(PROFILE_DRIVER_CLASS);
     }
 
     public String getConnectionUrl() {
-	return _properties.getProperty(PROFILE_URL);
+        return _properties.getProperty(PROFILE_URL);
     }
 
     public String getSchema() {
-	return _properties.getProperty(PROFILE_SCHEMA, null);
+        return _properties.getProperty(PROFILE_SCHEMA, null);
     }
 
     public String getUser() {
-	return _properties.getProperty(PROFILE_USER);
+        return _properties.getProperty(PROFILE_USER);
     }
 
     public String getPassword() {
-	return _properties.getProperty(PROFILE_PASSWORD);
+        return _properties.getProperty(PROFILE_PASSWORD);
     }
 
     public String getProfileDdl() {
-	return _properties.getProperty(PROFILE_DDL);
+        return _properties.getProperty(PROFILE_DDL);
     }
 
     public boolean getProfileMultilineSupport() {
-	return Boolean.valueOf(_properties.getProperty(PROFILE_MULTILINE_SUPPORT));
+        return Boolean.valueOf(_properties.getProperty(PROFILE_MULTILINE_SUPPORT));
     }
 
     public String[] getUnsupportedFeatures() {
-	String property = _properties.getProperty(PROFILE_UNSUPPORTED_FEATURES);
+        String property = _properties.getProperty(PROFILE_UNSUPPORTED_FEATURES);
 
-	// If property is not set return an empty array
-	if (property == null) {
-	    return EMPTY_ARRAY;
-	}
+        // If property is not set return an empty array
+        if (property == null) {
+            return EMPTY_ARRAY;
+        }
 
-	List<String> stringList = new ArrayList<String>();
-	StringTokenizer tokenizer = new StringTokenizer(property, ",");
-	while (tokenizer.hasMoreTokens()) {
-	    stringList.add(tokenizer.nextToken().trim());
-	}
-	return stringList.toArray(new String[stringList.size()]);
+        List<String> stringList = new ArrayList<String>();
+        StringTokenizer tokenizer = new StringTokenizer(property, ",");
+        while (tokenizer.hasMoreTokens()) {
+            stringList.add(tokenizer.nextToken().trim());
+        }
+        return stringList.toArray(new String[stringList.size()]);
     }
 
     private static Properties getProperties(String profileName) throws IOException {
 
-	final Properties properties = System.getProperties();
-	if (profileName == null) {
-	    profileName = properties.getProperty(DATABASE_PROFILE);
-	}
-	if (profileName == null) {
-	    profileName = "hsqldb";
-	}
-	logger.info("Selected profile '{}'", profileName);
+        final Properties properties = System.getProperties();
+        if (profileName == null) {
+            profileName = properties.getProperty(DATABASE_PROFILE);
+        }
+        if (profileName == null) {
+            profileName = "hsqldb";
+        }
+        logger.info("Selected profile '{}'", profileName);
 
-	String fileName = profileName + "-dbunit.properties";
+        String fileName = profileName + "-dbunit.properties";
 
-	final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
-	if (inputStream != null) {
-	    properties.load(inputStream);
-	    logger.info("Loaded properties from file '{}'", fileName);
-	    inputStream.close();
-	} else {
-	    logger.warn("Properties file '{}' is not found", fileName);
-	}
-	return properties;
+        final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream != null) {
+            properties.load(inputStream);
+            logger.info("Loaded properties from file '{}'", fileName);
+            inputStream.close();
+        } else {
+            logger.warn("Properties file '{}' is not found", fileName);
+        }
+        return properties;
     }
 }

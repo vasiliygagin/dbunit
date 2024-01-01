@@ -41,15 +41,15 @@ public class TransparentHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent IGNORE() {
-	logger.debug("IGNORE() - start");
+        logger.debug("IGNORE() - start");
 
-	return createPipelineComponent(new TransparentHandler(), new IGNORE());
+        return createPipelineComponent(new TransparentHandler(), new IGNORE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	if (logger.isDebugEnabled())
-	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
+        if (logger.isDebugEnabled())
+            logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-	return false;
+        return false;
     }
 }

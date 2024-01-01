@@ -60,23 +60,23 @@ public class TruncateTableOperation extends DeleteAllOperation {
     // DeleteAllOperation class
 
     protected String getDeleteAllCommand() {
-	return "truncate table ";
+        return "truncate table ";
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
-	logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
+        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-	// Patch to make it work with MS SQL Server
-	DatabaseConfig config = connection.getConfig();
-	boolean oldValue = config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
-	try {
-	    config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, false);
-	    super.execute(connection, dataSet);
-	} finally {
-	    config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, oldValue);
-	}
+        // Patch to make it work with MS SQL Server
+        DatabaseConfig config = connection.getConfig();
+        boolean oldValue = config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
+        try {
+            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, false);
+            super.execute(connection, dataSet);
+        } finally {
+            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, oldValue);
+        }
     }
 }

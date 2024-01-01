@@ -35,33 +35,33 @@ import org.dbunit.DatabaseEnvironmentLoader;
  */
 public class TestUtils {
     private static String getProfileName() throws Exception {
-	return DatabaseEnvironmentLoader.getInstance(null).getProfile().profileName;
+        return DatabaseEnvironmentLoader.getInstance(null).getProfile().profileName;
     }
 
     public static String getFileName(String fileName) {
-	return "src/test/resources/" + fileName;
+        return "src/test/resources/" + fileName;
     }
 
     public static File getFile(String fileName) {
-	return new File(getFileName(fileName));
+        return new File(getFileName(fileName));
     }
 
     public static File getFileForDatabaseEnvironment(String originalFileName) throws Exception {
-	String profilePath = originalFileName.replace(".", "-" + getProfileName() + ".");
-	File profileFile = new File(profilePath);
-	if (profileFile.exists()) {
-	    return profileFile;
-	} else {
-	    return new File(originalFileName);
-	}
+        String profilePath = originalFileName.replace(".", "-" + getProfileName() + ".");
+        File profileFile = new File(profilePath);
+        if (profileFile.exists()) {
+            return profileFile;
+        } else {
+            return new File(originalFileName);
+        }
     }
 
     public static FileReader getFileReader(String fileName) throws FileNotFoundException {
-	return new FileReader(getFileName(fileName));
+        return new FileReader(getFileName(fileName));
     }
 
     public static FileInputStream getFileInputStream(String fileName) throws FileNotFoundException {
-	return new FileInputStream(getFileName(fileName));
+        return new FileInputStream(getFileName(fileName));
     }
 
 }

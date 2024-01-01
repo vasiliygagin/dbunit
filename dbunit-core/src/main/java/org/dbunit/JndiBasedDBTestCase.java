@@ -44,7 +44,7 @@ public abstract class JndiBasedDBTestCase extends DBTestCase {
     }
 
     public JndiBasedDBTestCase(String name) {
-	super(name);
+        super(name);
     }
 
     /**
@@ -54,9 +54,9 @@ public abstract class JndiBasedDBTestCase extends DBTestCase {
      * {@link #getLookupName()}.
      */
     protected IDatabaseTester newDatabaseTester() {
-	logger.debug("newDatabaseTester() - start");
+        logger.debug("newDatabaseTester() - start");
 
-	return new JndiDatabaseTester(getJNDIProperties(), getLookupName());
+        return new JndiDatabaseTester(getJNDIProperties(), getLookupName());
     }
 
     /**
@@ -70,6 +70,6 @@ public abstract class JndiBasedDBTestCase extends DBTestCase {
      * Default implementation returns an empty Properties object.
      */
     protected Properties getJNDIProperties() {
-	return new Properties();
+        return new Properties();
     }
 }

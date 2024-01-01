@@ -31,11 +31,11 @@ import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
  */
 public class Oracle10Environment extends OracleEnvironment {
     public Oracle10Environment(DatabaseProfile profile) throws Exception {
-	super(profile);
+        super(profile);
     }
 
     protected void setupDatabaseConfig(DatabaseConfig config) {
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
     }
 
 }

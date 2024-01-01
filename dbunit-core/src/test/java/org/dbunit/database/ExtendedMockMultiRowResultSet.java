@@ -34,6 +34,6 @@ public class ExtendedMockMultiRowResultSet extends MockMultiRowResultSet {
      * Always returns false.
      */
     public boolean wasNull() throws SQLException {
-	return false;
+        return false;
     }
 }

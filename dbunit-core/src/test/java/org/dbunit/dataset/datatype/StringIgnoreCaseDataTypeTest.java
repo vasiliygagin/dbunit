@@ -33,14 +33,14 @@ import junit.framework.TestCase;
 public class StringIgnoreCaseDataTypeTest extends TestCase {
 
     public StringIgnoreCaseDataTypeTest(String name) {
-	super(name);
+        super(name);
     }
 
     public void testCompareIgnoreCase() throws Exception {
-	StringIgnoreCaseDataType type = new StringIgnoreCaseDataType("VARCHAR", Types.VARCHAR);
-	String value1 = "hello";
-	String value2 = "hElLo";
-	int result = type.compare(value1, value2);
-	assertEquals(0, result);
+        StringIgnoreCaseDataType type = new StringIgnoreCaseDataType("VARCHAR", Types.VARCHAR);
+        String value1 = "hello";
+        String value2 = "hElLo";
+        int result = type.compare(value1, value2);
+        assertEquals(0, result);
     }
 }

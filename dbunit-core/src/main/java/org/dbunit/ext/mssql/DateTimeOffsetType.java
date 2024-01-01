@@ -43,63 +43,63 @@ public class DateTimeOffsetType extends AbstractDataType {
      * @see https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetimeoffset-transact-sql?view=sql-server-2017
      */
     private static final DateTimeFormatter SQL_SERVER_FORMAT = DateTimeFormatter
-	    .ofPattern("yyyy-MM-dd HH:mm:ss[.n] xxx");
+            .ofPattern("yyyy-MM-dd HH:mm:ss[.n] xxx");
 
     public DateTimeOffsetType() {
-	super("datetimeoffset", TYPE, OffsetDateTime.class, false);
+        super("datetimeoffset", TYPE, OffsetDateTime.class, false);
     }
 
     @Override
     public Object typeCast(final Object value) throws TypeCastException {
-	if (value == null || value instanceof OffsetDateTime) {
-	    return value;
-	}
+        if (value == null || value instanceof OffsetDateTime) {
+            return value;
+        }
 
-	// if a java.time type, attempt a direct conversion
-	// if that fails, there's not enough info to do the conversion, so don't
-	// bother trying string parse
-	if (value instanceof TemporalAccessor) {
-	    try {
-		return OffsetDateTime.from((TemporalAccessor) value);
-	    } catch (final DateTimeException e) {
-		throw new TypeCastException(e);
-	    }
-	}
+        // if a java.time type, attempt a direct conversion
+        // if that fails, there's not enough info to do the conversion, so don't
+        // bother trying string parse
+        if (value instanceof TemporalAccessor) {
+            try {
+                return OffsetDateTime.from((TemporalAccessor) value);
+            } catch (final DateTimeException e) {
+                throw new TypeCastException(e);
+            }
+        }
 
-	final String valueAsString = value.toString();
+        final String valueAsString = value.toString();
 
-	// attempt to parse using ISO 8601 format
-	DateTimeParseException isoParseException;
-	try {
-	    return OffsetDateTime.parse(valueAsString);
-	} catch (final DateTimeParseException e) {
-	    isoParseException = e;
-	}
+        // attempt to parse using ISO 8601 format
+        DateTimeParseException isoParseException;
+        try {
+            return OffsetDateTime.parse(valueAsString);
+        } catch (final DateTimeParseException e) {
+            isoParseException = e;
+        }
 
-	// attempt to parse using SQL Server's ISO-like format
-	try {
-	    return OffsetDateTime.parse(valueAsString, SQL_SERVER_FORMAT);
-	} catch (final DateTimeParseException e) {
-	    final TypeCastException toThrow = new TypeCastException(
-		    "Could not parse value using ISO 8601 or SQL Server's format", e);
-	    toThrow.addSuppressed(isoParseException);
-	    throw toThrow;
-	}
+        // attempt to parse using SQL Server's ISO-like format
+        try {
+            return OffsetDateTime.parse(valueAsString, SQL_SERVER_FORMAT);
+        } catch (final DateTimeParseException e) {
+            final TypeCastException toThrow = new TypeCastException(
+                    "Could not parse value using ISO 8601 or SQL Server's format", e);
+            toThrow.addSuppressed(isoParseException);
+            throw toThrow;
+        }
     }
 
     @Override
     public Object getSqlValue(final int column, final ResultSet resultSet) throws SQLException, TypeCastException {
-	return resultSet.getObject(column, OffsetDateTime.class);
+        return resultSet.getObject(column, OffsetDateTime.class);
     }
 
     @Override
     public void setSqlValue(final Object value, final int column, final PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	statement.setObject(column, typeCast(value));
+            throws SQLException, TypeCastException {
+        statement.setObject(column, typeCast(value));
     }
 
     @Override
     public boolean isDateTime() {
-	return true;
+        return true;
     }
 }

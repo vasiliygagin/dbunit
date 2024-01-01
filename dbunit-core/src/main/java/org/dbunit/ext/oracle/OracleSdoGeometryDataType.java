@@ -130,175 +130,175 @@ public class OracleSdoGeometryDataType extends AbstractDataType {
     // patterns for parsing out the various pieces of the string
     // representation of an sdo_geometry object
     private static final Pattern sdoGeometryPattern = Pattern
-	    .compile("^(?:MDSYS\\.)?SDO_GEOMETRY\\s*\\(\\s*([^,\\s]+)\\s*,\\s*([^,\\s]+)\\s*,\\s*");
+            .compile("^(?:MDSYS\\.)?SDO_GEOMETRY\\s*\\(\\s*([^,\\s]+)\\s*,\\s*([^,\\s]+)\\s*,\\s*");
     private static final Pattern sdoPointTypePattern = Pattern.compile(
-	    "^(?:(?:(?:MDSYS\\.)?SDO_POINT_TYPE\\s*\\(\\s*([^,\\s]+)\\s*,\\s*([^,\\s]+)\\s*,\\s*([^,\\s\\)]+)\\s*\\))|(NULL))\\s*,\\s*");
+            "^(?:(?:(?:MDSYS\\.)?SDO_POINT_TYPE\\s*\\(\\s*([^,\\s]+)\\s*,\\s*([^,\\s]+)\\s*,\\s*([^,\\s\\)]+)\\s*\\))|(NULL))\\s*,\\s*");
     private static final Pattern sdoElemInfoArrayPattern = Pattern
-	    .compile("^(?:(?:(?:(?:MDSYS\\.)?SDO_ELEM_INFO_ARRAY\\s*\\(([^\\)]*)\\))|(NULL)))\\s*,\\s*");
+            .compile("^(?:(?:(?:(?:MDSYS\\.)?SDO_ELEM_INFO_ARRAY\\s*\\(([^\\)]*)\\))|(NULL)))\\s*,\\s*");
     private static final Pattern sdoOrdinateArrayPattern = Pattern
-	    .compile("^(?:(?:(?:(?:MDSYS\\.)?SDO_ORDINATE_ARRAY\\s*\\(([^\\)]*)\\))|(NULL)))\\s*\\)\\s*");
+            .compile("^(?:(?:(?:(?:MDSYS\\.)?SDO_ORDINATE_ARRAY\\s*\\(([^\\)]*)\\))|(NULL)))\\s*\\)\\s*");
 
     OracleSdoGeometryDataType() {
-	super(SDO_GEOMETRY, Types.STRUCT, OracleSdoGeometry.class, false);
+        super(SDO_GEOMETRY, Types.STRUCT, OracleSdoGeometry.class, false);
     }
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof OracleSdoGeometry) {
-	    return (OracleSdoGeometry) value;
-	}
+        if (value instanceof OracleSdoGeometry) {
+            return (OracleSdoGeometry) value;
+        }
 
-	if (value instanceof String) {
-	    // attempt to parse the SDO_GEOMETRY
-	    try {
-		// all upper case for parse purposes
-		String upperVal = ((String) value).toUpperCase().trim();
-		if (NULL.equals(upperVal)) {
-		    return null;
-		}
+        if (value instanceof String) {
+            // attempt to parse the SDO_GEOMETRY
+            try {
+                // all upper case for parse purposes
+                String upperVal = ((String) value).toUpperCase().trim();
+                if (NULL.equals(upperVal)) {
+                    return null;
+                }
 
-		// parse out sdo_geometry
-		Matcher sdoGeometryMatcher = sdoGeometryPattern.matcher(upperVal);
-		if (!sdoGeometryMatcher.find()) {
-		    throw new TypeCastException(value, this);
-		}
-		BigDecimal gtype = NULL.equals(sdoGeometryMatcher.group(1)) ? null
-			: new BigDecimal(sdoGeometryMatcher.group(1));
-		BigDecimal srid = NULL.equals(sdoGeometryMatcher.group(2)) ? null
-			: new BigDecimal(sdoGeometryMatcher.group(2));
+                // parse out sdo_geometry
+                Matcher sdoGeometryMatcher = sdoGeometryPattern.matcher(upperVal);
+                if (!sdoGeometryMatcher.find()) {
+                    throw new TypeCastException(value, this);
+                }
+                BigDecimal gtype = NULL.equals(sdoGeometryMatcher.group(1)) ? null
+                        : new BigDecimal(sdoGeometryMatcher.group(1));
+                BigDecimal srid = NULL.equals(sdoGeometryMatcher.group(2)) ? null
+                        : new BigDecimal(sdoGeometryMatcher.group(2));
 
-		// parse out sdo_point_type
-		upperVal = upperVal.substring(sdoGeometryMatcher.end());
-		Matcher sdoPointTypeMatcher = sdoPointTypePattern.matcher(upperVal);
-		if (!sdoPointTypeMatcher.find()) {
-		    throw new TypeCastException(value, this);
-		}
+                // parse out sdo_point_type
+                upperVal = upperVal.substring(sdoGeometryMatcher.end());
+                Matcher sdoPointTypeMatcher = sdoPointTypePattern.matcher(upperVal);
+                if (!sdoPointTypeMatcher.find()) {
+                    throw new TypeCastException(value, this);
+                }
 
-		OracleSdoPointType sdoPoint;
-		if (NULL.equals(sdoPointTypeMatcher.group(4))) {
-		    sdoPoint = null;
-		} else {
-		    sdoPoint = new OracleSdoPointType(
-			    NULL.equals(sdoPointTypeMatcher.group(1)) ? null
-				    : new BigDecimal(sdoPointTypeMatcher.group(1)),
-			    NULL.equals(sdoPointTypeMatcher.group(2)) ? null
-				    : new BigDecimal(sdoPointTypeMatcher.group(2)),
-			    NULL.equals(sdoPointTypeMatcher.group(3)) ? null
-				    : new BigDecimal(sdoPointTypeMatcher.group(3)));
-		}
+                OracleSdoPointType sdoPoint;
+                if (NULL.equals(sdoPointTypeMatcher.group(4))) {
+                    sdoPoint = null;
+                } else {
+                    sdoPoint = new OracleSdoPointType(
+                            NULL.equals(sdoPointTypeMatcher.group(1)) ? null
+                                    : new BigDecimal(sdoPointTypeMatcher.group(1)),
+                            NULL.equals(sdoPointTypeMatcher.group(2)) ? null
+                                    : new BigDecimal(sdoPointTypeMatcher.group(2)),
+                            NULL.equals(sdoPointTypeMatcher.group(3)) ? null
+                                    : new BigDecimal(sdoPointTypeMatcher.group(3)));
+                }
 
-		// parse out sdo_elem_info_array
-		upperVal = upperVal.substring(sdoPointTypeMatcher.end());
-		Matcher sdoElemInfoArrayMatcher = sdoElemInfoArrayPattern.matcher(upperVal);
-		if (!sdoElemInfoArrayMatcher.find()) {
-		    throw new TypeCastException(value, this);
-		}
+                // parse out sdo_elem_info_array
+                upperVal = upperVal.substring(sdoPointTypeMatcher.end());
+                Matcher sdoElemInfoArrayMatcher = sdoElemInfoArrayPattern.matcher(upperVal);
+                if (!sdoElemInfoArrayMatcher.find()) {
+                    throw new TypeCastException(value, this);
+                }
 
-		OracleSdoElemInfoArray sdoElemInfoArray;
-		if (NULL.equals(sdoElemInfoArrayMatcher.group(2))) {
-		    sdoElemInfoArray = null;
-		} else {
-		    String[] elemInfoStrings = sdoElemInfoArrayMatcher.group(1).trim().split("\\s*,\\s*");
-		    if (elemInfoStrings.length == 1 && "".equals(elemInfoStrings[0])) {
-			sdoElemInfoArray = new OracleSdoElemInfoArray();
-		    } else {
-			BigDecimal[] elemInfos = new BigDecimal[elemInfoStrings.length];
-			for (int index = 0; index < elemInfoStrings.length; index++) {
-			    elemInfos[index] = NULL.equals(elemInfoStrings[index]) ? null
-				    : new BigDecimal(elemInfoStrings[index]);
-			}
-			sdoElemInfoArray = new OracleSdoElemInfoArray(elemInfos);
-		    }
-		}
+                OracleSdoElemInfoArray sdoElemInfoArray;
+                if (NULL.equals(sdoElemInfoArrayMatcher.group(2))) {
+                    sdoElemInfoArray = null;
+                } else {
+                    String[] elemInfoStrings = sdoElemInfoArrayMatcher.group(1).trim().split("\\s*,\\s*");
+                    if (elemInfoStrings.length == 1 && "".equals(elemInfoStrings[0])) {
+                        sdoElemInfoArray = new OracleSdoElemInfoArray();
+                    } else {
+                        BigDecimal[] elemInfos = new BigDecimal[elemInfoStrings.length];
+                        for (int index = 0; index < elemInfoStrings.length; index++) {
+                            elemInfos[index] = NULL.equals(elemInfoStrings[index]) ? null
+                                    : new BigDecimal(elemInfoStrings[index]);
+                        }
+                        sdoElemInfoArray = new OracleSdoElemInfoArray(elemInfos);
+                    }
+                }
 
-		// parse out sdo_ordinate_array
-		upperVal = upperVal.substring(sdoElemInfoArrayMatcher.end());
-		Matcher sdoOrdinateArrayMatcher = sdoOrdinateArrayPattern.matcher(upperVal);
-		if (!sdoOrdinateArrayMatcher.find()) {
-		    throw new TypeCastException(value, this);
-		}
+                // parse out sdo_ordinate_array
+                upperVal = upperVal.substring(sdoElemInfoArrayMatcher.end());
+                Matcher sdoOrdinateArrayMatcher = sdoOrdinateArrayPattern.matcher(upperVal);
+                if (!sdoOrdinateArrayMatcher.find()) {
+                    throw new TypeCastException(value, this);
+                }
 
-		OracleSdoOrdinateArray sdoOrdinateArray;
-		if (NULL.equals(sdoOrdinateArrayMatcher.group(2))) {
-		    sdoOrdinateArray = null;
-		} else {
-		    String[] ordinateStrings = sdoOrdinateArrayMatcher.group(1).trim().split("\\s*,\\s*");
-		    if (ordinateStrings.length == 1 && "".equals(ordinateStrings[0])) {
-			sdoOrdinateArray = new OracleSdoOrdinateArray();
-		    } else {
-			BigDecimal[] ordinates = new BigDecimal[ordinateStrings.length];
-			for (int index = 0; index < ordinateStrings.length; index++) {
-			    ordinates[index] = NULL.equals(ordinateStrings[index]) ? null
-				    : new BigDecimal(ordinateStrings[index]);
-			}
-			sdoOrdinateArray = new OracleSdoOrdinateArray(ordinates);
-		    }
-		}
+                OracleSdoOrdinateArray sdoOrdinateArray;
+                if (NULL.equals(sdoOrdinateArrayMatcher.group(2))) {
+                    sdoOrdinateArray = null;
+                } else {
+                    String[] ordinateStrings = sdoOrdinateArrayMatcher.group(1).trim().split("\\s*,\\s*");
+                    if (ordinateStrings.length == 1 && "".equals(ordinateStrings[0])) {
+                        sdoOrdinateArray = new OracleSdoOrdinateArray();
+                    } else {
+                        BigDecimal[] ordinates = new BigDecimal[ordinateStrings.length];
+                        for (int index = 0; index < ordinateStrings.length; index++) {
+                            ordinates[index] = NULL.equals(ordinateStrings[index]) ? null
+                                    : new BigDecimal(ordinateStrings[index]);
+                        }
+                        sdoOrdinateArray = new OracleSdoOrdinateArray(ordinates);
+                    }
+                }
 
-		OracleSdoGeometry sdoGeometry = new OracleSdoGeometry(gtype, srid, sdoPoint, sdoElemInfoArray,
-			sdoOrdinateArray);
+                OracleSdoGeometry sdoGeometry = new OracleSdoGeometry(gtype, srid, sdoPoint, sdoElemInfoArray,
+                        sdoOrdinateArray);
 
-		return sdoGeometry;
-	    } catch (SQLException e) {
-		throw new TypeCastException(value, this, e);
-	    } catch (NumberFormatException e) {
-		throw new TypeCastException(value, this, e);
-	    }
-	}
+                return sdoGeometry;
+            } catch (SQLException e) {
+                throw new TypeCastException(value, this, e);
+            } catch (NumberFormatException e) {
+                throw new TypeCastException(value, this, e);
+            }
+        }
 
-	throw new TypeCastException(value, this);
+        throw new TypeCastException(value, this);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	Object data = null;
-	try {
-	    data = ((OracleResultSet) resultSet).getORAData(column, OracleSdoGeometry.getORADataFactory());
+        Object data = null;
+        try {
+            data = ((OracleResultSet) resultSet).getORAData(column, OracleSdoGeometry.getORADataFactory());
 
-	    // It would be preferable to return the actual object, but there are
-	    // a few dbunit issues with this:
-	    //
-	    // 1. Dbunit does not support nulls for user defined types (at least
-	    // with oracle.) PreparedStatement.setNull(int, int) is always used
-	    // but PreparedStatement.setNull(int, int, String) is required
-	    // for sdo_geometry (and other similar custom object types).
-	    //
-	    // 2. Dbunit does not support rendering custom objects (such as
-	    // OracleSdoGeometry) as strings.
-	    //
-	    // So, instead we return the object as a String or "NULL".
+            // It would be preferable to return the actual object, but there are
+            // a few dbunit issues with this:
+            //
+            // 1. Dbunit does not support nulls for user defined types (at least
+            // with oracle.) PreparedStatement.setNull(int, int) is always used
+            // but PreparedStatement.setNull(int, int, String) is required
+            // for sdo_geometry (and other similar custom object types).
+            //
+            // 2. Dbunit does not support rendering custom objects (such as
+            // OracleSdoGeometry) as strings.
+            //
+            // So, instead we return the object as a String or "NULL".
 
-	    // return data;
+            // return data;
 
-	    if (data != null) {
-		return data.toString();
-	    } else {
-		// return a string instead of null so that it can be interpreted
-		// in typeCast. DBUnit does not handle PreparedStatement.setNull
-		// for user defined types.
-		return NULL;
-	    }
+            if (data != null) {
+                return data.toString();
+            } else {
+                // return a string instead of null so that it can be interpreted
+                // in typeCast. DBUnit does not handle PreparedStatement.setNull
+                // for user defined types.
+                return NULL;
+            }
 
-	} catch (SQLException e) {
-	    throw new TypeCastException(data, this, e);
-	}
+        } catch (SQLException e) {
+            throw new TypeCastException(data, this, e);
+        }
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	Object castValue = typeCast(value);
-	if (castValue == null) {
-	    statement.setNull(column, OracleSdoGeometry._SQL_TYPECODE, OracleSdoGeometry._SQL_NAME);
-	} else {
-	    ((OraclePreparedStatement) statement).setORAData(column, (ORAData) castValue);
-	}
+            throws SQLException, TypeCastException {
+        Object castValue = typeCast(value);
+        if (castValue == null) {
+            statement.setNull(column, OracleSdoGeometry._SQL_TYPECODE, OracleSdoGeometry._SQL_NAME);
+        } else {
+            ((OraclePreparedStatement) statement).setORAData(column, (ORAData) castValue);
+        }
     }
 
     /**
@@ -308,44 +308,44 @@ public class OracleSdoGeometryDataType extends AbstractDataType {
      * check for equality between data in xml files and data read from the database.
      */
     public int compare(Object o1, Object o2) throws TypeCastException {
-	logger.debug("compare(o1={}, o2={}) - start", o1, o2);
+        logger.debug("compare(o1={}, o2={}) - start", o1, o2);
 
-	try {
-	    // New in 2.3: Object level check for equality - should give massive performance
-	    // improvements
-	    // in the most cases because the typecast can be avoided (null values and equal
-	    // objects)
-	    if (areObjectsEqual(o1, o2)) {
-		return 0;
-	    }
+        try {
+            // New in 2.3: Object level check for equality - should give massive performance
+            // improvements
+            // in the most cases because the typecast can be avoided (null values and equal
+            // objects)
+            if (areObjectsEqual(o1, o2)) {
+                return 0;
+            }
 
-	    // Comparable check based on the results of method "typeCast"
-	    Object value1 = typeCast(o1);
-	    Object value2 = typeCast(o2);
+            // Comparable check based on the results of method "typeCast"
+            Object value1 = typeCast(o1);
+            Object value2 = typeCast(o2);
 
-	    // Check for "null"s again because typeCast can produce them
+            // Check for "null"s again because typeCast can produce them
 
-	    if (value1 == null && value2 == null) {
-		return 0;
-	    }
+            if (value1 == null && value2 == null) {
+                return 0;
+            }
 
-	    if (value1 == null && value2 != null) {
-		return -1;
-	    }
+            if (value1 == null && value2 != null) {
+                return -1;
+            }
 
-	    if (value1 != null && value2 == null) {
-		return 1;
-	    }
+            if (value1 != null && value2 == null) {
+                return 1;
+            }
 
-	    if (value1.equals(value2)) {
-		return 0;
-	    }
+            if (value1.equals(value2)) {
+                return 0;
+            }
 
-	    return compareNonNulls(value1, value2);
+            return compareNonNulls(value1, value2);
 
-	} catch (ClassCastException e) {
-	    throw new TypeCastException(e);
-	}
+        } catch (ClassCastException e) {
+            throw new TypeCastException(e);
+        }
     }
 
 }

@@ -37,25 +37,25 @@ public class TypeCastException extends DataTypeException {
 //    }
 
     public TypeCastException(Throwable e) {
-	super(e);
+        super(e);
     }
 
     public TypeCastException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public TypeCastException(Object value, DataType dataType) {
-	super(buildMessage(value, dataType));
+        super(buildMessage(value, dataType));
     }
 
     public TypeCastException(Object value, DataType dataType, Throwable e) {
-	super(buildMessage(value, dataType), e);
+        super(buildMessage(value, dataType), e);
     }
 
     private static String buildMessage(Object value, DataType dataType) {
-	String valueClass = (value == null ? "null" : value.getClass().getName());
-	String message = "Unable to typecast value <" + value + "> of type <" + valueClass + "> to " + dataType;
-	return message;
+        String valueClass = (value == null ? "null" : value.getClass().getName());
+        String message = "Unable to typecast value <" + value + "> of type <" + valueClass + "> to " + dataType;
+        return message;
     }
 
 }

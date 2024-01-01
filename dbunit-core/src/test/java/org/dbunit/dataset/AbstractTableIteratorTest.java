@@ -27,7 +27,7 @@ package org.dbunit.dataset;
  */
 public abstract class AbstractTableIteratorTest extends AbstractTest {
     public AbstractTableIteratorTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected abstract ITableIterator getIterator() throws Exception;
@@ -35,83 +35,83 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
     protected abstract ITableIterator getEmptyIterator() throws Exception;
 
     public void testNext() throws Exception {
-	int count = 0;
-	String[] names = getExpectedNames();
-	ITableIterator iterator = getIterator();
-	while (iterator.next()) {
-	    count++;
-	}
+        int count = 0;
+        String[] names = getExpectedNames();
+        ITableIterator iterator = getIterator();
+        while (iterator.next()) {
+            count++;
+        }
 
-	assertEquals("count", names.length, count);
+        assertEquals("count", names.length, count);
     }
 
     public void testNextAndEmpty() throws Exception {
-	int count = 0;
-	ITableIterator iterator = getEmptyIterator();
-	while (iterator.next()) {
-	    count++;
-	}
+        int count = 0;
+        ITableIterator iterator = getEmptyIterator();
+        while (iterator.next()) {
+            count++;
+        }
 
-	assertEquals("count", 0, count);
+        assertEquals("count", 0, count);
     }
 
     public void testGetTableMetaData() throws Exception {
-	int i = 0;
-	String[] names = getExpectedNames();
-	ITableIterator iterator = getIterator();
-	while (iterator.next()) {
-	    assertEquals("name " + i, names[i], iterator.getTableMetaData().getTableName());
-	    i++;
-	}
+        int i = 0;
+        String[] names = getExpectedNames();
+        ITableIterator iterator = getIterator();
+        while (iterator.next()) {
+            assertEquals("name " + i, names[i], iterator.getTableMetaData().getTableName());
+            i++;
+        }
 
-	assertEquals("count", names.length, i);
+        assertEquals("count", names.length, i);
     }
 
     public void testGetTableMetaDataBeforeNext() throws Exception {
-	ITableIterator iterator = getIterator();
-	try {
-	    iterator.getTableMetaData();
-	    fail("Should have throw a ???Exception");
-	} catch (IndexOutOfBoundsException e) {
+        ITableIterator iterator = getIterator();
+        try {
+            iterator.getTableMetaData();
+            fail("Should have throw a ???Exception");
+        } catch (IndexOutOfBoundsException e) {
 
-	}
+        }
 
-	int i = 0;
-	String[] names = getExpectedNames();
-	while (iterator.next()) {
-	    assertEquals("name " + i, names[i], iterator.getTableMetaData().getTableName());
-	    i++;
-	}
+        int i = 0;
+        String[] names = getExpectedNames();
+        while (iterator.next()) {
+            assertEquals("name " + i, names[i], iterator.getTableMetaData().getTableName());
+            i++;
+        }
 
-	assertEquals("count", names.length, i);
+        assertEquals("count", names.length, i);
     }
 
     public void testGetTableMetaDataAfterLastNext() throws Exception {
-	int count = 0;
-	String[] names = getExpectedNames();
-	ITableIterator iterator = getIterator();
-	while (iterator.next()) {
-	    count++;
-	}
+        int count = 0;
+        String[] names = getExpectedNames();
+        ITableIterator iterator = getIterator();
+        while (iterator.next()) {
+            count++;
+        }
 
-	assertEquals("count", names.length, count);
+        assertEquals("count", names.length, count);
 
-	try {
-	    iterator.getTableMetaData();
-	    fail("Should have throw a ???Exception");
-	} catch (IndexOutOfBoundsException e) {
-	}
+        try {
+            iterator.getTableMetaData();
+            fail("Should have throw a ???Exception");
+        } catch (IndexOutOfBoundsException e) {
+        }
     }
 
     public void testGetTable() throws Exception {
-	int i = 0;
-	String[] names = getExpectedNames();
-	ITableIterator iterator = getIterator();
-	while (iterator.next()) {
-	    assertEquals("name " + i, names[i], iterator.getTable().getTableMetaData().getTableName());
-	    i++;
-	}
+        int i = 0;
+        String[] names = getExpectedNames();
+        ITableIterator iterator = getIterator();
+        while (iterator.next()) {
+            assertEquals("name " + i, names[i], iterator.getTable().getTableMetaData().getTableName());
+            i++;
+        }
 
-	assertEquals("count", names.length, i);
+        assertEquals("count", names.length, i);
     }
 }

@@ -31,6 +31,6 @@ import org.dbunit.DatabaseUnitRuntimeException;
  */
 public class CsvParserException extends DatabaseUnitRuntimeException {
     public CsvParserException(String message) {
-	super(message);
+        super(message);
     }
 }

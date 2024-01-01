@@ -58,12 +58,12 @@ public abstract class DatabaseOperation {
 
     /** @see TransactionOperation */
     public static final DatabaseOperation TRANSACTION(DatabaseOperation operation) {
-	return new TransactionOperation(operation);
+        return new TransactionOperation(operation);
     }
 
     /** @see CloseConnectionOperation */
     public static final DatabaseOperation CLOSE_CONNECTION(DatabaseOperation operation) {
-	return new CloseConnectionOperation(operation);
+        return new CloseConnectionOperation(operation);
     }
 
     /**
@@ -74,11 +74,11 @@ public abstract class DatabaseOperation {
      * @param dataSet    the dataset to be used by this operation.
      */
     public abstract void execute(IDatabaseConnection connection, IDataSet dataSet)
-	    throws DatabaseUnitException, SQLException;
+            throws DatabaseUnitException, SQLException;
 
     private static class DummyOperation extends DatabaseOperation {
-	@Override
-	public void execute(IDatabaseConnection connection, IDataSet dataSet) {
-	}
+        @Override
+        public void execute(IDatabaseConnection connection, IDataSet dataSet) {
+        }
     }
 }

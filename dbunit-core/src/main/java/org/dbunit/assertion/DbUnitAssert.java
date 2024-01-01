@@ -58,12 +58,12 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws org.dbunit.DatabaseUnitException If an error occurs.
      */
     public void assertEqualsIgnoreCols(final IDataSet expectedDataset, final IDataSet actualDataset,
-	    final String tableName, final String[] ignoreCols) throws DatabaseUnitException {
-	logger.debug(
-		"assertEqualsIgnoreCols(expectedDataset={}, actualDataset={}, tableName={}, ignoreCols={}) - start",
-		expectedDataset, actualDataset, tableName, ignoreCols);
+            final String tableName, final String[] ignoreCols) throws DatabaseUnitException {
+        logger.debug(
+                "assertEqualsIgnoreCols(expectedDataset={}, actualDataset={}, tableName={}, ignoreCols={}) - start",
+                expectedDataset, actualDataset, tableName, ignoreCols);
 
-	assertEqualsIgnoreCols(expectedDataset.getTable(tableName), actualDataset.getTable(tableName), ignoreCols);
+        assertEqualsIgnoreCols(expectedDataset.getTable(tableName), actualDataset.getTable(tableName), ignoreCols);
     }
 
     /**
@@ -75,13 +75,13 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws org.dbunit.DatabaseUnitException If an error occurs.
      */
     public void assertEqualsIgnoreCols(final ITable expectedTable, final ITable actualTable, final String[] ignoreCols)
-	    throws DatabaseUnitException {
-	logger.debug("assertEqualsIgnoreCols(expectedTable={}, actualTable={}, ignoreCols={}) - start", expectedTable,
-		actualTable, ignoreCols);
+            throws DatabaseUnitException {
+        logger.debug("assertEqualsIgnoreCols(expectedTable={}, actualTable={}, ignoreCols={}) - start", expectedTable,
+                actualTable, ignoreCols);
 
-	final ITable expectedTableFiltered = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
-	final ITable actualTableFiltered = DefaultColumnFilter.excludedColumnsTable(actualTable, ignoreCols);
-	assertEquals(expectedTableFiltered, actualTableFiltered);
+        final ITable expectedTableFiltered = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
+        final ITable actualTableFiltered = DefaultColumnFilter.excludedColumnsTable(actualTable, ignoreCols);
+        assertEquals(expectedTableFiltered, actualTableFiltered);
     }
 
     /**
@@ -98,14 +98,14 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws java.sql.SQLException If an SQL error occurs.
      */
     public void assertEqualsByQuery(final IDataSet expectedDataset, final IDatabaseConnection connection,
-	    final String sqlQuery, final String tableName, final String[] ignoreCols)
-	    throws DatabaseUnitException, SQLException {
-	logger.debug(
-		"assertEqualsByQuery(expectedDataset={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
-		expectedDataset, connection, tableName, sqlQuery, ignoreCols);
+            final String sqlQuery, final String tableName, final String[] ignoreCols)
+            throws DatabaseUnitException, SQLException {
+        logger.debug(
+                "assertEqualsByQuery(expectedDataset={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
+                expectedDataset, connection, tableName, sqlQuery, ignoreCols);
 
-	final ITable expectedTable = expectedDataset.getTable(tableName);
-	assertEqualsByQuery(expectedTable, connection, tableName, sqlQuery, ignoreCols);
+        final ITable expectedTable = expectedDataset.getTable(tableName);
+        assertEqualsByQuery(expectedTable, connection, tableName, sqlQuery, ignoreCols);
     }
 
     /**
@@ -122,16 +122,16 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws java.sql.SQLException If an SQL error occurs.
      */
     public void assertEqualsByQuery(final ITable expectedTable, final IDatabaseConnection connection,
-	    final String tableName, final String sqlQuery, final String[] ignoreCols)
-	    throws DatabaseUnitException, SQLException {
-	logger.debug(
-		"assertEqualsByQuery(expectedTable={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
-		expectedTable, connection, tableName, sqlQuery, ignoreCols);
+            final String tableName, final String sqlQuery, final String[] ignoreCols)
+            throws DatabaseUnitException, SQLException {
+        logger.debug(
+                "assertEqualsByQuery(expectedTable={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
+                expectedTable, connection, tableName, sqlQuery, ignoreCols);
 
-	final ITable expected = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
-	final ITable queriedTable = connection.createQueryTable(tableName, sqlQuery);
-	final ITable actual = DefaultColumnFilter.excludedColumnsTable(queriedTable, ignoreCols);
-	assertEquals(expected, actual);
+        final ITable expected = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
+        final ITable queriedTable = connection.createQueryTable(tableName, sqlQuery);
+        final ITable actual = DefaultColumnFilter.excludedColumnsTable(queriedTable, ignoreCols);
+        assertEquals(expected, actual);
     }
 
     /**
@@ -139,9 +139,9 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * tables order.
      */
     public void assertEquals(final IDataSet expectedDataSet, final IDataSet actualDataSet)
-	    throws DatabaseUnitException {
-	logger.debug("assertEquals(expectedDataSet={}, actualDataSet={}) - start", expectedDataSet, actualDataSet);
-	assertEquals(expectedDataSet, actualDataSet, null);
+            throws DatabaseUnitException {
+        logger.debug("assertEquals(expectedDataSet={}, actualDataSet={}) - start", expectedDataSet, actualDataSet);
+        assertEquals(expectedDataSet, actualDataSet, null);
     }
 
     /**
@@ -151,13 +151,13 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @since 2.4
      */
     public void assertEquals(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final FailureHandler failureHandler) throws DatabaseUnitException {
-	assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, null, null);
+            final FailureHandler failureHandler) throws DatabaseUnitException {
+        assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, null, null);
     }
 
     protected void compareTables(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final String[] expectedNames, final FailureHandler failureHandler) throws DatabaseUnitException {
-	compareTables(expectedDataSet, actualDataSet, expectedNames, failureHandler, null, null);
+            final String[] expectedNames, final FailureHandler failureHandler) throws DatabaseUnitException {
+        compareTables(expectedDataSet, actualDataSet, expectedNames, failureHandler, null, null);
     }
 
     /**
@@ -170,8 +170,8 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertEquals(final ITable expectedTable, final ITable actualTable) throws DatabaseUnitException {
-	logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
-	assertEquals(expectedTable, actualTable, (Column[]) null);
+        logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
+        assertEquals(expectedTable, actualTable, (Column[]) null);
     }
 
     /**
@@ -197,16 +197,16 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertEquals(final ITable expectedTable, final ITable actualTable, final Column[] additionalColumnInfo)
-	    throws DatabaseUnitException {
-	logger.debug("assertEquals(expectedTable={}, actualTable={}, additionalColumnInfo={}) - start", expectedTable,
-		actualTable, additionalColumnInfo);
+            throws DatabaseUnitException {
+        logger.debug("assertEquals(expectedTable={}, actualTable={}, additionalColumnInfo={}) - start", expectedTable,
+                actualTable, additionalColumnInfo);
 
-	FailureHandler failureHandler = null;
-	if (additionalColumnInfo != null) {
-	    failureHandler = getDefaultFailureHandler(additionalColumnInfo);
-	}
+        FailureHandler failureHandler = null;
+        if (additionalColumnInfo != null) {
+            failureHandler = getDefaultFailureHandler(additionalColumnInfo);
+        }
 
-	assertEquals(expectedTable, actualTable, failureHandler);
+        assertEquals(expectedTable, actualTable, failureHandler);
     }
 
     /**
@@ -233,9 +233,9 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @since 2.4
      */
     public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler)
-	    throws DatabaseUnitException {
-	assertWithValueComparer(expectedTable, actualTable, failureHandler,
-		ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
+            throws DatabaseUnitException {
+        assertWithValueComparer(expectedTable, actualTable, failureHandler,
+                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
     }
 
     /**
@@ -250,82 +250,82 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @since 2.4.0
      */
     public static class ComparisonColumn {
-	private static final Logger logger = LoggerFactory.getLogger(ComparisonColumn.class);
+        private static final Logger logger = LoggerFactory.getLogger(ComparisonColumn.class);
 
-	private String columnName;
-	private DataType dataType;
+        private String columnName;
+        private DataType dataType;
 
-	/**
-	 * @param tableName      The table name which is only needed for debugging
-	 *                       output.
-	 * @param expectedColumn The expected column needed to resolve the
-	 *                       {@link DataType} to use for the actual comparison.
-	 * @param actualColumn   The actual column needed to resolve the
-	 *                       {@link DataType} to use for the actual comparison.
-	 * @param failureHandler The {@link FailureHandler} to be used when no datatype
-	 *                       can be determined.
-	 */
-	public ComparisonColumn(final String tableName, final Column expectedColumn, final Column actualColumn,
-		final FailureHandler failureHandler) {
-	    this.columnName = expectedColumn.getColumnName();
-	    this.dataType = getComparisonDataType(tableName, expectedColumn, actualColumn, failureHandler);
-	}
+        /**
+         * @param tableName      The table name which is only needed for debugging
+         *                       output.
+         * @param expectedColumn The expected column needed to resolve the
+         *                       {@link DataType} to use for the actual comparison.
+         * @param actualColumn   The actual column needed to resolve the
+         *                       {@link DataType} to use for the actual comparison.
+         * @param failureHandler The {@link FailureHandler} to be used when no datatype
+         *                       can be determined.
+         */
+        public ComparisonColumn(final String tableName, final Column expectedColumn, final Column actualColumn,
+                final FailureHandler failureHandler) {
+            this.columnName = expectedColumn.getColumnName();
+            this.dataType = getComparisonDataType(tableName, expectedColumn, actualColumn, failureHandler);
+        }
 
-	/**
-	 * @return The column actually being compared.
-	 */
-	public String getColumnName() {
-	    return this.columnName;
-	}
+        /**
+         * @return The column actually being compared.
+         */
+        public String getColumnName() {
+            return this.columnName;
+        }
 
-	/**
-	 * @return The {@link DataType} to use for the actual comparison.
-	 */
-	public DataType getDataType() {
-	    return this.dataType;
-	}
+        /**
+         * @return The {@link DataType} to use for the actual comparison.
+         */
+        public DataType getDataType() {
+            return this.dataType;
+        }
 
-	/**
-	 * @param tableName      The table name which is only needed for debugging
-	 *                       output.
-	 * @param expectedColumn
-	 * @param actualColumn
-	 * @param failureHandler The {@link FailureHandler} to be used when no datatype
-	 *                       can be determined.
-	 * @return The dbunit {@link DataType} to use for comparing the given column.
-	 */
-	private DataType getComparisonDataType(final String tableName, final Column expectedColumn,
-		final Column actualColumn, final FailureHandler failureHandler) {
-	    logger.debug(
-		    "getComparisonDataType(tableName={}, expectedColumn={}, actualColumn={}, failureHandler={}) - start",
-		    tableName, expectedColumn, actualColumn, failureHandler);
+        /**
+         * @param tableName      The table name which is only needed for debugging
+         *                       output.
+         * @param expectedColumn
+         * @param actualColumn
+         * @param failureHandler The {@link FailureHandler} to be used when no datatype
+         *                       can be determined.
+         * @return The dbunit {@link DataType} to use for comparing the given column.
+         */
+        private DataType getComparisonDataType(final String tableName, final Column expectedColumn,
+                final Column actualColumn, final FailureHandler failureHandler) {
+            logger.debug(
+                    "getComparisonDataType(tableName={}, expectedColumn={}, actualColumn={}, failureHandler={}) - start",
+                    tableName, expectedColumn, actualColumn, failureHandler);
 
-	    final DataType expectedDataType = expectedColumn.getDataType();
-	    final DataType actualDataType = actualColumn.getDataType();
+            final DataType expectedDataType = expectedColumn.getDataType();
+            final DataType actualDataType = actualColumn.getDataType();
 
-	    // The two columns have different data type
-	    if (!expectedDataType.getClass().isInstance(actualDataType)) {
-		// Expected column data type is unknown, use actual column data
-		// type
-		if (expectedDataType instanceof UnknownDataType) {
-		    return actualDataType;
-		}
+            // The two columns have different data type
+            if (!expectedDataType.getClass().isInstance(actualDataType)) {
+                // Expected column data type is unknown, use actual column data
+                // type
+                if (expectedDataType instanceof UnknownDataType) {
+                    return actualDataType;
+                }
 
-		// Actual column data type is unknown, use expected column data
-		// type
-		if (actualDataType instanceof UnknownDataType) {
-		    return expectedDataType;
-		}
+                // Actual column data type is unknown, use expected column data
+                // type
+                if (actualDataType instanceof UnknownDataType) {
+                    return expectedDataType;
+                }
 
-		// Impossible to determine which data type to use
-		final String msg = "Incompatible data types: (table=" + tableName + ", col="
-			+ expectedColumn.getColumnName() + ")";
-		throw failureHandler.createFailure(msg, String.valueOf(expectedDataType),
-			String.valueOf(actualDataType));
-	    }
+                // Impossible to determine which data type to use
+                final String msg = "Incompatible data types: (table=" + tableName + ", col="
+                        + expectedColumn.getColumnName() + ")";
+                throw failureHandler.createFailure(msg, String.valueOf(expectedDataType),
+                        String.valueOf(actualDataType));
+            }
 
-	    // Both columns have same data type, return any one of them
-	    return expectedDataType;
-	}
+            // Both columns have same data type, return any one of them
+            return expectedDataType;
+        }
     }
 }

@@ -87,53 +87,53 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
     private List _activeRowValues;
 
     public XmlProducer(InputSource inputSource) {
-	_inputSource = inputSource;
+        _inputSource = inputSource;
     }
 
     private ITableMetaData createMetaData(String tableName, List columnNames) {
-	logger.debug("createMetaData(tableName={}, _columnNames={}) - start", tableName, columnNames);
+        logger.debug("createMetaData(tableName={}, _columnNames={}) - start", tableName, columnNames);
 
-	Column[] columns = new Column[columnNames.size()];
-	for (int i = 0; i < columns.length; i++) {
-	    String columnName = (String) columnNames.get(i);
-	    columns[i] = new Column(columnName, DataType.UNKNOWN);
-	}
-	DefaultTableMetaData metaData = new DefaultTableMetaData(tableName, columns);
-	return metaData;
+        Column[] columns = new Column[columnNames.size()];
+        for (int i = 0; i < columns.length; i++) {
+            String columnName = (String) columnNames.get(i);
+            columns[i] = new Column(columnName, DataType.UNKNOWN);
+        }
+        DefaultTableMetaData metaData = new DefaultTableMetaData(tableName, columns);
+        return metaData;
     }
 
     public void setValidating(boolean validating) {
-	_validating = validating;
+        _validating = validating;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetProducer interface
 
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-	logger.debug("setConsumer(consumer={}) - start", consumer);
-	_consumer = consumer;
+        logger.debug("setConsumer(consumer={}) - start", consumer);
+        _consumer = consumer;
     }
 
     public void produce() throws DataSetException {
-	logger.debug("produce() - start");
+        logger.debug("produce() - start");
 
-	try {
-	    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-	    saxParserFactory.setValidating(_validating);
-	    XMLReader xmlReader = saxParserFactory.newSAXParser().getXMLReader();
+        try {
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setValidating(_validating);
+            XMLReader xmlReader = saxParserFactory.newSAXParser().getXMLReader();
 
-	    xmlReader.setContentHandler(this);
-	    xmlReader.setEntityResolver(this);
-	    xmlReader.setErrorHandler(this);
-	    xmlReader.parse(_inputSource);
-	} catch (ParserConfigurationException e) {
-	    throw new DataSetException(e);
-	} catch (SAXException e) {
-	    DataSetException exceptionToRethrow = XmlProducer.buildException(e);
-	    throw exceptionToRethrow;
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+            xmlReader.setContentHandler(this);
+            xmlReader.setEntityResolver(this);
+            xmlReader.setErrorHandler(this);
+            xmlReader.parse(_inputSource);
+        } catch (ParserConfigurationException e) {
+            throw new DataSetException(e);
+        } catch (SAXException e) {
+            DataSetException exceptionToRethrow = XmlProducer.buildException(e);
+            throw exceptionToRethrow;
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     /**
@@ -143,174 +143,174 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
      * @return A {@link DataSetException} that wraps the given {@link SAXException}
      */
     protected final static DataSetException buildException(SAXException cause) {
-	int lineNumber = -1;
-	if (cause instanceof SAXParseException) {
-	    lineNumber = ((SAXParseException) cause).getLineNumber();
-	}
-	Exception exception = cause.getException() == null ? cause : cause.getException();
-	String message;
+        int lineNumber = -1;
+        if (cause instanceof SAXParseException) {
+            lineNumber = ((SAXParseException) cause).getLineNumber();
+        }
+        Exception exception = cause.getException() == null ? cause : cause.getException();
+        String message;
 
-	if (lineNumber >= 0) {
-	    message = "Line " + lineNumber + ": " + exception.getMessage();
-	} else {
-	    message = exception.getMessage();
-	}
+        if (lineNumber >= 0) {
+            message = "Line " + lineNumber + ": " + exception.getMessage();
+        } else {
+            message = exception.getMessage();
+        }
 
-	if (exception instanceof DataSetException) {
-	    return (DataSetException) exception;
-	} else {
-	    return new DataSetException(message, exception);
-	}
+        if (exception instanceof DataSetException) {
+            return (DataSetException) exception;
+        } else {
+            return new DataSetException(message, exception);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // EntityResolver interface
 
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-	logger.debug("resolveEntity(publicId={}, systemId={}) - start", publicId, systemId);
+        logger.debug("resolveEntity(publicId={}, systemId={}) - start", publicId, systemId);
 
-	InputStream in = getClass().getClassLoader().getResourceAsStream("org/dbunit/dataset/xml/dataset.dtd");
-	return (new InputSource(in));
+        InputStream in = getClass().getClassLoader().getResourceAsStream("org/dbunit/dataset/xml/dataset.dtd");
+        return (new InputSource(in));
     }
 
     ////////////////////////////////////////////////////////////////////////
     // ContentHandler interface
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("startElement(uri={}, localName={}, qName={}, attributes={}) - start",
-		    new Object[] { uri, localName, qName, attributes });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("startElement(uri={}, localName={}, qName={}, attributes={}) - start",
+                    new Object[] { uri, localName, qName, attributes });
+        }
 
-	try {
-	    // dataset
-	    if (qName.equals(DATASET)) {
-		_consumer.startDataSet();
-		return;
-	    }
+        try {
+            // dataset
+            if (qName.equals(DATASET)) {
+                _consumer.startDataSet();
+                return;
+            }
 
-	    // table
-	    if (qName.equals(TABLE)) {
-		_activeTableName = attributes.getValue(NAME);
-		_activeColumnNames = new LinkedList();
-		return;
-	    }
+            // table
+            if (qName.equals(TABLE)) {
+                _activeTableName = attributes.getValue(NAME);
+                _activeColumnNames = new LinkedList();
+                return;
+            }
 
-	    // column
-	    if (qName.equals(COLUMN)) {
-		_activeCharacters = new StringBuffer();
-		return;
-	    }
+            // column
+            if (qName.equals(COLUMN)) {
+                _activeCharacters = new StringBuffer();
+                return;
+            }
 
-	    // row
-	    if (qName.equals(ROW)) {
-		// End of metadata at first row
-		if (_activeColumnNames != null) {
-		    _activeMetaData = createMetaData(_activeTableName, _activeColumnNames);
-		    _consumer.startTable(_activeMetaData);
-		    _activeColumnNames = null;
+            // row
+            if (qName.equals(ROW)) {
+                // End of metadata at first row
+                if (_activeColumnNames != null) {
+                    _activeMetaData = createMetaData(_activeTableName, _activeColumnNames);
+                    _consumer.startTable(_activeMetaData);
+                    _activeColumnNames = null;
 
-		}
+                }
 
-		_activeRowValues = new LinkedList();
-		return;
-	    }
+                _activeRowValues = new LinkedList();
+                return;
+            }
 
-	    // value
-	    if (qName.equals(VALUE)) {
-		_activeCharacters = new StringBuffer();
-		return;
-	    }
+            // value
+            if (qName.equals(VALUE)) {
+                _activeCharacters = new StringBuffer();
+                return;
+            }
 
-	    // null
-	    if (qName.equals(NULL)) {
-		_activeRowValues.add(null);
-		return;
-	    }
+            // null
+            if (qName.equals(NULL)) {
+                _activeRowValues.add(null);
+                return;
+            }
 
-	    // none
-	    if (qName.equals(NONE)) {
-		_activeRowValues.add(ITable.NO_VALUE);
-		return;
-	    }
-	} catch (DataSetException e) {
-	    throw new SAXException(e);
-	}
+            // none
+            if (qName.equals(NONE)) {
+                _activeRowValues.add(ITable.NO_VALUE);
+                return;
+            }
+        } catch (DataSetException e) {
+            throw new SAXException(e);
+        }
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("endElement(uri={}, localName={}, qName={}) - start", new Object[] { uri, localName, qName });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("endElement(uri={}, localName={}, qName={}) - start", new Object[] { uri, localName, qName });
+        }
 
-	try {
-	    // dataset
-	    if (qName.equals(DATASET)) {
-		_consumer.endDataSet();
-		return;
-	    }
+        try {
+            // dataset
+            if (qName.equals(DATASET)) {
+                _consumer.endDataSet();
+                return;
+            }
 
-	    // table
-	    if (qName.equals(TABLE)) {
-		// End of metadata
-		if (_activeColumnNames != null) {
-		    _activeMetaData = createMetaData(_activeTableName, _activeColumnNames);
-		    _consumer.startTable(_activeMetaData);
-		    _activeColumnNames = null;
-		}
+            // table
+            if (qName.equals(TABLE)) {
+                // End of metadata
+                if (_activeColumnNames != null) {
+                    _activeMetaData = createMetaData(_activeTableName, _activeColumnNames);
+                    _consumer.startTable(_activeMetaData);
+                    _activeColumnNames = null;
+                }
 
-		_consumer.endTable();
-		_activeTableName = null;
-		_activeMetaData = null;
-		return;
-	    }
+                _consumer.endTable();
+                _activeTableName = null;
+                _activeMetaData = null;
+                return;
+            }
 
-	    // column
-	    if (qName.equals(COLUMN)) {
-		_activeColumnNames.add(_activeCharacters.toString());
-		_activeCharacters = null;
-		return;
-	    }
+            // column
+            if (qName.equals(COLUMN)) {
+                _activeColumnNames.add(_activeCharacters.toString());
+                _activeCharacters = null;
+                return;
+            }
 
-	    // row
-	    if (qName.equals(ROW)) {
-		final int length = Math.max(_activeRowValues.size(), _activeMetaData.getColumns().length);
-		Object[] values = new Object[length];
-		for (int i = 0; i < values.length; i++) {
-		    values[i] = (i >= _activeRowValues.size()) ? ITable.NO_VALUE : _activeRowValues.get(i);
-		}
-		_consumer.row(values);
-		_activeRowValues = null;
-		return;
-	    }
+            // row
+            if (qName.equals(ROW)) {
+                final int length = Math.max(_activeRowValues.size(), _activeMetaData.getColumns().length);
+                Object[] values = new Object[length];
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = (i >= _activeRowValues.size()) ? ITable.NO_VALUE : _activeRowValues.get(i);
+                }
+                _consumer.row(values);
+                _activeRowValues = null;
+                return;
+            }
 
-	    // value
-	    if (qName.equals(VALUE)) {
-		_activeRowValues.add(_activeCharacters.toString());
-		_activeCharacters = null;
-		return;
-	    }
+            // value
+            if (qName.equals(VALUE)) {
+                _activeRowValues.add(_activeCharacters.toString());
+                _activeCharacters = null;
+                return;
+            }
 
-	    // null
-	    if (qName.equals(NULL)) {
-		// Nothing to do, already processed in startElement()
-		return;
-	    }
+            // null
+            if (qName.equals(NULL)) {
+                // Nothing to do, already processed in startElement()
+                return;
+            }
 
-	    // none
-	    if (qName.equals(NONE)) {
-		// Nothing to do, already processed in startElement()
-		return;
-	    }
-	} catch (DataSetException e) {
-	    throw new SAXException(e);
-	}
+            // none
+            if (qName.equals(NONE)) {
+                // Nothing to do, already processed in startElement()
+                return;
+            }
+        } catch (DataSetException e) {
+            throw new SAXException(e);
+        }
     }
 
     public void characters(char ch[], int start, int length) throws SAXException {
-	if (_activeCharacters != null) {
-	    _activeCharacters.append(ch, start, length);
-	}
+        if (_activeCharacters != null) {
+            _activeCharacters.append(ch, start, length);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -323,7 +323,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
 //    }
 
     public void error(SAXParseException e) throws SAXException {
-	throw e;
+        throw e;
     }
 
 //    public void fatalError(SAXParseException e)

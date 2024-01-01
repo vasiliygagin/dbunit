@@ -37,13 +37,13 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 @Transactional
 public class ExpectedOnClassAndMethodWithoutOverrideTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, override = false)
-	public void shouldUseMethodExpectation() {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, override = false)
+    public void shouldUseMethodExpectation() {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
 }

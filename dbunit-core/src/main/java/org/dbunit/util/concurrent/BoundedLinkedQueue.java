@@ -106,12 +106,12 @@ public class BoundedLinkedQueue implements BoundedChannel {
      * @exception IllegalArgumentException if capacity less or equal to zero
      **/
     public BoundedLinkedQueue(int capacity) {
-	if (capacity <= 0)
-	    throw new IllegalArgumentException();
-	capacity_ = capacity;
-	putSidePutPermits_ = capacity;
-	head_ = new LinkedNode(null);
-	last_ = head_;
+        if (capacity <= 0)
+            throw new IllegalArgumentException();
+        capacity_ = capacity;
+        putSidePutPermits_ = capacity;
+        head_ = new LinkedNode(null);
+        last_ = head_;
     }
 
     /**
@@ -119,7 +119,7 @@ public class BoundedLinkedQueue implements BoundedChannel {
      **/
 
     public BoundedLinkedQueue() {
-	this(DefaultChannelCapacity.get());
+        this(DefaultChannelCapacity.get());
     }
 
     /**
@@ -127,17 +127,17 @@ public class BoundedLinkedQueue implements BoundedChannel {
      * permits that are available. Call only under synch on puGuard_ AND this.
      **/
     protected final int reconcilePutPermits() {
-	logger.debug("reconcilePutPermits() - start");
+        logger.debug("reconcilePutPermits() - start");
 
-	putSidePutPermits_ += takeSidePutPermits_;
-	takeSidePutPermits_ = 0;
-	return putSidePutPermits_;
+        putSidePutPermits_ += takeSidePutPermits_;
+        takeSidePutPermits_ = 0;
+        return putSidePutPermits_;
     }
 
     /** Return the current capacity of this queue **/
     public synchronized int capacity() {
-	logger.debug("capacity() - start");
-	return capacity_;
+        logger.debug("capacity() - start");
+        return capacity_;
     }
 
     /**
@@ -147,14 +147,14 @@ public class BoundedLinkedQueue implements BoundedChannel {
      * heuristic estimate, for example for resource monitoring purposes.
      **/
     public synchronized int size() {
-	logger.debug("size() - start");
+        logger.debug("size() - start");
 
-	/*
-	 * This should ideally synch on putGuard_, but doing so would cause it to block
-	 * waiting for an in-progress put, which might be stuck. So we instead use
-	 * whatever value of putSidePutPermits_ that we happen to read.
-	 */
-	return capacity_ - (takeSidePutPermits_ + putSidePutPermits_);
+        /*
+         * This should ideally synch on putGuard_, but doing so would cause it to block
+         * waiting for an in-progress put, which might be stuck. So we instead use
+         * whatever value of putSidePutPermits_ that we happen to read.
+         */
+        return capacity_ - (takeSidePutPermits_ + putSidePutPermits_);
     }
 
     /**
@@ -166,130 +166,130 @@ public class BoundedLinkedQueue implements BoundedChannel {
      **/
 
     public void setCapacity(int newCapacity) {
-	logger.debug("setCapacity(newCapacity=" + newCapacity + ") - start");
+        logger.debug("setCapacity(newCapacity=" + newCapacity + ") - start");
 
-	if (newCapacity <= 0)
-	    throw new IllegalArgumentException();
-	synchronized (putGuard_) {
-	    synchronized (this) {
-		takeSidePutPermits_ += (newCapacity - capacity_);
-		capacity_ = newCapacity;
+        if (newCapacity <= 0)
+            throw new IllegalArgumentException();
+        synchronized (putGuard_) {
+            synchronized (this) {
+                takeSidePutPermits_ += (newCapacity - capacity_);
+                capacity_ = newCapacity;
 
-		// Force immediate reconcilation.
-		reconcilePutPermits();
-		notifyAll();
-	    }
-	}
+                // Force immediate reconcilation.
+                reconcilePutPermits();
+                notifyAll();
+            }
+        }
     }
 
     /** Main mechanics for take/poll **/
     protected synchronized Object extract() {
-	logger.debug("extract() - start");
+        logger.debug("extract() - start");
 
-	synchronized (head_) {
-	    Object x = null;
-	    LinkedNode first = head_.next;
-	    if (first != null) {
-		x = first.value;
-		first.value = null;
-		head_ = first;
-		++takeSidePutPermits_;
-		notify();
-	    }
-	    return x;
-	}
+        synchronized (head_) {
+            Object x = null;
+            LinkedNode first = head_.next;
+            if (first != null) {
+                x = first.value;
+                first.value = null;
+                head_ = first;
+                ++takeSidePutPermits_;
+                notify();
+            }
+            return x;
+        }
     }
 
     public Object peek() {
-	logger.debug("peek() - start");
+        logger.debug("peek() - start");
 
-	synchronized (head_) {
-	    LinkedNode first = head_.next;
-	    if (first != null)
-		return first.value;
-	    else
-		return null;
-	}
+        synchronized (head_) {
+            LinkedNode first = head_.next;
+            if (first != null)
+                return first.value;
+            else
+                return null;
+        }
     }
 
     public Object take() throws InterruptedException {
-	logger.debug("take() - start");
+        logger.debug("take() - start");
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	Object x = extract();
-	if (x != null)
-	    return x;
-	else {
-	    synchronized (takeGuard_) {
-		try {
-		    for (;;) {
-			x = extract();
-			if (x != null) {
-			    return x;
-			} else {
-			    takeGuard_.wait();
-			}
-		    }
-		} catch (InterruptedException ex) {
-		    takeGuard_.notify();
-		    throw ex;
-		}
-	    }
-	}
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        Object x = extract();
+        if (x != null)
+            return x;
+        else {
+            synchronized (takeGuard_) {
+                try {
+                    for (;;) {
+                        x = extract();
+                        if (x != null) {
+                            return x;
+                        } else {
+                            takeGuard_.wait();
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    takeGuard_.notify();
+                    throw ex;
+                }
+            }
+        }
     }
 
     public Object poll(long msecs) throws InterruptedException {
-	logger.debug("poll(msecs=" + msecs + ") - start");
+        logger.debug("poll(msecs=" + msecs + ") - start");
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	Object x = extract();
-	if (x != null)
-	    return x;
-	else {
-	    synchronized (takeGuard_) {
-		try {
-		    long waitTime = msecs;
-		    long start = (msecs <= 0) ? 0 : System.currentTimeMillis();
-		    for (;;) {
-			x = extract();
-			if (x != null || waitTime <= 0) {
-			    return x;
-			} else {
-			    takeGuard_.wait(waitTime);
-			    waitTime = msecs - (System.currentTimeMillis() - start);
-			}
-		    }
-		} catch (InterruptedException ex) {
-		    takeGuard_.notify();
-		    throw ex;
-		}
-	    }
-	}
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        Object x = extract();
+        if (x != null)
+            return x;
+        else {
+            synchronized (takeGuard_) {
+                try {
+                    long waitTime = msecs;
+                    long start = (msecs <= 0) ? 0 : System.currentTimeMillis();
+                    for (;;) {
+                        x = extract();
+                        if (x != null || waitTime <= 0) {
+                            return x;
+                        } else {
+                            takeGuard_.wait(waitTime);
+                            waitTime = msecs - (System.currentTimeMillis() - start);
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    takeGuard_.notify();
+                    throw ex;
+                }
+            }
+        }
     }
 
     /** Notify a waiting take if needed **/
     protected final void allowTake() {
-	logger.debug("allowTake() - start");
+        logger.debug("allowTake() - start");
 
-	synchronized (takeGuard_) {
-	    takeGuard_.notify();
-	}
+        synchronized (takeGuard_) {
+            takeGuard_.notify();
+        }
     }
 
     /**
      * Create and insert a node. Call only under synch on putGuard_
      **/
     protected void insert(Object x) {
-	logger.debug("insert(x=" + x + ") - start");
+        logger.debug("insert(x=" + x + ") - start");
 
-	--putSidePutPermits_;
-	LinkedNode p = new LinkedNode(x);
-	synchronized (last_) {
-	    last_.next = p;
-	    last_ = p;
-	}
+        --putSidePutPermits_;
+        LinkedNode p = new LinkedNode(x);
+        synchronized (last_) {
+            last_.next = p;
+            last_ = p;
+        }
     }
 
     /*
@@ -297,91 +297,91 @@ public class BoundedLinkedQueue implements BoundedChannel {
      */
 
     public void put(Object x) throws InterruptedException {
-	logger.debug("put(x=" + x + ") - start");
+        logger.debug("put(x=" + x + ") - start");
 
-	if (x == null)
-	    throw new IllegalArgumentException();
-	if (Thread.interrupted())
-	    throw new InterruptedException();
+        if (x == null)
+            throw new IllegalArgumentException();
+        if (Thread.interrupted())
+            throw new InterruptedException();
 
-	synchronized (putGuard_) {
+        synchronized (putGuard_) {
 
-	    if (putSidePutPermits_ <= 0) { // wait for permit.
-		synchronized (this) {
-		    if (reconcilePutPermits() <= 0) {
-			try {
-			    for (;;) {
-				wait();
-				if (reconcilePutPermits() > 0) {
-				    break;
-				}
-			    }
-			} catch (InterruptedException ex) {
-			    notify();
-			    throw ex;
-			}
-		    }
-		}
-	    }
-	    insert(x);
-	}
-	// call outside of lock to loosen put/take coupling
-	allowTake();
+            if (putSidePutPermits_ <= 0) { // wait for permit.
+                synchronized (this) {
+                    if (reconcilePutPermits() <= 0) {
+                        try {
+                            for (;;) {
+                                wait();
+                                if (reconcilePutPermits() > 0) {
+                                    break;
+                                }
+                            }
+                        } catch (InterruptedException ex) {
+                            notify();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            insert(x);
+        }
+        // call outside of lock to loosen put/take coupling
+        allowTake();
     }
 
     public boolean offer(Object x, long msecs) throws InterruptedException {
-	logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
+        logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
 
-	if (x == null)
-	    throw new IllegalArgumentException();
-	if (Thread.interrupted())
-	    throw new InterruptedException();
+        if (x == null)
+            throw new IllegalArgumentException();
+        if (Thread.interrupted())
+            throw new InterruptedException();
 
-	synchronized (putGuard_) {
+        synchronized (putGuard_) {
 
-	    if (putSidePutPermits_ <= 0) {
-		synchronized (this) {
-		    if (reconcilePutPermits() <= 0) {
-			if (msecs <= 0)
-			    return false;
-			else {
-			    try {
-				long waitTime = msecs;
-				long start = System.currentTimeMillis();
+            if (putSidePutPermits_ <= 0) {
+                synchronized (this) {
+                    if (reconcilePutPermits() <= 0) {
+                        if (msecs <= 0)
+                            return false;
+                        else {
+                            try {
+                                long waitTime = msecs;
+                                long start = System.currentTimeMillis();
 
-				for (;;) {
-				    wait(waitTime);
-				    if (reconcilePutPermits() > 0) {
-					break;
-				    } else {
-					waitTime = msecs - (System.currentTimeMillis() - start);
-					if (waitTime <= 0) {
-					    return false;
-					}
-				    }
-				}
-			    } catch (InterruptedException ex) {
-				notify();
-				throw ex;
-			    }
-			}
-		    }
-		}
-	    }
+                                for (;;) {
+                                    wait(waitTime);
+                                    if (reconcilePutPermits() > 0) {
+                                        break;
+                                    } else {
+                                        waitTime = msecs - (System.currentTimeMillis() - start);
+                                        if (waitTime <= 0) {
+                                            return false;
+                                        }
+                                    }
+                                }
+                            } catch (InterruptedException ex) {
+                                notify();
+                                throw ex;
+                            }
+                        }
+                    }
+                }
+            }
 
-	    insert(x);
-	}
+            insert(x);
+        }
 
-	allowTake();
-	return true;
+        allowTake();
+        return true;
     }
 
     public boolean isEmpty() {
-	logger.debug("isEmpty() - start");
+        logger.debug("isEmpty() - start");
 
-	synchronized (head_) {
-	    return head_.next == null;
-	}
+        synchronized (head_) {
+            return head_.next == null;
+        }
     }
 
 }

@@ -74,7 +74,7 @@ public class VerifyTableDefinition {
      *                       exclude no columns.
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns) {
-	this(table, excludeColumns, null, null, null);
+        this(table, excludeColumns, null, null, null);
     }
 
     /**
@@ -96,8 +96,8 @@ public class VerifyTableDefinition {
      * @since 2.6.0
      */
     public VerifyTableDefinition(final String table, final ValueComparer defaultValueComparer,
-	    final Map<String, ValueComparer> columnValueComparers) {
-	this(table, null, null, defaultValueComparer, columnValueComparers);
+            final Map<String, ValueComparer> columnValueComparers) {
+        this(table, null, null, defaultValueComparer, columnValueComparers);
     }
 
     /**
@@ -122,8 +122,8 @@ public class VerifyTableDefinition {
      * @since 2.6.0
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns,
-	    final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
-	this(table, excludeColumns, null, defaultValueComparer, columnValueComparers);
+            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
+        this(table, excludeColumns, null, defaultValueComparer, columnValueComparers);
     }
 
     /**
@@ -138,7 +138,7 @@ public class VerifyTableDefinition {
      *                       array to include no columns.
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns, final String[] includeColumns) {
-	this(table, excludeColumns, includeColumns, null, null);
+        this(table, excludeColumns, includeColumns, null, null);
     }
 
     /**
@@ -166,40 +166,40 @@ public class VerifyTableDefinition {
      * @since 2.6.0
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns, final String[] includeColumns,
-	    final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
-	if (table == null) {
-	    throw new IllegalArgumentException("table is null.");
-	}
+            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
+        if (table == null) {
+            throw new IllegalArgumentException("table is null.");
+        }
 
-	tableName = table;
-	columnExclusionFilters = excludeColumns;
-	columnInclusionFilters = includeColumns;
-	this.defaultValueComparer = defaultValueComparer;
-	this.columnValueComparers = columnValueComparers;
+        tableName = table;
+        columnExclusionFilters = excludeColumns;
+        columnInclusionFilters = includeColumns;
+        this.defaultValueComparer = defaultValueComparer;
+        this.columnValueComparers = columnValueComparers;
 
-	verifyTableDefinitionVerifier.verify(this);
+        verifyTableDefinitionVerifier.verify(this);
     }
 
     public String getTableName() {
-	return tableName;
+        return tableName;
     }
 
     public String[] getColumnExclusionFilters() {
-	return columnExclusionFilters;
+        return columnExclusionFilters;
     }
 
     public String[] getColumnInclusionFilters() {
-	return columnInclusionFilters;
+        return columnInclusionFilters;
     }
 
     /** @since 2.6.0 */
     public ValueComparer getDefaultValueComparer() {
-	return defaultValueComparer;
+        return defaultValueComparer;
     }
 
     /** @since 2.6.0 */
     public Map<String, ValueComparer> getColumnValueComparers() {
-	return columnValueComparers;
+        return columnValueComparers;
     }
 
     /**
@@ -207,27 +207,27 @@ public class VerifyTableDefinition {
      */
     @Override
     public String toString() {
-	final String exclusionString = arrayToString(columnExclusionFilters);
-	final String inclusionString = arrayToString(columnInclusionFilters);
+        final String exclusionString = arrayToString(columnExclusionFilters);
+        final String inclusionString = arrayToString(columnInclusionFilters);
 
-	final StringBuilder sb = new StringBuilder(1000);
-	sb.append("tableName='").append(tableName).append("'");
-	sb.append(", columnExclusionFilters='").append(exclusionString).append("'");
-	sb.append(", columnInclusionFilters='").append(inclusionString).append("'");
-	sb.append(", defaultValueComparer='").append(defaultValueComparer).append("'");
-	sb.append(", columnValueComparers='").append(columnValueComparers).append("'");
-	return sb.toString();
+        final StringBuilder sb = new StringBuilder(1000);
+        sb.append("tableName='").append(tableName).append("'");
+        sb.append(", columnExclusionFilters='").append(exclusionString).append("'");
+        sb.append(", columnInclusionFilters='").append(inclusionString).append("'");
+        sb.append(", defaultValueComparer='").append(defaultValueComparer).append("'");
+        sb.append(", columnValueComparers='").append(columnValueComparers).append("'");
+        return sb.toString();
     }
 
     protected String arrayToString(final String[] array) {
-	return array == null ? "" : Arrays.toString(array);
+        return array == null ? "" : Arrays.toString(array);
     }
 
     public VerifyTableDefinitionVerifier getVerifyTableDefinitionVerifier() {
-	return verifyTableDefinitionVerifier;
+        return verifyTableDefinitionVerifier;
     }
 
     public void setVerifyTableDefinitionVerifier(final VerifyTableDefinitionVerifier verifyTableDefinitionVerifier) {
-	this.verifyTableDefinitionVerifier = verifyTableDefinitionVerifier;
+        this.verifyTableDefinitionVerifier = verifyTableDefinitionVerifier;
     }
 }

@@ -46,43 +46,43 @@ public class FilteredTableMetaData extends AbstractTableMetaData {
     private final Column[] _primaryKeys;
 
     public FilteredTableMetaData(ITableMetaData metaData, IColumnFilter columnFilter) throws DataSetException {
-	_tableName = metaData.getTableName();
-	_columns = getFilteredColumns(_tableName, metaData.getColumns(), columnFilter);
-	_primaryKeys = getFilteredColumns(_tableName, metaData.getPrimaryKeys(), columnFilter);
+        _tableName = metaData.getTableName();
+        _columns = getFilteredColumns(_tableName, metaData.getColumns(), columnFilter);
+        _primaryKeys = getFilteredColumns(_tableName, metaData.getPrimaryKeys(), columnFilter);
     }
 
     public static Column[] getFilteredColumns(String tableName, Column[] columns, IColumnFilter columnFilter) {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getFilteredColumns(tableName={}, columns={}, columnFilter={}) - start",
-		    new Object[] { tableName, columns, columnFilter });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getFilteredColumns(tableName={}, columns={}, columnFilter={}) - start",
+                    new Object[] { tableName, columns, columnFilter });
+        }
 
-	if (columns == null) {
-	    return new Column[0];
-	}
+        if (columns == null) {
+            return new Column[0];
+        }
 
-	List columnList = new ArrayList();
-	for (int i = 0; i < columns.length; i++) {
-	    Column column = columns[i];
-	    if (columnFilter.accept(tableName, column)) {
-		columnList.add(column);
-	    }
-	}
-	return (Column[]) columnList.toArray(new Column[0]);
+        List columnList = new ArrayList();
+        for (int i = 0; i < columns.length; i++) {
+            Column column = columns[i];
+            if (columnFilter.accept(tableName, column)) {
+                columnList.add(column);
+            }
+        }
+        return (Column[]) columnList.toArray(new Column[0]);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
     public String getTableName() {
-	return _tableName;
+        return _tableName;
     }
 
     public Column[] getColumns() throws DataSetException {
-	return _columns;
+        return _columns;
     }
 
     public Column[] getPrimaryKeys() throws DataSetException {
-	return _primaryKeys;
+        return _primaryKeys;
     }
 }

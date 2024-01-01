@@ -46,90 +46,90 @@ public class DateDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(DateDataType.class);
 
     DateDataType() {
-	super("DATE", Types.DATE, java.sql.Date.class, false);
+        super("DATE", Types.DATE, java.sql.Date.class, false);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof java.sql.Date) {
-	    return value;
-	}
+        if (value instanceof java.sql.Date) {
+            return value;
+        }
 
-	if (value instanceof java.util.Date) {
-	    java.util.Date date = (java.util.Date) value;
-	    return new java.sql.Date(date.getTime());
-	}
+        if (value instanceof java.util.Date) {
+            java.util.Date date = (java.util.Date) value;
+            return new java.sql.Date(date.getTime());
+        }
 
-	if (value instanceof Long) {
-	    Long date = (Long) value;
-	    return new java.sql.Date(date.longValue());
-	}
+        if (value instanceof Long) {
+            Long date = (Long) value;
+            return new java.sql.Date(date.longValue());
+        }
 
-	if (value instanceof String) {
-	    final String stringValue = (String) value;
+        if (value instanceof String) {
+            final String stringValue = (String) value;
 
-	    if (isExtendedSyntax(stringValue)) {
-		// Relative date.
-		try {
-		    LocalDateTime datetime = RELATIVE_DATE_TIME_PARSER.parse(stringValue);
-		    return java.sql.Date.valueOf(datetime.toLocalDate());
-		} catch (IllegalArgumentException | DateTimeParseException e) {
-		    throw new TypeCastException(value, this, e);
-		}
-	    }
+            if (isExtendedSyntax(stringValue)) {
+                // Relative date.
+                try {
+                    LocalDateTime datetime = RELATIVE_DATE_TIME_PARSER.parse(stringValue);
+                    return java.sql.Date.valueOf(datetime.toLocalDate());
+                } catch (IllegalArgumentException | DateTimeParseException e) {
+                    throw new TypeCastException(value, this, e);
+                }
+            }
 
-	    // Probably a Timestamp, try it just in case!
-	    if (stringValue.length() > 10) {
-		try {
-		    long time = java.sql.Timestamp.valueOf(stringValue).getTime();
-		    return new java.sql.Date(time);
+            // Probably a Timestamp, try it just in case!
+            if (stringValue.length() > 10) {
+                try {
+                    long time = java.sql.Timestamp.valueOf(stringValue).getTime();
+                    return new java.sql.Date(time);
 //                    return java.sql.Date.valueOf(new java.sql.Date(time).toString());
-		} catch (IllegalArgumentException e) {
-		    // Was not a Timestamp, let java.sql.Date handle this value
-		}
-	    }
+                } catch (IllegalArgumentException e) {
+                    // Was not a Timestamp, let java.sql.Date handle this value
+                }
+            }
 
-	    try {
-		return java.sql.Date.valueOf(stringValue);
-	    } catch (IllegalArgumentException e) {
-		throw new TypeCastException(value, this, e);
-	    }
-	}
+            try {
+                return java.sql.Date.valueOf(stringValue);
+            } catch (IllegalArgumentException e) {
+                throw new TypeCastException(value, this, e);
+            }
+        }
 
-	throw new TypeCastException(value, this);
+        throw new TypeCastException(value, this);
     }
 
     public boolean isDateTime() {
-	logger.debug("isDateTime() - start");
+        logger.debug("isDateTime() - start");
 
-	return true;
+        return true;
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	java.sql.Date value = resultSet.getDate(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return value;
+        java.sql.Date value = resultSet.getDate(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return value;
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setDate(column, (java.sql.Date) typeCast(value));
+        statement.setDate(column, (java.sql.Date) typeCast(value));
     }
 }

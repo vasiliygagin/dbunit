@@ -46,7 +46,7 @@ public class CompositeDataSet extends AbstractDataSet {
      * the same name are merged into one table.
      */
     public CompositeDataSet(IDataSet[] dataSets) throws DataSetException {
-	this(dataSets, true);
+        this(dataSets, true);
     }
 
     /**
@@ -57,7 +57,7 @@ public class CompositeDataSet extends AbstractDataSet {
      *                 into one table.
      */
     public CompositeDataSet(IDataSet[] dataSets, boolean combine) throws DataSetException {
-	this(dataSets, combine, false);
+        this(dataSets, combine, false);
     }
 
     /**
@@ -71,20 +71,20 @@ public class CompositeDataSet extends AbstractDataSet {
      * @since 2.4.2
      */
     public CompositeDataSet(IDataSet[] dataSets, boolean combine, boolean caseSensitiveTableNames)
-	    throws DataSetException {
-	super(caseSensitiveTableNames);
+            throws DataSetException {
+        super(caseSensitiveTableNames);
 
-	// Check for duplicates using the OrderedTableNameMap as helper
-	OrderedTableNameMap orderedTableMap = super.createTableNameMap();
-	for (int i = 0; i < dataSets.length; i++) {
-	    IDataSet dataSet = dataSets[i];
-	    ITableIterator iterator = dataSet.iterator();
-	    while (iterator.next()) {
-		addTable(iterator.getTable(), orderedTableMap, combine);
-	    }
-	}
+        // Check for duplicates using the OrderedTableNameMap as helper
+        OrderedTableNameMap orderedTableMap = super.createTableNameMap();
+        for (int i = 0; i < dataSets.length; i++) {
+            IDataSet dataSet = dataSets[i];
+            ITableIterator iterator = dataSet.iterator();
+            while (iterator.next()) {
+                addTable(iterator.getTable(), orderedTableMap, combine);
+            }
+        }
 
-	_tables = (ITable[]) orderedTableMap.orderedValues().toArray(new ITable[0]);
+        _tables = (ITable[]) orderedTableMap.orderedValues().toArray(new ITable[0]);
     }
 
     /**
@@ -92,7 +92,7 @@ public class CompositeDataSet extends AbstractDataSet {
      * having the same name are merged into one table.
      */
     public CompositeDataSet(IDataSet dataSet1, IDataSet dataSet2) throws DataSetException {
-	this(new IDataSet[] { dataSet1, dataSet2 });
+        this(new IDataSet[] { dataSet1, dataSet2 });
     }
 
     /**
@@ -104,7 +104,7 @@ public class CompositeDataSet extends AbstractDataSet {
      *                 into one table.
      */
     public CompositeDataSet(IDataSet dataSet1, IDataSet dataSet2, boolean combine) throws DataSetException {
-	this(new IDataSet[] { dataSet1, dataSet2 }, combine);
+        this(new IDataSet[] { dataSet1, dataSet2 }, combine);
     }
 
     /**
@@ -119,7 +119,7 @@ public class CompositeDataSet extends AbstractDataSet {
      *             argument.
      */
     public CompositeDataSet(IDataSet dataSet, boolean combine) throws DataSetException {
-	this(new IDataSet[] { dataSet }, combine);
+        this(new IDataSet[] { dataSet }, combine);
     }
 
     /**
@@ -129,7 +129,7 @@ public class CompositeDataSet extends AbstractDataSet {
      * @param dataSet the dataset
      */
     public CompositeDataSet(IDataSet dataSet) throws DataSetException {
-	this(new IDataSet[] { dataSet }, true);
+        this(new IDataSet[] { dataSet }, true);
     }
 
     /**
@@ -137,7 +137,7 @@ public class CompositeDataSet extends AbstractDataSet {
      * Tables having the same name are merged into one table.
      */
     public CompositeDataSet(ITable[] tables) throws DataSetException {
-	this(tables, false);
+        this(tables, false);
     }
 
     /**
@@ -150,14 +150,14 @@ public class CompositeDataSet extends AbstractDataSet {
      * @since 2.4.2
      */
     public CompositeDataSet(ITable[] tables, boolean caseSensitiveTableNames) throws DataSetException {
-	super(caseSensitiveTableNames);
+        super(caseSensitiveTableNames);
 
-	OrderedTableNameMap orderedTableMap = super.createTableNameMap();
-	for (int i = 0; i < tables.length; i++) {
-	    addTable(tables[i], orderedTableMap, true);
-	}
+        OrderedTableNameMap orderedTableMap = super.createTableNameMap();
+        for (int i = 0; i < tables.length; i++) {
+            addTable(tables[i], orderedTableMap, true);
+        }
 
-	_tables = (ITable[]) orderedTableMap.orderedValues().toArray(new ITable[0]);
+        _tables = (ITable[]) orderedTableMap.orderedValues().toArray(new ITable[0]);
     }
 
     /**
@@ -168,39 +168,39 @@ public class CompositeDataSet extends AbstractDataSet {
      *                                     set to <code>false</code>.
      */
     private void addTable(ITable newTable, OrderedTableNameMap tableMap, boolean combine)
-	    throws AmbiguousTableNameException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("addTable(newTable={}, tableList={}, combine={}) - start",
-		    new Object[] { newTable, tableMap, String.valueOf(combine) });
-	}
+            throws AmbiguousTableNameException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("addTable(newTable={}, tableList={}, combine={}) - start",
+                    new Object[] { newTable, tableMap, String.valueOf(combine) });
+        }
 
-	String tableName = newTable.getTableMetaData().getTableName();
+        String tableName = newTable.getTableMetaData().getTableName();
 
-	// No merge required, simply add new table at then end of the list
-	if (!combine) {
-	    tableMap.add(tableName, newTable);
-	    return;
-	}
+        // No merge required, simply add new table at then end of the list
+        if (!combine) {
+            tableMap.add(tableName, newTable);
+            return;
+        }
 
-	// Merge required, search for existing table with the same name
-	ITable existingTable = (ITable) tableMap.get(tableName);
-	if (existingTable != null) {
-	    // Found existing table, merge existing and new tables together
-	    tableMap.update(tableName, new CompositeTable(existingTable, newTable));
-	    return;
-	} else {
-	    // No existing table found, add new table at the end of the list
-	    tableMap.add(tableName, newTable);
-	}
+        // Merge required, search for existing table with the same name
+        ITable existingTable = (ITable) tableMap.get(tableName);
+        if (existingTable != null) {
+            // Found existing table, merge existing and new tables together
+            tableMap.update(tableName, new CompositeTable(existingTable, newTable));
+            return;
+        } else {
+            // No existing table found, add new table at the end of the list
+            tableMap.add(tableName, newTable);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-	return new DefaultTableIterator(_tables, reversed);
+        return new DefaultTableIterator(_tables, reversed);
     }
 }

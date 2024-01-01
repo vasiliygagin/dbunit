@@ -36,13 +36,13 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @Transactional
 public class ExpectedNonStrictUnorderedOnMethodTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_nonstrict_unordered.xml", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
-	public void shouldNotFailEvenThoughExpectedTableDoesNotSpecifyAllColumnsAndDoesNotMatchColumnOrders() {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_nonstrict_unordered.xml", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
+    public void shouldNotFailEvenThoughExpectedTableDoesNotSpecifyAllColumnsAndDoesNotMatchColumnOrders() {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
 }

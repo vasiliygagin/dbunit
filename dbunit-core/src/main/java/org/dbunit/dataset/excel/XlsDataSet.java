@@ -61,46 +61,46 @@ public class XlsDataSet extends AbstractDataSet {
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
     public XlsDataSet(File file) throws IOException, DataSetException {
-	this(new FileInputStream(file));
+        this(new FileInputStream(file));
     }
 
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
     public XlsDataSet(InputStream in) throws IOException, DataSetException {
-	_tables = super.createTableNameMap();
+        _tables = super.createTableNameMap();
 
-	Workbook workbook;
-	try {
-	    workbook = WorkbookFactory.create(in);
-	} catch (EncryptedDocumentException e) {
-	    throw new IOException(e);
-	}
+        Workbook workbook;
+        try {
+            workbook = WorkbookFactory.create(in);
+        } catch (EncryptedDocumentException e) {
+            throw new IOException(e);
+        }
 
-	int sheetCount = workbook.getNumberOfSheets();
-	for (int i = 0; i < sheetCount; i++) {
-	    ITable table = new XlsTable(workbook.getSheetName(i), workbook.getSheetAt(i));
-	    _tables.add(table.getTableMetaData().getTableName(), table);
-	}
+        int sheetCount = workbook.getNumberOfSheets();
+        for (int i = 0; i < sheetCount; i++) {
+            ITable table = new XlsTable(workbook.getSheetName(i), workbook.getSheetAt(i));
+            _tables.add(table.getTableMetaData().getTableName(), table);
+        }
     }
 
     /**
      * Write the specified dataset to the specified Excel document.
      */
     public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
 
-	new XlsDataSetWriter().write(dataSet, out);
+        new XlsDataSetWriter().write(dataSet, out);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-	ITable[] tables = (ITable[]) _tables.orderedValues().toArray(new ITable[0]);
-	return new DefaultTableIterator(tables, reversed);
+        ITable[] tables = (ITable[]) _tables.orderedValues().toArray(new ITable[0]);
+        return new DefaultTableIterator(tables, reversed);
     }
 }

@@ -53,7 +53,7 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      */
     @Override
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     /**
@@ -62,26 +62,26 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      */
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
+        }
 
-	DataType dataType = DataType.UNKNOWN;
-	if (sqlType != Types.OTHER) {
-	    dataType = DataType.forSqlType(sqlType);
-	} else {
-	    // Necessary for compatibility with DbUnit 1.5 and older
-	    // BLOB
-	    if ("BLOB".equals(sqlTypeName)) {
-		return DataType.BLOB;
-	    }
+        DataType dataType = DataType.UNKNOWN;
+        if (sqlType != Types.OTHER) {
+            dataType = DataType.forSqlType(sqlType);
+        } else {
+            // Necessary for compatibility with DbUnit 1.5 and older
+            // BLOB
+            if ("BLOB".equals(sqlTypeName)) {
+                return DataType.BLOB;
+            }
 
-	    // CLOB
-	    if ("CLOB".equals(sqlTypeName)) {
-		return DataType.CLOB;
-	    }
-	}
-	return dataType;
+            // CLOB
+            if ("CLOB".equals(sqlTypeName)) {
+                return DataType.CLOB;
+            }
+        }
+        return dataType;
     }
 
     /**
@@ -90,28 +90,28 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      */
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
-	    throws DataTypeException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start",
-		    new Integer(sqlType), sqlTypeName, tableName, columnName);
-	}
+            throws DataTypeException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start",
+                    new Integer(sqlType), sqlTypeName, tableName, columnName);
+        }
 
-	if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
-	    // Check if the user has set a tolerance delta for this floating point field
-	    ToleratedDelta delta = _toleratedDeltaMap.findToleratedDelta(tableName, columnName);
-	    // Found a toleratedDelta object
-	    if (delta != null) {
-		if (logger.isDebugEnabled()) {
-		    logger.debug("Creating NumberTolerantDataType for table={}, column={}, toleratedDelta={}",
-			    tableName, columnName, delta.getToleratedDelta());
-		}
+        if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
+            // Check if the user has set a tolerance delta for this floating point field
+            ToleratedDelta delta = _toleratedDeltaMap.findToleratedDelta(tableName, columnName);
+            // Found a toleratedDelta object
+            if (delta != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Creating NumberTolerantDataType for table={}, column={}, toleratedDelta={}",
+                            tableName, columnName, delta.getToleratedDelta());
+                }
 
-		return new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", sqlType, delta.getToleratedDelta());
-	    }
-	}
+                return new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", sqlType, delta.getToleratedDelta());
+            }
+        }
 
-	// In all other cases (default) use the default data type creation
-	return this.createDataType(sqlType, sqlTypeName);
+        // In all other cases (default) use the default data type creation
+        return this.createDataType(sqlType, sqlTypeName);
     }
 
     /**
@@ -119,7 +119,7 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      * @since 2.3.0
      */
     public ToleratedDeltaMap getToleratedDeltaMap() {
-	return _toleratedDeltaMap;
+        return _toleratedDeltaMap;
     }
 
     /**
@@ -130,7 +130,7 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      * @since 2.3.0
      */
     public void addToleratedDelta(ToleratedDelta delta) {
-	this._toleratedDeltaMap.addToleratedDelta(delta);
+        this._toleratedDeltaMap.addToleratedDelta(delta);
     }
 
     /**
@@ -141,10 +141,10 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      */
     @Override
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_toleratedDeltaMap=").append(_toleratedDeltaMap);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_toleratedDeltaMap=").append(_toleratedDeltaMap);
+        sb.append("]");
+        return sb.toString();
     }
 }

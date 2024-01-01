@@ -39,11 +39,11 @@ public class DefaultDatabaseTester extends AbstractDatabaseTester {
      * Creates a new DefaultDatabaseTester with the supplied connection.
      */
     public DefaultDatabaseTester(final IDatabaseConnection connection) {
-	this.connection = connection;
+        this.connection = connection;
     }
 
     public IDatabaseConnection getConnection() throws Exception {
-	return this.connection;
+        return this.connection;
     }
 
 }

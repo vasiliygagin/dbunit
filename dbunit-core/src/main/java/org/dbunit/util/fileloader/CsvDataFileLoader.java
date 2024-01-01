@@ -48,7 +48,7 @@ public class CsvDataFileLoader extends AbstractDataFileLoader {
      *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public CsvDataFileLoader(Map ro) {
-	super(ro);
+        super(ro);
     }
 
     /**
@@ -60,15 +60,15 @@ public class CsvDataFileLoader extends AbstractDataFileLoader {
      *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public CsvDataFileLoader(Map ro, Map rs) {
-	super(ro, rs);
+        super(ro, rs);
     }
 
     /**
      * {@inheritDoc}
      */
     public IDataSet loadDataSet(URL url) throws DataSetException, IOException {
-	IDataSet ds = new CsvURLDataSet(url);
+        IDataSet ds = new CsvURLDataSet(url);
 
-	return ds;
+        return ds;
     }
 }

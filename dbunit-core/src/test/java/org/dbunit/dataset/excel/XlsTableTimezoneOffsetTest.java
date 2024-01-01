@@ -48,49 +48,49 @@ public class XlsTableTimezoneOffsetTest {
     // date = new Date(date.getTime() + tzOffset);
     @Test
     public void testTimestampTzOffsets() throws Exception {
-	// uncomment to see available timezones
-	// System.err.println(Arrays.toString(TimeZone.getAvailableIDs()));
+        // uncomment to see available timezones
+        // System.err.println(Arrays.toString(TimeZone.getAvailableIDs()));
 
-	assertNotEquals("Precondition failed: default time zone must not have offset 0!"
-		+ " Use JVM parameter '-Duser.timezone=\"Europe/Berlin\"' or some other value, if you have to...", 0,
-		TimeZone.getDefault().getRawOffset());
+        assertNotEquals("Precondition failed: default time zone must not have offset 0!"
+                + " Use JVM parameter '-Duser.timezone=\"Europe/Berlin\"' or some other value, if you have to...", 0,
+                TimeZone.getDefault().getRawOffset());
 
-	URL spreadsheetUrl = getClass().getResource(EXCEL_SPREADSHEET);
-	URI spreadsheetUri = spreadsheetUrl.toURI();
-	File spreadsheetFile = new File(spreadsheetUri);
-	XlsDataSet xlsDataSet = new XlsDataSet(spreadsheetFile);
+        URL spreadsheetUrl = getClass().getResource(EXCEL_SPREADSHEET);
+        URI spreadsheetUri = spreadsheetUrl.toURI();
+        File spreadsheetFile = new File(spreadsheetUri);
+        XlsDataSet xlsDataSet = new XlsDataSet(spreadsheetFile);
 
-	table = xlsDataSet.getTable(TABLE_NAME);
+        table = xlsDataSet.getTable(TABLE_NAME);
 
-	// The values returned by ITable.getValue() should match the content of
-	// the actual file, regardless of the JVM's default timezone
+        // The values returned by ITable.getValue() should match the content of
+        // the actual file, regardless of the JVM's default timezone
 
-	checkStringValue(0, "id", "1");
-	checkDateValue(0, "ts", "2015-03-14 00:00:00");
-	checkStringValue(1, "id", "2");
-	checkDateValue(1, "ts", "2015-03-18 02:00:00");
-	checkStringValue(2, "id", "3");
-	checkDateValue(2, "ts", "2015-12-19 23:00:00");
+        checkStringValue(0, "id", "1");
+        checkDateValue(0, "ts", "2015-03-14 00:00:00");
+        checkStringValue(1, "id", "2");
+        checkDateValue(1, "ts", "2015-03-18 02:00:00");
+        checkStringValue(2, "id", "3");
+        checkDateValue(2, "ts", "2015-12-19 23:00:00");
     }
 
     private void checkStringValue(int row, String column, String expected) throws DataSetException {
-	String failMsg = String.format(FAIL_MSG, row, column);
-	String value = getValueAsString(row, column);
-	collector.checkThat(failMsg, value, equalTo(expected));
+        String failMsg = String.format(FAIL_MSG, row, column);
+        String value = getValueAsString(row, column);
+        collector.checkThat(failMsg, value, equalTo(expected));
     }
 
     private void checkDateValue(int row, String column, String expected) throws DataSetException {
-	String failMsg = String.format(FAIL_MSG, row, column);
-	String value = getValueAsDate(row, column);
-	collector.checkThat(failMsg, value, equalTo(expected));
+        String failMsg = String.format(FAIL_MSG, row, column);
+        String value = getValueAsDate(row, column);
+        collector.checkThat(failMsg, value, equalTo(expected));
     }
 
     private String getValueAsString(int row, String column) throws DataSetException {
-	Object value = table.getValue(row, column);
-	return value.toString();
+        Object value = table.getValue(row, column);
+        return value.toString();
     }
 
     private String getValueAsDate(int row, String column) throws DataSetException {
-	return dateFormat.format(table.getValue(row, column));
+        return dateFormat.format(table.getValue(row, column));
     }
 }

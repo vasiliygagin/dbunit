@@ -31,12 +31,12 @@ import org.dbunit.ext.mysql.MySqlDataTypeFactory;
  */
 public class MySqlEnvironment extends DatabaseEnvironment {
     public MySqlEnvironment(DatabaseProfile profile) throws Exception {
-	super(profile);
+        super(profile);
     }
 
     @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
     }
 
     /**
@@ -46,7 +46,7 @@ public class MySqlEnvironment extends DatabaseEnvironment {
      */
     @Override
     public String convertString(String str) {
-	return str;
+        return str;
     }
 
 }

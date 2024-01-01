@@ -76,7 +76,7 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @return which modes are allowed/denied, depending on the operation mode.
      */
     protected Set getFilteredNodes() {
-	return this.filteredNodes;
+        return this.filteredNodes;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @return operation mode
      */
     protected int getFilteringMode() {
-	return this.filteringMode;
+        return this.filteringMode;
     }
 
     /**
@@ -94,10 +94,10 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @param filteredNodes which modes are allowed on the search.
      */
     protected void setAllowedNodes(Set filteredNodes) {
-	logger.debug("setAllowedNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setAllowedNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	setFilteredNodes(filteredNodes);
-	this.filteringMode = ALLOW_MODE;
+        setFilteredNodes(filteredNodes);
+        this.filteringMode = ALLOW_MODE;
     }
 
     /**
@@ -106,10 +106,10 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @param filteredNodes which modes are allowed on the search.
      */
     protected void setAllowedNodes(Object[] filteredNodes) {
-	logger.debug("setAllowedNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setAllowedNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	setFilteredNodes(filteredNodes);
-	this.filteringMode = ALLOW_MODE;
+        setFilteredNodes(filteredNodes);
+        this.filteringMode = ALLOW_MODE;
     }
 
     /**
@@ -118,10 +118,10 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @param filteredNodes which modes are not allowed on the search.
      */
     protected void setDeniedNodes(Set filteredNodes) {
-	logger.debug("setDeniedNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setDeniedNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	setFilteredNodes(filteredNodes);
-	this.filteringMode = DENY_MODE;
+        setFilteredNodes(filteredNodes);
+        this.filteringMode = DENY_MODE;
     }
 
     /**
@@ -130,45 +130,45 @@ public abstract class AbstractNodesFilterSearchCallback implements ISearchCallba
      * @param filteredNodes which modes are not allowed on the search.
      */
     protected void setDeniedNodes(Object[] filteredNodes) {
-	logger.debug("setDeniedNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setDeniedNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	setFilteredNodes(filteredNodes);
-	this.filteringMode = DENY_MODE;
+        setFilteredNodes(filteredNodes);
+        this.filteringMode = DENY_MODE;
     }
 
     /**
      * Do nothing...
      */
     public void nodeAdded(Object fromNode) throws SearchException {
-	// do nothing
+        // do nothing
     }
 
     public boolean searchNode(Object node) throws SearchException {
-	logger.debug("searchNode(node=" + node + ") - start");
+        logger.debug("searchNode(node=" + node + ") - start");
 
-	switch (this.filteringMode) {
-	case ALLOW_MODE:
-	    return getFilteredNodes().contains(node);
-	case DENY_MODE:
-	    return !getFilteredNodes().contains(node);
-	default:
-	    return true;
-	}
+        switch (this.filteringMode) {
+        case ALLOW_MODE:
+            return getFilteredNodes().contains(node);
+        case DENY_MODE:
+            return !getFilteredNodes().contains(node);
+        default:
+            return true;
+        }
     }
 
     private void setFilteredNodes(Set filteredNodes) {
-	logger.debug("setFilteredNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setFilteredNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	this.filteredNodes = new HashSet(filteredNodes);
+        this.filteredNodes = new HashSet(filteredNodes);
     }
 
     private void setFilteredNodes(Object[] filteredNodes) {
-	logger.debug("setFilteredNodes(filteredNodes=" + filteredNodes + ") - start");
+        logger.debug("setFilteredNodes(filteredNodes=" + filteredNodes + ") - start");
 
-	this.filteredNodes = new HashSet(filteredNodes.length);
-	for (int i = 0; i < filteredNodes.length; i++) {
-	    this.filteredNodes.add(filteredNodes[i]);
-	}
+        this.filteredNodes = new HashSet(filteredNodes.length);
+        for (int i = 0; i < filteredNodes.length; i++) {
+            this.filteredNodes.add(filteredNodes[i]);
+        }
     }
 
 }

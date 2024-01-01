@@ -22,21 +22,21 @@ import org.springframework.test.context.TestContext;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 
 /**
- * An extension of {@link TransactionDbUnitTestExecutionListener} that ensures that a test method does not swallow
- * exceptions.
+ * An extension of {@link TransactionDbUnitTestExecutionListener} that ensures
+ * that a test method does not swallow exceptions.
  *
  * @author Phillip Webb
  */
 public class MustNoSwallowTestExecutionListener extends TransactionDbUnitTestExecutionListener {
 
-	@Override
-	public void afterTestMethod(TestContext testContext) throws Exception {
-		Assert.assertTrue(testContext.getTestException() instanceof NotSwallowedException);
-		try {
-			super.afterTestMethod(testContext);
-		} catch (Throwable ex) {
-			Assert.fail("Throw exception");
-		}
-	}
+    @Override
+    public void afterTestMethod(TestContext testContext) throws Exception {
+        Assert.assertTrue(testContext.getTestException() instanceof NotSwallowedException);
+        try {
+            super.afterTestMethod(testContext);
+        } catch (Throwable ex) {
+            Assert.fail("Throw exception");
+        }
+    }
 
 }

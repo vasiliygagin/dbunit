@@ -46,19 +46,19 @@ public class Table {
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	logger.debug("setName(name={}) - start", name);
-	this.name = name;
+        logger.debug("setName(name={}) - start", name);
+        this.name = name;
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer();
-	result.append("Table: ");
-	result.append(" name=" + name);
+        StringBuffer result = new StringBuffer();
+        result.append("Table: ");
+        result.append(" name=" + name);
 
-	return result.toString();
+        return result.toString();
     }
 }

@@ -47,40 +47,40 @@ public class DatabaseTableIterator implements ITableIterator {
     private int _index = -1;
 
     public DatabaseTableIterator(String[] tableNames, IDataSet dataSet) {
-	_tableNames = tableNames;
-	_dataSet = dataSet;
-	_currentTable = null;
+        _tableNames = tableNames;
+        _dataSet = dataSet;
+        _currentTable = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
     public boolean next() throws DataSetException {
-	logger.debug("next() - start");
+        logger.debug("next() - start");
 
-	_index++;
+        _index++;
 
-	// Ensure previous table is closed
-	if (_currentTable != null) {
-	    _currentTable.close();
-	    _currentTable = null;
-	}
+        // Ensure previous table is closed
+        if (_currentTable != null) {
+            _currentTable.close();
+            _currentTable = null;
+        }
 
-	return _index < _tableNames.length;
+        return _index < _tableNames.length;
     }
 
     public ITableMetaData getTableMetaData() throws DataSetException {
-	logger.debug("getTableMetaData() - start");
+        logger.debug("getTableMetaData() - start");
 
-	return _dataSet.getTableMetaData(_tableNames[_index]);
+        return _dataSet.getTableMetaData(_tableNames[_index]);
     }
 
     public ITable getTable() throws DataSetException {
-	logger.debug("getTable() - start");
+        logger.debug("getTable() - start");
 
-	if (_currentTable == null) {
-	    _currentTable = (IResultSetTable) _dataSet.getTable(_tableNames[_index]);
-	}
-	return _currentTable;
+        if (_currentTable == null) {
+            _currentTable = (IResultSetTable) _dataSet.getTable(_tableNames[_index]);
+        }
+        return _currentTable;
     }
 }

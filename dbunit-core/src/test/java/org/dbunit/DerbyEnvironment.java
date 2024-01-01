@@ -28,11 +28,11 @@ import org.dbunit.util.FileHelper;
 public class DerbyEnvironment extends DatabaseEnvironment {
 
     public DerbyEnvironment(DatabaseProfile profile) throws Exception {
-	super(prepare(profile));
+        super(prepare(profile));
     }
 
     private static DatabaseProfile prepare(DatabaseProfile profile) {
-	FileHelper.deleteDirectory(new File("./target/derby_db"));
-	return profile;
+        FileHelper.deleteDirectory(new File("./target/derby_db"));
+        return profile;
     }
 }

@@ -59,7 +59,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
      * @param lookupName the name of the resource in the JNDI context
      */
     public JndiDatabaseTester(String lookupName) {
-	this(null, lookupName);
+        this(null, lookupName);
     }
 
     /**
@@ -69,7 +69,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
      * @param lookupName  the name of the resource in the JNDI context
      */
     public JndiDatabaseTester(Properties environment, String lookupName) {
-	this(environment, lookupName, null);
+        this(environment, lookupName, null);
     }
 
     /**
@@ -83,23 +83,23 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
      * @since 2.4.5
      */
     public JndiDatabaseTester(Properties environment, String lookupName, String schema) {
-	super(schema);
+        super(schema);
 
-	if (lookupName == null) {
-	    throw new NullPointerException("The parameter 'lookupName' must not be null");
-	}
-	this.lookupName = lookupName;
-	this.environment = environment;
+        if (lookupName == null) {
+            throw new NullPointerException("The parameter 'lookupName' must not be null");
+        }
+        this.lookupName = lookupName;
+        this.environment = environment;
     }
 
     public IDatabaseConnection getConnection() throws Exception {
-	logger.trace("getConnection() - start");
+        logger.trace("getConnection() - start");
 
-	if (!initialized) {
-	    initialize();
-	}
+        if (!initialized) {
+            initialize();
+        }
 
-	return new DatabaseConnection(dataSource.getConnection(), getSchema());
+        return new DatabaseConnection(dataSource.getConnection(), getSchema());
     }
 
     /**
@@ -109,29 +109,29 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
      * initialized yet.
      */
     private void initialize() throws NamingException {
-	logger.trace("initialize() - start");
+        logger.trace("initialize() - start");
 
-	Context context = new InitialContext(environment);
-	assertNotNullNorEmpty("lookupName", lookupName);
-	Object obj = context.lookup(lookupName);
-	assertTrue("JNDI object with [" + lookupName + "] not found", obj != null);
-	assertTrue("Object [" + obj + "] at JNDI location [" + lookupName + "] is not of type ["
-		+ DataSource.class.getName() + "]", obj instanceof DataSource);
-	dataSource = (DataSource) obj;
-	assertTrue("DataSource is not set", dataSource != null);
-	initialized = true;
+        Context context = new InitialContext(environment);
+        assertNotNullNorEmpty("lookupName", lookupName);
+        Object obj = context.lookup(lookupName);
+        assertTrue("JNDI object with [" + lookupName + "] not found", obj != null);
+        assertTrue("Object [" + obj + "] at JNDI location [" + lookupName + "] is not of type ["
+                + DataSource.class.getName() + "]", obj instanceof DataSource);
+        dataSource = (DataSource) obj;
+        assertTrue("DataSource is not set", dataSource != null);
+        initialized = true;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("lookupName=").append(this.lookupName);
-	sb.append(", environment=").append(this.environment);
-	sb.append(", initialized=").append(this.initialized);
-	sb.append(", dataSource=").append(this.dataSource);
-	sb.append(", schema=").append(super.getSchema());
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("lookupName=").append(this.lookupName);
+        sb.append(", environment=").append(this.environment);
+        sb.append(", initialized=").append(this.initialized);
+        sb.append(", dataSource=").append(this.dataSource);
+        sb.append(", schema=").append(super.getSchema());
+        sb.append("]");
+        return sb.toString();
     }
 
 }

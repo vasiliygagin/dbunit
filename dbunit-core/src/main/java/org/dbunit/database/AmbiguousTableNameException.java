@@ -52,14 +52,14 @@ public class AmbiguousTableNameException extends DataSetException {
     }
 
     public AmbiguousTableNameException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public AmbiguousTableNameException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public AmbiguousTableNameException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

@@ -31,14 +31,14 @@ public class NoSuchTableException extends DataSetException {
     }
 
     public NoSuchTableException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public NoSuchTableException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public NoSuchTableException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

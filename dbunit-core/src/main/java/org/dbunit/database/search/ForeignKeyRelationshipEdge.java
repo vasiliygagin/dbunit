@@ -54,9 +54,9 @@ public class ForeignKeyRelationshipEdge extends Edge {
      */
 
     public ForeignKeyRelationshipEdge(String tableFrom, String tableTo, String fkColumn, String pkColumn) {
-	super(tableFrom, tableTo);
-	this.fkColumn = fkColumn;
-	this.pkColumn = pkColumn;
+        super(tableFrom, tableTo);
+        this.fkColumn = fkColumn;
+        this.pkColumn = pkColumn;
     }
 
     /**
@@ -65,7 +65,7 @@ public class ForeignKeyRelationshipEdge extends Edge {
      * @return name of the foreign key column in the relationship.
      */
     public String getFKColumn() {
-	return fkColumn;
+        return fkColumn;
     }
 
     /**
@@ -74,54 +74,54 @@ public class ForeignKeyRelationshipEdge extends Edge {
      * @return name of the primary key column in the relationship.
      */
     public String getPKColumn() {
-	return pkColumn;
+        return pkColumn;
     }
 
     public String toString() {
-	return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
+        return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
     }
 
     public int hashCode() {
-	final int prime = 31;
-	int result = super.hashCode();
-	result = prime * result + ((fkColumn == null) ? 0 : fkColumn.hashCode());
-	result = prime * result + ((pkColumn == null) ? 0 : pkColumn.hashCode());
-	return result;
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((fkColumn == null) ? 0 : fkColumn.hashCode());
+        result = prime * result + ((pkColumn == null) ? 0 : pkColumn.hashCode());
+        return result;
     }
 
     public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (!super.equals(obj))
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	ForeignKeyRelationshipEdge other = (ForeignKeyRelationshipEdge) obj;
-	if (fkColumn == null) {
-	    if (other.fkColumn != null)
-		return false;
-	} else if (!fkColumn.equals(other.fkColumn))
-	    return false;
-	if (pkColumn == null) {
-	    if (other.pkColumn != null)
-		return false;
-	} else if (!pkColumn.equals(other.pkColumn))
-	    return false;
-	return true;
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ForeignKeyRelationshipEdge other = (ForeignKeyRelationshipEdge) obj;
+        if (fkColumn == null) {
+            if (other.fkColumn != null)
+                return false;
+        } else if (!fkColumn.equals(other.fkColumn))
+            return false;
+        if (pkColumn == null) {
+            if (other.pkColumn != null)
+                return false;
+        } else if (!pkColumn.equals(other.pkColumn))
+            return false;
+        return true;
     }
 
     public int compareTo(Object o) {
-	log.debug("compareTo(o={}) - start", o);
+        log.debug("compareTo(o={}) - start", o);
 
-	ForeignKeyRelationshipEdge that = (ForeignKeyRelationshipEdge) o;
+        ForeignKeyRelationshipEdge that = (ForeignKeyRelationshipEdge) o;
 
-	int result = super.compareTo(that);
-	if (result == 0) {
-	    result = this.pkColumn.compareTo(that.pkColumn);
-	}
-	if (result == 0) {
-	    result = this.fkColumn.compareTo(that.fkColumn);
-	}
-	return result;
+        int result = super.compareTo(that);
+        if (result == 0) {
+            result = this.pkColumn.compareTo(that.pkColumn);
+        }
+        if (result == 0) {
+            result = this.fkColumn.compareTo(that.fkColumn);
+        }
+        return result;
     }
 }

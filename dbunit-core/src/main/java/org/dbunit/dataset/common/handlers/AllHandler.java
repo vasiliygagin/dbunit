@@ -41,17 +41,17 @@ public class AllHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent ACCEPT() {
-	logger.debug("ACCEPT() - start");
-	return createPipelineComponent(new AllHandler(), new ACCEPT());
+        logger.debug("ACCEPT() - start");
+        return createPipelineComponent(new AllHandler(), new ACCEPT());
     }
 
     public static final PipelineComponent IGNORE() {
-	logger.debug("IGNORE() - start");
-	return createPipelineComponent(new AllHandler() {
-	}, new IGNORE());
+        logger.debug("IGNORE() - start");
+        return createPipelineComponent(new AllHandler() {
+        }, new IGNORE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	return true;
+        return true;
     }
 }

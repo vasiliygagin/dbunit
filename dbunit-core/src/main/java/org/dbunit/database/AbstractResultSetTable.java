@@ -48,13 +48,13 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
     protected ResultSet _resultSet;
 
     public AbstractResultSetTable(ITableMetaData metaData, ResultSet resultSet) throws SQLException, DataSetException {
-	_metaData = metaData;
-	_resultSet = resultSet;
+        _metaData = metaData;
+        _resultSet = resultSet;
     }
 
     public AbstractResultSetTable(String tableName, String selectStatement, IDatabaseConnection connection)
-	    throws DataSetException, SQLException {
-	this(tableName, selectStatement, connection, false);
+            throws DataSetException, SQLException {
+        this(tableName, selectStatement, connection, false);
     }
 
     /**
@@ -67,95 +67,95 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
      * @since 2.4.1
      */
     public AbstractResultSetTable(String tableName, String selectStatement, IDatabaseConnection connection,
-	    boolean caseSensitiveTableNames) throws DataSetException, SQLException {
-	_statement = createStatement(connection);
+            boolean caseSensitiveTableNames) throws DataSetException, SQLException {
+        _statement = createStatement(connection);
 
-	try {
-	    _resultSet = _statement.executeQuery(selectStatement);
-	    _metaData = new ResultSetTableMetaData(tableName, _resultSet, connection, caseSensitiveTableNames);
-	} catch (SQLException e) {
-	    _statement.close();
-	    _statement = null;
-	    throw e;
-	}
+        try {
+            _resultSet = _statement.executeQuery(selectStatement);
+            _metaData = new ResultSetTableMetaData(tableName, _resultSet, connection, caseSensitiveTableNames);
+        } catch (SQLException e) {
+            _statement.close();
+            _statement = null;
+            throw e;
+        }
     }
 
     public AbstractResultSetTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws DataSetException, SQLException {
-	_statement = createStatement(connection);
+            throws DataSetException, SQLException {
+        _statement = createStatement(connection);
 
-	String escapePattern = (String) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        String escapePattern = (String) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
 
-	try {
-	    String schema = connection.getSchema();
-	    String selectStatement = getSelectStatement(schema, metaData, escapePattern);
+        try {
+            String schema = connection.getSchema();
+            String selectStatement = getSelectStatement(schema, metaData, escapePattern);
 
-	    if (logger.isDebugEnabled())
-		logger.debug("Query: {}", selectStatement);
+            if (logger.isDebugEnabled())
+                logger.debug("Query: {}", selectStatement);
 
-	    _resultSet = _statement.executeQuery(selectStatement);
-	    _metaData = metaData;
-	} catch (SQLException e) {
-	    _statement.close();
-	    _statement = null;
-	    throw e;
-	}
+            _resultSet = _statement.executeQuery(selectStatement);
+            _metaData = metaData;
+        } catch (SQLException e) {
+            _statement.close();
+            _statement = null;
+            throw e;
+        }
     }
 
     private Statement createStatement(IDatabaseConnection connection) throws SQLException {
-	logger.trace("createStatement() - start");
+        logger.trace("createStatement() - start");
 
-	Connection jdbcConnection = connection.getConnection();
-	Statement stmt = jdbcConnection.createStatement();
-	connection.getConfig().getConfigurator().configureStatement(stmt);
-	return stmt;
+        Connection jdbcConnection = connection.getConnection();
+        Statement stmt = jdbcConnection.createStatement();
+        connection.getConfig().getConfigurator().configureStatement(stmt);
+        return stmt;
     }
 
     static String getSelectStatement(String schema, ITableMetaData metaData, String escapePattern)
-	    throws DataSetException {
-	return DatabaseDataSet.getSelectStatement(schema, metaData, escapePattern);
+            throws DataSetException {
+        return DatabaseDataSet.getSelectStatement(schema, metaData, escapePattern);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
     public ITableMetaData getTableMetaData() {
-	return _metaData;
+        return _metaData;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IResultSetTable interface
 
     public void close() throws DataSetException {
-	logger.trace("close() - start");
+        logger.trace("close() - start");
 
-	try {
-	    if (_resultSet != null) {
-		_resultSet.close();
-		_resultSet = null;
-	    }
+        try {
+            if (_resultSet != null) {
+                _resultSet.close();
+                _resultSet = null;
+            }
 
-	    if (_statement != null) {
-		_statement.close();
-		_statement = null;
-	    }
-	} catch (SQLException e) {
-	    throw new DataSetException(e);
-	}
+            if (_statement != null) {
+                _statement.close();
+                _statement = null;
+            }
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public String toString() {
-	StringBuilder sb = new StringBuilder(2000);
+        StringBuilder sb = new StringBuilder(2000);
 
-	sb.append(getClass().getName()).append("[");
-	sb.append("_metaData=[").append(_metaData).append("], ");
-	sb.append("_resultSet=[").append(_resultSet).append("], ");
-	sb.append("_statement=[").append(_statement).append("]");
-	sb.append("]");
+        sb.append(getClass().getName()).append("[");
+        sb.append("_metaData=[").append(_metaData).append("], ");
+        sb.append("_resultSet=[").append(_resultSet).append("], ");
+        sb.append("_statement=[").append(_statement).append("]");
+        sb.append("]");
 
-	return sb.toString();
+        return sb.toString();
     }
 }

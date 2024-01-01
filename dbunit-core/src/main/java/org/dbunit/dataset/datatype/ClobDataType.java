@@ -44,26 +44,26 @@ public class ClobDataType extends StringDataType {
     private static final Logger logger = LoggerFactory.getLogger(ClobDataType.class);
 
     public ClobDataType() {
-	super("CLOB", Types.CLOB);
+        super("CLOB", Types.CLOB);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	Clob value = resultSet.getClob(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return typeCast(value);
+        Clob value = resultSet.getClob(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return typeCast(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setObject(column, typeCast(value), getSqlType());
+        statement.setObject(column, typeCast(value), getSqlType());
     }
 }

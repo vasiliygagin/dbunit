@@ -34,29 +34,30 @@ import com.github.springtestdbunit.entity.OtherEntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @Transactional
 public class CleanInsertSetupOnMethodTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Autowired
-	private OtherEntityAssert otherEntityAssert;
+    @Autowired
+    private OtherEntityAssert otherEntityAssert;
 
-	@Test
-	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/META-INF/db/insert.xml")
-	public void test() throws Exception {
-		this.entityAssert.assertValues("fromDbUnit");
-	}
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/META-INF/db/insert.xml")
+    public void test() throws Exception {
+        this.entityAssert.assertValues("fromDbUnit");
+    }
 
-	@Test
-	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = { "/META-INF/db/insert.xml",
-			"/META-INF/db/insert_Other.xml" })
-	public void testSeveralSetupFiles() throws Exception {
-		this.entityAssert.assertValues("fromDbUnit");
-		// OtherSampleEntity is populated using import.sql imitating dirty state of the table
-		this.otherEntityAssert.assertValues("fromDbUnit");
-	}
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = { "/META-INF/db/insert.xml",
+            "/META-INF/db/insert_Other.xml" })
+    public void testSeveralSetupFiles() throws Exception {
+        this.entityAssert.assertValues("fromDbUnit");
+        // OtherSampleEntity is populated using import.sql imitating dirty state of the
+        // table
+        this.otherEntityAssert.assertValues("fromDbUnit");
+    }
 
 }

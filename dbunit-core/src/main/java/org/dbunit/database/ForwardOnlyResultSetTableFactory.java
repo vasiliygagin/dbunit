@@ -44,28 +44,28 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
     private static final Logger logger = LoggerFactory.getLogger(ForwardOnlyResultSetTableFactory.class);
 
     public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
-	    throws SQLException, DataSetException {
-	if (logger.isTraceEnabled())
-	    logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
-		    new Object[] { tableName, selectStatement, connection });
+            throws SQLException, DataSetException {
+        if (logger.isTraceEnabled())
+            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
+                    new Object[] { tableName, selectStatement, connection });
 
-	return new ForwardOnlyResultSetTable(tableName, selectStatement, connection);
+        return new ForwardOnlyResultSetTable(tableName, selectStatement, connection);
     }
 
     public IResultSetTable createTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws SQLException, DataSetException {
-	logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
+            throws SQLException, DataSetException {
+        logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
 
-	return new ForwardOnlyResultSetTable(metaData, connection);
+        return new ForwardOnlyResultSetTable(metaData, connection);
     }
 
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
-	    IDatabaseConnection connection) throws SQLException, DataSetException {
-	if (logger.isTraceEnabled())
-	    logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
-		    new Object[] { tableName, preparedStatement, connection });
+            IDatabaseConnection connection) throws SQLException, DataSetException {
+        if (logger.isTraceEnabled())
+            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
+                    new Object[] { tableName, preparedStatement, connection });
 
-	return createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
+        return createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
     }
 
     /**
@@ -81,20 +81,20 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
      * @throws DataSetException
      */
     ForwardOnlyResultSetTable createForwardOnlyResultSetTable(String tableName, PreparedStatement preparedStatement,
-	    IDatabaseConnection connection) throws SQLException, DataSetException {
-	if (logger.isTraceEnabled())
-	    logger.trace("createForwardOnlyResultSetTable(tableName={}, preparedStatement={}, connection={}) - start",
-		    new Object[] { tableName, preparedStatement, connection });
+            IDatabaseConnection connection) throws SQLException, DataSetException {
+        if (logger.isTraceEnabled())
+            logger.trace("createForwardOnlyResultSetTable(tableName={}, preparedStatement={}, connection={}) - start",
+                    new Object[] { tableName, preparedStatement, connection });
 
-	connection.getConfig().getConfigurator().configureStatement(preparedStatement);
+        connection.getConfig().getConfigurator().configureStatement(preparedStatement);
 
-	ResultSet rs = preparedStatement.executeQuery();
+        ResultSet rs = preparedStatement.executeQuery();
 
-	boolean caseSensitiveTableNames = connection.getConfig()
-		.getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
-	ITableMetaData metaData = new ResultSetTableMetaData(tableName, rs, connection, caseSensitiveTableNames);
-	ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTable(metaData, rs);
-	return table;
+        boolean caseSensitiveTableNames = connection.getConfig()
+                .getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+        ITableMetaData metaData = new ResultSetTableMetaData(tableName, rs, connection, caseSensitiveTableNames);
+        ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTable(metaData, rs);
+        return table;
     }
 
 }

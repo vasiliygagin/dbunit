@@ -47,55 +47,55 @@ public class LowerCaseTableMetaData extends AbstractTableMetaData {
     public LowerCaseTableMetaData(String tableName, Column[] columns)
     // throws DataSetException
     {
-	this(tableName, columns, new Column[0]);
+        this(tableName, columns, new Column[0]);
     }
 
     public LowerCaseTableMetaData(String tableName, Column[] columns, String[] primaryKeys) // throws DataSetException
     {
-	this(tableName, columns, Columns.getColumns(primaryKeys, columns));
+        this(tableName, columns, Columns.getColumns(primaryKeys, columns));
     }
 
     public LowerCaseTableMetaData(ITableMetaData metaData) throws DataSetException {
-	this(metaData.getTableName(), metaData.getColumns(), metaData.getPrimaryKeys());
+        this(metaData.getTableName(), metaData.getColumns(), metaData.getPrimaryKeys());
     }
 
     public LowerCaseTableMetaData(String tableName, Column[] columns, Column[] primaryKeys) // throws DataSetException
     {
-	_tableName = tableName.toLowerCase();
-	_columns = createLowerColumns(columns);
-	_primaryKeys = createLowerColumns(primaryKeys);
+        _tableName = tableName.toLowerCase();
+        _columns = createLowerColumns(columns);
+        _primaryKeys = createLowerColumns(primaryKeys);
     }
 
     private Column[] createLowerColumns(Column[] columns) {
-	logger.debug("createLowerColumns(columns={}) - start", columns);
+        logger.debug("createLowerColumns(columns={}) - start", columns);
 
-	Column[] lowerColumns = new Column[columns.length];
-	for (int i = 0; i < columns.length; i++) {
-	    lowerColumns[i] = createLowerColumn(columns[i]);
-	}
+        Column[] lowerColumns = new Column[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            lowerColumns[i] = createLowerColumn(columns[i]);
+        }
 
-	return lowerColumns;
+        return lowerColumns;
     }
 
     private Column createLowerColumn(Column column) {
-	logger.debug("createLowerColumn(column={}) - start", column);
+        logger.debug("createLowerColumn(column={}) - start", column);
 
-	return new Column(column.getColumnName().toLowerCase(), column.getDataType(), column.getSqlTypeName(),
-		column.getNullable(), column.getDefaultValue());
+        return new Column(column.getColumnName().toLowerCase(), column.getDataType(), column.getSqlTypeName(),
+                column.getNullable(), column.getDefaultValue());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
     public String getTableName() {
-	return _tableName;
+        return _tableName;
     }
 
     public Column[] getColumns() {
-	return _columns;
+        return _columns;
     }
 
     public Column[] getPrimaryKeys() {
-	return _primaryKeys;
+        return _primaryKeys;
     }
 }

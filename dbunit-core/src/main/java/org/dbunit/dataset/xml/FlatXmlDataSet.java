@@ -113,7 +113,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @since 2.4.7
      */
     public FlatXmlDataSet(FlatXmlProducer flatXmlProducer) throws DataSetException {
-	super(flatXmlProducer, flatXmlProducer.isCaseSensitiveTableNames());
+        super(flatXmlProducer, flatXmlProducer.isCaseSensitiveTableNames());
     }
 
     /**
@@ -123,7 +123,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(InputSource source) throws IOException, DataSetException {
-	super(new FlatXmlProducer(source));
+        super(new FlatXmlProducer(source));
     }
 
     /**
@@ -135,7 +135,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(File xmlFile) throws IOException, DataSetException {
-	this(xmlFile, true);
+        this(xmlFile, true);
     }
 
     /**
@@ -148,7 +148,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata) throws IOException, DataSetException {
-	this(xmlFile.toURL(), dtdMetadata);
+        this(xmlFile.toURL(), dtdMetadata);
     }
 
     /**
@@ -164,8 +164,8 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata, boolean columnSensing)
-	    throws IOException, DataSetException {
-	this(xmlFile.toURL(), dtdMetadata, columnSensing);
+            throws IOException, DataSetException {
+        this(xmlFile.toURL(), dtdMetadata, columnSensing);
     }
 
     /**
@@ -185,8 +185,8 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
-	    throws IOException, DataSetException {
-	this(xmlFile.toURL(), dtdMetadata, columnSensing, caseSensitiveTableNames);
+            throws IOException, DataSetException {
+        this(xmlFile.toURL(), dtdMetadata, columnSensing, caseSensitiveTableNames);
     }
 
     /**
@@ -198,7 +198,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(URL xmlUrl) throws IOException, DataSetException {
-	this(xmlUrl, true);
+        this(xmlUrl, true);
     }
 
     /**
@@ -211,7 +211,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata) throws IOException, DataSetException {
-	this(xmlUrl, dtdMetadata, false);
+        this(xmlUrl, dtdMetadata, false);
     }
 
     /**
@@ -227,7 +227,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata, boolean columnSensing) throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing));
+        super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing));
     }
 
     /**
@@ -247,9 +247,9 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
-	    throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing,
-		caseSensitiveTableNames), caseSensitiveTableNames);
+            throws IOException, DataSetException {
+        super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing,
+                caseSensitiveTableNames), caseSensitiveTableNames);
     }
 
     /**
@@ -261,7 +261,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(Reader xmlReader) throws IOException, DataSetException {
-	this(xmlReader, true);
+        this(xmlReader, true);
     }
 
     /**
@@ -274,7 +274,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(Reader xmlReader, boolean dtdMetadata) throws IOException, DataSetException {
-	this(xmlReader, dtdMetadata, false, false);
+        this(xmlReader, dtdMetadata, false, false);
     }
 
     /**
@@ -295,9 +295,9 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(Reader xmlReader, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
-	    throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlReader), dtdMetadata, columnSensing, caseSensitiveTableNames),
-		caseSensitiveTableNames);
+            throws IOException, DataSetException {
+        super(new FlatXmlProducer(new InputSource(xmlReader), dtdMetadata, columnSensing, caseSensitiveTableNames),
+                caseSensitiveTableNames);
     }
 
     /**
@@ -309,7 +309,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(Reader xmlReader, Reader dtdReader) throws IOException, DataSetException {
-	this(xmlReader, new FlatDtdDataSet(dtdReader));
+        this(xmlReader, new FlatDtdDataSet(dtdReader));
     }
 
     /**
@@ -321,7 +321,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(Reader xmlReader, IDataSet metaDataSet) throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlReader), metaDataSet));
+        super(new FlatXmlProducer(new InputSource(xmlReader), metaDataSet));
     }
 
     /**
@@ -333,7 +333,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(InputStream xmlStream) throws IOException, DataSetException {
-	this(xmlStream, true);
+        this(xmlStream, true);
     }
 
     /**
@@ -346,7 +346,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(InputStream xmlStream, boolean dtdMetadata) throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlStream), dtdMetadata));
+        super(new FlatXmlProducer(new InputSource(xmlStream), dtdMetadata));
     }
 
     /**
@@ -358,7 +358,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(InputStream xmlStream, InputStream dtdStream) throws IOException, DataSetException {
-	this(xmlStream, new FlatDtdDataSet(dtdStream));
+        this(xmlStream, new FlatDtdDataSet(dtdStream));
     }
 
     /**
@@ -370,40 +370,40 @@ public class FlatXmlDataSet extends CachedDataSet {
      *             {@link FlatXmlDataSet}
      */
     public FlatXmlDataSet(InputStream xmlStream, IDataSet metaDataSet) throws IOException, DataSetException {
-	super(new FlatXmlProducer(new InputSource(xmlStream), metaDataSet));
+        super(new FlatXmlProducer(new InputSource(xmlStream), metaDataSet));
     }
 
     /**
      * Write the specified dataset to the specified output stream as xml.
      */
     public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
 
-	FlatXmlWriter datasetWriter = new FlatXmlWriter(out);
-	datasetWriter.setIncludeEmptyTable(true);
-	datasetWriter.write(dataSet);
+        FlatXmlWriter datasetWriter = new FlatXmlWriter(out);
+        datasetWriter.setIncludeEmptyTable(true);
+        datasetWriter.write(dataSet);
     }
 
     /**
      * Write the specified dataset to the specified writer as xml.
      */
     public static void write(IDataSet dataSet, Writer writer) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, writer={}) - start", dataSet, writer);
-	write(dataSet, writer, null);
+        logger.debug("write(dataSet={}, writer={}) - start", dataSet, writer);
+        write(dataSet, writer, null);
     }
 
     /**
      * Write the specified dataset to the specified writer as xml.
      */
     public static void write(IDataSet dataSet, Writer writer, String encoding) throws IOException, DataSetException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("write(dataSet={}, writer={}, encoding={}) - start",
-		    new Object[] { dataSet, writer, encoding });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("write(dataSet={}, writer={}, encoding={}) - start",
+                    new Object[] { dataSet, writer, encoding });
+        }
 
-	FlatXmlWriter datasetWriter = new FlatXmlWriter(writer, encoding);
-	datasetWriter.setIncludeEmptyTable(true);
-	datasetWriter.write(dataSet);
+        FlatXmlWriter datasetWriter = new FlatXmlWriter(writer, encoding);
+        datasetWriter.setIncludeEmptyTable(true);
+        datasetWriter.write(dataSet);
     }
 
     /**
@@ -412,7 +412,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated use {@link FlatDtdDataSet#write}
      */
     public static void writeDtd(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-	logger.debug("writeDtd(dataSet={}, out={}) - start", dataSet, out);
-	FlatDtdDataSet.write(dataSet, out);
+        logger.debug("writeDtd(dataSet={}, out={}) - start", dataSet, out);
+        FlatDtdDataSet.write(dataSet, out);
     }
 }

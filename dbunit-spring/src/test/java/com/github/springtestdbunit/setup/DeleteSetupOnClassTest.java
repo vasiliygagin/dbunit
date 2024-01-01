@@ -33,17 +33,17 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @DatabaseSetup(type = DatabaseOperation.DELETE, value = "/META-INF/db/delete.xml")
 @Transactional
 public class DeleteSetupOnClassTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void test() throws Exception {
-		this.entityAssert.assertValues("existing2");
-	}
+    @Test
+    public void test() throws Exception {
+        this.entityAssert.assertValues("existing2");
+    }
 
 }

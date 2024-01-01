@@ -31,23 +31,23 @@ import org.springframework.core.style.ToStringCreator;
 @Entity
 public class SampleEntity {
 
-	@Id
-	@GeneratedValue
-	private int id;
+    @Id
+    @GeneratedValue
+    private int id;
 
-	@Column
-	private String value;
+    @Column
+    private String value;
 
-	public String getValue() {
-		return this.value;
-	}
+    public String getValue() {
+        return this.value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringCreator(this).append("id", this.id).append("value", this.value).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringCreator(this).append("id", this.id).append("value", this.value).toString();
+    }
 }

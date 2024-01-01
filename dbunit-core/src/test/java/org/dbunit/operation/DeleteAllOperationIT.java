@@ -44,106 +44,106 @@ import org.dbunit.dataset.LowerCaseDataSet;
  */
 public class DeleteAllOperationIT extends AbstractDatabaseIT {
     public DeleteAllOperationIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	DatabaseOperation.CLEAN_INSERT.execute(_connection, getEnvironment().getInitDataSet());
+        DatabaseOperation.CLEAN_INSERT.execute(_connection, getEnvironment().getInitDataSet());
     }
 
     protected DatabaseOperation getDeleteAllOperation() {
-	return new DeleteAllOperation();
+        return new DeleteAllOperation();
     }
 
     protected String getExpectedStament(String tableName) {
-	return "delete from " + tableName;
+        return "delete from " + tableName;
     }
 
     public void testMockExecute() throws Exception {
-	String schemaName = "schema";
-	String tableName = "table";
-	String expected = getExpectedStament(schemaName + "." + tableName);
+        String schemaName = "schema";
+        String tableName = "table";
+        String expected = getExpectedStament(schemaName + "." + tableName);
 
-	IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
+        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
 
-	// setup mock objects
-	MockBatchStatement statement = new MockBatchStatement();
-	statement.addExpectedBatchString(expected);
-	statement.setExpectedExecuteBatchCalls(1);
-	statement.setExpectedClearBatchCalls(1);
-	statement.setExpectedCloseCalls(1);
+        // setup mock objects
+        MockBatchStatement statement = new MockBatchStatement();
+        statement.addExpectedBatchString(expected);
+        statement.setExpectedExecuteBatchCalls(1);
+        statement.setExpectedClearBatchCalls(1);
+        statement.setExpectedCloseCalls(1);
 
-	MockStatementFactory factory = new MockStatementFactory();
-	factory.setExpectedCreateStatementCalls(1);
-	factory.setupStatement(statement);
+        MockStatementFactory factory = new MockStatementFactory();
+        factory.setExpectedCreateStatementCalls(1);
+        factory.setupStatement(statement);
 
-	MockDatabaseConnection connection = new MockDatabaseConnection();
-	connection.setupDataSet(dataSet);
-	connection.setupSchema(schemaName);
-	connection.setupStatementFactory(factory);
-	connection.setExpectedCloseCalls(0);
+        MockDatabaseConnection connection = new MockDatabaseConnection();
+        connection.setupDataSet(dataSet);
+        connection.setupSchema(schemaName);
+        connection.setupStatementFactory(factory);
+        connection.setExpectedCloseCalls(0);
 
-	// execute operation
-	getDeleteAllOperation().execute(connection, dataSet);
+        // execute operation
+        getDeleteAllOperation().execute(connection, dataSet);
 
-	statement.verify();
-	factory.verify();
-	connection.verify();
+        statement.verify();
+        factory.verify();
+        connection.verify();
     }
 
     public void testExecuteWithEscapedNames() throws Exception {
-	String schemaName = "schema";
-	String tableName = "table";
-	String expected = getExpectedStament("'" + schemaName + "'.'" + tableName + "'");
+        String schemaName = "schema";
+        String tableName = "table";
+        String expected = getExpectedStament("'" + schemaName + "'.'" + tableName + "'");
 
-	IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
+        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
 
-	// setup mock objects
-	MockBatchStatement statement = new MockBatchStatement();
-	statement.addExpectedBatchString(expected);
-	statement.setExpectedExecuteBatchCalls(1);
-	statement.setExpectedClearBatchCalls(1);
-	statement.setExpectedCloseCalls(1);
+        // setup mock objects
+        MockBatchStatement statement = new MockBatchStatement();
+        statement.addExpectedBatchString(expected);
+        statement.setExpectedExecuteBatchCalls(1);
+        statement.setExpectedClearBatchCalls(1);
+        statement.setExpectedCloseCalls(1);
 
-	MockStatementFactory factory = new MockStatementFactory();
-	factory.setExpectedCreateStatementCalls(1);
-	factory.setupStatement(statement);
+        MockStatementFactory factory = new MockStatementFactory();
+        factory.setExpectedCreateStatementCalls(1);
+        factory.setupStatement(statement);
 
-	MockDatabaseConnection connection = new MockDatabaseConnection();
-	connection.setupDataSet(dataSet);
-	connection.setupSchema(schemaName);
-	connection.setupStatementFactory(factory);
-	connection.setExpectedCloseCalls(0);
+        MockDatabaseConnection connection = new MockDatabaseConnection();
+        connection.setupDataSet(dataSet);
+        connection.setupSchema(schemaName);
+        connection.setupStatementFactory(factory);
+        connection.setExpectedCloseCalls(0);
 
-	// execute operation
-	connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "'?'");
-	getDeleteAllOperation().execute(connection, dataSet);
+        // execute operation
+        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "'?'");
+        getDeleteAllOperation().execute(connection, dataSet);
 
-	statement.verify();
-	factory.verify();
-	connection.verify();
+        statement.verify();
+        factory.verify();
+        connection.verify();
     }
 
     public void testExecute() throws Exception {
-	IDataSet databaseDataSet = _connection.createDataSet();
-	IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
+        IDataSet databaseDataSet = _connection.createDataSet();
+        IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
-	testExecute(dataSet);
+        testExecute(dataSet);
     }
 
     public void testExecuteEmpty() throws Exception {
-	IDataSet databaseDataSet = _connection.createDataSet();
-	IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
+        IDataSet databaseDataSet = _connection.createDataSet();
+        IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
-	testExecute(new EmptyTableDataSet(dataSet));
+        testExecute(new EmptyTableDataSet(dataSet));
     }
 
     public void testExecuteCaseInsentive() throws Exception {
-	IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet());
+        IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet());
 
-	testExecute(new LowerCaseDataSet(dataSet));
+        testExecute(new LowerCaseDataSet(dataSet));
     }
 
     /*
@@ -154,32 +154,32 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
      * Need something like getDefaultTables or something that is totally cross dbms.
      */
     private void testExecute(IDataSet dataSet) throws Exception {
-	// dataSet = dataSet);
-	ITable[] tablesBefore = DataSetUtils
-		.getTables(AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet()));
-	getDeleteAllOperation().execute(_connection, dataSet);
-	ITable[] tablesAfter = DataSetUtils
-		.getTables(AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet()));
+        // dataSet = dataSet);
+        ITable[] tablesBefore = DataSetUtils
+                .getTables(AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet()));
+        getDeleteAllOperation().execute(_connection, dataSet);
+        ITable[] tablesAfter = DataSetUtils
+                .getTables(AbstractDataSetTest.removeExtraTestTables(_connection.createDataSet()));
 
-	assertTrue("table count > 0", tablesBefore.length > 0);
-	assertEquals("table count", tablesBefore.length, tablesAfter.length);
-	for (int i = 0; i < tablesBefore.length; i++) {
-	    ITable table = tablesBefore[i];
-	    String name = table.getTableMetaData().getTableName();
+        assertTrue("table count > 0", tablesBefore.length > 0);
+        assertEquals("table count", tablesBefore.length, tablesAfter.length);
+        for (int i = 0; i < tablesBefore.length; i++) {
+            ITable table = tablesBefore[i];
+            String name = table.getTableMetaData().getTableName();
 
-	    if (!name.toUpperCase().startsWith("EMPTY")) {
-		assertTrue(name + " before", table.getRowCount() > 0);
-	    }
-	}
+            if (!name.toUpperCase().startsWith("EMPTY")) {
+                assertTrue(name + " before", table.getRowCount() > 0);
+            }
+        }
 
-	for (int i = 0; i < tablesAfter.length; i++) {
-	    ITable table = tablesAfter[i];
-	    String name = table.getTableMetaData().getTableName();
-	    assertEquals(name + " after " + i, 0, table.getRowCount());
-	}
+        for (int i = 0; i < tablesAfter.length; i++) {
+            ITable table = tablesAfter[i];
+            String name = table.getTableMetaData().getTableName();
+            assertEquals(name + " after " + i, 0, table.getRowCount());
+        }
     }
 
     public void testExecuteWithEmptyDataset() throws Exception {
-	getDeleteAllOperation().execute(_connection, new DefaultDataSet(new ITable[0]));
+        getDeleteAllOperation().execute(_connection, new DefaultDataSet(new ITable[0]));
     }
 }

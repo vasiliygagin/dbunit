@@ -52,50 +52,50 @@ public abstract class AbstractDataType extends DataType {
     private final boolean _isNumber;
 
     public AbstractDataType(String name, int sqlType, Class classType, boolean isNumber) {
-	_sqlType = sqlType;
-	_name = name;
-	_classType = classType;
-	_isNumber = isNumber;
+        _sqlType = sqlType;
+        _name = name;
+        _classType = classType;
+        _isNumber = isNumber;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public int compare(Object o1, Object o2) throws TypeCastException {
-	logger.debug("compare(o1={}, o2={}) - start", o1, o2);
+        logger.debug("compare(o1={}, o2={}) - start", o1, o2);
 
-	try {
-	    // New in 2.3: Object level check for equality - should give massive performance
-	    // improvements
-	    // in the most cases because the typecast can be avoided (null values and equal
-	    // objects)
-	    if (areObjectsEqual(o1, o2)) {
-		return 0;
-	    }
+        try {
+            // New in 2.3: Object level check for equality - should give massive performance
+            // improvements
+            // in the most cases because the typecast can be avoided (null values and equal
+            // objects)
+            if (areObjectsEqual(o1, o2)) {
+                return 0;
+            }
 
-	    // Comparable check based on the results of method "typeCast"
-	    Object value1 = typeCast(o1);
-	    Object value2 = typeCast(o2);
+            // Comparable check based on the results of method "typeCast"
+            Object value1 = typeCast(o1);
+            Object value2 = typeCast(o2);
 
-	    // Check for "null"s again because typeCast can produce them
+            // Check for "null"s again because typeCast can produce them
 
-	    if (value1 == null && value2 == null) {
-		return 0;
-	    }
+            if (value1 == null && value2 == null) {
+                return 0;
+            }
 
-	    if (value1 == null && value2 != null) {
-		return -1;
-	    }
+            if (value1 == null && value2 != null) {
+                return -1;
+            }
 
-	    if (value1 != null && value2 == null) {
-		return 1;
-	    }
+            if (value1 != null && value2 == null) {
+                return 1;
+            }
 
-	    return compareNonNulls(value1, value2);
+            return compareNonNulls(value1, value2);
 
-	} catch (ClassCastException e) {
-	    throw new TypeCastException(e);
-	}
+        } catch (ClassCastException e) {
+            throw new TypeCastException(e);
+        }
     }
 
     /**
@@ -112,11 +112,11 @@ public abstract class AbstractDataType extends DataType {
      * @throws TypeCastException
      */
     protected int compareNonNulls(Object value1, Object value2) throws TypeCastException {
-	logger.debug("compareNonNulls(value1={}, value2={}) - start", value1, value2);
+        logger.debug("compareNonNulls(value1={}, value2={}) - start", value1, value2);
 
-	Comparable value1comp = (Comparable) value1;
-	Comparable value2comp = (Comparable) value2;
-	return value1comp.compareTo(value2comp);
+        Comparable value1comp = (Comparable) value1;
+        Comparable value2comp = (Comparable) value2;
+        return value1comp.compareTo(value2comp);
     }
 
     /**
@@ -128,60 +128,60 @@ public abstract class AbstractDataType extends DataType {
      *         equal) or if the <code>o1.equals(o2)</code> is <code>true</code>.
      */
     protected final boolean areObjectsEqual(Object o1, Object o2) {
-	if (o1 == null && o2 == null) {
-	    return true;
-	}
-	if (o1 != null && o1.equals(o2)) {
-	    return true;
-	}
-	// Note that no more check is needed for o2 because it definitely does is not
-	// equal to o1
-	// Instead immediately proceed with the typeCast method
-	return false;
+        if (o1 == null && o2 == null) {
+            return true;
+        }
+        if (o1 != null && o1.equals(o2)) {
+            return true;
+        }
+        // Note that no more check is needed for o2 because it definitely does is not
+        // equal to o1
+        // Instead immediately proceed with the typeCast method
+        return false;
     }
 
     public int getSqlType() {
-	logger.debug("getSqlType() - start");
+        logger.debug("getSqlType() - start");
 
-	return _sqlType;
+        return _sqlType;
     }
 
     public Class getTypeClass() {
-	logger.debug("getTypeClass() - start");
+        logger.debug("getTypeClass() - start");
 
-	return _classType;
+        return _classType;
     }
 
     public boolean isNumber() {
-	logger.debug("isNumber() - start");
+        logger.debug("isNumber() - start");
 
-	return _isNumber;
+        return _isNumber;
     }
 
     public boolean isDateTime() {
-	logger.debug("isDateTime() - start");
+        logger.debug("isDateTime() - start");
 
-	return false;
+        return false;
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	Object value = resultSet.getObject(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return value;
+        Object value = resultSet.getObject(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return value;
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setObject(column, typeCast(value), getSqlType());
+        statement.setObject(column, typeCast(value), getSqlType());
     }
 
     /**
@@ -191,8 +191,8 @@ public abstract class AbstractDataType extends DataType {
      * @throws ClassNotFoundException
      */
     protected final Class loadClass(String clazz, Connection connection) throws ClassNotFoundException {
-	ClassLoader connectionClassLoader = connection.getClass().getClassLoader();
-	return this.loadClass(clazz, connectionClassLoader);
+        ClassLoader connectionClassLoader = connection.getClass().getClassLoader();
+        return this.loadClass(clazz, connectionClassLoader);
     }
 
     /**
@@ -202,14 +202,14 @@ public abstract class AbstractDataType extends DataType {
      * @throws ClassNotFoundException
      */
     protected final Class loadClass(String clazz, ClassLoader classLoader) throws ClassNotFoundException {
-	Class loadedClass = classLoader.loadClass(clazz);
-	return loadedClass;
+        Class loadedClass = classLoader.loadClass(clazz);
+        return loadedClass;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Object class
 
     public String toString() {
-	return _name;
+        return _name;
     }
 }

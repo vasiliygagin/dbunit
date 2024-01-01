@@ -53,15 +53,15 @@ public class DbConfig extends ProjectComponent {
     }
 
     public void addProperty(Property property) {
-	logger.trace("addProperty(property={}) - start)", property);
+        logger.trace("addProperty(property={}) - start)", property);
 
-	this.properties.add(property);
+        this.properties.add(property);
     }
 
     public void addFeature(Feature feature) {
-	logger.trace("addFeature(feature={}) - start)", feature);
+        logger.trace("addFeature(feature={}) - start)", feature);
 
-	this.features.add(feature);
+        this.features.add(feature);
     }
 
     /**
@@ -72,36 +72,36 @@ public class DbConfig extends ProjectComponent {
      * @throws DatabaseUnitException
      */
     public void copyTo(DatabaseConfig config) throws DatabaseUnitException {
-	Properties javaProps = new Properties();
+        Properties javaProps = new Properties();
 
-	for (Iterator iterator = this.features.iterator(); iterator.hasNext();) {
-	    Feature feature = (Feature) iterator.next();
+        for (Iterator iterator = this.features.iterator(); iterator.hasNext();) {
+            Feature feature = (Feature) iterator.next();
 
-	    String propName = feature.getName();
-	    String propValue = String.valueOf(feature.isValue());
+            String propName = feature.getName();
+            String propValue = String.valueOf(feature.isValue());
 
-	    logger.debug("Setting property {}", feature);
-	    javaProps.setProperty(propName, propValue);
-	}
+            logger.debug("Setting property {}", feature);
+            javaProps.setProperty(propName, propValue);
+        }
 
-	// Copy the properties into java.util.Properties
-	for (Iterator iterator = this.properties.iterator(); iterator.hasNext();) {
-	    Property prop = (Property) iterator.next();
+        // Copy the properties into java.util.Properties
+        for (Iterator iterator = this.properties.iterator(); iterator.hasNext();) {
+            Property prop = (Property) iterator.next();
 
-	    String propName = prop.getName();
-	    String propValue = prop.getValue();
+            String propName = prop.getName();
+            String propValue = prop.getValue();
 
-	    if (propName == null)
-		throw new NullPointerException("The propName must not be null");
+            if (propName == null)
+                throw new NullPointerException("The propName must not be null");
 
-	    if (propValue == null)
-		throw new NullPointerException("The propValue must not be null");
+            if (propValue == null)
+                throw new NullPointerException("The propValue must not be null");
 
-	    logger.debug("Setting property {}", prop);
-	    javaProps.setProperty(propName, propValue);
-	}
+            logger.debug("Setting property {}", prop);
+            javaProps.setProperty(propName, propValue);
+        }
 
-	config.setPropertiesByString(javaProps);
+        config.setPropertiesByString(javaProps);
     }
 
     /**
@@ -111,23 +111,23 @@ public class DbConfig extends ProjectComponent {
      * @since 2.4.0
      */
     public static class Feature {
-	private String name;
-	private boolean value;
+        private String name;
+        private boolean value;
 
-	public String getName() {
-	    return name;
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void setName(String name) {
-	    this.name = name;
-	}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-	public boolean isValue() {
-	    return value;
-	}
+        public boolean isValue() {
+            return value;
+        }
 
-	public void setValue(boolean value) {
-	    this.value = value;
-	}
+        public void setValue(boolean value) {
+            this.value = value;
+        }
     }
 }

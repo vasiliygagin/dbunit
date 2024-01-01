@@ -42,7 +42,7 @@ public class DefaultDataSet extends AbstractDataSet {
     private static final Logger logger = LoggerFactory.getLogger(DefaultDataSet.class);
 
     public DefaultDataSet() {
-	super();
+        super();
     }
 
     /**
@@ -52,19 +52,19 @@ public class DefaultDataSet extends AbstractDataSet {
      * @since 2.4.2
      */
     public DefaultDataSet(boolean caseSensitiveTableNames) {
-	super(caseSensitiveTableNames);
+        super(caseSensitiveTableNames);
     }
 
     public DefaultDataSet(ITable table) throws AmbiguousTableNameException {
-	this(new ITable[] { table });
+        this(new ITable[] { table });
     }
 
     public DefaultDataSet(ITable table1, ITable table2) throws AmbiguousTableNameException {
-	this(new ITable[] { table1, table2 });
+        this(new ITable[] { table1, table2 });
     }
 
     public DefaultDataSet(ITable[] tables) throws AmbiguousTableNameException {
-	this(tables, false);
+        this(tables, false);
     }
 
     /**
@@ -74,11 +74,11 @@ public class DefaultDataSet extends AbstractDataSet {
      * @since 2.4.2
      */
     public DefaultDataSet(ITable[] tables, boolean caseSensitiveTableNames) throws AmbiguousTableNameException {
-	super(caseSensitiveTableNames);
+        super(caseSensitiveTableNames);
 
-	for (int i = 0; i < tables.length; i++) {
-	    addTable(tables[i]);
-	}
+        for (int i = 0; i < tables.length; i++) {
+            addTable(tables[i]);
+        }
     }
 
     /**
@@ -87,11 +87,11 @@ public class DefaultDataSet extends AbstractDataSet {
      * @throws AmbiguousTableNameException
      */
     public void addTable(ITable table) throws AmbiguousTableNameException {
-	logger.debug("addTable(table={}) - start", table);
+        logger.debug("addTable(table={}) - start", table);
 
-	this.initialize();
+        this.initialize();
 
-	super._orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
+        super._orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
     }
 
     /**
@@ -102,17 +102,17 @@ public class DefaultDataSet extends AbstractDataSet {
      * @since 2.4.6
      */
     protected void initialize() {
-	logger.debug("initialize() - start");
+        logger.debug("initialize() - start");
 
-	if (_orderedTableNameMap != null) {
-	    logger.debug("The table name map has already been initialized.");
-	    // already initialized
-	    return;
-	}
+        if (_orderedTableNameMap != null) {
+            logger.debug("The table name map has already been initialized.");
+            // already initialized
+            return;
+        }
 
-	// Gather all tables in the OrderedTableNameMap which also makes the duplicate
-	// check
-	_orderedTableNameMap = this.createTableNameMap();
+        // Gather all tables in the OrderedTableNameMap which also makes the duplicate
+        // check
+        _orderedTableNameMap = this.createTableNameMap();
 
     }
 
@@ -120,11 +120,11 @@ public class DefaultDataSet extends AbstractDataSet {
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	logger.debug("createIterator(reversed={}) - start", Boolean.toString(reversed));
+        logger.debug("createIterator(reversed={}) - start", Boolean.toString(reversed));
 
-	this.initialize();
+        this.initialize();
 
-	ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
-	return new DefaultTableIterator(tables, reversed);
+        ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+        return new DefaultTableIterator(tables, reversed);
     }
 }

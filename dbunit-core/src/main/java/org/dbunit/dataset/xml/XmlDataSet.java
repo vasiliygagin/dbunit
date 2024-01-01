@@ -67,22 +67,22 @@ public class XmlDataSet extends CachedDataSet {
      * Creates an XmlDataSet with the specified xml reader.
      */
     public XmlDataSet(Reader reader) throws DataSetException {
-	super(new XmlProducer(new InputSource(reader)));
+        super(new XmlProducer(new InputSource(reader)));
     }
 
     /**
      * Creates an XmlDataSet with the specified xml input stream.
      */
     public XmlDataSet(InputStream in) throws DataSetException {
-	super(new XmlProducer(new InputSource(in)));
+        super(new XmlProducer(new InputSource(in)));
     }
 
     /**
      * Write the specified dataset to the specified output stream as xml.
      */
     public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
-	XmlDataSet.write(dataSet, out, null);
+        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+        XmlDataSet.write(dataSet, out, null);
     }
 
     /**
@@ -90,29 +90,29 @@ public class XmlDataSet extends CachedDataSet {
      * specified encoding).
      */
     public static void write(IDataSet dataSet, OutputStream out, String encoding) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, out={}, encoding={}) - start", new Object[] { dataSet, out, encoding });
+        logger.debug("write(dataSet={}, out={}, encoding={}) - start", new Object[] { dataSet, out, encoding });
 
-	XmlDataSetWriter datasetWriter = new XmlDataSetWriter(out, encoding);
-	datasetWriter.write(dataSet);
+        XmlDataSetWriter datasetWriter = new XmlDataSetWriter(out, encoding);
+        datasetWriter.write(dataSet);
     }
 
     /**
      * Write the specified dataset to the specified writer as xml.
      */
     public static void write(IDataSet dataSet, Writer writer) throws IOException, DataSetException {
-	logger.debug("write(dataSet={}, writer={}) - start", dataSet, writer);
-	write(dataSet, writer, null);
+        logger.debug("write(dataSet={}, writer={}) - start", dataSet, writer);
+        write(dataSet, writer, null);
     }
 
     /**
      * Write the specified dataset to the specified writer as xml.
      */
     public static void write(IDataSet dataSet, Writer writer, String encoding) throws IOException, DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("write(dataSet={}, writer={}, encoding={}) - start",
-		    new Object[] { dataSet, writer, encoding });
+        if (logger.isDebugEnabled())
+            logger.debug("write(dataSet={}, writer={}, encoding={}) - start",
+                    new Object[] { dataSet, writer, encoding });
 
-	XmlDataSetWriter datasetWriter = new XmlDataSetWriter(writer, encoding);
-	datasetWriter.write(dataSet);
+        XmlDataSetWriter datasetWriter = new XmlDataSetWriter(writer, encoding);
+        datasetWriter.write(dataSet);
     }
 }

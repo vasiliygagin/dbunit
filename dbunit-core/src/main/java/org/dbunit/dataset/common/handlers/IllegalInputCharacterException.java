@@ -31,6 +31,6 @@ import org.dbunit.DatabaseUnitRuntimeException;
  */
 public class IllegalInputCharacterException extends DatabaseUnitRuntimeException {
     public IllegalInputCharacterException(String message) {
-	super(message);
+        super(message);
     }
 }

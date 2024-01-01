@@ -40,30 +40,30 @@ public class UnknownDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(UnknownDataType.class);
 
     UnknownDataType() {
-	super("UNKNOWN", Types.OTHER, Object.class, false);
+        super("UNKNOWN", Types.OTHER, Object.class, false);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	return value;
+        return value;
     }
 
     public int compare(Object o1, Object o2) throws TypeCastException {
-	logger.debug("compare(o1={}, o2={}) - start", o1, o2);
+        logger.debug("compare(o1={}, o2={}) - start", o1, o2);
 
-	// New since dbunit 2.4 for performance optimization (avoid the "asString")
-	if (areObjectsEqual(o1, o2)) {
-	    return 0;
-	}
+        // New since dbunit 2.4 for performance optimization (avoid the "asString")
+        if (areObjectsEqual(o1, o2)) {
+            return 0;
+        }
 
-	return super.compare(asString(o1), asString(o2));
+        return super.compare(asString(o1), asString(o2));
     }
 }

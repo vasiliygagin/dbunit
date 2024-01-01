@@ -68,44 +68,44 @@ public class Export extends AbstractStep {
     private String _format = FORMAT_FLAT;
     private String _doctype = null;
     private String _encoding = null; // if no encoding set by script than the default encoding (UTF-8) of the wrietr
-				     // is used
+                                     // is used
     private List _tables = new ArrayList();
 
     public Export() {
     }
 
     private String getAbsolutePath(File filename) {
-	return filename != null ? filename.getAbsolutePath() : "null";
+        return filename != null ? filename.getAbsolutePath() : "null";
     }
 
     public File getDest() {
-	return _dest;
+        return _dest;
     }
 
     public String getFormat() {
-	return _format;
+        return _format;
     }
 
     public List getTables() {
-	return _tables;
+        return _tables;
     }
 
     public void setDest(File dest) {
-	logger.debug("setDest(dest={}) - start", dest);
-	_dest = dest;
+        logger.debug("setDest(dest={}) - start", dest);
+        _dest = dest;
     }
 
     public void setFormat(String format) {
-	logger.debug("setFormat(format={}) - start", format);
+        logger.debug("setFormat(format={}) - start", format);
 
-	if (format.equalsIgnoreCase(FORMAT_FLAT) || format.equalsIgnoreCase(FORMAT_XML)
-		|| format.equalsIgnoreCase(FORMAT_DTD) || format.equalsIgnoreCase(FORMAT_CSV)
-		|| format.equalsIgnoreCase(FORMAT_XLS)) {
-	    _format = format;
-	} else {
-	    throw new IllegalArgumentException(
-		    "Type must be one of: 'flat'(default), 'xml', 'dtd' or 'xls' but was: " + format);
-	}
+        if (format.equalsIgnoreCase(FORMAT_FLAT) || format.equalsIgnoreCase(FORMAT_XML)
+                || format.equalsIgnoreCase(FORMAT_DTD) || format.equalsIgnoreCase(FORMAT_CSV)
+                || format.equalsIgnoreCase(FORMAT_XLS)) {
+            _format = format;
+        } else {
+            throw new IllegalArgumentException(
+                    "Type must be one of: 'flat'(default), 'xml', 'dtd' or 'xls' but was: " + format);
+        }
     }
 
     /**
@@ -114,81 +114,81 @@ public class Export extends AbstractStep {
      * @return Returns the encoding.
      */
     public String getEncoding() {
-	return this._encoding;
+        return this._encoding;
     }
 
     public void setEncoding(String encoding) {
-	this._encoding = encoding;
+        this._encoding = encoding;
     }
 
     public void addTable(Table table) {
-	logger.debug("addTable(table={}) - start", table);
-	_tables.add(table);
+        logger.debug("addTable(table={}) - start", table);
+        _tables.add(table);
     }
 
     public void addQuery(Query query) {
-	logger.debug("addQuery(query={}) - start", query);
-	_tables.add(query);
+        logger.debug("addQuery(query={}) - start", query);
+        _tables.add(query);
     }
 
     public void addQuerySet(QuerySet querySet) {
-	logger.debug("addQuerySet(querySet={}) - start", querySet);
-	_tables.add(querySet);
+        logger.debug("addQuerySet(querySet={}) - start", querySet);
+        _tables.add(querySet);
     }
 
     public String getDoctype() {
-	return _doctype;
+        return _doctype;
     }
 
     public void setDoctype(String doctype) {
-	logger.debug("setDoctype(doctype={}) - start", doctype);
-	_doctype = doctype;
+        logger.debug("setDoctype(doctype={}) - start", doctype);
+        _doctype = doctype;
     }
 
     public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
-	logger.debug("execute(connection={}) - start", connection);
+        logger.debug("execute(connection={}) - start", connection);
 
-	try {
-	    if (_dest == null) {
-		throw new DatabaseUnitException("'_dest' is a required attribute of the <export> step.");
-	    }
+        try {
+            if (_dest == null) {
+                throw new DatabaseUnitException("'_dest' is a required attribute of the <export> step.");
+            }
 
-	    IDataSet dataset = getExportDataSet(connection);
-	    log("dataset tables: " + Arrays.asList(dataset.getTableNames()), Project.MSG_VERBOSE);
+            IDataSet dataset = getExportDataSet(connection);
+            log("dataset tables: " + Arrays.asList(dataset.getTableNames()), Project.MSG_VERBOSE);
 
-	    // Write the dataset
-	    if (_format.equals(FORMAT_CSV)) {
-		CsvDataSetWriter.write(dataset, _dest);
-	    } else {
-		OutputStream out = new FileOutputStream(_dest);
-		try {
-		    if (_format.equalsIgnoreCase(FORMAT_FLAT)) {
-			FlatXmlWriter writer = new FlatXmlWriter(out, getEncoding());
-			writer.setDocType(_doctype);
-			writer.write(dataset);
-		    } else if (_format.equalsIgnoreCase(FORMAT_XML)) {
-			XmlDataSet.write(dataset, out, getEncoding());
-		    } else if (_format.equalsIgnoreCase(FORMAT_DTD)) {
-			// TODO Should DTD also support encoding? It is basically an XML file...
-			FlatDtdDataSet.write(dataset, out);// , getEncoding());
-		    } else if (_format.equalsIgnoreCase(FORMAT_XLS)) {
-			XlsDataSet.write(dataset, out);
-		    } else {
-			throw new IllegalArgumentException("The given format '" + _format + "' is not supported.");
-		    }
+            // Write the dataset
+            if (_format.equals(FORMAT_CSV)) {
+                CsvDataSetWriter.write(dataset, _dest);
+            } else {
+                OutputStream out = new FileOutputStream(_dest);
+                try {
+                    if (_format.equalsIgnoreCase(FORMAT_FLAT)) {
+                        FlatXmlWriter writer = new FlatXmlWriter(out, getEncoding());
+                        writer.setDocType(_doctype);
+                        writer.write(dataset);
+                    } else if (_format.equalsIgnoreCase(FORMAT_XML)) {
+                        XmlDataSet.write(dataset, out, getEncoding());
+                    } else if (_format.equalsIgnoreCase(FORMAT_DTD)) {
+                        // TODO Should DTD also support encoding? It is basically an XML file...
+                        FlatDtdDataSet.write(dataset, out);// , getEncoding());
+                    } else if (_format.equalsIgnoreCase(FORMAT_XLS)) {
+                        XlsDataSet.write(dataset, out);
+                    } else {
+                        throw new IllegalArgumentException("The given format '" + _format + "' is not supported.");
+                    }
 
-		} finally {
-		    out.close();
-		}
-	    }
+                } finally {
+                    out.close();
+                }
+            }
 
-	    log("Successfully wrote file '" + _dest + "'", Project.MSG_INFO);
+            log("Successfully wrote file '" + _dest + "'", Project.MSG_INFO);
 
-	} catch (SQLException e) {
-	    throw new DatabaseUnitException(e);
-	} catch (IOException e) {
-	    throw new DatabaseUnitException(e);
-	}
+        } catch (SQLException e) {
+            throw new DatabaseUnitException(e);
+        } catch (IOException e) {
+            throw new DatabaseUnitException(e);
+        }
     }
 
     /**
@@ -200,27 +200,27 @@ public class Export extends AbstractStep {
      * @throws SQLException
      */
     protected IDataSet getExportDataSet(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
-	IDataSet dataset = getDatabaseDataSet(connection, this._tables);
-	if (isOrdered()) {
-	    // Use topologically sorted database
-	    ITableFilter filter = new DatabaseSequenceFilter(connection);
-	    dataset = new FilteredDataSet(filter, dataset);
-	}
-	return dataset;
+        IDataSet dataset = getDatabaseDataSet(connection, this._tables);
+        if (isOrdered()) {
+            // Use topologically sorted database
+            ITableFilter filter = new DatabaseSequenceFilter(connection);
+            dataset = new FilteredDataSet(filter, dataset);
+        }
+        return dataset;
     }
 
     public String getLogMessage() {
-	return "Executing export: " + "\n      in format: " + _format + " to datafile: " + getAbsolutePath(_dest);
+        return "Executing export: " + "\n      in format: " + _format + " to datafile: " + getAbsolutePath(_dest);
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer();
-	result.append("Export: ");
-	result.append(" dest=" + getAbsolutePath(_dest));
-	result.append(", format= " + _format);
-	result.append(", doctype= " + _doctype);
-	result.append(", tables= " + _tables);
+        StringBuffer result = new StringBuffer();
+        result.append("Export: ");
+        result.append(" dest=" + getAbsolutePath(_dest));
+        result.append(", format= " + _format);
+        result.append(", doctype= " + _doctype);
+        result.append(", tables= " + _tables);
 
-	return result.toString();
+        return result.toString();
     }
 }

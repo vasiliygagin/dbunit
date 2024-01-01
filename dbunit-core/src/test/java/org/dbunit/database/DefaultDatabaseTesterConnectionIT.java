@@ -36,19 +36,19 @@ public class DefaultDatabaseTesterConnectionIT extends AbstractDatabaseTesterCon
     private PropertiesBasedJdbcDatabaseTester databaseTester;
 
     public DefaultDatabaseTesterConnectionIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDatabaseTester getDatabaseTester() throws Exception {
-	if (databaseTester == null) {
-	    DatabaseProfile profile = getEnvironment().getProfile();
-	    System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, profile.getDriverClass());
-	    System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL, profile.getConnectionUrl());
-	    System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, profile.getUser());
-	    System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD, profile.getPassword());
-	    System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA, profile.getSchema());
-	    databaseTester = new PropertiesBasedJdbcDatabaseTester();
-	}
-	return databaseTester;
+        if (databaseTester == null) {
+            DatabaseProfile profile = getEnvironment().getProfile();
+            System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, profile.getDriverClass());
+            System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL, profile.getConnectionUrl());
+            System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, profile.getUser());
+            System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD, profile.getPassword());
+            System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA, profile.getSchema());
+            databaseTester = new PropertiesBasedJdbcDatabaseTester();
+        }
+        return databaseTester;
     }
 }

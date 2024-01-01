@@ -19,36 +19,36 @@ public class PostgreSQLOidDataType extends BytesDataType {
     private static final Logger logger = LoggerFactory.getLogger(PostgreSQLOidDataType.class);
 
     public PostgreSQLOidDataType() {
-	super("OID", Types.BIGINT);
+        super("OID", Types.BIGINT);
     }
 
     @Override
     public Object getSqlValue(final int column, final ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        }
 
-	Statement statement = resultSet.getStatement();
-	Connection connection = statement.getConnection();
-	boolean autoCommit = connection.getAutoCommit();
-	// kinda ugly
-	connection.setAutoCommit(false);
+        Statement statement = resultSet.getStatement();
+        Connection connection = statement.getConnection();
+        boolean autoCommit = connection.getAutoCommit();
+        // kinda ugly
+        connection.setAutoCommit(false);
 
-	try {
-	    PGConnection pgConnection = connection.unwrap(PGConnection.class);
-	    LargeObjectManager lobj = pgConnection.getLargeObjectAPI();
+        try {
+            PGConnection pgConnection = connection.unwrap(PGConnection.class);
+            LargeObjectManager lobj = pgConnection.getLargeObjectAPI();
 
-	    long oid = resultSet.getLong(column);
-	    if (oid == 0) {
-		logger.debug("'oid' is zero, the data is NULL.");
-		return null;
-	    }
-	    LargeObject obj = lobj.open(oid, LargeObjectManager.READ);
-	    // If lobj.open() throws an exception, it means something wrong with the OID /
-	    // table.
-	    // So to be accurate, we don't catch this exception but let it propagate.
-	    // Swallowing the exception silently indeed hides the problem, which is the
-	    // wrong behavior
+            long oid = resultSet.getLong(column);
+            if (oid == 0) {
+                logger.debug("'oid' is zero, the data is NULL.");
+                return null;
+            }
+            LargeObject obj = lobj.open(oid, LargeObjectManager.READ);
+            // If lobj.open() throws an exception, it means something wrong with the OID /
+            // table.
+            // So to be accurate, we don't catch this exception but let it propagate.
+            // Swallowing the exception silently indeed hides the problem, which is the
+            // wrong behavior
 //            try {
 //                obj = lobj.open(oid, LargeObjectManager.READ);
 //            } catch (SQLException ex) {
@@ -58,57 +58,57 @@ public class PostgreSQLOidDataType extends BytesDataType {
 //                return null;
 //            }
 
-	    // Read the data
-	    byte buf[] = new byte[obj.size()];
-	    obj.read(buf, 0, obj.size());
-	    // Close the object
-	    obj.close();
+            // Read the data
+            byte buf[] = new byte[obj.size()];
+            obj.read(buf, 0, obj.size());
+            // Close the object
+            obj.close();
 
-	    return buf;
-	} finally {
-	    connection.setAutoCommit(autoCommit);
-	}
+            return buf;
+        } finally {
+            connection.setAutoCommit(autoCommit);
+        }
     }
 
     @Override
     public void setSqlValue(final Object value, final int column, final PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
-	}
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
+        }
 
-	Connection connection = statement.getConnection();
-	boolean autoCommit = connection.getAutoCommit();
-	// kinda ugly
-	connection.setAutoCommit(false);
+        Connection connection = statement.getConnection();
+        boolean autoCommit = connection.getAutoCommit();
+        // kinda ugly
+        connection.setAutoCommit(false);
 
-	try {
-	    // Get the Large Object Manager to perform operations with
-	    LargeObjectManager lobj = ((org.postgresql.PGConnection) statement.getConnection()).getLargeObjectAPI();
+        try {
+            // Get the Large Object Manager to perform operations with
+            LargeObjectManager lobj = ((org.postgresql.PGConnection) statement.getConnection()).getLargeObjectAPI();
 
-	    // Create a new large object
-	    long oid = lobj.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
+            // Create a new large object
+            long oid = lobj.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
 
-	    // Open the large object for writing
-	    LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
+            // Open the large object for writing
+            LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
 
-	    // Now open the file
-	    ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) super.typeCast(value));
+            // Now open the file
+            ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) super.typeCast(value));
 
-	    // Copy the data from the file to the large object
-	    byte buf[] = new byte[2048];
-	    int s = 0;
-	    while ((s = bis.read(buf, 0, 2048)) > 0) {
-		obj.write(buf, 0, s);
-	    }
+            // Copy the data from the file to the large object
+            byte buf[] = new byte[2048];
+            int s = 0;
+            while ((s = bis.read(buf, 0, 2048)) > 0) {
+                obj.write(buf, 0, s);
+            }
 
-	    // Close the large object
-	    obj.close();
+            // Close the large object
+            obj.close();
 
-	    statement.setLong(column, oid);
-	} finally {
-	    connection.setAutoCommit(autoCommit);
-	}
+            statement.setLong(column, oid);
+        } finally {
+            connection.setAutoCommit(autoCommit);
+        }
     }
 }

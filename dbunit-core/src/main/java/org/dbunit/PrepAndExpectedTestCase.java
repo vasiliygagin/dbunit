@@ -45,7 +45,7 @@ public interface PrepAndExpectedTestCase {
      * @throws Exception
      */
     void configureTest(VerifyTableDefinition[] verifyTableDefinitions, String[] prepDataFiles,
-	    String[] expectedDataFiles) throws Exception;
+            String[] expectedDataFiles) throws Exception;
 
     /**
      * Execute pre-test steps. Call this method before performing the test steps.
@@ -66,7 +66,7 @@ public interface PrepAndExpectedTestCase {
      * @throws Exception
      */
     void preTest(VerifyTableDefinition[] verifyTables, String[] prepDataFiles, String[] expectedDataFiles)
-	    throws Exception;
+            throws Exception;
 
     /**
      * Run the DbUnit test.
@@ -83,7 +83,7 @@ public interface PrepAndExpectedTestCase {
      * @since 2.5.2
      */
     Object runTest(VerifyTableDefinition[] verifyTables, String[] prepDataFiles, String[] expectedDataFiles,
-	    PrepAndExpectedTestCaseSteps testSteps) throws Exception;
+            PrepAndExpectedTestCaseSteps testSteps) throws Exception;
 
     /**
      * Execute all post-test steps. Call this method after performing the test

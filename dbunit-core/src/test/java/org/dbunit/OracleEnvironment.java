@@ -36,17 +36,17 @@ import org.dbunit.ext.oracle.OracleDataTypeFactory;
  */
 public class OracleEnvironment extends DatabaseEnvironment {
     public OracleEnvironment(DatabaseProfile profile) throws Exception {
-	super(profile);
+        super(profile);
     }
 
     protected void setupDatabaseConfig(DatabaseConfig config) {
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
     }
 
     public IDataSet getInitDataSet() throws Exception {
-	ITable[] extraTables = { new DefaultTable("CLOB_TABLE"), new DefaultTable("BLOB_TABLE"),
-		new DefaultTable("SDO_GEOMETRY_TABLE"), new DefaultTable("XML_TYPE_TABLE"), };
+        ITable[] extraTables = { new DefaultTable("CLOB_TABLE"), new DefaultTable("BLOB_TABLE"),
+                new DefaultTable("SDO_GEOMETRY_TABLE"), new DefaultTable("XML_TYPE_TABLE"), };
 
-	return new CompositeDataSet(super.getInitDataSet(), new DefaultDataSet(extraTables));
+        return new CompositeDataSet(super.getInitDataSet(), new DefaultDataSet(extraTables));
     }
 }

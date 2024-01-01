@@ -47,41 +47,41 @@ public class OracleClobDataType extends ClobDataType {
     private static final Logger logger = LoggerFactory.getLogger(OracleClobDataType.class);
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        }
 
-	return typeCast(resultSet.getClob(column));
+        return typeCast(resultSet.getClob(column));
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
-	}
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
+        }
 
-	statement.setObject(column, getClob(value, statement.getConnection()));
+        statement.setObject(column, getClob(value, statement.getConnection()));
     }
 
     protected Object getClob(Object value, Connection connection) throws TypeCastException {
-	logger.debug("getClob(value={}, connection={}) - start", value, connection);
+        logger.debug("getClob(value={}, connection={}) - start", value, connection);
 
-	Writer tempClobWriter = null;
-	try {
-	    java.sql.Clob tempClob = connection.createClob();
-	    tempClobWriter = tempClob.setCharacterStream(1);
+        Writer tempClobWriter = null;
+        try {
+            java.sql.Clob tempClob = connection.createClob();
+            tempClobWriter = tempClob.setCharacterStream(1);
 
-	    // Write the data into the temporary CLOB
-	    tempClobWriter.write((String) typeCast(value));
+            // Write the data into the temporary CLOB
+            tempClobWriter.write((String) typeCast(value));
 
-	    // Flush and close the stream
-	    tempClobWriter.flush();
-	    return tempClob;
-	} catch (IOException | SQLException e) {
-	    throw new TypeCastException(value, this, e);
-	} finally {
-	    IOUtils.closeQuietly(tempClobWriter);
-	}
+            // Flush and close the stream
+            tempClobWriter.flush();
+            return tempClob;
+        } catch (IOException | SQLException e) {
+            throw new TypeCastException(value, this, e);
+        } finally {
+            IOUtils.closeQuietly(tempClobWriter);
+        }
     }
 }

@@ -22,21 +22,22 @@ import org.springframework.test.context.TestContext;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 
 /**
- * An extension of {@link TransactionDbUnitTestExecutionListener} that ensures that a test method has failed.
+ * An extension of {@link TransactionDbUnitTestExecutionListener} that ensures
+ * that a test method has failed.
  *
  * @author Phillip Webb
  */
 public class MustFailDbUnitTestExecutionListener extends TransactionDbUnitTestExecutionListener {
 
-	@Override
-	public void afterTestMethod(TestContext testContext) throws Exception {
-		Throwable caught = null;
-		try {
-			super.afterTestMethod(testContext);
-		} catch (Throwable ex) {
-			caught = ex;
-		}
-		Assert.assertNotNull("Test did not fail", caught);
-	}
+    @Override
+    public void afterTestMethod(TestContext testContext) throws Exception {
+        Throwable caught = null;
+        try {
+            super.afterTestMethod(testContext);
+        } catch (Throwable ex) {
+            caught = ex;
+        }
+        Assert.assertNotNull("Test did not fail", caught);
+    }
 
 }

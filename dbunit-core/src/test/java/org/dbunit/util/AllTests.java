@@ -30,12 +30,12 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() throws Exception {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new TestSuite(CollectionsHelperTest.class));
-	suite.addTest(new TestSuite(QualifiedTableNameTest.class));
-	suite.addTest(new TestSuite(SQLHelperTest.class));
-	suite.addTest(new TestSuite(TableFormatterTest.class));
-	return suite;
+        TestSuite suite = new TestSuite();
+        suite.addTest(new TestSuite(CollectionsHelperTest.class));
+        suite.addTest(new TestSuite(QualifiedTableNameTest.class));
+        suite.addTest(new TestSuite(SQLHelperTest.class));
+        suite.addTest(new TestSuite(TableFormatterTest.class));
+        return suite;
     }
 
 }

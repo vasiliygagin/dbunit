@@ -65,22 +65,22 @@ public class Columns {
      * @see #findColumnsByName(String[], ITableMetaData)
      */
     public static Column[] getColumns(String[] columnNames, Column[] columns) {
-	if (logger.isDebugEnabled())
-	    logger.debug("getColumns(columnNames={}, columns={}) - start", new Object[] { columnNames, columns });
+        if (logger.isDebugEnabled())
+            logger.debug("getColumns(columnNames={}, columns={}) - start", new Object[] { columnNames, columns });
 
-	if (columnNames == null || columnNames.length == 0) {
-	    return EMPTY_COLUMNS;
-	}
+        if (columnNames == null || columnNames.length == 0) {
+            return EMPTY_COLUMNS;
+        }
 
-	List resultList = new ArrayList();
-	for (int i = 0; i < columnNames.length; i++) {
-	    Column column = Columns.getColumn(columnNames[i], columns);
-	    if (column != null) {
-		resultList.add(column);
-	    }
-	}
+        List resultList = new ArrayList();
+        for (int i = 0; i < columnNames.length; i++) {
+            Column column = Columns.getColumn(columnNames[i], columns);
+            if (column != null) {
+                resultList.add(column);
+            }
+        }
 
-	return (Column[]) resultList.toArray(new Column[0]);
+        return (Column[]) resultList.toArray(new Column[0]);
     }
 
     /**
@@ -97,16 +97,16 @@ public class Columns {
      *                               the columns
      */
     public static Column[] findColumnsByName(String[] columnNames, ITableMetaData tableMetaData)
-	    throws NoSuchColumnException, DataSetException {
-	logger.debug("findColumnsByName(columnNames={}, tableMetaData={}) - start", columnNames, tableMetaData);
+            throws NoSuchColumnException, DataSetException {
+        logger.debug("findColumnsByName(columnNames={}, tableMetaData={}) - start", columnNames, tableMetaData);
 
-	Column[] resultColumns = new Column[columnNames.length];
-	for (int i = 0; i < columnNames.length; i++) {
-	    String sortColumn = columnNames[i];
-	    int colIndex = tableMetaData.getColumnIndex(sortColumn);
-	    resultColumns[i] = tableMetaData.getColumns()[colIndex];
-	}
-	return resultColumns;
+        Column[] resultColumns = new Column[columnNames.length];
+        for (int i = 0; i < columnNames.length; i++) {
+            String sortColumn = columnNames[i];
+            int colIndex = tableMetaData.getColumnIndex(sortColumn);
+            resultColumns[i] = tableMetaData.getColumns()[colIndex];
+        }
+        return resultColumns;
     }
 
     /**
@@ -123,16 +123,16 @@ public class Columns {
      *                               the columns
      */
     public static Column[] findColumnsByName(Column[] columns, ITableMetaData tableMetaData)
-	    throws NoSuchColumnException, DataSetException {
-	logger.debug("findColumnsByName(columns={}, tableMetaData={}) - start", columns, tableMetaData);
+            throws NoSuchColumnException, DataSetException {
+        logger.debug("findColumnsByName(columns={}, tableMetaData={}) - start", columns, tableMetaData);
 
-	Column[] resultColumns = new Column[columns.length];
-	for (int i = 0; i < columns.length; i++) {
-	    Column sortColumn = columns[i];
-	    int colIndex = tableMetaData.getColumnIndex(sortColumn.getColumnName());
-	    resultColumns[i] = tableMetaData.getColumns()[colIndex];
-	}
-	return resultColumns;
+        Column[] resultColumns = new Column[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            Column sortColumn = columns[i];
+            int colIndex = tableMetaData.getColumnIndex(sortColumn.getColumnName());
+            resultColumns[i] = tableMetaData.getColumns()[colIndex];
+        }
+        return resultColumns;
     }
 
     /**
@@ -147,16 +147,16 @@ public class Columns {
      * @return the column or <code>null</code> if the column is not found
      */
     public static Column getColumn(String columnName, Column[] columns) {
-	logger.debug("getColumn(columnName={}, columns={}) - start", columnName, columns);
+        logger.debug("getColumn(columnName={}, columns={}) - start", columnName, columns);
 
-	for (int i = 0; i < columns.length; i++) {
-	    Column column = columns[i];
-	    if (columnName.equalsIgnoreCase(columns[i].getColumnName())) {
-		return column;
-	    }
-	}
+        for (int i = 0; i < columns.length; i++) {
+            Column column = columns[i];
+            if (columnName.equalsIgnoreCase(columns[i].getColumnName())) {
+                return column;
+            }
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -172,17 +172,17 @@ public class Columns {
      * @throws NoSuchColumnException If no column exists with the given name
      */
     public static Column getColumnValidated(String columnName, Column[] columns, String tableName)
-	    throws NoSuchColumnException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getColumn(columnName={}, columns={}, tableName={}) - start",
-		    new Object[] { columnName, columns, tableName });
+            throws NoSuchColumnException {
+        if (logger.isDebugEnabled())
+            logger.debug("getColumn(columnName={}, columns={}, tableName={}) - start",
+                    new Object[] { columnName, columns, tableName });
 
-	Column column = Columns.getColumn(columnName, columns);
-	if (column == null) {
-	    throw new NoSuchColumnException(tableName, columnName);
-	}
+        Column column = Columns.getColumn(columnName, columns);
+        if (column == null) {
+            throw new NoSuchColumnException(tableName, columnName);
+        }
 
-	return column;
+        return column;
     }
 
     /**
@@ -197,19 +197,19 @@ public class Columns {
      * @return The columns that are accepted by the given filter
      */
     public static Column[] getColumns(String tableName, Column[] columns, IColumnFilter columnFilter) {
-	if (logger.isDebugEnabled())
-	    logger.debug("getColumns(tableName={}, columns={}, columnFilter={}) - start",
-		    new Object[] { tableName, columns, columnFilter });
+        if (logger.isDebugEnabled())
+            logger.debug("getColumns(tableName={}, columns={}, columnFilter={}) - start",
+                    new Object[] { tableName, columns, columnFilter });
 
-	List resultList = new ArrayList();
-	for (int i = 0; i < columns.length; i++) {
-	    Column column = columns[i];
-	    if (columnFilter.accept(tableName, column)) {
-		resultList.add(column);
-	    }
-	}
+        List resultList = new ArrayList();
+        for (int i = 0; i < columns.length; i++) {
+            Column column = columns[i];
+            if (columnFilter.accept(tableName, column)) {
+                resultList.add(column);
+            }
+        }
 
-	return (Column[]) resultList.toArray(new Column[0]);
+        return (Column[]) resultList.toArray(new Column[0]);
     }
 
     /**
@@ -221,13 +221,13 @@ public class Columns {
      * @throws DataSetException
      */
     public static Column[] getSortedColumns(ITableMetaData metaData) throws DataSetException {
-	logger.debug("getSortedColumns(metaData={}) - start", metaData);
+        logger.debug("getSortedColumns(metaData={}) - start", metaData);
 
-	Column[] columns = metaData.getColumns();
-	Column[] sortColumns = new Column[columns.length];
-	System.arraycopy(columns, 0, sortColumns, 0, columns.length);
-	Arrays.sort(sortColumns, COLUMN_COMPARATOR);
-	return sortColumns;
+        Column[] columns = metaData.getColumns();
+        Column[] sortColumns = new Column[columns.length];
+        System.arraycopy(columns, 0, sortColumns, 0, columns.length);
+        Arrays.sort(sortColumns, COLUMN_COMPARATOR);
+        return sortColumns;
     }
 
     /**
@@ -238,11 +238,11 @@ public class Columns {
      * @since 2.4
      */
     public static String[] getColumnNames(Column[] columns) {
-	String[] result = new String[columns.length];
-	for (int i = 0; i < columns.length; i++) {
-	    result[i] = columns[i].getColumnName();
-	}
-	return result;
+        String[] result = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            result[i] = columns[i].getColumnName();
+        }
+        return result;
     }
 
     /**
@@ -252,14 +252,14 @@ public class Columns {
      * @return The string representation of the given column names
      */
     public static String getColumnNamesAsString(Column[] columns) {
-	logger.debug("getColumnNamesAsString(columns={}) - start", columns);
+        logger.debug("getColumnNamesAsString(columns={}) - start", columns);
 
-	String[] names = new String[columns.length];
-	for (int i = 0; i < columns.length; i++) {
-	    Column column = columns[i];
-	    names[i] = column.getColumnName();
-	}
-	return Arrays.asList(names).toString();
+        String[] names = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            Column column = columns[i];
+            names[i] = column.getColumnName();
+        }
+        return Arrays.asList(names).toString();
     }
 
     /**
@@ -275,30 +275,30 @@ public class Columns {
      * @return Array of merged columns
      */
     public static Column[] mergeColumnsByName(Column[] referenceColumns, Column[] columnsToMerge) {
-	logger.debug("mergeColumnsByName(referenceColumns={}, columnsToMerge={}) - start", referenceColumns,
-		columnsToMerge);
+        logger.debug("mergeColumnsByName(referenceColumns={}, columnsToMerge={}) - start", referenceColumns,
+                columnsToMerge);
 
-	List resultList = new ArrayList(Arrays.asList(referenceColumns));
-	List columnsToMergeNotInRefList = new ArrayList(Arrays.asList(columnsToMerge));
+        List resultList = new ArrayList(Arrays.asList(referenceColumns));
+        List columnsToMergeNotInRefList = new ArrayList(Arrays.asList(columnsToMerge));
 
-	// All columns that exist in the referenceColumns
-	for (int i = 0; i < referenceColumns.length; i++) {
-	    Column refColumn = referenceColumns[i];
-	    for (int k = 0; k < columnsToMerge.length; k++) {
-		Column columnToMerge = columnsToMerge[k];
-		// Check if this colToMerge exists in the refColumn
-		if (columnToMerge.getColumnName().equals(refColumn.getColumnName())) {
-		    // We found the column in the refColumns - so no candidate for adding to the
-		    // result list
-		    columnsToMergeNotInRefList.remove(columnToMerge);
-		    break;
-		}
-	    }
-	}
+        // All columns that exist in the referenceColumns
+        for (int i = 0; i < referenceColumns.length; i++) {
+            Column refColumn = referenceColumns[i];
+            for (int k = 0; k < columnsToMerge.length; k++) {
+                Column columnToMerge = columnsToMerge[k];
+                // Check if this colToMerge exists in the refColumn
+                if (columnToMerge.getColumnName().equals(refColumn.getColumnName())) {
+                    // We found the column in the refColumns - so no candidate for adding to the
+                    // result list
+                    columnsToMergeNotInRefList.remove(columnToMerge);
+                    break;
+                }
+            }
+        }
 
-	// Add all "columnsToMerge" that have not been found in the referenceColumnList
-	resultList.addAll(columnsToMergeNotInRefList);
-	return (Column[]) resultList.toArray(new Column[] {});
+        // Add all "columnsToMerge" that have not been found in the referenceColumnList
+        resultList.addAll(columnsToMergeNotInRefList);
+        return (Column[]) resultList.toArray(new Column[] {});
     }
 
     /**
@@ -311,32 +311,32 @@ public class Columns {
      * @throws DataSetException
      */
     public static ColumnDiff getColumnDiff(ITableMetaData expectedMetaData, ITableMetaData actualMetaData)
-	    throws DataSetException {
-	return new ColumnDiff(expectedMetaData, actualMetaData);
+            throws DataSetException {
+        return new ColumnDiff(expectedMetaData, actualMetaData);
     }
 
     // ColumnComparator class
     private static class ColumnComparator implements Comparator {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(ColumnComparator.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(ColumnComparator.class);
 
-	/**
-	 * Compare columns by name ignoring case
-	 * 
-	 * @see java.util.Comparator#compare(T, T)
-	 */
-	public int compare(Object o1, Object o2) {
-	    logger.debug("compare(o1={}, o2={}) - start", o1, o2);
+        /**
+         * Compare columns by name ignoring case
+         * 
+         * @see java.util.Comparator#compare(T, T)
+         */
+        public int compare(Object o1, Object o2) {
+            logger.debug("compare(o1={}, o2={}) - start", o1, o2);
 
-	    Column column1 = (Column) o1;
-	    Column column2 = (Column) o2;
+            Column column1 = (Column) o1;
+            Column column2 = (Column) o2;
 
-	    String columnName1 = column1.getColumnName();
-	    String columnName2 = column2.getColumnName();
-	    return columnName1.compareToIgnoreCase(columnName2);
-	}
+            String columnName1 = column1.getColumnName();
+            String columnName2 = column2.getColumnName();
+            return columnName1.compareToIgnoreCase(columnName2);
+        }
     }
 
     /**
@@ -347,148 +347,148 @@ public class Columns {
      * @since 2.3.0
      */
     public static class ColumnDiff {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(ColumnDiff.class);
-	/**
-	 * String message that is returned when no difference has been found in the
-	 * compared columns
-	 */
-	private static final String NO_DIFFERENCE = "no difference found";
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(ColumnDiff.class);
+        /**
+         * String message that is returned when no difference has been found in the
+         * compared columns
+         */
+        private static final String NO_DIFFERENCE = "no difference found";
 
-	/**
-	 * The columns that exist in the expected result but not in the actual
-	 */
-	private Column[] expected;
-	/**
-	 * The columns that exist in the actual result but not in the expected
-	 */
-	private Column[] actual;
-	private ITableMetaData expectedMetaData;
-	private ITableMetaData actualMetaData;
+        /**
+         * The columns that exist in the expected result but not in the actual
+         */
+        private Column[] expected;
+        /**
+         * The columns that exist in the actual result but not in the expected
+         */
+        private Column[] actual;
+        private ITableMetaData expectedMetaData;
+        private ITableMetaData actualMetaData;
 
-	/**
-	 * Creates the difference between the two metadata's columns
-	 * 
-	 * @param expectedMetaData The metadata of the expected results table
-	 * @param actualMetaData   The metadata of the actual results table
-	 * @throws DataSetException
-	 */
-	public ColumnDiff(ITableMetaData expectedMetaData, ITableMetaData actualMetaData) throws DataSetException {
-	    if (expectedMetaData == null) {
-		throw new NullPointerException("The parameter 'expectedMetaData' must not be null");
-	    }
-	    if (actualMetaData == null) {
-		throw new NullPointerException("The parameter 'actualMetaData' must not be null");
-	    }
+        /**
+         * Creates the difference between the two metadata's columns
+         * 
+         * @param expectedMetaData The metadata of the expected results table
+         * @param actualMetaData   The metadata of the actual results table
+         * @throws DataSetException
+         */
+        public ColumnDiff(ITableMetaData expectedMetaData, ITableMetaData actualMetaData) throws DataSetException {
+            if (expectedMetaData == null) {
+                throw new NullPointerException("The parameter 'expectedMetaData' must not be null");
+            }
+            if (actualMetaData == null) {
+                throw new NullPointerException("The parameter 'actualMetaData' must not be null");
+            }
 
-	    this.expectedMetaData = expectedMetaData;
-	    this.actualMetaData = actualMetaData;
+            this.expectedMetaData = expectedMetaData;
+            this.actualMetaData = actualMetaData;
 
-	    Column[] allExpectedCols = expectedMetaData.getColumns();
-	    Column[] allActualCols = actualMetaData.getColumns();
+            Column[] allExpectedCols = expectedMetaData.getColumns();
+            Column[] allActualCols = actualMetaData.getColumns();
 
-	    // Get the columns that are missing on the actual side (walk through actual
-	    // columns and look for them in the expected metadata)
-	    this.actual = findMissingColumnsIn(expectedMetaData, allActualCols);
-	    // Get the columns that are missing on the expected side (walk through expected
-	    // columns and look for them in the actual metadata)
-	    this.expected = findMissingColumnsIn(actualMetaData, allExpectedCols);
-	}
+            // Get the columns that are missing on the actual side (walk through actual
+            // columns and look for them in the expected metadata)
+            this.actual = findMissingColumnsIn(expectedMetaData, allActualCols);
+            // Get the columns that are missing on the expected side (walk through expected
+            // columns and look for them in the actual metadata)
+            this.expected = findMissingColumnsIn(actualMetaData, allExpectedCols);
+        }
 
-	/**
-	 * Searches and returns all columns that are missing in the given
-	 * {@link ITableMetaData} object
-	 * 
-	 * @param metaDataToCheck The {@link ITableMetaData} in which the given columns
-	 *                        should be searched
-	 * @param columnsToSearch The columns to be searched in the given
-	 *                        {@link ITableMetaData}
-	 * @return Those {@link Column}s out of the columnsToSearch that have not been
-	 *         found in metaDataToCheck
-	 * @throws DataSetException
-	 */
-	private Column[] findMissingColumnsIn(ITableMetaData metaDataToCheck, Column[] columnsToSearch)
-		throws DataSetException {
-	    logger.debug("findMissingColumnsIn(metaDataToCheck={}, columnsToSearch={})", metaDataToCheck,
-		    columnsToSearch);
+        /**
+         * Searches and returns all columns that are missing in the given
+         * {@link ITableMetaData} object
+         * 
+         * @param metaDataToCheck The {@link ITableMetaData} in which the given columns
+         *                        should be searched
+         * @param columnsToSearch The columns to be searched in the given
+         *                        {@link ITableMetaData}
+         * @return Those {@link Column}s out of the columnsToSearch that have not been
+         *         found in metaDataToCheck
+         * @throws DataSetException
+         */
+        private Column[] findMissingColumnsIn(ITableMetaData metaDataToCheck, Column[] columnsToSearch)
+                throws DataSetException {
+            logger.debug("findMissingColumnsIn(metaDataToCheck={}, columnsToSearch={})", metaDataToCheck,
+                    columnsToSearch);
 
-	    List columnsNotFound = new ArrayList();
-	    for (int i = 0; i < columnsToSearch.length; i++) {
-		try {
-		    metaDataToCheck.getColumnIndex(columnsToSearch[i].getColumnName());
-		} catch (NoSuchColumnException e) {
-		    columnsNotFound.add(columnsToSearch[i]);
-		}
-	    }
+            List columnsNotFound = new ArrayList();
+            for (int i = 0; i < columnsToSearch.length; i++) {
+                try {
+                    metaDataToCheck.getColumnIndex(columnsToSearch[i].getColumnName());
+                } catch (NoSuchColumnException e) {
+                    columnsNotFound.add(columnsToSearch[i]);
+                }
+            }
 
-	    Column[] result = (Column[]) columnsNotFound.toArray(new Column[] {});
-	    return result;
-	}
+            Column[] result = (Column[]) columnsNotFound.toArray(new Column[] {});
+            return result;
+        }
 
-	/**
-	 * @return <code>true</code> if there is a difference in the columns given in
-	 *         the constructor
-	 */
-	public boolean hasDifference() {
-	    return this.expected.length > 0 || this.actual.length > 0;
-	}
+        /**
+         * @return <code>true</code> if there is a difference in the columns given in
+         *         the constructor
+         */
+        public boolean hasDifference() {
+            return this.expected.length > 0 || this.actual.length > 0;
+        }
 
-	/**
-	 * @return The columns that exist in the expected result but not in the actual
-	 */
-	public Column[] getExpected() {
-	    return expected;
-	}
+        /**
+         * @return The columns that exist in the expected result but not in the actual
+         */
+        public Column[] getExpected() {
+            return expected;
+        }
 
-	/**
-	 * @return The columns that exist in the actual result but not in the expected
-	 */
-	public Column[] getActual() {
-	    return actual;
-	}
+        /**
+         * @return The columns that exist in the actual result but not in the expected
+         */
+        public Column[] getActual() {
+            return actual;
+        }
 
-	/**
-	 * @return The value of {@link #getExpected()} as formatted string
-	 * @see #getExpected()
-	 */
-	public String getExpectedAsString() {
-	    return Columns.getColumnNamesAsString(expected);
-	}
+        /**
+         * @return The value of {@link #getExpected()} as formatted string
+         * @see #getExpected()
+         */
+        public String getExpectedAsString() {
+            return Columns.getColumnNamesAsString(expected);
+        }
 
-	/**
-	 * @return The value of {@link #getActual()} as formatted string
-	 * @see #getActual()
-	 */
-	public String getActualAsString() {
-	    return Columns.getColumnNamesAsString(actual);
-	}
+        /**
+         * @return The value of {@link #getActual()} as formatted string
+         * @see #getActual()
+         */
+        public String getActualAsString() {
+            return Columns.getColumnNamesAsString(actual);
+        }
 
-	/**
-	 * @return A pretty formatted message that can be used for user information
-	 * @throws DataSetException
-	 */
-	public String getMessage() throws DataSetException {
-	    logger.debug("getMessage() - start");
+        /**
+         * @return A pretty formatted message that can be used for user information
+         * @throws DataSetException
+         */
+        public String getMessage() throws DataSetException {
+            logger.debug("getMessage() - start");
 
-	    if (!this.hasDifference()) {
-		return NO_DIFFERENCE;
-	    } else {
-		Column[] allExpectedCols = expectedMetaData.getColumns();
-		Column[] allActualCols = actualMetaData.getColumns();
-		String expectedTableName = expectedMetaData.getTableName();
+            if (!this.hasDifference()) {
+                return NO_DIFFERENCE;
+            } else {
+                Column[] allExpectedCols = expectedMetaData.getColumns();
+                Column[] allActualCols = actualMetaData.getColumns();
+                String expectedTableName = expectedMetaData.getTableName();
 
-		String message;
-		if (allExpectedCols.length != allActualCols.length) {
-		    message = "column count (table=" + expectedTableName + ", " + "expectedColCount="
-			    + allExpectedCols.length + ", actualColCount=" + allActualCols.length + ")";
-		} else {
-		    message = "column mismatch (table=" + expectedTableName + ")";
-		}
-		return message;
-	    }
-	}
+                String message;
+                if (allExpectedCols.length != allActualCols.length) {
+                    message = "column count (table=" + expectedTableName + ", " + "expectedColCount="
+                            + allExpectedCols.length + ", actualColCount=" + allActualCols.length + ")";
+                } else {
+                    message = "column mismatch (table=" + expectedTableName + ")";
+                }
+                return message;
+            }
+        }
 
 //		/**
 //		 * @return A pretty formatted message that shows up the difference
@@ -510,14 +510,14 @@ public class Columns {
 //			return sb.toString();
 //		}
 
-	public String toString() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append(getClass().getName()).append("[");
-	    sb.append("expected=").append(Arrays.asList(expected).toString());
-	    sb.append(", actual=").append(Arrays.asList(actual).toString());
-	    sb.append("]");
-	    return sb.toString();
-	}
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append(getClass().getName()).append("[");
+            sb.append("expected=").append(Arrays.asList(expected).toString());
+            sb.append(", actual=").append(Arrays.asList(actual).toString());
+            sb.append("]");
+            return sb.toString();
+        }
 
     }
 

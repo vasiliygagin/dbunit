@@ -66,8 +66,8 @@ public class TablesDependencyHelper {
      * @throws SearchException if an exception occurred while calculating the order
      */
     public static String[] getDependentTables(IDatabaseConnection connection, String rootTable) throws SearchException {
-	logger.debug("getDependentTables(connection={}, rootTable={}) - start", connection, rootTable);
-	return getDependentTables(connection, new String[] { rootTable });
+        logger.debug("getDependentTables(connection={}, rootTable={}) - start", connection, rootTable);
+        return getDependentTables(connection, new String[] { rootTable });
     }
 
     /**
@@ -81,13 +81,13 @@ public class TablesDependencyHelper {
      * @throws SearchException if an exception occurred while calculating the order
      */
     public static String[] getDependentTables(IDatabaseConnection connection, String[] rootTables)
-	    throws SearchException {
-	logger.debug("getDependentTables(connection={}, rootTables={}) - start", connection, rootTables);
+            throws SearchException {
+        logger.debug("getDependentTables(connection={}, rootTables={}) - start", connection, rootTables);
 
-	ImportedKeysSearchCallback callback = new ImportedKeysSearchCallback(connection);
-	DepthFirstSearch search = new DepthFirstSearch();
-	Set tables = search.search(rootTables, callback);
-	return CollectionsHelper.setToStrings(tables);
+        ImportedKeysSearchCallback callback = new ImportedKeysSearchCallback(connection);
+        DepthFirstSearch search = new DepthFirstSearch();
+        Set tables = search.search(rootTables, callback);
+        return CollectionsHelper.setToStrings(tables);
     }
 
     /**
@@ -102,12 +102,12 @@ public class TablesDependencyHelper {
      * @since 2.4
      */
     public static String[] getDependsOnTables(IDatabaseConnection connection, String rootTable) throws SearchException {
-	logger.debug("getDependsOnTables(connection={}, rootTable={}) - start", connection, rootTable);
+        logger.debug("getDependsOnTables(connection={}, rootTable={}) - start", connection, rootTable);
 
-	ExportedKeysSearchCallback callback = new ExportedKeysSearchCallback(connection);
-	DepthFirstSearch search = new DepthFirstSearch();
-	Set tables = search.search(new String[] { rootTable }, callback);
-	return CollectionsHelper.setToStrings(tables);
+        ExportedKeysSearchCallback callback = new ExportedKeysSearchCallback(connection);
+        DepthFirstSearch search = new DepthFirstSearch();
+        Set tables = search.search(new String[] { rootTable }, callback);
+        return CollectionsHelper.setToStrings(tables);
     }
 
     /**
@@ -122,9 +122,9 @@ public class TablesDependencyHelper {
      * @throws SearchException if an exception occurred while calculating the order
      */
     public static String[] getAllDependentTables(IDatabaseConnection connection, String rootTable)
-	    throws SearchException {
-	logger.debug("getAllDependentTables(connection={}, rootTable={}) - start", connection, rootTable);
-	return getAllDependentTables(connection, new String[] { rootTable });
+            throws SearchException {
+        logger.debug("getAllDependentTables(connection={}, rootTable={}) - start", connection, rootTable);
+        return getAllDependentTables(connection, new String[] { rootTable });
     }
 
     /**
@@ -140,71 +140,71 @@ public class TablesDependencyHelper {
      * @throws SearchException if an exception occurred while calculating the order
      */
     public static String[] getAllDependentTables(IDatabaseConnection connection, String[] rootTables)
-	    throws SearchException {
-	logger.debug("getAllDependentTables(connection={}, rootTables={}) - start", connection, rootTables);
+            throws SearchException {
+        logger.debug("getAllDependentTables(connection={}, rootTables={}) - start", connection, rootTables);
 
-	ImportedAndExportedKeysSearchCallback callback = new ImportedAndExportedKeysSearchCallback(connection);
-	DepthFirstSearch search = new DepthFirstSearch();
-	Set tables = search.search(rootTables, callback);
-	return CollectionsHelper.setToStrings(tables);
+        ImportedAndExportedKeysSearchCallback callback = new ImportedAndExportedKeysSearchCallback(connection);
+        DepthFirstSearch search = new DepthFirstSearch();
+        Set tables = search.search(rootTables, callback);
+        return CollectionsHelper.setToStrings(tables);
     }
 
     // TODO: javadoc (and unit tests) from down here...
 
     public static IDataSet getDataset(IDatabaseConnection connection, String rootTable, Set allowedIds)
-	    throws SearchException, SQLException, DataSetException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getDataset(connection={}, rootTable={}, allowedIds={}) - start",
-		    new Object[] { connection, rootTable, allowedIds });
-	}
+            throws SearchException, SQLException, DataSetException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getDataset(connection={}, rootTable={}, allowedIds={}) - start",
+                    new Object[] { connection, rootTable, allowedIds });
+        }
 
-	PkTableMap map = new PkTableMap();
-	map.addAll(rootTable, allowedIds);
-	return getDataset(connection, map);
+        PkTableMap map = new PkTableMap();
+        map.addAll(rootTable, allowedIds);
+        return getDataset(connection, map);
     }
 
     public static IDataSet getDataset(IDatabaseConnection connection, PkTableMap rootTables)
-	    throws SearchException, SQLException, DataSetException {
-	logger.debug("getDataset(connection={}, rootTables={}) - start", connection, rootTables);
+            throws SearchException, SQLException, DataSetException {
+        logger.debug("getDataset(connection={}, rootTables={}) - start", connection, rootTables);
 
-	ImportedKeysSearchCallbackFilteredByPKs callback = new ImportedKeysSearchCallbackFilteredByPKs(connection,
-		rootTables);
-	ITableFilter filter = callback.getFilter();
-	DepthFirstSearch search = new DepthFirstSearch();
-	String[] tableNames = rootTables.getTableNames();
-	Set tmpTables = search.search(tableNames, callback);
-	String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
-	IDataSet tmpDataset = connection.createDataSet(dependentTables);
-	FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
-	return dataset;
+        ImportedKeysSearchCallbackFilteredByPKs callback = new ImportedKeysSearchCallbackFilteredByPKs(connection,
+                rootTables);
+        ITableFilter filter = callback.getFilter();
+        DepthFirstSearch search = new DepthFirstSearch();
+        String[] tableNames = rootTables.getTableNames();
+        Set tmpTables = search.search(tableNames, callback);
+        String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
+        IDataSet tmpDataset = connection.createDataSet(dependentTables);
+        FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
+        return dataset;
     }
 
     public static IDataSet getAllDataset(IDatabaseConnection connection, String rootTable, Set allowedPKs)
-	    throws SearchException, SQLException, DataSetException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("getAllDataset(connection={}, rootTable={}, allowedPKs={}) - start",
-		    new Object[] { connection, rootTable, allowedPKs });
-	}
+            throws SearchException, SQLException, DataSetException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getAllDataset(connection={}, rootTable={}, allowedPKs={}) - start",
+                    new Object[] { connection, rootTable, allowedPKs });
+        }
 
-	PkTableMap map = new PkTableMap();
-	map.addAll(rootTable, allowedPKs);
-	return getAllDataset(connection, map);
+        PkTableMap map = new PkTableMap();
+        map.addAll(rootTable, allowedPKs);
+        return getAllDataset(connection, map);
     }
 
     public static IDataSet getAllDataset(IDatabaseConnection connection, PkTableMap rootTables)
-	    throws SearchException, SQLException, DataSetException {
-	logger.debug("getAllDataset(connection={}, rootTables={}) - start", connection, rootTables);
+            throws SearchException, SQLException, DataSetException {
+        logger.debug("getAllDataset(connection={}, rootTables={}) - start", connection, rootTables);
 
-	ImportedAndExportedKeysSearchCallbackFilteredByPKs callback = new ImportedAndExportedKeysSearchCallbackFilteredByPKs(
-		connection, rootTables);
-	ITableFilter filter = callback.getFilter();
-	DepthFirstSearch search = new DepthFirstSearch();
-	String[] tableNames = rootTables.getTableNames();
-	Set tmpTables = search.search(tableNames, callback);
-	String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
-	IDataSet tmpDataset = connection.createDataSet(dependentTables);
-	FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
-	return dataset;
+        ImportedAndExportedKeysSearchCallbackFilteredByPKs callback = new ImportedAndExportedKeysSearchCallbackFilteredByPKs(
+                connection, rootTables);
+        ITableFilter filter = callback.getFilter();
+        DepthFirstSearch search = new DepthFirstSearch();
+        String[] tableNames = rootTables.getTableNames();
+        Set tmpTables = search.search(tableNames, callback);
+        String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
+        IDataSet tmpDataset = connection.createDataSet(dependentTables);
+        FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
+        return dataset;
     }
 
     /**
@@ -217,14 +217,14 @@ public class TablesDependencyHelper {
      * @since 2.4
      */
     public static Set getDirectDependsOnTables(IDatabaseConnection connection, String tableName)
-	    throws SearchException {
-	logger.debug("getDirectDependsOnTables(connection={}, tableName={}) - start", connection, tableName);
+            throws SearchException {
+        logger.debug("getDirectDependsOnTables(connection={}, tableName={}) - start", connection, tableName);
 
-	ExportedKeysSearchCallback callback = new ExportedKeysSearchCallback(connection);
-	// Do a depthFirstSearch with a recursion depth of 1
-	DepthFirstSearch search = new DepthFirstSearch(1);
-	Set tables = search.search(new String[] { tableName }, callback);
-	return tables;
+        ExportedKeysSearchCallback callback = new ExportedKeysSearchCallback(connection);
+        // Do a depthFirstSearch with a recursion depth of 1
+        DepthFirstSearch search = new DepthFirstSearch(1);
+        Set tables = search.search(new String[] { tableName }, callback);
+        return tables;
     }
 
     /**
@@ -237,14 +237,14 @@ public class TablesDependencyHelper {
      * @since 2.4
      */
     public static Set getDirectDependentTables(IDatabaseConnection connection, String tableName)
-	    throws SearchException {
-	logger.debug("getDirectDependentTables(connection={}, tableName={}) - start", connection, tableName);
+            throws SearchException {
+        logger.debug("getDirectDependentTables(connection={}, tableName={}) - start", connection, tableName);
 
-	ImportedKeysSearchCallback callback = new ImportedKeysSearchCallback(connection);
-	// Do a depthFirstSearch with a recursion depth of 1
-	DepthFirstSearch search = new DepthFirstSearch(1);
-	Set tables = search.search(new String[] { tableName }, callback);
-	return tables;
+        ImportedKeysSearchCallback callback = new ImportedKeysSearchCallback(connection);
+        // Do a depthFirstSearch with a recursion depth of 1
+        DepthFirstSearch search = new DepthFirstSearch(1);
+        Set tables = search.search(new String[] { tableName }, callback);
+        return tables;
     }
 
 }

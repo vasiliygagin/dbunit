@@ -108,28 +108,28 @@ package org.dbunit.util.concurrent;
  *     private final Sync lock; // use lock type supplied in constructor
  * 
  *     public HandSynchedV2(Sync l) {
- * 	lock = l;
+ *         lock = l;
  *     }
  *
  *     protected void runSafely(Runnable r) {
- * 	try {
- * 	    lock.acquire();
- * 	    try {
- * 		r.run();
- * 	    } finally {
- * 		lock.release();
- * 	    }
- * 	} catch (InterruptedException ex) { // propagate without throwing
- * 	    Thread.currentThread().interrupt();
- * 	}
+ *         try {
+ *             lock.acquire();
+ *             try {
+ *                 r.run();
+ *             } finally {
+ *                 lock.release();
+ *             }
+ *         } catch (InterruptedException ex) { // propagate without throwing
+ *             Thread.currentThread().interrupt();
+ *         }
  *     }
  *
  *     public void changeState(double d) {
- * 	runSafely(new Runnable() {
- * 	    public void run() {
- * 		state_ = updateFunction(d);
- * 	    }
- * 	});
+ *         runSafely(new Runnable() {
+ *             public void run() {
+ *                 state_ = updateFunction(d);
+ *             }
+ *         });
  *     }
  *     // ...
  * }

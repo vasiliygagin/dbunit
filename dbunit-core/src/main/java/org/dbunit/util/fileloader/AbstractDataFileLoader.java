@@ -49,7 +49,7 @@ public abstract class AbstractDataFileLoader implements DataFileLoader {
 
     /** Create new instance. */
     public AbstractDataFileLoader() {
-	this(new HashMap(), new HashMap());
+        this(new HashMap(), new HashMap());
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class AbstractDataFileLoader implements DataFileLoader {
      *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public AbstractDataFileLoader(Map ro) {
-	this(ro, new HashMap());
+        this(ro, new HashMap());
     }
 
     /**
@@ -71,52 +71,52 @@ public abstract class AbstractDataFileLoader implements DataFileLoader {
      *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public AbstractDataFileLoader(Map ro, Map rs) {
-	if (ro == null) {
-	    throw new IllegalArgumentException("Replacement object map is null.");
-	}
+        if (ro == null) {
+            throw new IllegalArgumentException("Replacement object map is null.");
+        }
 
-	if (rs == null) {
-	    throw new IllegalArgumentException("Replacement substrings map is null.");
-	}
+        if (rs == null) {
+            throw new IllegalArgumentException("Replacement substrings map is null.");
+        }
 
-	this.replacementObjects = ro;
-	this.replacementSubstrings = rs;
+        this.replacementObjects = ro;
+        this.replacementSubstrings = rs;
     }
 
     /**
      * {@inheritDoc}
      */
     public IDataSet load(String filename) throws DatabaseUnitRuntimeException {
-	IDataSet ds = new DefaultDataSet();
+        IDataSet ds = new DefaultDataSet();
 
-	LOG.debug("load: processing file={}", filename);
+        LOG.debug("load: processing file={}", filename);
 
-	if (filename == null || "".equals(filename)) {
-	    final String msg = "load: filename is null or empty string," + " using DefaultDataSet()";
-	    LOG.debug(msg);
-	} else {
-	    URL url = this.getClass().getResource(filename);
+        if (filename == null || "".equals(filename)) {
+            final String msg = "load: filename is null or empty string," + " using DefaultDataSet()";
+            LOG.debug(msg);
+        } else {
+            URL url = this.getClass().getResource(filename);
 
-	    if (url == null) {
-		final String msg = "Could not find file named=" + filename;
-		throw new DatabaseUnitRuntimeException(msg);
-	    }
+            if (url == null) {
+                final String msg = "Could not find file named=" + filename;
+                throw new DatabaseUnitRuntimeException(msg);
+            }
 
-	    try {
-		ds = loadDataSet(url);
-		ds = processReplacementTokens(ds);
-	    } catch (DataSetException e) {
-		final String msg = "DataSetException occurred loading data set file name='" + filename + "', msg='"
-			+ e.getLocalizedMessage() + "'";
-		throw new DatabaseUnitRuntimeException(msg, e);
-	    } catch (IOException e) {
-		final String msg = "IOException occurred loading data set file name='" + filename + '\'' + ", msg='"
-			+ e.getLocalizedMessage() + "'";
-		throw new DatabaseUnitRuntimeException(msg, e);
-	    }
-	}
+            try {
+                ds = loadDataSet(url);
+                ds = processReplacementTokens(ds);
+            } catch (DataSetException e) {
+                final String msg = "DataSetException occurred loading data set file name='" + filename + "', msg='"
+                        + e.getLocalizedMessage() + "'";
+                throw new DatabaseUnitRuntimeException(msg, e);
+            } catch (IOException e) {
+                final String msg = "IOException occurred loading data set file name='" + filename + '\'' + ", msg='"
+                        + e.getLocalizedMessage() + "'";
+                throw new DatabaseUnitRuntimeException(msg, e);
+            }
+        }
 
-	return ds;
+        return ds;
     }
 
     /**
@@ -130,36 +130,36 @@ public abstract class AbstractDataFileLoader implements DataFileLoader {
      * @since 2.4.8
      */
     protected ReplacementDataSet processReplacementTokens(IDataSet ds) {
-	ReplacementDataSet rds = new ReplacementDataSet(ds, replacementObjects, replacementSubstrings);
+        ReplacementDataSet rds = new ReplacementDataSet(ds, replacementObjects, replacementSubstrings);
 
-	return rds;
+        return rds;
     }
 
     /**
      * {@inheritDoc}
      */
     public void addReplacementObjects(Map ro) {
-	this.replacementObjects.putAll(ro);
+        this.replacementObjects.putAll(ro);
     }
 
     /**
      * {@inheritDoc}
      */
     public void addReplacementSubstrings(Map rs) {
-	this.replacementSubstrings.putAll(rs);
+        this.replacementSubstrings.putAll(rs);
     }
 
     /**
      * {@inheritDoc}
      */
     public void removeAllReplacementObjects() {
-	this.replacementObjects.clear();
+        this.replacementObjects.clear();
     }
 
     /**
      * {@inheritDoc}
      */
     public void removeAllReplacementSubstrings() {
-	this.replacementSubstrings.clear();
+        this.replacementSubstrings.clear();
     }
 }

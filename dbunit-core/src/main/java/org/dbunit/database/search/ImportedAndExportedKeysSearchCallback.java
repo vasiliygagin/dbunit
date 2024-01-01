@@ -46,12 +46,12 @@ public class ImportedAndExportedKeysSearchCallback extends AbstractMetaDataBased
     private static final Logger logger = LoggerFactory.getLogger(ImportedAndExportedKeysSearchCallback.class);
 
     public ImportedAndExportedKeysSearchCallback(IDatabaseConnection connection) {
-	super(connection);
+        super(connection);
     }
 
     public SortedSet getEdges(Object node) throws SearchException {
-	logger.debug("getEdges(node={}) - start", node);
-	return getNodesFromImportAndExportKeys(node);
+        logger.debug("getEdges(node={}) - start", node);
+        return getNodesFromImportAndExportKeys(node);
     }
 
 }

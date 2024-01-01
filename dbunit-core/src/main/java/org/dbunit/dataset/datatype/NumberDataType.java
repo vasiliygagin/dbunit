@@ -47,51 +47,51 @@ public class NumberDataType extends AbstractDataType {
     private static final Number FALSE = new BigDecimal((double) 0);
 
     NumberDataType(String name, int sqlType) {
-	super(name, sqlType, BigDecimal.class, true);
+        super(name, sqlType, BigDecimal.class, true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof BigDecimal) {
-	    return value;
-	}
+        if (value instanceof BigDecimal) {
+            return value;
+        }
 
-	if (value instanceof Boolean) {
-	    return ((Boolean) value).booleanValue() ? TRUE : FALSE;
-	}
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue() ? TRUE : FALSE;
+        }
 
-	try {
-	    return new BigDecimal(value.toString());
-	} catch (java.lang.NumberFormatException e) {
-	    throw new TypeCastException(value, this, e);
-	}
+        try {
+            return new BigDecimal(value.toString());
+        } catch (java.lang.NumberFormatException e) {
+            throw new TypeCastException(value, this, e);
+        }
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	BigDecimal value = resultSet.getBigDecimal(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return value;
+        BigDecimal value = resultSet.getBigDecimal(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return value;
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setBigDecimal(column, (BigDecimal) typeCast(value));
+        statement.setBigDecimal(column, (BigDecimal) typeCast(value));
     }
 }

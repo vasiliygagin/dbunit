@@ -34,34 +34,34 @@ import org.dbunit.testutil.TestUtils;
  */
 public class CaseInsensitiveDataSetTest extends AbstractDataSetTest {
     public CaseInsensitiveDataSetTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDataSet createDataSet() throws Exception {
-	return new CaseInsensitiveDataSet(
-		new XmlDataSet(TestUtils.getFileReader("xml/caseInsensitiveDataSetTest.xml")));
+        return new CaseInsensitiveDataSet(
+                new XmlDataSet(TestUtils.getFileReader("xml/caseInsensitiveDataSetTest.xml")));
     }
 
     protected IDataSet createDuplicateDataSet() throws Exception {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     protected void assertEqualsTableName(String message, String expected, String actual) {
-	assertEqualsIgnoreCase(message, expected, actual);
+        assertEqualsIgnoreCase(message, expected, actual);
     }
 
     public void testCreateDuplicateDataSet() throws Exception {
-	// No op. This dataSet is only a wrapper for another dataSet which is why
-	// duplicates cannot occur.
+        // No op. This dataSet is only a wrapper for another dataSet which is why
+        // duplicates cannot occur.
     }
 
     public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
-	// No op. This dataSet is only a wrapper for another dataSet which is why
-	// duplicates cannot occur.
+        // No op. This dataSet is only a wrapper for another dataSet which is why
+        // duplicates cannot occur.
     }
 
 }

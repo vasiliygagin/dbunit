@@ -43,47 +43,47 @@ public class EscapeHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent ACCEPT() {
-	logger.debug("ACCEPT() - start");
-	return createPipelineComponent(new EscapeHandler(), new ACCEPT());
+        logger.debug("ACCEPT() - start");
+        return createPipelineComponent(new EscapeHandler(), new ACCEPT());
     }
 
     // @todo: make sense?
     public static final PipelineComponent IGNORE() {
-	logger.debug("IGNORE() - start");
-	return createPipelineComponent(new EscapeHandler(), new IGNORE());
+        logger.debug("IGNORE() - start");
+        return createPipelineComponent(new EscapeHandler(), new IGNORE());
     }
 
     public static final PipelineComponent ESCAPE() {
-	logger.debug("ESCAPE() - start");
-	return createPipelineComponent(new EscapeHandler(), new ESCAPE());
+        logger.debug("ESCAPE() - start");
+        return createPipelineComponent(new EscapeHandler(), new ESCAPE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	if (logger.isDebugEnabled())
-	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
+        if (logger.isDebugEnabled())
+            logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-	PipelineConfig pipelineConfig = this.getPipelineConfig();
-	if (c == pipelineConfig.getEscapeChar()) {
-	    return true;
-	}
-	return false;
+        PipelineConfig pipelineConfig = this.getPipelineConfig();
+        if (c == pipelineConfig.getEscapeChar()) {
+            return true;
+        }
+        return false;
     }
 
     static private class ESCAPE extends Helper {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(ESCAPE.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(ESCAPE.class);
 
-	public void helpWith(char c) {
-	    if (logger.isDebugEnabled())
-		logger.debug("helpWith(c={}) - start", String.valueOf(c));
+        public void helpWith(char c) {
+            if (logger.isDebugEnabled())
+                logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-	    getHandler().getPipeline().putFront(
-		    EnforceHandler.ENFORCE(new PipelineComponent[] { QuoteHandler.ACCEPT(), EscapeHandler.ACCEPT() }));
-	    // ignore the char
-	}
+            getHandler().getPipeline().putFront(
+                    EnforceHandler.ENFORCE(new PipelineComponent[] { QuoteHandler.ACCEPT(), EscapeHandler.ACCEPT() }));
+            // ignore the char
+        }
     }
 
 }

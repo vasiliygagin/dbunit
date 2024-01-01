@@ -30,12 +30,12 @@ import org.dbunit.testutil.TestUtils;
  */
 public class XlsxDataSetTest extends XlsDataSetTest {
     public XlsxDataSetTest(String s) {
-	super(s);
+        super(s);
     }
 
     @Override
     protected IDataSet createDataSet() throws Exception {
-	return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xlsx"));
+        return new XlsDataSet(TestUtils.getFile("xml/dataSetTest.xlsx"));
     }
 
 }

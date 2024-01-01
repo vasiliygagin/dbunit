@@ -30,6 +30,6 @@ import java.sql.Types;
  */
 public class BitDataType extends BooleanDataType {
     BitDataType() {
-	super("BIT", Types.BIT);
+        super("BIT", Types.BIT);
     }
 }

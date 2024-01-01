@@ -36,13 +36,13 @@ public class PersonService {
 
     @SuppressWarnings("unchecked")
     public List<Person> find(String name) {
-	Query query = this.entityManager.createNamedQuery("Person.find");
-	query.setParameter("name", "%" + name + "%");
-	return query.getResultList();
+        Query query = this.entityManager.createNamedQuery("Person.find");
+        query.setParameter("name", "%" + name + "%");
+        return query.getResultList();
     }
 
     public void remove(int personId) {
-	Person person = this.entityManager.find(Person.class, personId);
-	this.entityManager.remove(person);
+        Person person = this.entityManager.find(Person.class, personId);
+        this.entityManager.remove(person);
     }
 }

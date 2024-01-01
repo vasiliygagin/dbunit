@@ -36,44 +36,44 @@ import java.io.File;
  */
 public class FlatXmlTableTest extends AbstractTableTest {
     public FlatXmlTableTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected ITable createTable() throws Exception {
-	return createDataSet(true).getTable("TEST_TABLE");
+        return createDataSet(true).getTable("TEST_TABLE");
     }
 
     protected IDataSet createDataSet(boolean noneAsNull) throws Exception {
-	return new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/flatXmlTableTest.xml"));
+        return new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/flatXmlTableTest.xml"));
     }
 
     public void testGetMissingValue() throws Exception {
-	int row = 0;
-	Object[] expected = { "row 1 col 0", null, "row 1 col 2" };
+        int row = 0;
+        Object[] expected = { "row 1 col 0", null, "row 1 col 2" };
 
-	ITable table = createDataSet(false).getTable("MISSING_VALUES");
+        ITable table = createDataSet(false).getTable("MISSING_VALUES");
 
-	Column[] columns = table.getTableMetaData().getColumns();
-	assertEquals("column count", expected.length, columns.length);
-	assertEquals("row count", 1, table.getRowCount());
-	for (int i = 0; i < columns.length; i++) {
-	    assertEquals("value " + i, expected[i], table.getValue(row, columns[i].getColumnName()));
-	}
+        Column[] columns = table.getTableMetaData().getColumns();
+        assertEquals("column count", expected.length, columns.length);
+        assertEquals("row count", 1, table.getRowCount());
+        for (int i = 0; i < columns.length; i++) {
+            assertEquals("value " + i, expected[i], table.getValue(row, columns[i].getColumnName()));
+        }
     }
 
     public void testLoadCRLF() throws Exception {
-	int row = 0;
-	Object[] expected = { "row 0 \n col 0 \r" }; // in the expected result the &#xA; and &#xD; should be replaced by
-						     // \n and \r
+        int row = 0;
+        Object[] expected = { "row 0 \n col 0 \r" }; // in the expected result the &#xA; and &#xD; should be replaced by
+                                                     // \n and \r
 
-	ITable table = createDataSet(false).getTable("TABLE_VALUE_METACHARS");
+        ITable table = createDataSet(false).getTable("TABLE_VALUE_METACHARS");
 
-	Column[] columns = table.getTableMetaData().getColumns();
-	assertEquals("column count", expected.length, columns.length);
-	assertEquals("row count", 1, table.getRowCount());
-	for (int i = 0; i < columns.length; i++) {
-	    assertEquals("value " + i, expected[i], table.getValue(row, columns[i].getColumnName()));
-	}
+        Column[] columns = table.getTableMetaData().getColumns();
+        assertEquals("column count", expected.length, columns.length);
+        assertEquals("row count", 1, table.getRowCount());
+        for (int i = 0; i < columns.length; i++) {
+            assertEquals("value " + i, expected[i], table.getValue(row, columns[i].getColumnName()));
+        }
     }
 
 //    public void testGetValueAndNoSuchColumn() throws Exception

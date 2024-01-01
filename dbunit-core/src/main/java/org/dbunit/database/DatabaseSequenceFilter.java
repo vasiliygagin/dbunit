@@ -60,15 +60,15 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
      * Create a DatabaseSequenceFilter that only exposes specified table names.
      */
     public DatabaseSequenceFilter(IDatabaseConnection connection, String[] tableNames)
-	    throws DataSetException, SQLException {
-	super(sortTableNames(connection, tableNames));
+            throws DataSetException, SQLException {
+        super(sortTableNames(connection, tableNames));
     }
 
     /**
      * Create a DatabaseSequenceFilter that exposes all the database tables.
      */
     public DatabaseSequenceFilter(IDatabaseConnection connection) throws DataSetException, SQLException {
-	this(connection, connection.createDataSet().getTableNames());
+        this(connection, connection.createDataSet().getTableNames());
     }
 
     /**
@@ -82,83 +82,83 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
      *                          database.
      */
     static String[] sortTableNames(IDatabaseConnection connection, String[] tableNames)
-	    throws DataSetException, SQLException
+            throws DataSetException, SQLException
     // not sure why this throws DataSetException ? - ENP
     {
-	logger.debug("sortTableNames(connection={}, tableNames={}) - start", connection, tableNames);
+        logger.debug("sortTableNames(connection={}, tableNames={}) - start", connection, tableNames);
 
-	// Get dependencies for each table
-	Map dependencies = new HashMap();
-	try {
-	    for (int i = 0; i < tableNames.length; i++) {
-		String tableName = tableNames[i];
-		DependencyInfo info = getDependencyInfo(connection, tableName);
-		dependencies.put(tableName, info);
-	    }
-	} catch (SearchException e) {
-	    throw new DataSetException("Exception while searching the dependent tables.", e);
-	}
+        // Get dependencies for each table
+        Map dependencies = new HashMap();
+        try {
+            for (int i = 0; i < tableNames.length; i++) {
+                String tableName = tableNames[i];
+                DependencyInfo info = getDependencyInfo(connection, tableName);
+                dependencies.put(tableName, info);
+            }
+        } catch (SearchException e) {
+            throw new DataSetException("Exception while searching the dependent tables.", e);
+        }
 
-	// Check whether the table dependency info contains cycles
-	for (Iterator iterator = dependencies.values().iterator(); iterator.hasNext();) {
-	    DependencyInfo info = (DependencyInfo) iterator.next();
-	    info.checkCycles();
-	}
+        // Check whether the table dependency info contains cycles
+        for (Iterator iterator = dependencies.values().iterator(); iterator.hasNext();) {
+            DependencyInfo info = (DependencyInfo) iterator.next();
+            info.checkCycles();
+        }
 
-	return sort(tableNames, dependencies);
+        return sort(tableNames, dependencies);
     }
 
     private static String[] sort(String[] tableNames, Map dependencies) {
-	logger.debug("sort(tableNames={}, dependencies={}) - start", tableNames, dependencies);
+        logger.debug("sort(tableNames={}, dependencies={}) - start", tableNames, dependencies);
 
-	boolean reprocess = true;
-	List tmpTableNames = Arrays.asList(tableNames);
-	List sortedTableNames = null;
+        boolean reprocess = true;
+        List tmpTableNames = Arrays.asList(tableNames);
+        List sortedTableNames = null;
 
-	while (reprocess) {
-	    sortedTableNames = new LinkedList();
+        while (reprocess) {
+            sortedTableNames = new LinkedList();
 
-	    // re-order 'tmpTableNames' into 'sortedTableNames'
-	    for (Iterator i = tmpTableNames.iterator(); i.hasNext();) {
-		boolean foundDependentInSortedTableNames = false;
-		String tmpTable = (String) i.next();
-		DependencyInfo tmpTableDependents = (DependencyInfo) dependencies.get(tmpTable);
+            // re-order 'tmpTableNames' into 'sortedTableNames'
+            for (Iterator i = tmpTableNames.iterator(); i.hasNext();) {
+                boolean foundDependentInSortedTableNames = false;
+                String tmpTable = (String) i.next();
+                DependencyInfo tmpTableDependents = (DependencyInfo) dependencies.get(tmpTable);
 
-		int sortedTableIndex = -1;
-		for (Iterator k = sortedTableNames.iterator(); k.hasNext();) {
-		    String sortedTable = (String) k.next();
-		    if (tmpTableDependents.containsDirectDependsOn(sortedTable)) {
-			sortedTableIndex = sortedTableNames.indexOf(sortedTable);
-			foundDependentInSortedTableNames = true;
-			break; // end for loop; we know the index
-		    }
-		}
+                int sortedTableIndex = -1;
+                for (Iterator k = sortedTableNames.iterator(); k.hasNext();) {
+                    String sortedTable = (String) k.next();
+                    if (tmpTableDependents.containsDirectDependsOn(sortedTable)) {
+                        sortedTableIndex = sortedTableNames.indexOf(sortedTable);
+                        foundDependentInSortedTableNames = true;
+                        break; // end for loop; we know the index
+                    }
+                }
 
-		// add 'tmpTable' to 'sortedTableNames'.
-		// Insert it before its first dependent if there are any,
-		// otherwise append it to the end of 'sortedTableNames'
-		if (foundDependentInSortedTableNames) {
-		    if (sortedTableIndex < 0) {
-			throw new IllegalStateException(
-				"sortedTableIndex should be 0 or greater, but is " + sortedTableIndex);
-		    }
-		    sortedTableNames.add(sortedTableIndex, tmpTable);
-		} else {
-		    sortedTableNames.add(tmpTable);
-		}
-	    }
+                // add 'tmpTable' to 'sortedTableNames'.
+                // Insert it before its first dependent if there are any,
+                // otherwise append it to the end of 'sortedTableNames'
+                if (foundDependentInSortedTableNames) {
+                    if (sortedTableIndex < 0) {
+                        throw new IllegalStateException(
+                                "sortedTableIndex should be 0 or greater, but is " + sortedTableIndex);
+                    }
+                    sortedTableNames.add(sortedTableIndex, tmpTable);
+                } else {
+                    sortedTableNames.add(tmpTable);
+                }
+            }
 
-	    // don't stop processing until we have a perfect run (no re-ordering)
-	    if (tmpTableNames.equals(sortedTableNames)) {
-		reprocess = false;
-	    } else {
+            // don't stop processing until we have a perfect run (no re-ordering)
+            if (tmpTableNames.equals(sortedTableNames)) {
+                reprocess = false;
+            } else {
 
-		tmpTableNames = null;
-		tmpTableNames = (List) ((LinkedList) sortedTableNames).clone();
-	    }
-	} // end 'while (reprocess)'
+                tmpTableNames = null;
+                tmpTableNames = (List) ((LinkedList) sortedTableNames).clone();
+            }
+        } // end 'while (reprocess)'
 
-	return (String[]) sortedTableNames.toArray(new String[0]);
+        return (String[]) sortedTableNames.toArray(new String[0]);
     }
 
     /**
@@ -170,29 +170,29 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
      * @throws SearchException
      */
     private static DependencyInfo getDependencyInfo(IDatabaseConnection connection, String tableName)
-	    throws SearchException {
-	logger.debug("getDependencyInfo(connection={}, tableName={}) - start", connection, tableName);
+            throws SearchException {
+        logger.debug("getDependencyInfo(connection={}, tableName={}) - start", connection, tableName);
 
-	// The tables dependency helpers makes a depth search for dependencies and
-	// returns the whole
-	// tree of dependent objects, not only the direct FK-PK related tables.
-	String[] allDependentTables = TablesDependencyHelper.getDependentTables(connection, tableName);
-	String[] allDependsOnTables = TablesDependencyHelper.getDependsOnTables(connection, tableName);
-	Set allDependentTablesSet = new HashSet(Arrays.asList(allDependentTables));
-	Set allDependsOnTablesSet = new HashSet(Arrays.asList(allDependsOnTables));
-	// Remove the table itself which is automatically included by the
-	// TablesDependencyHelper
-	allDependentTablesSet.remove(tableName);
-	allDependsOnTablesSet.remove(tableName);
+        // The tables dependency helpers makes a depth search for dependencies and
+        // returns the whole
+        // tree of dependent objects, not only the direct FK-PK related tables.
+        String[] allDependentTables = TablesDependencyHelper.getDependentTables(connection, tableName);
+        String[] allDependsOnTables = TablesDependencyHelper.getDependsOnTables(connection, tableName);
+        Set allDependentTablesSet = new HashSet(Arrays.asList(allDependentTables));
+        Set allDependsOnTablesSet = new HashSet(Arrays.asList(allDependsOnTables));
+        // Remove the table itself which is automatically included by the
+        // TablesDependencyHelper
+        allDependentTablesSet.remove(tableName);
+        allDependsOnTablesSet.remove(tableName);
 
-	Set directDependsOnTablesSet = TablesDependencyHelper.getDirectDependsOnTables(connection, tableName);
-	Set directDependentTablesSet = TablesDependencyHelper.getDirectDependentTables(connection, tableName);
-	directDependsOnTablesSet.remove(tableName);
-	directDependentTablesSet.remove(tableName);
+        Set directDependsOnTablesSet = TablesDependencyHelper.getDirectDependsOnTables(connection, tableName);
+        Set directDependentTablesSet = TablesDependencyHelper.getDirectDependentTables(connection, tableName);
+        directDependsOnTablesSet.remove(tableName);
+        directDependentTablesSet.remove(tableName);
 
-	DependencyInfo info = new DependencyInfo(tableName, directDependsOnTablesSet, directDependentTablesSet,
-		allDependsOnTablesSet, allDependentTablesSet);
-	return info;
+        DependencyInfo info = new DependencyInfo(tableName, directDependsOnTablesSet, directDependentTablesSet,
+                allDependsOnTablesSet, allDependentTablesSet);
+        return info;
     }
 
     /**
@@ -204,92 +204,92 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
      * @since 2.4.0
      */
     static class DependencyInfo {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseSequenceFilter.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(DatabaseSequenceFilter.class);
 
-	private String tableName;
+        private String tableName;
 
-	private Set allTableDependsOn;
-	private Set allTableDependent;
+        private Set allTableDependsOn;
+        private Set allTableDependent;
 
-	private Set directDependsOnTablesSet;
-	private Set directDependentTablesSet;
+        private Set directDependsOnTablesSet;
+        private Set directDependentTablesSet;
 
-	/**
-	 * @param tableName
-	 * @param allTableDependsOn Tables that are required as prerequisite so that
-	 *                          this one can exist
-	 * @param allTableDependent Tables that need this one in order to be able to
-	 *                          exist
-	 */
-	public DependencyInfo(String tableName, Set directDependsOnTablesSet, Set directDependentTablesSet,
-		Set allTableDependsOn, Set allTableDependent) {
-	    super();
-	    this.directDependsOnTablesSet = directDependsOnTablesSet;
-	    this.directDependentTablesSet = directDependentTablesSet;
-	    this.allTableDependsOn = allTableDependsOn;
-	    this.allTableDependent = allTableDependent;
-	    this.tableName = tableName;
-	}
+        /**
+         * @param tableName
+         * @param allTableDependsOn Tables that are required as prerequisite so that
+         *                          this one can exist
+         * @param allTableDependent Tables that need this one in order to be able to
+         *                          exist
+         */
+        public DependencyInfo(String tableName, Set directDependsOnTablesSet, Set directDependentTablesSet,
+                Set allTableDependsOn, Set allTableDependent) {
+            super();
+            this.directDependsOnTablesSet = directDependsOnTablesSet;
+            this.directDependentTablesSet = directDependentTablesSet;
+            this.allTableDependsOn = allTableDependsOn;
+            this.allTableDependent = allTableDependent;
+            this.tableName = tableName;
+        }
 
-	public boolean containsDirectDependent(String tableName) {
-	    return this.directDependentTablesSet.contains(tableName);
-	}
+        public boolean containsDirectDependent(String tableName) {
+            return this.directDependentTablesSet.contains(tableName);
+        }
 
-	public boolean containsDirectDependsOn(String tableName) {
-	    return this.directDependsOnTablesSet.contains(tableName);
-	}
+        public boolean containsDirectDependsOn(String tableName) {
+            return this.directDependsOnTablesSet.contains(tableName);
+        }
 
-	public String getTableName() {
-	    return tableName;
-	}
+        public String getTableName() {
+            return tableName;
+        }
 
-	public Set getAllTableDependsOn() {
-	    return allTableDependsOn;
-	}
+        public Set getAllTableDependsOn() {
+            return allTableDependsOn;
+        }
 
-	public Set getAllTableDependent() {
-	    return allTableDependent;
-	}
+        public Set getAllTableDependent() {
+            return allTableDependent;
+        }
 
-	public Set getDirectDependsOnTablesSet() {
-	    return directDependsOnTablesSet;
-	}
+        public Set getDirectDependsOnTablesSet() {
+            return directDependsOnTablesSet;
+        }
 
-	public Set getDirectDependentTablesSet() {
-	    return directDependentTablesSet;
-	}
+        public Set getDirectDependentTablesSet() {
+            return directDependentTablesSet;
+        }
 
-	/**
-	 * Checks this table's information for cycles by intersecting the two sets. When
-	 * the result set has at least one element we do have cycles.
-	 * 
-	 * @throws CyclicTablesDependencyException
-	 */
-	public void checkCycles() throws CyclicTablesDependencyException {
-	    logger.debug("checkCycles() - start");
+        /**
+         * Checks this table's information for cycles by intersecting the two sets. When
+         * the result set has at least one element we do have cycles.
+         * 
+         * @throws CyclicTablesDependencyException
+         */
+        public void checkCycles() throws CyclicTablesDependencyException {
+            logger.debug("checkCycles() - start");
 
-	    // Intersect the "tableDependsOn" and "otherTablesDependOn" to check for cycles
-	    Set intersect = new HashSet(this.allTableDependsOn);
-	    intersect.retainAll(this.allTableDependent);
-	    if (!intersect.isEmpty()) {
-		throw new CyclicTablesDependencyException(tableName, intersect);
-	    }
-	}
+            // Intersect the "tableDependsOn" and "otherTablesDependOn" to check for cycles
+            Set intersect = new HashSet(this.allTableDependsOn);
+            intersect.retainAll(this.allTableDependent);
+            if (!intersect.isEmpty()) {
+                throw new CyclicTablesDependencyException(tableName, intersect);
+            }
+        }
 
-	public String toString() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("DependencyInfo[");
-	    sb.append("table=").append(tableName);
-	    sb.append(", directDependsOn=").append(directDependsOnTablesSet);
-	    sb.append(", directDependent=").append(directDependentTablesSet);
-	    sb.append(", allDependsOn=").append(allTableDependsOn);
-	    sb.append(", allDependent=").append(allTableDependent);
-	    sb.append("]");
-	    return sb.toString();
-	}
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append("DependencyInfo[");
+            sb.append("table=").append(tableName);
+            sb.append(", directDependsOn=").append(directDependsOnTablesSet);
+            sb.append(", directDependent=").append(directDependentTablesSet);
+            sb.append(", allDependsOn=").append(allTableDependsOn);
+            sb.append(", allDependent=").append(allTableDependent);
+            sb.append("]");
+            return sb.toString();
+        }
 
     }
 }

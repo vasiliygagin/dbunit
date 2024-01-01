@@ -12,16 +12,16 @@ import java.util.Map;
 public class DefaultValueComparerDefaults implements ValueComparerDefaults {
     @Override
     public ValueComparer getDefaultValueComparer() {
-	return ValueComparers.isActualEqualToExpected;
+        return ValueComparers.isActualEqualToExpected;
     }
 
     @Override
     public Map<String, Map<String, ValueComparer>> getDefaultTableColumnValueComparerMap() {
-	return Collections.emptyMap();
+        return Collections.emptyMap();
     }
 
     @Override
     public Map<String, ValueComparer> getDefaultColumnValueComparerMapForTable(final String tableName) {
-	return Collections.emptyMap();
+        return Collections.emptyMap();
     }
 }

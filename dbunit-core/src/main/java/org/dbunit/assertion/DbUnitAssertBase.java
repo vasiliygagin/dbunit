@@ -36,7 +36,7 @@ public class DbUnitAssertBase {
      * @since 2.4
      */
     protected FailureHandler getDefaultFailureHandler() {
-	return getDefaultFailureHandler(null);
+        return getDefaultFailureHandler(null);
     }
 
     /**
@@ -44,11 +44,11 @@ public class DbUnitAssertBase {
      * @since 2.4
      */
     protected FailureHandler getDefaultFailureHandler(final Column[] additionalColumnInfo) {
-	final DefaultFailureHandler failureHandler = new DefaultFailureHandler(additionalColumnInfo);
-	if (junitFailureFactory != null) {
-	    failureHandler.setFailureFactory(junitFailureFactory);
-	}
-	return failureHandler;
+        final DefaultFailureHandler failureHandler = new DefaultFailureHandler(additionalColumnInfo);
+        if (junitFailureFactory != null) {
+            failureHandler.setFailureFactory(junitFailureFactory);
+        }
+        return failureHandler;
     }
 
     /**
@@ -56,15 +56,15 @@ public class DbUnitAssertBase {
      *         <code>null</code> if JUnit is not on the classpath.
      */
     private FailureFactory getJUnitFailureFactory() {
-	try {
-	    Class.forName("junit.framework.Assert");
-	    // JUnit available
-	    return new JUnitFailureFactory();
-	} catch (final ClassNotFoundException e) {
-	    // JUnit not available on the classpath return null
-	    log.debug("JUnit does not seem to be on the classpath. " + e);
-	}
-	return null;
+        try {
+            Class.forName("junit.framework.Assert");
+            // JUnit available
+            return new JUnitFailureFactory();
+        } catch (final ClassNotFoundException e) {
+            // JUnit not available on the classpath return null
+            log.debug("JUnit does not seem to be on the classpath. " + e);
+        }
+        return null;
     }
 
     /**
@@ -78,15 +78,15 @@ public class DbUnitAssertBase {
      * @since 2.4
      */
     protected ComparisonColumn[] getComparisonColumns(final String expectedTableName, final Column[] expectedColumns,
-	    final Column[] actualColumns, final FailureHandler failureHandler) {
-	final ComparisonColumn[] result = new ComparisonColumn[expectedColumns.length];
+            final Column[] actualColumns, final FailureHandler failureHandler) {
+        final ComparisonColumn[] result = new ComparisonColumn[expectedColumns.length];
 
-	for (int j = 0; j < expectedColumns.length; j++) {
-	    final Column expectedColumn = expectedColumns[j];
-	    final Column actualColumn = actualColumns[j];
-	    result[j] = new ComparisonColumn(expectedTableName, expectedColumn, actualColumn, failureHandler);
-	}
-	return result;
+        for (int j = 0; j < expectedColumns.length; j++) {
+            final Column expectedColumn = expectedColumns[j];
+            final Column actualColumn = actualColumns[j];
+            result[j] = new ComparisonColumn(expectedTableName, expectedColumn, actualColumn, failureHandler);
+        }
+        return result;
     }
 
     /**
@@ -101,102 +101,102 @@ public class DbUnitAssertBase {
      * @since 2.4
      */
     protected boolean skipCompare(final String columnName, final Object expectedValue, final Object actualValue) {
-	return false;
+        return false;
     }
 
     protected FailureHandler determineFailureHandler(final FailureHandler failureHandler) {
-	final FailureHandler validFailureHandler;
+        final FailureHandler validFailureHandler;
 
-	if (failureHandler == null) {
-	    log.debug("FailureHandler is null. Using default implementation");
-	    validFailureHandler = getDefaultFailureHandler();
-	} else {
-	    validFailureHandler = failureHandler;
-	}
+        if (failureHandler == null) {
+            log.debug("FailureHandler is null. Using default implementation");
+            validFailureHandler = getDefaultFailureHandler();
+        } else {
+            validFailureHandler = failureHandler;
+        }
 
-	return validFailureHandler;
+        return validFailureHandler;
     }
 
     protected boolean compareRowCounts(final ITable expectedTable, final ITable actualTable,
-	    final FailureHandler failureHandler, final String expectedTableName) throws Error {
-	boolean isTablesEmpty;
+            final FailureHandler failureHandler, final String expectedTableName) throws Error {
+        boolean isTablesEmpty;
 
-	final int expectedRowsCount = expectedTable.getRowCount();
-	int actualRowsCount = 0;
-	boolean skipRowComparison = false;
-	try {
-	    actualRowsCount = actualTable.getRowCount();
-	} catch (final UnsupportedOperationException exception) {
-	    skipRowComparison = true;
-	}
+        final int expectedRowsCount = expectedTable.getRowCount();
+        int actualRowsCount = 0;
+        boolean skipRowComparison = false;
+        try {
+            actualRowsCount = actualTable.getRowCount();
+        } catch (final UnsupportedOperationException exception) {
+            skipRowComparison = true;
+        }
 
-	if (skipRowComparison) {
-	    isTablesEmpty = false;
-	} else {
-	    if (expectedRowsCount != actualRowsCount) {
-		final String msg = "row count (table=" + expectedTableName + ")";
-		final Error error = failureHandler.createFailure(msg, String.valueOf(expectedRowsCount),
-			String.valueOf(actualRowsCount));
-		log.error(error.toString());
-		throw error;
-	    }
+        if (skipRowComparison) {
+            isTablesEmpty = false;
+        } else {
+            if (expectedRowsCount != actualRowsCount) {
+                final String msg = "row count (table=" + expectedTableName + ")";
+                final Error error = failureHandler.createFailure(msg, String.valueOf(expectedRowsCount),
+                        String.valueOf(actualRowsCount));
+                log.error(error.toString());
+                throw error;
+            }
 
-	    // if both tables are empty, it is not necessary to compare columns,
-	    // as such comparison can fail if column metadata is different
-	    // (which could occurs when comparing empty tables)
-	    if (expectedRowsCount == 0 && actualRowsCount == 0) {
-		log.debug("Tables are empty, hence equals.");
-		isTablesEmpty = true;
-	    } else {
-		isTablesEmpty = false;
-	    }
-	}
+            // if both tables are empty, it is not necessary to compare columns,
+            // as such comparison can fail if column metadata is different
+            // (which could occurs when comparing empty tables)
+            if (expectedRowsCount == 0 && actualRowsCount == 0) {
+                log.debug("Tables are empty, hence equals.");
+                isTablesEmpty = true;
+            } else {
+                isTablesEmpty = false;
+            }
+        }
 
-	return isTablesEmpty;
+        return isTablesEmpty;
     }
 
     protected void compareColumns(final Column[] expectedColumns, final Column[] actualColumns,
-	    final ITableMetaData expectedMetaData, final ITableMetaData actualMetaData,
-	    final FailureHandler failureHandler) throws DataSetException, Error {
-	final Columns.ColumnDiff columnDiff = Columns.getColumnDiff(expectedMetaData, actualMetaData);
-	if (columnDiff.hasDifference()) {
-	    final String message = columnDiff.getMessage();
-	    final Error error = failureHandler.createFailure(message, Columns.getColumnNamesAsString(expectedColumns),
-		    Columns.getColumnNamesAsString(actualColumns));
-	    log.error(error.toString());
-	    throw error;
-	}
+            final ITableMetaData expectedMetaData, final ITableMetaData actualMetaData,
+            final FailureHandler failureHandler) throws DataSetException, Error {
+        final Columns.ColumnDiff columnDiff = Columns.getColumnDiff(expectedMetaData, actualMetaData);
+        if (columnDiff.hasDifference()) {
+            final String message = columnDiff.getMessage();
+            final Error error = failureHandler.createFailure(message, Columns.getColumnNamesAsString(expectedColumns),
+                    Columns.getColumnNamesAsString(actualColumns));
+            log.error(error.toString());
+            throw error;
+        }
     }
 
     protected void compareTableCounts(final String[] expectedNames, final String[] actualNames,
-	    final FailureHandler failureHandler) throws Error {
-	if (expectedNames.length != actualNames.length) {
-	    throw failureHandler.createFailure("table count", String.valueOf(expectedNames.length),
-		    String.valueOf(actualNames.length));
-	}
+            final FailureHandler failureHandler) throws Error {
+        if (expectedNames.length != actualNames.length) {
+            throw failureHandler.createFailure("table count", String.valueOf(expectedNames.length),
+                    String.valueOf(actualNames.length));
+        }
     }
 
     protected void compareTableNames(final String[] expectedNames, final String[] actualNames,
-	    final FailureHandler failureHandler) throws Error {
-	for (int i = 0; i < expectedNames.length; i++) {
-	    if (!actualNames[i].equals(expectedNames[i])) {
-		throw failureHandler.createFailure("tables", Arrays.asList(expectedNames).toString(),
-			Arrays.asList(actualNames).toString());
-	    }
-	}
+            final FailureHandler failureHandler) throws Error {
+        for (int i = 0; i < expectedNames.length; i++) {
+            if (!actualNames[i].equals(expectedNames[i])) {
+                throw failureHandler.createFailure("tables", Arrays.asList(expectedNames).toString(),
+                        Arrays.asList(actualNames).toString());
+            }
+        }
     }
 
     protected String[] getSortedTableNames(final IDataSet dataSet) throws DataSetException {
-	log.debug("getSortedTableNames(dataSet={}) - start", dataSet);
+        log.debug("getSortedTableNames(dataSet={}) - start", dataSet);
 
-	final String[] names = dataSet.getTableNames();
-	if (!dataSet.isCaseSensitiveTableNames()) {
-	    for (int i = 0; i < names.length; i++) {
-		names[i] = names[i].toUpperCase();
-	    }
-	}
-	Arrays.sort(names);
-	return names;
+        final String[] names = dataSet.getTableNames();
+        if (!dataSet.isCaseSensitiveTableNames()) {
+            for (int i = 0; i < names.length; i++) {
+                names[i] = names[i].toUpperCase();
+            }
+        }
+        Arrays.sort(names);
+        return names;
     }
 
     /**
@@ -235,49 +235,49 @@ public class DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-	    final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
-	log.debug(
-		"assertWithValueComparer(expectedDataSet={}, actualDataSet={},"
-			+ " failureHandler={}, defaultValueComparer={}," + " tableColumnValueComparers={}) - start",
-		expectedDataSet, actualDataSet, failureHandler, defaultValueComparer, tableColumnValueComparers);
+            final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
+            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
+        log.debug(
+                "assertWithValueComparer(expectedDataSet={}, actualDataSet={},"
+                        + " failureHandler={}, defaultValueComparer={}," + " tableColumnValueComparers={}) - start",
+                expectedDataSet, actualDataSet, failureHandler, defaultValueComparer, tableColumnValueComparers);
 
-	// do not continue if same instance
-	if (expectedDataSet == actualDataSet) {
-	    log.debug("The given datasets reference the same object." + " Skipping comparisons.");
-	    return;
-	}
+        // do not continue if same instance
+        if (expectedDataSet == actualDataSet) {
+            log.debug("The given datasets reference the same object." + " Skipping comparisons.");
+            return;
+        }
 
-	final FailureHandler validFailureHandler = determineFailureHandler(failureHandler);
+        final FailureHandler validFailureHandler = determineFailureHandler(failureHandler);
 
-	final String[] expectedNames = getSortedTableNames(expectedDataSet);
-	final String[] actualNames = getSortedTableNames(actualDataSet);
+        final String[] expectedNames = getSortedTableNames(expectedDataSet);
+        final String[] actualNames = getSortedTableNames(actualDataSet);
 
-	compareTableCounts(expectedNames, actualNames, validFailureHandler);
+        compareTableCounts(expectedNames, actualNames, validFailureHandler);
 
-	// table names in no specific order
-	compareTableNames(expectedNames, actualNames, validFailureHandler);
+        // table names in no specific order
+        compareTableNames(expectedNames, actualNames, validFailureHandler);
 
-	compareTables(expectedDataSet, actualDataSet, expectedNames, validFailureHandler, defaultValueComparer,
-		tableColumnValueComparers);
+        compareTables(expectedDataSet, actualDataSet, expectedNames, validFailureHandler, defaultValueComparer,
+                tableColumnValueComparers);
     }
 
     protected void compareTables(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final String[] expectedNames, final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-	    final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
-	final Map<String, Map<String, ValueComparer>> validTableColumnValueComparers = determineValidTableColumnValueComparers(
-		tableColumnValueComparers);
+            final String[] expectedNames, final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
+            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
+        final Map<String, Map<String, ValueComparer>> validTableColumnValueComparers = determineValidTableColumnValueComparers(
+                tableColumnValueComparers);
 
-	for (int i = 0; i < expectedNames.length; i++) {
-	    final String tableName = expectedNames[i];
+        for (int i = 0; i < expectedNames.length; i++) {
+            final String tableName = expectedNames[i];
 
-	    final ITable expectedTable = expectedDataSet.getTable(tableName);
-	    final ITable actualTable = actualDataSet.getTable(tableName);
-	    final Map<String, ValueComparer> columnValueComparers = validTableColumnValueComparers.get(tableName);
+            final ITable expectedTable = expectedDataSet.getTable(tableName);
+            final ITable actualTable = actualDataSet.getTable(tableName);
+            final Map<String, ValueComparer> columnValueComparers = validTableColumnValueComparers.get(tableName);
 
-	    assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer,
-		    columnValueComparers);
-	}
+            assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer,
+                    columnValueComparers);
+        }
     }
 
     /**
@@ -311,48 +311,48 @@ public class DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
-	    final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-	    final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
-	log.trace("assertWithValueComparer(expectedTable, actualTable," + " failureHandler, defaultValueComparer,"
-		+ " columnValueComparers) - start");
-	log.debug("assertWithValueComparer: expectedTable={}", expectedTable);
-	log.debug("assertWithValueComparer: actualTable={}", actualTable);
-	log.debug("assertWithValueComparer: failureHandler={}", failureHandler);
-	log.debug("assertWithValueComparer: defaultValueComparer={}", defaultValueComparer);
-	log.debug("assertWithValueComparer: columnValueComparers={}", columnValueComparers);
+            final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
+            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
+        log.trace("assertWithValueComparer(expectedTable, actualTable," + " failureHandler, defaultValueComparer,"
+                + " columnValueComparers) - start");
+        log.debug("assertWithValueComparer: expectedTable={}", expectedTable);
+        log.debug("assertWithValueComparer: actualTable={}", actualTable);
+        log.debug("assertWithValueComparer: failureHandler={}", failureHandler);
+        log.debug("assertWithValueComparer: defaultValueComparer={}", defaultValueComparer);
+        log.debug("assertWithValueComparer: columnValueComparers={}", columnValueComparers);
 
-	// Do not continue if same instance
-	if (expectedTable == actualTable) {
-	    log.debug("The given tables reference the same object." + " Skipping comparisons.");
-	    return;
-	}
+        // Do not continue if same instance
+        if (expectedTable == actualTable) {
+            log.debug("The given tables reference the same object." + " Skipping comparisons.");
+            return;
+        }
 
-	final FailureHandler validFailureHandler = determineFailureHandler(failureHandler);
+        final FailureHandler validFailureHandler = determineFailureHandler(failureHandler);
 
-	final ITableMetaData expectedMetaData = expectedTable.getTableMetaData();
-	final ITableMetaData actualMetaData = actualTable.getTableMetaData();
-	final String expectedTableName = expectedMetaData.getTableName();
+        final ITableMetaData expectedMetaData = expectedTable.getTableMetaData();
+        final ITableMetaData actualMetaData = actualTable.getTableMetaData();
+        final String expectedTableName = expectedMetaData.getTableName();
 
-	final boolean isTablesEmpty = compareRowCounts(expectedTable, actualTable, validFailureHandler,
-		expectedTableName);
-	if (isTablesEmpty) {
-	    return;
-	}
+        final boolean isTablesEmpty = compareRowCounts(expectedTable, actualTable, validFailureHandler,
+                expectedTableName);
+        if (isTablesEmpty) {
+            return;
+        }
 
-	// Put the columns into the same order
-	final Column[] expectedColumns = Columns.getSortedColumns(expectedMetaData);
-	final Column[] actualColumns = Columns.getSortedColumns(actualMetaData);
+        // Put the columns into the same order
+        final Column[] expectedColumns = Columns.getSortedColumns(expectedMetaData);
+        final Column[] actualColumns = Columns.getSortedColumns(actualMetaData);
 
-	// Verify columns
-	compareColumns(expectedColumns, actualColumns, expectedMetaData, actualMetaData, validFailureHandler);
+        // Verify columns
+        compareColumns(expectedColumns, actualColumns, expectedMetaData, actualMetaData, validFailureHandler);
 
-	// Get the datatypes to be used for comparing the sorted columns
-	final ComparisonColumn[] comparisonCols = getComparisonColumns(expectedTableName, expectedColumns,
-		actualColumns, validFailureHandler);
+        // Get the datatypes to be used for comparing the sorted columns
+        final ComparisonColumn[] comparisonCols = getComparisonColumns(expectedTableName, expectedColumns,
+                actualColumns, validFailureHandler);
 
-	// Finally compare the data
-	compareData(expectedTable, actualTable, comparisonCols, validFailureHandler, defaultValueComparer,
-		columnValueComparers);
+        // Finally compare the data
+        compareData(expectedTable, actualTable, comparisonCols, validFailureHandler, defaultValueComparer,
+                columnValueComparers);
     }
 
     /**
@@ -370,16 +370,16 @@ public class DbUnitAssertBase {
      * @since 2.4
      */
     protected void compareData(final ITable expectedTable, final ITable actualTable,
-	    final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler) throws DataSetException {
-	final ValueComparer defaultValueComparer = null;
-	final Map<String, ValueComparer> columnValueComparers = null;
-	try {
-	    compareData(expectedTable, actualTable, comparisonCols, failureHandler, defaultValueComparer,
-		    columnValueComparers);
-	} catch (final DatabaseUnitException e) {
-	    // not-private method, signature change breaks compatability
-	    throw new DataSetException(e);
-	}
+            final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler) throws DataSetException {
+        final ValueComparer defaultValueComparer = null;
+        final Map<String, ValueComparer> columnValueComparers = null;
+        try {
+            compareData(expectedTable, actualTable, comparisonCols, failureHandler, defaultValueComparer,
+                    columnValueComparers);
+        } catch (final DatabaseUnitException e) {
+            // not-private method, signature change breaks compatability
+            throw new DataSetException(e);
+        }
     }
 
     /**
@@ -412,143 +412,143 @@ public class DbUnitAssertBase {
      * @since 2.6.0
      */
     protected void compareData(final ITable expectedTable, final ITable actualTable,
-	    final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler,
-	    final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
-	    throws DatabaseUnitException {
-	log.debug(
-		"compareData(expectedTable={}, actualTable={}, " + "comparisonCols={}, failureHandler={},"
-			+ " defaultValueComparer={}, columnValueComparers={})" + " - start",
-		expectedTable, actualTable, comparisonCols, failureHandler, defaultValueComparer, columnValueComparers);
+            final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler,
+            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
+            throws DatabaseUnitException {
+        log.debug(
+                "compareData(expectedTable={}, actualTable={}, " + "comparisonCols={}, failureHandler={},"
+                        + " defaultValueComparer={}, columnValueComparers={})" + " - start",
+                expectedTable, actualTable, comparisonCols, failureHandler, defaultValueComparer, columnValueComparers);
 
-	if (expectedTable == null) {
-	    throw new IllegalArgumentException("The parameter 'expectedTable' is null");
-	}
-	if (actualTable == null) {
-	    throw new IllegalArgumentException("The parameter 'actualTable' is null");
-	}
-	if (comparisonCols == null) {
-	    throw new IllegalArgumentException("The parameter 'comparisonCols' is null");
-	}
-	if (failureHandler == null) {
-	    throw new IllegalArgumentException("The parameter 'failureHandler' is null");
-	}
+        if (expectedTable == null) {
+            throw new IllegalArgumentException("The parameter 'expectedTable' is null");
+        }
+        if (actualTable == null) {
+            throw new IllegalArgumentException("The parameter 'actualTable' is null");
+        }
+        if (comparisonCols == null) {
+            throw new IllegalArgumentException("The parameter 'comparisonCols' is null");
+        }
+        if (failureHandler == null) {
+            throw new IllegalArgumentException("The parameter 'failureHandler' is null");
+        }
 
-	final ValueComparer validDefaultValueComparer = determineValidDefaultValueComparer(defaultValueComparer);
-	final String expectedTableName = expectedTable.getTableMetaData().getTableName();
-	final Map<String, ValueComparer> validColumnValueComparers = determineValidColumnValueComparers(
-		columnValueComparers, expectedTableName);
+        final ValueComparer validDefaultValueComparer = determineValidDefaultValueComparer(defaultValueComparer);
+        final String expectedTableName = expectedTable.getTableMetaData().getTableName();
+        final Map<String, ValueComparer> validColumnValueComparers = determineValidColumnValueComparers(
+                columnValueComparers, expectedTableName);
 
-	// iterate over all rows
-	for (int rowNum = 0; rowNum < expectedTable.getRowCount(); rowNum++) {
-	    // iterate over all columns of the current row
-	    final int columnCount = comparisonCols.length;
-	    for (int columnNum = 0; columnNum < columnCount; columnNum++) {
-		compareData(expectedTable, actualTable, comparisonCols, failureHandler, validDefaultValueComparer,
-			validColumnValueComparers, rowNum, columnNum);
-	    }
-	}
+        // iterate over all rows
+        for (int rowNum = 0; rowNum < expectedTable.getRowCount(); rowNum++) {
+            // iterate over all columns of the current row
+            final int columnCount = comparisonCols.length;
+            for (int columnNum = 0; columnNum < columnCount; columnNum++) {
+                compareData(expectedTable, actualTable, comparisonCols, failureHandler, validDefaultValueComparer,
+                        validColumnValueComparers, rowNum, columnNum);
+            }
+        }
     }
 
     protected void compareData(final ITable expectedTable, final ITable actualTable,
-	    final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler,
-	    final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers,
-	    final int rowNum, final int columnNum) throws DatabaseUnitException {
-	final ComparisonColumn compareColumn = comparisonCols[columnNum];
+            final ComparisonColumn[] comparisonCols, final FailureHandler failureHandler,
+            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers,
+            final int rowNum, final int columnNum) throws DatabaseUnitException {
+        final ComparisonColumn compareColumn = comparisonCols[columnNum];
 
-	final String columnName = compareColumn.getColumnName();
-	final DataType dataType = compareColumn.getDataType();
+        final String columnName = compareColumn.getColumnName();
+        final DataType dataType = compareColumn.getDataType();
 
-	final Object expectedValue = expectedTable.getValue(rowNum, columnName);
-	final Object actualValue = actualTable.getValue(rowNum, columnName);
+        final Object expectedValue = expectedTable.getValue(rowNum, columnName);
+        final Object actualValue = actualTable.getValue(rowNum, columnName);
 
-	// Compare the values
-	if (skipCompare(columnName, expectedValue, actualValue)) {
-	    log.trace("skipCompare: ignoring comparison" + " {}={} on column={}", expectedValue, actualValue,
-		    columnName);
-	} else {
-	    final ValueComparer valueComparer = determineValueComparer(columnName, defaultValueComparer,
-		    columnValueComparers);
+        // Compare the values
+        if (skipCompare(columnName, expectedValue, actualValue)) {
+            log.trace("skipCompare: ignoring comparison" + " {}={} on column={}", expectedValue, actualValue,
+                    columnName);
+        } else {
+            final ValueComparer valueComparer = determineValueComparer(columnName, defaultValueComparer,
+                    columnValueComparers);
 
-	    log.debug("compareData: comparing actualValue={}" + " to expectedValue={} with valueComparer={}",
-		    actualValue, expectedValue, valueComparer);
-	    final String failMessage = valueComparer.compare(expectedTable, actualTable, rowNum, columnName, dataType,
-		    expectedValue, actualValue);
+            log.debug("compareData: comparing actualValue={}" + " to expectedValue={} with valueComparer={}",
+                    actualValue, expectedValue, valueComparer);
+            final String failMessage = valueComparer.compare(expectedTable, actualTable, rowNum, columnName, dataType,
+                    expectedValue, actualValue);
 
-	    failIfNecessary(expectedTable, actualTable, failureHandler, rowNum, columnName, expectedValue, actualValue,
-		    failMessage);
-	}
+            failIfNecessary(expectedTable, actualTable, failureHandler, rowNum, columnName, expectedValue, actualValue,
+                    failMessage);
+        }
     }
 
     protected void failIfNecessary(final ITable expectedTable, final ITable actualTable,
-	    final FailureHandler failureHandler, final int rowNum, final String columnName, final Object expectedValue,
-	    final Object actualValue, final String failMessage) {
-	if (failMessage != null) {
-	    final Difference diff = new Difference(expectedTable, actualTable, rowNum, columnName, expectedValue,
-		    actualValue, failMessage);
+            final FailureHandler failureHandler, final int rowNum, final String columnName, final Object expectedValue,
+            final Object actualValue, final String failMessage) {
+        if (failMessage != null) {
+            final Difference diff = new Difference(expectedTable, actualTable, rowNum, columnName, expectedValue,
+                    actualValue, failMessage);
 
-	    failureHandler.handle(diff);
-	}
+            failureHandler.handle(diff);
+        }
     }
 
     protected ValueComparer determineValueComparer(final String columnName, final ValueComparer defaultValueComparer,
-	    final Map<String, ValueComparer> columnValueComparers) {
-	ValueComparer valueComparer = columnValueComparers.get(columnName);
-	if (valueComparer == null) {
-	    log.debug("determineValueComparer: using defaultValueComparer='{}'" + " as columnName='{}' not found"
-		    + " in columnValueComparers='{}'", defaultValueComparer, columnName, columnValueComparers);
-	    valueComparer = defaultValueComparer;
-	}
+            final Map<String, ValueComparer> columnValueComparers) {
+        ValueComparer valueComparer = columnValueComparers.get(columnName);
+        if (valueComparer == null) {
+            log.debug("determineValueComparer: using defaultValueComparer='{}'" + " as columnName='{}' not found"
+                    + " in columnValueComparers='{}'", defaultValueComparer, columnName, columnValueComparers);
+            valueComparer = defaultValueComparer;
+        }
 
-	return valueComparer;
+        return valueComparer;
     }
 
     protected ValueComparer determineValidDefaultValueComparer(final ValueComparer defaultValueComparer) {
-	final ValueComparer validValueComparer;
+        final ValueComparer validValueComparer;
 
-	if (defaultValueComparer == null) {
-	    validValueComparer = valueComparerDefaults.getDefaultValueComparer();
-	    log.debug("determineValidDefaultValueComparer:" + " using getDefaultValueComparer()={}"
-		    + " as defaultValueComparer={}", validValueComparer, defaultValueComparer);
-	} else {
-	    validValueComparer = defaultValueComparer;
-	}
+        if (defaultValueComparer == null) {
+            validValueComparer = valueComparerDefaults.getDefaultValueComparer();
+            log.debug("determineValidDefaultValueComparer:" + " using getDefaultValueComparer()={}"
+                    + " as defaultValueComparer={}", validValueComparer, defaultValueComparer);
+        } else {
+            validValueComparer = defaultValueComparer;
+        }
 
-	return validValueComparer;
+        return validValueComparer;
     }
 
     protected Map<String, Map<String, ValueComparer>> determineValidTableColumnValueComparers(
-	    final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) {
-	final Map<String, Map<String, ValueComparer>> validMap;
+            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) {
+        final Map<String, Map<String, ValueComparer>> validMap;
 
-	if (tableColumnValueComparers == null) {
-	    validMap = valueComparerDefaults.getDefaultTableColumnValueComparerMap();
-	    log.debug("determineValidTableColumnValueComparers:" + " using getDefaultTableColumnValueComparerMap()={}"
-		    + " as tableColumnValueComparers={}", validMap, tableColumnValueComparers);
-	} else {
-	    validMap = tableColumnValueComparers;
-	}
+        if (tableColumnValueComparers == null) {
+            validMap = valueComparerDefaults.getDefaultTableColumnValueComparerMap();
+            log.debug("determineValidTableColumnValueComparers:" + " using getDefaultTableColumnValueComparerMap()={}"
+                    + " as tableColumnValueComparers={}", validMap, tableColumnValueComparers);
+        } else {
+            validMap = tableColumnValueComparers;
+        }
 
-	return validMap;
+        return validMap;
     }
 
     protected Map<String, ValueComparer> determineValidColumnValueComparers(
-	    final Map<String, ValueComparer> columnValueComparers, final String tableName) {
-	final Map<String, ValueComparer> validMap;
+            final Map<String, ValueComparer> columnValueComparers, final String tableName) {
+        final Map<String, ValueComparer> validMap;
 
-	if (columnValueComparers == null) {
-	    validMap = valueComparerDefaults.getDefaultColumnValueComparerMapForTable(tableName);
-	    log.debug(
-		    "determineValidColumnValueComparers:" + " using getDefaultValueComparerMap()={}"
-			    + " as columnValueComparers={} for tableName={}",
-		    validMap, columnValueComparers, tableName);
-	} else {
-	    validMap = columnValueComparers;
-	}
+        if (columnValueComparers == null) {
+            validMap = valueComparerDefaults.getDefaultColumnValueComparerMapForTable(tableName);
+            log.debug(
+                    "determineValidColumnValueComparers:" + " using getDefaultValueComparerMap()={}"
+                            + " as columnValueComparers={} for tableName={}",
+                    validMap, columnValueComparers, tableName);
+        } else {
+            validMap = columnValueComparers;
+        }
 
-	return validMap;
+        return validMap;
     }
 
     public void setValueComparerDefaults(final ValueComparerDefaults valueComparerDefaults) {
-	this.valueComparerDefaults = valueComparerDefaults;
+        this.valueComparerDefaults = valueComparerDefaults;
     }
 }

@@ -30,67 +30,67 @@ public class PipelineTest extends TestCase {
     Pipeline line;
 
     public void testRemovingTheLastHandlerThrowsException() {
-	try {
-	    line.removeFront();
-	    line.removeFront();
-	    fail("Removing from an ampty pipeline should throw an exception");
-	} catch (PipelineException e) {
-	}
+        try {
+            line.removeFront();
+            line.removeFront();
+            fail("Removing from an ampty pipeline should throw an exception");
+        } catch (PipelineException e) {
+        }
     }
 
     public void testAnHandlerCanBeAddedInFront() throws PipelineException {
-	PipelineComponent handler = SeparatorHandler.ACCEPT();
-	line.putFront(handler);
-	assertSame(handler, line.removeFront());
-	assertSame(line, handler.getPipeline());
+        PipelineComponent handler = SeparatorHandler.ACCEPT();
+        line.putFront(handler);
+        assertSame(handler, line.removeFront());
+        assertSame(line, handler.getPipeline());
     }
 
     public void testTheFrontHandlerIsThereAfterAddingAndRemovingAnother() throws PipelineException {
-	PipelineComponent handler = SeparatorHandler.ACCEPT();
-	PipelineComponent handler2 = SeparatorHandler.ACCEPT();
-	line.putFront(handler);
-	line.putFront(handler2);
-	assertSame(handler2, line.removeFront());
-	assertSame(handler, line.removeFront());
+        PipelineComponent handler = SeparatorHandler.ACCEPT();
+        PipelineComponent handler2 = SeparatorHandler.ACCEPT();
+        line.putFront(handler);
+        line.putFront(handler2);
+        assertSame(handler2, line.removeFront());
+        assertSame(handler, line.removeFront());
     }
 
     public void testEachHandlerIsCalled() throws IllegalInputCharacterException, PipelineException {
-	MockHandler component = new MockHandler();
-	MockHandler component2 = new MockHandler();
-	component.setExpectedHandleCalls(1);
-	component2.setExpectedHandleCalls(1);
-	line.putFront(component);
-	line.putFront(component2);
+        MockHandler component = new MockHandler();
+        MockHandler component2 = new MockHandler();
+        component.setExpectedHandleCalls(1);
+        component2.setExpectedHandleCalls(1);
+        line.putFront(component);
+        line.putFront(component2);
 
-	// the last handler will throw an exception
-	try {
-	    line.handle('x');
-	    fail("Exception expected");
-	} catch (IllegalInputCharacterException seen) {
-	}
+        // the last handler will throw an exception
+        try {
+            line.handle('x');
+            fail("Exception expected");
+        } catch (IllegalInputCharacterException seen) {
+        }
 
-	component.verify();
-	component2.verify();
+        component.verify();
+        component2.verify();
     }
 
     public void testWhenAPieceIsDoneIsAddedToProducts() throws IllegalInputCharacterException, PipelineException {
-	PipelineComponent c = AllHandler.ACCEPT();
-	line.putFront(c);
-	line.handle('x');
-	line.thePieceIsDone();
-	assertEquals(1, line.getProducts().size());
-	assertEquals("x", line.getProducts().get(0));
+        PipelineComponent c = AllHandler.ACCEPT();
+        line.putFront(c);
+        line.handle('x');
+        line.thePieceIsDone();
+        assertEquals(1, line.getProducts().size());
+        assertEquals("x", line.getProducts().get(0));
     }
 
     public void testWhetAPieceIsDoneANewOneIsCreated() throws IllegalInputCharacterException, PipelineException {
-	PipelineComponent c = AllHandler.ACCEPT();
-	line.putFront(c);
-	line.handle('x');
-	line.thePieceIsDone();
-	assertEquals("", line.getCurrentProduct().toString());
+        PipelineComponent c = AllHandler.ACCEPT();
+        line.putFront(c);
+        line.handle('x');
+        line.thePieceIsDone();
+        assertEquals("", line.getCurrentProduct().toString());
     }
 
     protected void setUp() throws Exception {
-	line = new Pipeline();
+        line = new Pipeline();
     }
 }

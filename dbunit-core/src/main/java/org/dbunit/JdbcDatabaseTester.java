@@ -58,7 +58,7 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
      *                                found
      */
     public JdbcDatabaseTester(String driverClass, String connectionUrl) throws ClassNotFoundException {
-	this(driverClass, connectionUrl, null, null);
+        this(driverClass, connectionUrl, null, null);
     }
 
     /**
@@ -72,8 +72,8 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
      *                                found
      */
     public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password)
-	    throws ClassNotFoundException {
-	this(driverClass, connectionUrl, username, password, null);
+            throws ClassNotFoundException {
+        this(driverClass, connectionUrl, username, password, null);
     }
 
     /**
@@ -91,40 +91,40 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
      * @since 2.4.3
      */
     public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password, String schema)
-	    throws ClassNotFoundException {
-	super(schema);
-	this.driverClass = driverClass;
-	this.connectionUrl = connectionUrl;
-	this.username = username;
-	this.password = password;
+            throws ClassNotFoundException {
+        super(schema);
+        this.driverClass = driverClass;
+        this.connectionUrl = connectionUrl;
+        this.username = username;
+        this.password = password;
 
-	assertNotNullNorEmpty("driverClass", driverClass);
-	Class.forName(driverClass);
+        assertNotNullNorEmpty("driverClass", driverClass);
+        Class.forName(driverClass);
     }
 
     public IDatabaseConnection getConnection() throws Exception {
-	logger.debug("getConnection() - start");
+        logger.debug("getConnection() - start");
 
-	assertNotNullNorEmpty("connectionUrl", connectionUrl);
-	Connection conn = null;
-	if (username == null && password == null) {
-	    conn = DriverManager.getConnection(connectionUrl);
-	} else {
-	    conn = DriverManager.getConnection(connectionUrl, username, password);
-	}
-	return new DatabaseConnection(conn, getSchema());
+        assertNotNullNorEmpty("connectionUrl", connectionUrl);
+        Connection conn = null;
+        if (username == null && password == null) {
+            conn = DriverManager.getConnection(connectionUrl);
+        } else {
+            conn = DriverManager.getConnection(connectionUrl, username, password);
+        }
+        return new DatabaseConnection(conn, getSchema());
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("connectionUrl=").append(this.connectionUrl);
-	sb.append(", driverClass=").append(this.driverClass);
-	sb.append(", username=").append(this.username);
-	sb.append(", password=**********");
-	sb.append(", schema=").append(super.getSchema());
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("connectionUrl=").append(this.connectionUrl);
+        sb.append(", driverClass=").append(this.driverClass);
+        sb.append(", username=").append(this.username);
+        sb.append(", password=**********");
+        sb.append(", schema=").append(super.getSchema());
+        sb.append("]");
+        return sb.toString();
     }
 
 }

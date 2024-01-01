@@ -31,14 +31,14 @@ public class NoPrimaryKeyException extends DataSetException {
     }
 
     public NoPrimaryKeyException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public NoPrimaryKeyException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public NoPrimaryKeyException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

@@ -49,79 +49,79 @@ public class TimeDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(TimeDataType.class);
 
     TimeDataType() {
-	super("TIME", Types.TIME, Time.class, false);
+        super("TIME", Types.TIME, Time.class, false);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof java.sql.Time) {
-	    return value;
-	}
+        if (value instanceof java.sql.Time) {
+            return value;
+        }
 
-	if (value instanceof java.util.Date) {
-	    java.util.Date date = (java.util.Date) value;
-	    return new java.sql.Time(date.getTime());
-	}
+        if (value instanceof java.util.Date) {
+            java.util.Date date = (java.util.Date) value;
+            return new java.sql.Time(date.getTime());
+        }
 
-	if (value instanceof Long) {
-	    Long date = (Long) value;
-	    return new java.sql.Time(date.longValue());
-	}
+        if (value instanceof Long) {
+            Long date = (Long) value;
+            return new java.sql.Time(date.longValue());
+        }
 
-	if (value instanceof String) {
-	    final String stringValue = (String) value;
+        if (value instanceof String) {
+            final String stringValue = (String) value;
 
-	    if (isExtendedSyntax(stringValue)) {
-		// Relative date.
-		try {
-		    LocalDateTime datetime = RELATIVE_DATE_TIME_PARSER.parse(stringValue);
-		    return java.sql.Time.valueOf(datetime.toLocalTime());
-		} catch (IllegalArgumentException | DateTimeParseException e) {
-		    throw new TypeCastException(value, this, e);
-		}
-	    }
+            if (isExtendedSyntax(stringValue)) {
+                // Relative date.
+                try {
+                    LocalDateTime datetime = RELATIVE_DATE_TIME_PARSER.parse(stringValue);
+                    return java.sql.Time.valueOf(datetime.toLocalTime());
+                } catch (IllegalArgumentException | DateTimeParseException e) {
+                    throw new TypeCastException(value, this, e);
+                }
+            }
 
-	    try {
-		return java.sql.Time.valueOf(stringValue);
-	    } catch (IllegalArgumentException e) {
-		throw new TypeCastException(value, this, e);
-	    }
-	}
+            try {
+                return java.sql.Time.valueOf(stringValue);
+            } catch (IllegalArgumentException e) {
+                throw new TypeCastException(value, this, e);
+            }
+        }
 
-	throw new TypeCastException(value, this);
+        throw new TypeCastException(value, this);
     }
 
     public boolean isDateTime() {
-	logger.debug("isDateTime() - start");
+        logger.debug("isDateTime() - start");
 
-	return true;
+        return true;
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	Time value = resultSet.getTime(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return value;
+        Time value = resultSet.getTime(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return value;
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setTime(column, (java.sql.Time) typeCast(value));
+        statement.setTime(column, (java.sql.Time) typeCast(value));
     }
 }

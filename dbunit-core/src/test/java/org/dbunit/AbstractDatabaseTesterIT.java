@@ -43,56 +43,56 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     protected final Logger logger = LoggerFactory.getLogger(AbstractDatabaseTesterIT.class);
 
     public AbstractDatabaseTesterIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected DatabaseEnvironment getEnvironment() throws Exception {
-	return DatabaseEnvironmentLoader.getInstance(null);
+        return DatabaseEnvironmentLoader.getInstance(null);
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
-	return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
+        return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
     }
 
     // //////////////////////////////////////////////////////////////////////////
     // TestCase class
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	assertNotNull("DatabaseTester is not set", getDatabaseTester());
-	getDatabaseTester().setSetUpOperation(getSetUpOperation());
-	getDatabaseTester().setDataSet(getDataSet());
-	getDatabaseTester().onSetup();
+        assertNotNull("DatabaseTester is not set", getDatabaseTester());
+        getDatabaseTester().setSetUpOperation(getSetUpOperation());
+        getDatabaseTester().setDataSet(getDataSet());
+        getDatabaseTester().onSetup();
 
-	_connection = getDatabaseTester().getConnection();
+        _connection = getDatabaseTester().getConnection();
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
 
-	assertNotNull("DatabaseTester is not set", getDatabaseTester());
-	getDatabaseTester().setTearDownOperation(getTearDownOperation());
-	getDatabaseTester().setDataSet(getDataSet());
-	getDatabaseTester().onTearDown();
+        assertNotNull("DatabaseTester is not set", getDatabaseTester());
+        getDatabaseTester().setTearDownOperation(getTearDownOperation());
+        getDatabaseTester().setDataSet(getDataSet());
+        getDatabaseTester().onTearDown();
 
-	DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
+        DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
 
-	_connection = null;
+        _connection = null;
     }
 
     // //////////////////////////////////////////////////////////////////////////
 
     protected IDataSet getDataSet() throws Exception {
-	return getEnvironment().getInitDataSet();
+        return getEnvironment().getInitDataSet();
     }
 
     protected DatabaseOperation getSetUpOperation() {
-	return DatabaseOperation.CLEAN_INSERT;
+        return DatabaseOperation.CLEAN_INSERT;
     }
 
     protected DatabaseOperation getTearDownOperation() {
-	return DatabaseOperation.NONE;
+        return DatabaseOperation.NONE;
     }
 
     protected abstract IDatabaseTester getDatabaseTester() throws Exception;
@@ -105,26 +105,26 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
      * @return flag indicating if the test should be executed or not
      */
     protected boolean runTest(String testName) {
-	return true;
+        return true;
     }
 
     protected void runTest() throws Throwable {
-	if (runTest(getName())) {
-	    super.runTest();
-	} else {
-	    if (logger.isDebugEnabled()) {
-		logger.debug("Skipping test " + getClass().getName() + "." + getName());
-	    }
-	}
+        if (runTest(getName())) {
+            super.runTest();
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Skipping test " + getClass().getName() + "." + getName());
+            }
+        }
     }
 
     public static boolean environmentHasFeature(TestFeature feature) {
-	try {
-	    final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
-	    final boolean runIt = environment.support(feature);
-	    return runIt;
-	} catch (Exception e) {
-	    throw new DatabaseUnitRuntimeException(e);
-	}
+        try {
+            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+            final boolean runIt = environment.support(feature);
+            return runIt;
+        } catch (Exception e) {
+            throw new DatabaseUnitRuntimeException(e);
+        }
     }
 }

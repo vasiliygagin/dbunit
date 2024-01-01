@@ -34,9 +34,9 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 @Transactional
 public class ExpectedQueryNonStrictOnMethodTest {
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_query_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, query = "select * from SampleEntity where id in (1,2)", table = "SampleEntity")
-	public void test() throws Exception {
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_query_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, query = "select * from SampleEntity where id in (1,2)", table = "SampleEntity")
+    public void test() throws Exception {
+    }
 
 }

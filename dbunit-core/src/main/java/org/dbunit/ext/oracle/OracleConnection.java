@@ -42,7 +42,7 @@ public class OracleConnection extends DatabaseConnection {
      * @throws DatabaseUnitException
      */
     public OracleConnection(Connection connection, String schema) throws DatabaseUnitException {
-	super(connection, schema != null ? schema.toUpperCase() : null);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
+        super(connection, schema != null ? schema.toUpperCase() : null);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
     }
 }

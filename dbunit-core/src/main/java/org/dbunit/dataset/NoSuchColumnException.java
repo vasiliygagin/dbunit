@@ -42,7 +42,7 @@ public class NoSuchColumnException extends DataSetException {
      *             argument
      */
     public NoSuchColumnException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     /**
@@ -53,7 +53,7 @@ public class NoSuchColumnException extends DataSetException {
      * @since 2.3.0
      */
     public NoSuchColumnException(String tableName, String columnName) {
-	this(tableName, columnName, null);
+        this(tableName, columnName, null);
     }
 
     /**
@@ -65,7 +65,7 @@ public class NoSuchColumnException extends DataSetException {
      * @since 2.3.0
      */
     public NoSuchColumnException(String tableName, String columnName, String msg) {
-	super(buildText(tableName, columnName, msg));
+        super(buildText(tableName, columnName, msg));
     }
 
     /**
@@ -75,7 +75,7 @@ public class NoSuchColumnException extends DataSetException {
      *             argument
      */
     public NoSuchColumnException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     /**
@@ -84,19 +84,19 @@ public class NoSuchColumnException extends DataSetException {
      *             argument
      */
     public NoSuchColumnException(Throwable e) {
-	super(e);
+        super(e);
     }
 
     private static String buildText(String tableName, String columnName, String message) {
-	StringBuffer sb = new StringBuffer();
-	if (tableName != null) {
-	    sb.append(tableName).append(".");
-	}
-	sb.append(columnName);
-	if (message != null) {
-	    sb.append(" - ").append(message);
-	}
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        if (tableName != null) {
+            sb.append(tableName).append(".");
+        }
+        sb.append(columnName);
+        if (message != null) {
+            sb.append(" - ").append(message);
+        }
+        return sb.toString();
     }
 
 }

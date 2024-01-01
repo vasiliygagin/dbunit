@@ -61,7 +61,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
     private static final String NONE = "none";
 
     static char[] CDATA_DETECTION_CHARS = new char[] { 0x20, '\n', '\r', '\t', // whitespace
-	    '&', '<', // forbidden char
+            '&', '<', // forbidden char
     };
 
     private XmlWriter _xmlWriter;
@@ -76,18 +76,18 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @throws UnsupportedEncodingException
      */
     public XmlDataSetWriter(OutputStream outputStream, String encoding) throws UnsupportedEncodingException {
-	_xmlWriter = new XmlWriter(outputStream, encoding);
-	_xmlWriter.enablePrettyPrint(true);
+        _xmlWriter = new XmlWriter(outputStream, encoding);
+        _xmlWriter.enablePrettyPrint(true);
     }
 
     public XmlDataSetWriter(Writer writer) {
-	_xmlWriter = new XmlWriter(writer);
-	_xmlWriter.enablePrettyPrint(true);
+        _xmlWriter = new XmlWriter(writer);
+        _xmlWriter.enablePrettyPrint(true);
     }
 
     public XmlDataSetWriter(Writer writer, String encoding) {
-	_xmlWriter = new XmlWriter(writer, encoding);
-	_xmlWriter.enablePrettyPrint(true);
+        _xmlWriter = new XmlWriter(writer, encoding);
+        _xmlWriter.enablePrettyPrint(true);
     }
 
     /**
@@ -98,7 +98,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @since 2.4
      */
     public void setPrettyPrint(boolean enabled) {
-	_xmlWriter.enablePrettyPrint(enabled);
+        _xmlWriter.enablePrettyPrint(enabled);
     }
 
     /**
@@ -108,7 +108,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      *                              comment into the XML
      */
     public void setIncludeColumnComments(boolean includeColumnComments) {
-	this.includeColumnComments = includeColumnComments;
+        this.includeColumnComments = includeColumnComments;
     }
 
     /**
@@ -118,132 +118,132 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @throws DataSetException
      */
     public void write(IDataSet dataSet) throws DataSetException {
-	logger.trace("write(dataSet{}) - start", dataSet);
+        logger.trace("write(dataSet{}) - start", dataSet);
 
-	DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
-	provider.setConsumer(this);
-	provider.produce();
+        DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
+        provider.setConsumer(this);
+        provider.produce();
     }
 
     boolean needsCData(String text) {
-	logger.trace("needsCData(text={}) - start", text);
+        logger.trace("needsCData(text={}) - start", text);
 
-	if (text == null) {
-	    return false;
-	}
+        if (text == null) {
+            return false;
+        }
 
-	for (int i = 0; i < text.length(); i++) {
-	    char c = text.charAt(i);
-	    for (int j = 0; j < CDATA_DETECTION_CHARS.length; j++) {
-		if (CDATA_DETECTION_CHARS[j] == c) {
-		    return true;
-		}
-	    }
-	}
-	return false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            for (int j = 0; j < CDATA_DETECTION_CHARS.length; j++) {
+                if (CDATA_DETECTION_CHARS[j] == c) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
     public void startDataSet() throws DataSetException {
-	logger.trace("startDataSet() - start");
+        logger.trace("startDataSet() - start");
 
-	try {
-	    _xmlWriter.writeDeclaration();
-	    _xmlWriter.writeElement(DATASET);
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+        try {
+            _xmlWriter.writeDeclaration();
+            _xmlWriter.writeElement(DATASET);
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     public void endDataSet() throws DataSetException {
-	logger.trace("endDataSet() - start");
+        logger.trace("endDataSet() - start");
 
-	try {
-	    _xmlWriter.endElement();
-	    _xmlWriter.close();
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+        try {
+            _xmlWriter.endElement();
+            _xmlWriter.close();
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     public void startTable(ITableMetaData metaData) throws DataSetException {
-	logger.trace("startTable(metaData={}) - start", metaData);
+        logger.trace("startTable(metaData={}) - start", metaData);
 
-	try {
-	    _activeMetaData = metaData;
+        try {
+            _activeMetaData = metaData;
 
-	    String tableName = _activeMetaData.getTableName();
-	    _xmlWriter.writeElement(TABLE);
-	    _xmlWriter.writeAttribute(NAME, tableName);
+            String tableName = _activeMetaData.getTableName();
+            _xmlWriter.writeElement(TABLE);
+            _xmlWriter.writeAttribute(NAME, tableName);
 
-	    Column[] columns = _activeMetaData.getColumns();
-	    for (int i = 0; i < columns.length; i++) {
-		String columnName = columns[i].getColumnName();
-		_xmlWriter.writeElementWithText(COLUMN, columnName);
-	    }
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+            Column[] columns = _activeMetaData.getColumns();
+            for (int i = 0; i < columns.length; i++) {
+                String columnName = columns[i].getColumnName();
+                _xmlWriter.writeElementWithText(COLUMN, columnName);
+            }
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
 
     }
 
     public void endTable() throws DataSetException {
-	logger.trace("endTable() - start");
+        logger.trace("endTable() - start");
 
-	try {
-	    _xmlWriter.endElement();
-	    _activeMetaData = null;
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+        try {
+            _xmlWriter.endElement();
+            _activeMetaData = null;
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     public void row(Object[] values) throws DataSetException {
-	logger.trace("row(values={}) - start", values);
+        logger.trace("row(values={}) - start", values);
 
-	try {
-	    _xmlWriter.writeElement(ROW);
+        try {
+            _xmlWriter.writeElement(ROW);
 
-	    Column[] columns = _activeMetaData.getColumns();
-	    for (int i = 0; i < columns.length; i++) {
-		String columnName = columns[i].getColumnName();
-		Object value = values[i];
+            Column[] columns = _activeMetaData.getColumns();
+            for (int i = 0; i < columns.length; i++) {
+                String columnName = columns[i].getColumnName();
+                Object value = values[i];
 
-		// null
-		if (value == null) {
-		    _xmlWriter.writeEmptyElement(NULL);
-		}
-		// none
-		else if (value == ITable.NO_VALUE) {
-		    _xmlWriter.writeEmptyElement(NONE);
-		}
-		// values
-		else {
-		    try {
-			String stringValue = DataType.asString(value);
+                // null
+                if (value == null) {
+                    _xmlWriter.writeEmptyElement(NULL);
+                }
+                // none
+                else if (value == ITable.NO_VALUE) {
+                    _xmlWriter.writeEmptyElement(NONE);
+                }
+                // values
+                else {
+                    try {
+                        String stringValue = DataType.asString(value);
 
-			_xmlWriter.writeElement(VALUE);
-			if (needsCData(stringValue)) {
-			    writeValueCData(stringValue);
-			} else if (stringValue.length() > 0) {
-			    writeValue(stringValue);
-			}
-			_xmlWriter.endElement();
-		    } catch (TypeCastException e) {
-			throw new DataSetException("table=" + _activeMetaData.getTableName() + ", row=" + i
-				+ ", column=" + columnName + ", value=" + value, e);
-		    }
-		}
-		if (this.includeColumnComments) {
-		    _xmlWriter.writeComment(columnName);
-		}
-	    }
-	    _xmlWriter.endElement();
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+                        _xmlWriter.writeElement(VALUE);
+                        if (needsCData(stringValue)) {
+                            writeValueCData(stringValue);
+                        } else if (stringValue.length() > 0) {
+                            writeValue(stringValue);
+                        }
+                        _xmlWriter.endElement();
+                    } catch (TypeCastException e) {
+                        throw new DataSetException("table=" + _activeMetaData.getTableName() + ", row=" + i
+                                + ", column=" + columnName + ", value=" + value, e);
+                    }
+                }
+                if (this.includeColumnComments) {
+                    _xmlWriter.writeComment(columnName);
+                }
+            }
+            _xmlWriter.endElement();
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     /**
@@ -256,8 +256,8 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @since 2.4.4
      */
     protected void writeValueCData(String stringValue) throws IOException {
-	logger.trace("writeValueCData(stringValue={}) - start", stringValue);
-	_xmlWriter.writeCData(stringValue);
+        logger.trace("writeValueCData(stringValue={}) - start", stringValue);
+        _xmlWriter.writeCData(stringValue);
     }
 
     /**
@@ -270,8 +270,8 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @since 2.4.4
      */
     protected void writeValue(String stringValue) throws IOException {
-	logger.trace("writeValue(stringValue={}) - start", stringValue);
-	_xmlWriter.writeText(stringValue);
+        logger.trace("writeValue(stringValue={}) - start", stringValue);
+        _xmlWriter.writeText(stringValue);
     }
 
     /**
@@ -279,6 +279,6 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * @since 2.4.4
      */
     protected final XmlWriter getXmlWriter() {
-	return _xmlWriter;
+        return _xmlWriter;
     }
 }

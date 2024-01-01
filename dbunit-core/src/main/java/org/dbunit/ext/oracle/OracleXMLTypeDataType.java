@@ -43,35 +43,35 @@ import oracle.jdbc.OracleResultSet;
  */
 public class OracleXMLTypeDataType extends BlobDataType {
     OracleXMLTypeDataType() {
-	super("SQLXML", Types.SQLXML);
+        super("SQLXML", Types.SQLXML);
     }
 
     @Override
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	byte[] data = null;
-	OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
-	SQLXML sqlXml = oracleResultSet.getSQLXML(column);
-	if (sqlXml != null) {
-	    data = sqlXml.getString().getBytes();
-	}
+        byte[] data = null;
+        OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
+        SQLXML sqlXml = oracleResultSet.getSQLXML(column);
+        if (sqlXml != null) {
+            data = sqlXml.getString().getBytes();
+        }
 
-	// return the byte data (using typeCast to cast it to Base64 notation)
-	return typeCast(data);
+        // return the byte data (using typeCast to cast it to Base64 notation)
+        return typeCast(data);
     }
 
     @Override
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	OraclePreparedStatement oraclePreparedStatement = (OraclePreparedStatement) statement;
-	SQLXML sqlXmlValue = oraclePreparedStatement.getConnection().createSQLXML();
-	// XML document in the parameter is Base64 encoded (it is entered in XML
-	// parameter
-	sqlXmlValue.setString(new String((byte[]) typeCast(value)));
-	oraclePreparedStatement.setSQLXML(column, sqlXmlValue);
+            throws SQLException, TypeCastException {
+        OraclePreparedStatement oraclePreparedStatement = (OraclePreparedStatement) statement;
+        SQLXML sqlXmlValue = oraclePreparedStatement.getConnection().createSQLXML();
+        // XML document in the parameter is Base64 encoded (it is entered in XML
+        // parameter
+        sqlXmlValue.setString(new String((byte[]) typeCast(value)));
+        oraclePreparedStatement.setSQLXML(column, sqlXmlValue);
     }
 
     @Override
     public String getSqlTypeName() {
-	return "SYS.XMLTYPE";
+        return "SYS.XMLTYPE";
     }
 }

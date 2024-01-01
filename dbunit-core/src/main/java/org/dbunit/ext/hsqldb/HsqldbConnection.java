@@ -34,7 +34,7 @@ import java.sql.Connection;
  */
 public class HsqldbConnection extends DatabaseConnection {
     public HsqldbConnection(Connection connection, String schema) throws DatabaseUnitException {
-	super(connection, schema);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        super(connection, schema);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
     }
 }

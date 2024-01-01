@@ -65,7 +65,7 @@ public abstract class AbstractDataSet implements IDataSet {
      * @since 2.4
      */
     public AbstractDataSet(boolean caseSensitiveTableNames) {
-	_caseSensitiveTableNames = caseSensitiveTableNames;
+        _caseSensitiveTableNames = caseSensitiveTableNames;
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class AbstractDataSet implements IDataSet {
      * @since 2.4
      */
     public boolean isCaseSensitiveTableNames() {
-	return this._caseSensitiveTableNames;
+        return this._caseSensitiveTableNames;
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class AbstractDataSet implements IDataSet {
      * @since 2.4
      */
     protected OrderedTableNameMap createTableNameMap() {
-	return new OrderedTableNameMap(this._caseSensitiveTableNames);
+        return new OrderedTableNameMap(this._caseSensitiveTableNames);
     }
 
     /**
@@ -96,22 +96,22 @@ public abstract class AbstractDataSet implements IDataSet {
      * @since 2.4
      */
     protected void initialize() throws DataSetException {
-	logger.debug("initialize() - start");
+        logger.debug("initialize() - start");
 
-	if (_orderedTableNameMap != null) {
-	    logger.debug("The table name map has already been initialized.");
-	    // already initialized
-	    return;
-	}
+        if (_orderedTableNameMap != null) {
+            logger.debug("The table name map has already been initialized.");
+            // already initialized
+            return;
+        }
 
-	// Gather all tables in the OrderedTableNameMap which also makes the duplicate
-	// check
-	_orderedTableNameMap = this.createTableNameMap();
-	ITableIterator iterator = createIterator(false);
-	while (iterator.next()) {
-	    ITable table = iterator.getTable();
-	    _orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
-	}
+        // Gather all tables in the OrderedTableNameMap which also makes the duplicate
+        // check
+        _orderedTableNameMap = this.createTableNameMap();
+        ITableIterator iterator = createIterator(false);
+        while (iterator.next()) {
+            ITable table = iterator.getTable();
+            _orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
+        }
     }
 
 //    protected ITable[] cloneTables(ITable[] tables)
@@ -139,61 +139,61 @@ public abstract class AbstractDataSet implements IDataSet {
     // IDataSet interface
 
     public String[] getTableNames() throws DataSetException {
-	logger.debug("getTableNames() - start");
+        logger.debug("getTableNames() - start");
 
-	initialize();
+        initialize();
 
-	return this._orderedTableNameMap.getTableNames();
+        return this._orderedTableNameMap.getTableNames();
     }
 
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
-	logger.debug("getTableMetaData(tableName={}) - start", tableName);
+        logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
-	return getTable(tableName).getTableMetaData();
+        return getTable(tableName).getTableMetaData();
     }
 
     public ITable getTable(String tableName) throws DataSetException {
-	logger.debug("getTable(tableName={}) - start", tableName);
+        logger.debug("getTable(tableName={}) - start", tableName);
 
-	initialize();
+        initialize();
 
-	ITable found = (ITable) _orderedTableNameMap.get(tableName);
-	if (found != null) {
-	    return found;
-	} else {
-	    throw new NoSuchTableException(tableName);
-	}
+        ITable found = (ITable) _orderedTableNameMap.get(tableName);
+        if (found != null) {
+            return found;
+        } else {
+            throw new NoSuchTableException(tableName);
+        }
     }
 
     public ITable[] getTables() throws DataSetException {
-	logger.debug("getTables() - start");
+        logger.debug("getTables() - start");
 
-	initialize();
+        initialize();
 
-	return (ITable[]) this._orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+        return (ITable[]) this._orderedTableNameMap.orderedValues().toArray(new ITable[0]);
     }
 
     public ITableIterator iterator() throws DataSetException {
-	logger.debug("iterator() - start");
+        logger.debug("iterator() - start");
 
-	return createIterator(false);
+        return createIterator(false);
     }
 
     public ITableIterator reverseIterator() throws DataSetException {
-	logger.debug("reverseIterator() - start");
+        logger.debug("reverseIterator() - start");
 
-	return createIterator(true);
+        return createIterator(true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Object class
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append("AbstractDataSet[");
-	sb.append("_orderedTableNameMap=").append(_orderedTableNameMap);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("AbstractDataSet[");
+        sb.append("_orderedTableNameMap=").append(_orderedTableNameMap);
+        sb.append("]");
+        return sb.toString();
     }
 
 }

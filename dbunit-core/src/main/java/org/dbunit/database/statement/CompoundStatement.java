@@ -42,25 +42,25 @@ public class CompoundStatement extends AbstractBatchStatement {
     private StringBuffer _buffer = new StringBuffer();
 
     CompoundStatement(Connection connection) throws SQLException {
-	super(connection);
+        super(connection);
     }
 
     public void addBatch(String sql) throws SQLException {
-	logger.debug("addBatch(sql={}) - start", sql);
+        logger.debug("addBatch(sql={}) - start", sql);
 
-	_buffer.append(sql);
-	_buffer.append(";");
+        _buffer.append(sql);
+        _buffer.append(";");
     }
 
     public int executeBatch() throws SQLException {
-	logger.debug("executeBatch() - start");
+        logger.debug("executeBatch() - start");
 
-	return _statement.executeUpdate(_buffer.toString());
+        return _statement.executeUpdate(_buffer.toString());
     }
 
     public void clearBatch() throws SQLException {
-	logger.debug("clearBatch() - start");
+        logger.debug("clearBatch() - start");
 
-	_buffer = new StringBuffer();
+        _buffer = new StringBuffer();
     }
 }

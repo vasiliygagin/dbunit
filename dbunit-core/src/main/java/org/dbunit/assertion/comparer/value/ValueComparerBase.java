@@ -29,16 +29,16 @@ public abstract class ValueComparerBase implements ValueComparer {
      * {@link #doCompare(ITable, ITable, int, String, DataType, Object, Object)}.
      */
     public String compare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException {
-	final String failMessage;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException {
+        final String failMessage;
 
-	failMessage = doCompare(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue, actualValue);
+        failMessage = doCompare(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue, actualValue);
 
-	log.debug("compare: rowNum={}, columnName={}, expectedValue={}," + " actualValue={}, failMessage={}", rowNum,
-		columnName, expectedValue, actualValue, failMessage);
+        log.debug("compare: rowNum={}, columnName={}, expectedValue={}," + " actualValue={}, failMessage={}", rowNum,
+                columnName, expectedValue, actualValue, failMessage);
 
-	return failMessage;
+        return failMessage;
     }
 
     /**
@@ -48,11 +48,11 @@ public abstract class ValueComparerBase implements ValueComparer {
      *      Object)
      */
     protected abstract String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException;
 
     @Override
     public String toString() {
-	return getClass().getName();
+        return getClass().getName();
     }
 }

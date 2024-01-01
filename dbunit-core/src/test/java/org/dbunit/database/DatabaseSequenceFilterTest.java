@@ -42,83 +42,83 @@ public class DatabaseSequenceFilterTest extends TestCase {
     Connection _jdbcConnection;
 
     public DatabaseSequenceFilterTest(final String s) {
-	super(s);
+        super(s);
     }
 
     @Override
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	_jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
+        _jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
     }
 
     @Override
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
 
-	HypersonicEnvironment.shutdown(_jdbcConnection);
-	_jdbcConnection.close();
+        HypersonicEnvironment.shutdown(_jdbcConnection);
+        _jdbcConnection.close();
 
-	HypersonicEnvironment.deleteFiles("tempdb");
+        HypersonicEnvironment.deleteFiles("tempdb");
     }
 
     public void testGetTableNames() throws Exception {
-	final String[] expectedNoFilter = { "A", "B", "C", "D", "E", "F", "G", "H", };
-	final String[] expectedFiltered = { "D", "A", "F", "C", "G", "E", "H", "B", };
+        final String[] expectedNoFilter = { "A", "B", "C", "D", "E", "F", "G", "H", };
+        final String[] expectedFiltered = { "D", "A", "F", "C", "G", "E", "H", "B", };
 
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_fk.sql"), _jdbcConnection);
-	final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_fk.sql"), _jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
 
-	final IDataSet databaseDataset = connection.createDataSet();
-	final String[] actualNoFilter = databaseDataset.getTableNames();
-	assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
+        final IDataSet databaseDataset = connection.createDataSet();
+        final String[] actualNoFilter = databaseDataset.getTableNames();
+        assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
 
-	final ITableFilter filter = new DatabaseSequenceFilter(connection);
-	final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
-	final String[] actualFiltered = filteredDataSet.getTableNames();
-	assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
+        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
+        final String[] actualFiltered = filteredDataSet.getTableNames();
+        assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
     }
 
     public void testGetTableNamesCyclic() throws Exception {
-	final String[] expectedNoFilter = { "A", "B", "C", "D", "E", };
+        final String[] expectedNoFilter = { "A", "B", "C", "D", "E", };
 
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_cyclic.sql"), _jdbcConnection);
-	final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_cyclic.sql"), _jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
 
-	final IDataSet databaseDataset = connection.createDataSet();
-	final String[] actualNoFilter = databaseDataset.getTableNames();
-	assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
+        final IDataSet databaseDataset = connection.createDataSet();
+        final String[] actualNoFilter = databaseDataset.getTableNames();
+        assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
 
-	boolean gotCyclicTablesDependencyException = false;
+        boolean gotCyclicTablesDependencyException = false;
 
-	try {
-	    final ITableFilter filter = new DatabaseSequenceFilter(connection);
-	    final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
-	    filteredDataSet.getTableNames();
-	    fail("Should not be here!");
-	} catch (final CyclicTablesDependencyException expected) {
-	    gotCyclicTablesDependencyException = true;
-	}
-	assertTrue("Expected CyclicTablesDependencyException was not raised", gotCyclicTablesDependencyException);
+        try {
+            final ITableFilter filter = new DatabaseSequenceFilter(connection);
+            final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
+            filteredDataSet.getTableNames();
+            fail("Should not be here!");
+        } catch (final CyclicTablesDependencyException expected) {
+            gotCyclicTablesDependencyException = true;
+        }
+        assertTrue("Expected CyclicTablesDependencyException was not raised", gotCyclicTablesDependencyException);
     }
 
     public void testCaseSensitiveTableNames() throws Exception {
-	final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
-	final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
+        final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
+        final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
 
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), _jdbcConnection);
-	final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), _jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
 
-	connection.getConfig().setProperty(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.TRUE);
+        connection.getConfig().setProperty(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.TRUE);
 
-	final IDataSet databaseDataset = connection.createDataSet();
-	final String[] actualNoFilter = databaseDataset.getTableNames();
-	assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
+        final IDataSet databaseDataset = connection.createDataSet();
+        final String[] actualNoFilter = databaseDataset.getTableNames();
+        assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
 
-	final ITableFilter filter = new DatabaseSequenceFilter(connection);
-	final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
-	final String[] actualFiltered = filteredDataSet.getTableNames();
-	assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
+        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
+        final String[] actualFiltered = filteredDataSet.getTableNames();
+        assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
     }
 
     /**
@@ -128,23 +128,23 @@ public class DatabaseSequenceFilterTest extends TestCase {
      * @throws Exception
      */
     public void testMultiSchemaFks() throws Exception {
-	final Connection jdbcConnection = H2Environment.createJdbcConnection("test");
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/h2_multischema_fk_test.sql"), jdbcConnection);
-	final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
-	connection.getConfig().setProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, Boolean.TRUE);
+        final Connection jdbcConnection = H2Environment.createJdbcConnection("test");
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/h2_multischema_fk_test.sql"), jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+        connection.getConfig().setProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, Boolean.TRUE);
 
-	final IDataSet databaseDataset = connection.createDataSet();
-	final ITableFilter filter = new DatabaseSequenceFilter(connection);
-	final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
+        final IDataSet databaseDataset = connection.createDataSet();
+        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
 
-	final String[] actualNoFilter = databaseDataset.getTableNames();
-	assertEquals(2, actualNoFilter.length);
-	assertEquals("A.FOO", actualNoFilter[0]);
-	assertEquals("B.BAR", actualNoFilter[1]);
+        final String[] actualNoFilter = databaseDataset.getTableNames();
+        assertEquals(2, actualNoFilter.length);
+        assertEquals("A.FOO", actualNoFilter[0]);
+        assertEquals("B.BAR", actualNoFilter[1]);
 
-	final String[] actualFiltered = filteredDataSet.getTableNames();
-	assertEquals(2, actualFiltered.length);
-	assertEquals("A.FOO", actualFiltered[0]);
-	assertEquals("B.BAR", actualFiltered[1]);
+        final String[] actualFiltered = filteredDataSet.getTableNames();
+        assertEquals(2, actualFiltered.length);
+        assertEquals("A.FOO", actualFiltered[0]);
+        assertEquals("B.BAR", actualFiltered[1]);
     }
 }

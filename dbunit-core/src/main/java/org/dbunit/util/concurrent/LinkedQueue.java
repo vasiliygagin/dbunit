@@ -68,143 +68,143 @@ public class LinkedQueue implements Channel {
     protected int waitingForTake_ = 0;
 
     public LinkedQueue() {
-	head_ = new LinkedNode(null);
-	last_ = head_;
+        head_ = new LinkedNode(null);
+        last_ = head_;
     }
 
     /** Main mechanics for put/offer **/
     protected void insert(Object x) {
-	logger.debug("insert(x=" + x + ") - start");
+        logger.debug("insert(x=" + x + ") - start");
 
-	synchronized (putLock_) {
-	    LinkedNode p = new LinkedNode(x);
-	    synchronized (last_) {
-		last_.next = p;
-		last_ = p;
-	    }
-	    if (waitingForTake_ > 0)
-		putLock_.notify();
-	}
+        synchronized (putLock_) {
+            LinkedNode p = new LinkedNode(x);
+            synchronized (last_) {
+                last_.next = p;
+                last_ = p;
+            }
+            if (waitingForTake_ > 0)
+                putLock_.notify();
+        }
     }
 
     /** Main mechanics for take/poll **/
     protected synchronized Object extract() {
-	logger.debug("extract() - start");
+        logger.debug("extract() - start");
 
-	synchronized (head_) {
-	    Object x = null;
-	    LinkedNode first = head_.next;
-	    if (first != null) {
-		x = first.value;
-		first.value = null;
-		head_ = first;
-	    }
-	    return x;
-	}
+        synchronized (head_) {
+            Object x = null;
+            LinkedNode first = head_.next;
+            if (first != null) {
+                x = first.value;
+                first.value = null;
+                head_ = first;
+            }
+            return x;
+        }
     }
 
     public void put(Object x) throws InterruptedException {
-	logger.debug("put(x=" + x + ") - start");
+        logger.debug("put(x=" + x + ") - start");
 
-	if (x == null)
-	    throw new IllegalArgumentException();
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	insert(x);
+        if (x == null)
+            throw new IllegalArgumentException();
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        insert(x);
     }
 
     public boolean offer(Object x, long msecs) throws InterruptedException {
-	logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
+        logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
 
-	if (x == null)
-	    throw new IllegalArgumentException();
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	insert(x);
-	return true;
+        if (x == null)
+            throw new IllegalArgumentException();
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        insert(x);
+        return true;
     }
 
     public Object take() throws InterruptedException {
-	logger.debug("take() - start");
+        logger.debug("take() - start");
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	// try to extract. If fail, then enter wait-based retry loop
-	Object x = extract();
-	if (x != null)
-	    return x;
-	else {
-	    synchronized (putLock_) {
-		try {
-		    ++waitingForTake_;
-		    for (;;) {
-			x = extract();
-			if (x != null) {
-			    --waitingForTake_;
-			    return x;
-			} else {
-			    putLock_.wait();
-			}
-		    }
-		} catch (InterruptedException ex) {
-		    --waitingForTake_;
-		    putLock_.notify();
-		    throw ex;
-		}
-	    }
-	}
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        // try to extract. If fail, then enter wait-based retry loop
+        Object x = extract();
+        if (x != null)
+            return x;
+        else {
+            synchronized (putLock_) {
+                try {
+                    ++waitingForTake_;
+                    for (;;) {
+                        x = extract();
+                        if (x != null) {
+                            --waitingForTake_;
+                            return x;
+                        } else {
+                            putLock_.wait();
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    --waitingForTake_;
+                    putLock_.notify();
+                    throw ex;
+                }
+            }
+        }
     }
 
     public Object peek() {
-	logger.debug("peek() - start");
+        logger.debug("peek() - start");
 
-	synchronized (head_) {
-	    LinkedNode first = head_.next;
-	    if (first != null)
-		return first.value;
-	    else
-		return null;
-	}
+        synchronized (head_) {
+            LinkedNode first = head_.next;
+            if (first != null)
+                return first.value;
+            else
+                return null;
+        }
     }
 
     public boolean isEmpty() {
-	logger.debug("isEmpty() - start");
+        logger.debug("isEmpty() - start");
 
-	synchronized (head_) {
-	    return head_.next == null;
-	}
+        synchronized (head_) {
+            return head_.next == null;
+        }
     }
 
     public Object poll(long msecs) throws InterruptedException {
-	logger.debug("poll(msecs=" + msecs + ") - start");
+        logger.debug("poll(msecs=" + msecs + ") - start");
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	Object x = extract();
-	if (x != null)
-	    return x;
-	else {
-	    synchronized (putLock_) {
-		try {
-		    long waitTime = msecs;
-		    long start = (msecs <= 0) ? 0 : System.currentTimeMillis();
-		    ++waitingForTake_;
-		    for (;;) {
-			x = extract();
-			if (x != null || waitTime <= 0) {
-			    --waitingForTake_;
-			    return x;
-			} else {
-			    putLock_.wait(waitTime);
-			    waitTime = msecs - (System.currentTimeMillis() - start);
-			}
-		    }
-		} catch (InterruptedException ex) {
-		    --waitingForTake_;
-		    putLock_.notify();
-		    throw ex;
-		}
-	    }
-	}
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        Object x = extract();
+        if (x != null)
+            return x;
+        else {
+            synchronized (putLock_) {
+                try {
+                    long waitTime = msecs;
+                    long start = (msecs <= 0) ? 0 : System.currentTimeMillis();
+                    ++waitingForTake_;
+                    for (;;) {
+                        x = extract();
+                        if (x != null || waitTime <= 0) {
+                            --waitingForTake_;
+                            return x;
+                        } else {
+                            putLock_.wait(waitTime);
+                            waitTime = msecs - (System.currentTimeMillis() - start);
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    --waitingForTake_;
+                    putLock_.notify();
+                    throw ex;
+                }
+            }
+        }
     }
 }

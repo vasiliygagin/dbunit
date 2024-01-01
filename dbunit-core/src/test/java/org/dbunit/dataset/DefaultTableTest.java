@@ -30,44 +30,44 @@ import org.dbunit.dataset.datatype.DataType;
  */
 public class DefaultTableTest extends AbstractTableTest {
     public DefaultTableTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected ITable createTable() throws Exception {
-	return createTable(COLUMN_COUNT, ROW_COUNT, 0);
+        return createTable(COLUMN_COUNT, ROW_COUNT, 0);
     }
 
     protected ITable createTable(int columnCount, int rowCount, int startRow) throws Exception {
-	DefaultTable table = new DefaultTable(createTableMetaData(columnCount));
-	for (int i = 0; i < rowCount; i++) {
-	    Object[] rowValues = new Object[columnCount];
-	    for (int j = 0; j < rowValues.length; j++) {
-		rowValues[j] = "row " + (i + startRow) + " col " + j;
-	    }
-	    table.addRow(rowValues);
-	}
-	return table;
+        DefaultTable table = new DefaultTable(createTableMetaData(columnCount));
+        for (int i = 0; i < rowCount; i++) {
+            Object[] rowValues = new Object[columnCount];
+            for (int j = 0; j < rowValues.length; j++) {
+                rowValues[j] = "row " + (i + startRow) + " col " + j;
+            }
+            table.addRow(rowValues);
+        }
+        return table;
     }
 
     protected ITableMetaData createTableMetaData(int columnCount) throws Exception {
-	Column[] columns = new Column[columnCount];
-	for (int i = 0; i < columns.length; i++) {
-	    columns[i] = new Column("COLUMN" + i, DataType.UNKNOWN);
-	}
+        Column[] columns = new Column[columnCount];
+        for (int i = 0; i < columns.length; i++) {
+            columns[i] = new Column("COLUMN" + i, DataType.UNKNOWN);
+        }
 
-	return new DefaultTableMetaData("myTable", columns);
+        return new DefaultTableMetaData("myTable", columns);
     }
 
     public void testGetMissingValue() throws Exception {
-	String columnName = "COLUMN0";
-	Object expected = ITable.NO_VALUE;
+        String columnName = "COLUMN0";
+        Object expected = ITable.NO_VALUE;
 
-	DefaultTable table = new DefaultTable(createTableMetaData(COLUMN_COUNT));
-	table.addRow(new Object[] { ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE,
-		ITable.NO_VALUE });
-	Column[] columns = table.getTableMetaData().getColumns();
-	assertNotNull(Columns.getColumn(columnName, columns));
-	assertEquals("no value", expected, table.getValue(0, columnName));
+        DefaultTable table = new DefaultTable(createTableMetaData(COLUMN_COUNT));
+        table.addRow(new Object[] { ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE, ITable.NO_VALUE,
+                ITable.NO_VALUE });
+        Column[] columns = table.getTableMetaData().getColumns();
+        assertNotNull(Columns.getColumn(columnName, columns));
+        assertEquals("no value", expected, table.getValue(0, columnName));
     }
 
 }

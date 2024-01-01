@@ -36,12 +36,12 @@ public class MockStatementFactory implements IStatementFactory, Verifiable {
     private IBatchStatement _batchStatement = null;
 //    private IPreparedBatchStatement _preparedBatchStatement = null;
     private ExpectationCounter _createStatementCalls = new ExpectationCounter(
-	    "MockStatementFactory.createBatchStatement");;
+            "MockStatementFactory.createBatchStatement");;
     private ExpectationCounter _createPreparedStatementCalls = new ExpectationCounter(
-	    "MockStatementFactory.createPreparedBatchStatement");;
+            "MockStatementFactory.createPreparedBatchStatement");;
 
     public void setupStatement(IBatchStatement batchStatement) {
-	_batchStatement = batchStatement;
+        _batchStatement = batchStatement;
     }
 
 //    public void setupPreparedStatement(IPreparedBatchStatement preparedBatchStatement)
@@ -50,32 +50,32 @@ public class MockStatementFactory implements IStatementFactory, Verifiable {
 //    }
 
     public void setExpectedCreateStatementCalls(int callsCount) {
-	_createStatementCalls.setExpected(callsCount);
+        _createStatementCalls.setExpected(callsCount);
     }
 
     public void setExpectedCreatePreparedStatementCalls(int callsCount) {
-	_createPreparedStatementCalls.setExpected(callsCount);
+        _createPreparedStatementCalls.setExpected(callsCount);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
     public void verify() {
-	_createStatementCalls.verify();
-	_createPreparedStatementCalls.verify();
+        _createStatementCalls.verify();
+        _createPreparedStatementCalls.verify();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IStatementFactory interface
 
     public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
-	_createStatementCalls.inc();
-	return _batchStatement;
+        _createStatementCalls.inc();
+        return _batchStatement;
     }
 
     public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
-	    throws SQLException {
-	_createPreparedStatementCalls.inc();
-	return new BatchStatementDecorator(sql, _batchStatement);
+            throws SQLException {
+        _createPreparedStatementCalls.inc();
+        return new BatchStatementDecorator(sql, _batchStatement);
     }
 }

@@ -31,31 +31,31 @@ public class DatabaseEnvironmentLoader {
     private static DatabaseEnvironment INSTANCE = null;
 
     public static DatabaseEnvironment getInstance(String profileName) throws Exception {
-	if (INSTANCE == null) {
-	    final DatabaseProfile profile = new DatabaseProfile(profileName);
+        if (INSTANCE == null) {
+            final DatabaseProfile profile = new DatabaseProfile(profileName);
 
-	    if (profile.profileName.equals("hsqldb")) {
-		INSTANCE = new HypersonicEnvironment(profile);
-	    } else if (profile.profileName.equals("oracle")) {
-		INSTANCE = new OracleEnvironment(profile);
-	    } else if (profile.profileName.equals("oracle10")) {
-		INSTANCE = new Oracle10Environment(profile);
-	    } else if (profile.profileName.equals("postgresql")) {
-		INSTANCE = new PostgresqlEnvironment(profile);
-	    } else if (profile.profileName.equals("mysql")) {
-		INSTANCE = new MySqlEnvironment(profile);
-	    } else if (profile.profileName.equals("derby")) {
-		INSTANCE = new DerbyEnvironment(profile);
-	    } else if (profile.profileName.equals("h2")) {
-		INSTANCE = new H2Environment(profile);
-	    } else if (profile.profileName.equals("mssql")) {
-		INSTANCE = new MsSqlEnvironment(profile);
-	    } else {
-		logger.warn("getInstance: activeProfile={} not known," + " using generic profile", profile.profileName);
-		INSTANCE = new DatabaseEnvironment(profile);
-	    }
-	}
+            if (profile.profileName.equals("hsqldb")) {
+                INSTANCE = new HypersonicEnvironment(profile);
+            } else if (profile.profileName.equals("oracle")) {
+                INSTANCE = new OracleEnvironment(profile);
+            } else if (profile.profileName.equals("oracle10")) {
+                INSTANCE = new Oracle10Environment(profile);
+            } else if (profile.profileName.equals("postgresql")) {
+                INSTANCE = new PostgresqlEnvironment(profile);
+            } else if (profile.profileName.equals("mysql")) {
+                INSTANCE = new MySqlEnvironment(profile);
+            } else if (profile.profileName.equals("derby")) {
+                INSTANCE = new DerbyEnvironment(profile);
+            } else if (profile.profileName.equals("h2")) {
+                INSTANCE = new H2Environment(profile);
+            } else if (profile.profileName.equals("mssql")) {
+                INSTANCE = new MsSqlEnvironment(profile);
+            } else {
+                logger.warn("getInstance: activeProfile={} not known," + " using generic profile", profile.profileName);
+                INSTANCE = new DatabaseEnvironment(profile);
+            }
+        }
 
-	return INSTANCE;
+        return INSTANCE;
     }
 }

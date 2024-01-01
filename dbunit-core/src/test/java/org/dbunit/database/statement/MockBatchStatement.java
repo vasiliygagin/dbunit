@@ -43,54 +43,54 @@ public class MockBatchStatement implements IBatchStatement, Verifiable {
     }
 
     public void addExpectedBatchString(String sql) {
-	_batchStrings.addExpected(sql);
+        _batchStrings.addExpected(sql);
     }
 
     public void addExpectedBatchStrings(String[] sql) {
-	_batchStrings.addExpectedMany(sql);
+        _batchStrings.addExpectedMany(sql);
     }
 
     public void setExpectedExecuteBatchCalls(int callsCount) {
-	_executeBatchCalls.setExpected(callsCount);
+        _executeBatchCalls.setExpected(callsCount);
     }
 
     public void setExpectedClearBatchCalls(int callsCount) {
-	_clearBatchCalls.setExpected(callsCount);
+        _clearBatchCalls.setExpected(callsCount);
     }
 
     public void setExpectedCloseCalls(int callsCount) {
-	_closeCalls.setExpected(callsCount);
+        _closeCalls.setExpected(callsCount);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
     public void verify() {
-	_executeBatchCalls.verify();
-	_clearBatchCalls.verify();
-	_closeCalls.verify();
-	_batchStrings.verify();
+        _executeBatchCalls.verify();
+        _clearBatchCalls.verify();
+        _closeCalls.verify();
+        _batchStrings.verify();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IBatchStatement interface
 
     public void addBatch(String sql) throws SQLException {
-	_batchStrings.addActual(sql);
-	_addBatchCalls++;
+        _batchStrings.addActual(sql);
+        _addBatchCalls++;
     }
 
     public int executeBatch() throws SQLException {
-	_executeBatchCalls.inc();
-	return _addBatchCalls;
+        _executeBatchCalls.inc();
+        return _addBatchCalls;
     }
 
     public void clearBatch() throws SQLException {
-	_clearBatchCalls.inc();
-	_addBatchCalls = 0;
+        _clearBatchCalls.inc();
+        _addBatchCalls = 0;
     }
 
     public void close() throws SQLException {
-	_closeCalls.inc();
+        _closeCalls.inc();
     }
 }

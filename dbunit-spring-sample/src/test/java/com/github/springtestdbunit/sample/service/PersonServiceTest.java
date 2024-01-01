@@ -28,16 +28,16 @@ public class PersonServiceTest {
     @Test
     @DatabaseSetup("sampleData.xml")
     public void testFind() throws Exception {
-	List<Person> personList = this.personService.find("hil");
-	assertEquals(1, personList.size());
-	assertEquals("Phillip", personList.get(0).getFirstName());
+        List<Person> personList = this.personService.find("hil");
+        assertEquals(1, personList.size());
+        assertEquals("Phillip", personList.get(0).getFirstName());
     }
 
     @Test
     @DatabaseSetup("sampleData.xml")
     @ExpectedDatabase("expectedData.xml")
     public void testRemove() throws Exception {
-	this.personService.remove(1);
+        this.personService.remove(1);
     }
 
 }

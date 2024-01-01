@@ -31,57 +31,57 @@ import java.sql.Types;
  */
 public class AbstractDataTypeFactoryTest extends TestCase {
     public AbstractDataTypeFactoryTest(String s) {
-	super(s);
+        super(s);
     }
 
     public IDataTypeFactory createFactory() throws Exception {
-	return new DefaultDataTypeFactory();
+        return new DefaultDataTypeFactory();
     }
 
     public void testCreateDataType() throws Exception {
-	DataType[] expectedTypes = new DataType[] { DataType.UNKNOWN, DataType.CHAR, DataType.VARCHAR,
-		DataType.LONGVARCHAR,
+        DataType[] expectedTypes = new DataType[] { DataType.UNKNOWN, DataType.CHAR, DataType.VARCHAR,
+                DataType.LONGVARCHAR,
 //            DataType.CLOB,
-		DataType.NUMERIC, DataType.DECIMAL, DataType.BOOLEAN, DataType.TINYINT, DataType.SMALLINT,
-		DataType.INTEGER, DataType.BIGINT, DataType.REAL, DataType.FLOAT, DataType.DOUBLE,
+                DataType.NUMERIC, DataType.DECIMAL, DataType.BOOLEAN, DataType.TINYINT, DataType.SMALLINT,
+                DataType.INTEGER, DataType.BIGINT, DataType.REAL, DataType.FLOAT, DataType.DOUBLE,
 //            DataType.DATE,
-		DataType.TIME, DataType.TIMESTAMP, DataType.BINARY, DataType.VARBINARY, DataType.LONGVARBINARY,
+                DataType.TIME, DataType.TIMESTAMP, DataType.BINARY, DataType.VARBINARY, DataType.LONGVARBINARY,
 //            DataType.BLOB,
-	};
+        };
 
-	IDataTypeFactory factory = createFactory();
-	for (int i = 0; i < expectedTypes.length; i++) {
-	    DataType expected = expectedTypes[i];
-	    DataType actual = factory.createDataType(expected.getSqlType(), expected.toString());
-	    assertSame("type", expected, actual);
-	}
+        IDataTypeFactory factory = createFactory();
+        for (int i = 0; i < expectedTypes.length; i++) {
+            DataType expected = expectedTypes[i];
+            DataType actual = factory.createDataType(expected.getSqlType(), expected.toString());
+            assertSame("type", expected, actual);
+        }
     }
 
     public void testCreateDateDataType() throws Exception {
-	int sqlType = Types.DATE;
-	String sqlTypeName = "DATE";
+        int sqlType = Types.DATE;
+        String sqlTypeName = "DATE";
 
-	DataType expected = DataType.DATE;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = DataType.DATE;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 
     public void testCreateBlobDataType() throws Exception {
-	int sqlType = Types.BLOB;
-	String sqlTypeName = "BLOB";
+        int sqlType = Types.BLOB;
+        String sqlTypeName = "BLOB";
 
-	DataType expected = DataType.BLOB;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = DataType.BLOB;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 
     public void testCreateClobDataType() throws Exception {
-	int sqlType = Types.CLOB;
-	String sqlTypeName = "CLOB";
+        int sqlType = Types.CLOB;
+        String sqlTypeName = "CLOB";
 
-	DataType expected = DataType.CLOB;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = DataType.CLOB;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 
 }

@@ -36,70 +36,70 @@ import java.io.Writer;
  */
 public class FlatXmlTableWriteTest extends FlatXmlTableTest {
     public FlatXmlTableWriteTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDataSet createDataSet() throws Exception {
-	File tempFile = File.createTempFile("flatXmlTableWriteTest", ".xml");
-	Writer out = new FileWriter(tempFile);
-	try {
-	    // write DefaultTable in temp file
-	    try {
-		FlatXmlDataSet.write(super.createDataSet(true), out);
-	    } finally {
-		out.close();
-	    }
+        File tempFile = File.createTempFile("flatXmlTableWriteTest", ".xml");
+        Writer out = new FileWriter(tempFile);
+        try {
+            // write DefaultTable in temp file
+            try {
+                FlatXmlDataSet.write(super.createDataSet(true), out);
+            } finally {
+                out.close();
+            }
 
-	    // load new dataset from temp file
-	    FileReader in = new FileReader(tempFile);
-	    try {
-		return new FlatXmlDataSetBuilder().build(in);
-	    } finally {
-		in.close();
-	    }
-	} finally {
-	    tempFile.delete();
-	}
+            // load new dataset from temp file
+            FileReader in = new FileReader(tempFile);
+            try {
+                return new FlatXmlDataSetBuilder().build(in);
+            } finally {
+                in.close();
+            }
+        } finally {
+            tempFile.delete();
+        }
     }
 
     public void testWriteMultipleTable() throws Exception {
-	int tableCount = 5;
-	ITable sourceTable = super.createTable();
+        int tableCount = 5;
+        ITable sourceTable = super.createTable();
 
-	ITable[] tables = new ITable[tableCount];
-	for (int i = 0; i < tables.length; i++) {
-	    ITableMetaData metaData = new DefaultTableMetaData("table" + i,
-		    sourceTable.getTableMetaData().getColumns());
-	    tables[i] = new CompositeTable(metaData, sourceTable);
-	}
+        ITable[] tables = new ITable[tableCount];
+        for (int i = 0; i < tables.length; i++) {
+            ITableMetaData metaData = new DefaultTableMetaData("table" + i,
+                    sourceTable.getTableMetaData().getColumns());
+            tables[i] = new CompositeTable(metaData, sourceTable);
+        }
 
-	IDataSet dataSet = new DefaultDataSet(tables);
-	File tempFile = File.createTempFile("flatXmlTableWriteTest", "xml");
-	Writer out = new FileWriter(tempFile);
-	try {
-	    // write DefaultTable in temp file
-	    try {
-		FlatXmlDataSet.write(dataSet, out);
-	    } finally {
-		out.close();
-	    }
+        IDataSet dataSet = new DefaultDataSet(tables);
+        File tempFile = File.createTempFile("flatXmlTableWriteTest", "xml");
+        Writer out = new FileWriter(tempFile);
+        try {
+            // write DefaultTable in temp file
+            try {
+                FlatXmlDataSet.write(dataSet, out);
+            } finally {
+                out.close();
+            }
 
-	    // load new dataset from temp file
-	    FileReader in = new FileReader(tempFile);
-	    try {
-		FlatXmlDataSet xmlDataSet2 = new FlatXmlDataSetBuilder().build(in);
+            // load new dataset from temp file
+            FileReader in = new FileReader(tempFile);
+            try {
+                FlatXmlDataSet xmlDataSet2 = new FlatXmlDataSetBuilder().build(in);
 
-		// verify each table
-		for (int i = 0; i < tables.length; i++) {
-		    ITable table = tables[i];
-		    Assertion.assertEquals(table, xmlDataSet2.getTable(xmlDataSet2.getTableNames()[i]));
-		}
-	    } finally {
-		in.close();
-	    }
-	} finally {
-	    tempFile.delete();
-	}
+                // verify each table
+                for (int i = 0; i < tables.length; i++) {
+                    ITable table = tables[i];
+                    Assertion.assertEquals(table, xmlDataSet2.getTable(xmlDataSet2.getTableNames()[i]));
+                }
+            } finally {
+                in.close();
+            }
+        } finally {
+            tempFile.delete();
+        }
     }
 
 }

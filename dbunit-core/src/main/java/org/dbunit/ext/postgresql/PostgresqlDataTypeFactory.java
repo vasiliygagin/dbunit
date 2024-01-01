@@ -56,44 +56,44 @@ public class PostgresqlDataTypeFactory extends DefaultDataTypeFactory {
      */
     @Override
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     public static Collection getDatabaseProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     @Override
     public DataType createDataType(final int sqlType, final String sqlTypeName) throws DataTypeException {
-	logger.debug("createDataType(sqlType={}, sqlTypeName={})", String.valueOf(sqlType), sqlTypeName);
+        logger.debug("createDataType(sqlType={}, sqlTypeName={})", String.valueOf(sqlType), sqlTypeName);
 
-	if (sqlType == Types.OTHER) {
-	    // Treat Postgresql UUID types as VARCHARS
-	    if ("uuid".equals(sqlTypeName)) {
-		return new UuidType();
-	    } else if ("interval".equals(sqlTypeName)) {
-		return new IntervalType();
-	    } else if ("inet".equals(sqlTypeName)) {
-		return new InetType();
-	    } else if ("geometry".equals(sqlTypeName)) {
-		return new GeometryType();
-	    } else if ("citext".equals(sqlTypeName)) {
-		return new CitextType();
-	    } else {
-		// Finally check whether the user defined a custom datatype
-		if (isEnumType(sqlTypeName)) {
-		    if (logger.isDebugEnabled()) {
-			logger.debug("Custom enum type used for sqlTypeName {} (sqlType '{}')",
-				new Object[] { sqlTypeName, new Integer(sqlType) });
-		    }
-		    return new GenericEnumType(sqlTypeName);
-		}
-	    }
-	} else if (sqlType == Types.BIGINT && "oid".equals(sqlTypeName)) {
-	    return new PostgreSQLOidDataType();
-	}
+        if (sqlType == Types.OTHER) {
+            // Treat Postgresql UUID types as VARCHARS
+            if ("uuid".equals(sqlTypeName)) {
+                return new UuidType();
+            } else if ("interval".equals(sqlTypeName)) {
+                return new IntervalType();
+            } else if ("inet".equals(sqlTypeName)) {
+                return new InetType();
+            } else if ("geometry".equals(sqlTypeName)) {
+                return new GeometryType();
+            } else if ("citext".equals(sqlTypeName)) {
+                return new CitextType();
+            } else {
+                // Finally check whether the user defined a custom datatype
+                if (isEnumType(sqlTypeName)) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Custom enum type used for sqlTypeName {} (sqlType '{}')",
+                                new Object[] { sqlTypeName, new Integer(sqlType) });
+                    }
+                    return new GenericEnumType(sqlTypeName);
+                }
+            }
+        } else if (sqlType == Types.BIGINT && "oid".equals(sqlTypeName)) {
+            return new PostgreSQLOidDataType();
+        }
 
-	return super.createDataType(sqlType, sqlTypeName);
+        return super.createDataType(sqlType, sqlTypeName);
     }
 
     /**
@@ -109,6 +109,6 @@ public class PostgresqlDataTypeFactory extends DefaultDataTypeFactory {
      * @since 2.4.6
      */
     public boolean isEnumType(final String sqlTypeName) {
-	return false;
+        return false;
     }
 }

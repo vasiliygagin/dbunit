@@ -61,110 +61,110 @@ public class Compare extends AbstractStep {
     private boolean _sort = false;
 
     public File getSrc() {
-	return _src;
+        return _src;
     }
 
     public void setSrc(File src) {
-	logger.debug("setSrc(src={}) - start", src);
+        logger.debug("setSrc(src={}) - start", src);
 
-	_src = src;
+        _src = src;
     }
 
     public void setSort(boolean sort) {
-	logger.debug("setSort(sort={}) - start", String.valueOf(sort));
+        logger.debug("setSort(sort={}) - start", String.valueOf(sort));
 
-	_sort = sort;
+        _sort = sort;
     }
 
     public String getFormat() {
-	return _format != null ? _format : DEFAULT_FORMAT;
+        return _format != null ? _format : DEFAULT_FORMAT;
     }
 
     public void setFormat(String format) {
-	logger.debug("setFormat(format={}) - start", format);
+        logger.debug("setFormat(format={}) - start", format);
 
-	// Check if the given format is accepted
-	checkDataFormat(format);
-	// If we get here the given format is a valid data format
-	_format = format;
+        // Check if the given format is accepted
+        checkDataFormat(format);
+        // If we get here the given format is a valid data format
+        _format = format;
     }
 
     public List getTables() {
-	return _tables;
+        return _tables;
     }
 
     public void addTable(Table table) {
-	logger.debug("addTable(table={}) - start", table);
+        logger.debug("addTable(table={}) - start", table);
 
-	_tables.add(table);
+        _tables.add(table);
     }
 
     public void addQuery(Query query) {
-	logger.debug("addQuery(query={}) - start", query);
+        logger.debug("addQuery(query={}) - start", query);
 
-	_tables.add(query);
+        _tables.add(query);
     }
 
     public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
-	logger.debug("execute(connection={}) - start", connection);
+        logger.debug("execute(connection={}) - start", connection);
 
-	IDataSet expectedDataset = getSrcDataSet(_src, getFormat(), false);
-	IDataSet actualDataset = getDatabaseDataSet(connection, _tables);
+        IDataSet expectedDataset = getSrcDataSet(_src, getFormat(), false);
+        IDataSet actualDataset = getDatabaseDataSet(connection, _tables);
 
-	String[] tableNames = null;
-	if (_tables.size() == 0) {
-	    // No tables specified, assume must compare all tables from
-	    // expected dataset
-	    tableNames = expectedDataset.getTableNames();
-	} else {
-	    tableNames = actualDataset.getTableNames();
-	}
+        String[] tableNames = null;
+        if (_tables.size() == 0) {
+            // No tables specified, assume must compare all tables from
+            // expected dataset
+            tableNames = expectedDataset.getTableNames();
+        } else {
+            tableNames = actualDataset.getTableNames();
+        }
 
-	for (int i = 0; i < tableNames.length; i++) {
-	    String tableName = tableNames[i];
-	    ITable expectedTable;
-	    try {
-		expectedTable = expectedDataset.getTable(tableName);
-	    } catch (NoSuchTableException e) {
-		throw new DatabaseUnitException(
-			"Did not find table in source file '" + _src + "' using format '" + getFormat() + "'", e);
-	    }
-	    ITableMetaData expectedMetaData = expectedTable.getTableMetaData();
+        for (int i = 0; i < tableNames.length; i++) {
+            String tableName = tableNames[i];
+            ITable expectedTable;
+            try {
+                expectedTable = expectedDataset.getTable(tableName);
+            } catch (NoSuchTableException e) {
+                throw new DatabaseUnitException(
+                        "Did not find table in source file '" + _src + "' using format '" + getFormat() + "'", e);
+            }
+            ITableMetaData expectedMetaData = expectedTable.getTableMetaData();
 
-	    ITable actualTable;
-	    try {
-		actualTable = actualDataset.getTable(tableName);
-	    } catch (NoSuchTableException e) {
-		throw new DatabaseUnitException("Did not find table in actual dataset '" + actualDataset
-			+ "' via db connection '" + connection + "'", e);
-	    }
-	    // Only compare columns present in expected table. Extra columns
-	    // are filtered out from actual database table.
-	    actualTable = DefaultColumnFilter.includedColumnsTable(actualTable, expectedMetaData.getColumns());
+            ITable actualTable;
+            try {
+                actualTable = actualDataset.getTable(tableName);
+            } catch (NoSuchTableException e) {
+                throw new DatabaseUnitException("Did not find table in actual dataset '" + actualDataset
+                        + "' via db connection '" + connection + "'", e);
+            }
+            // Only compare columns present in expected table. Extra columns
+            // are filtered out from actual database table.
+            actualTable = DefaultColumnFilter.includedColumnsTable(actualTable, expectedMetaData.getColumns());
 
-	    if (_sort) {
-		expectedTable = new SortedTable(expectedTable);
-		actualTable = new SortedTable(actualTable);
-	    }
-	    Assertion.assertEquals(expectedTable, actualTable);
-	}
+            if (_sort) {
+                expectedTable = new SortedTable(expectedTable);
+                actualTable = new SortedTable(actualTable);
+            }
+            Assertion.assertEquals(expectedTable, actualTable);
+        }
     }
 
     public String getLogMessage() {
-	return "Executing compare: " + "\n          from file: " + ((_src == null) ? null : _src.getAbsolutePath())
-		+ "\n          with format: " + _format;
+        return "Executing compare: " + "\n          from file: " + ((_src == null) ? null : _src.getAbsolutePath())
+                + "\n          with format: " + _format;
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer();
-	result.append("Compare: ");
-	result.append(" src=");
-	result.append((_src == null ? "null" : _src.getAbsolutePath()));
-	result.append(", format= ");
-	result.append(_format);
-	result.append(", tables= ");
-	result.append(_tables);
+        StringBuffer result = new StringBuffer();
+        result.append("Compare: ");
+        result.append(" src=");
+        result.append((_src == null ? "null" : _src.getAbsolutePath()));
+        result.append(", format= ");
+        result.append(_format);
+        result.append(", tables= ");
+        result.append(_tables);
 
-	return result.toString();
+        return result.toString();
     }
 }

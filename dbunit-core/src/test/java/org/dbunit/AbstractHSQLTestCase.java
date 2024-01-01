@@ -64,43 +64,43 @@ public abstract class AbstractHSQLTestCase extends TestCase {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractHSQLTestCase(String testName, String sqlFile) {
-	super(testName);
-	this.sqlFile = sqlFile;
+        super(testName);
+        this.sqlFile = sqlFile;
     }
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
-	this.connection = new DatabaseConnection(jdbcConnection);
-	DatabaseConfig config = connection.getConfig();
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
+        this.connection = new DatabaseConnection(jdbcConnection);
+        DatabaseConfig config = connection.getConfig();
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
 
-	HypersonicEnvironment.shutdown(this.jdbcConnection);
-	this.jdbcConnection.close();
+        HypersonicEnvironment.shutdown(this.jdbcConnection);
+        this.jdbcConnection.close();
     }
 
     protected IDatabaseConnection getConnection() {
-	return this.connection;
+        return this.connection;
     }
 
     protected static String dump(String[] parent) {
-	StringBuffer buffer = new StringBuffer("[ " + parent[0]);
-	for (int i = 1; i < parent.length; i++) {
-	    buffer.append(", " + parent[i]);
-	}
-	buffer.append(" ]");
-	return buffer.toString();
+        StringBuffer buffer = new StringBuffer("[ " + parent[0]);
+        for (int i = 1; i < parent.length; i++) {
+            buffer.append(", " + parent[i]);
+        }
+        buffer.append(" ]");
+        return buffer.toString();
     }
 
     public static String dump(Set set) {
-	String[] strings = CollectionsHelper.setToStrings(set);
-	return dump(strings);
+        String[] strings = CollectionsHelper.setToStrings(set);
+        return dump(strings);
     }
 
 }

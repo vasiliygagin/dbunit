@@ -32,7 +32,7 @@ public abstract class ValueComparers {
      * @see IsActualWithinToleranceOfExpectedTimestampValueComparer
      */
     public static final ValueComparer isActualEqualToExpectedTimestampWithIgnoreMillis = new IsActualWithinToleranceOfExpectedTimestampValueComparer(
-	    0, ONE_SECOND_IN_MILLIS);
+            0, ONE_SECOND_IN_MILLIS);
 
     /** @see IsActualNotEqualToExpectedValueComparer */
     public static final ValueComparer isActualNotEqualToExpected = new IsActualNotEqualToExpectedValueComparer();
@@ -51,19 +51,19 @@ public abstract class ValueComparers {
 
     /** @see IsActualWithinToleranceOfExpectedTimestampValueComparer */
     public static final ValueComparer isActualWithinOneSecondNewerOfExpectedTimestamp = new IsActualWithinToleranceOfExpectedTimestampValueComparer(
-	    0, ONE_SECOND_IN_MILLIS);
+            0, ONE_SECOND_IN_MILLIS);
 
     /** @see IsActualWithinToleranceOfExpectedTimestampValueComparer */
     public static final ValueComparer isActualWithinOneSecondOlderOfExpectedTimestamp = new IsActualWithinToleranceOfExpectedTimestampValueComparer(
-	    ONE_SECOND_IN_MILLIS, 0);
+            ONE_SECOND_IN_MILLIS, 0);
 
     /** @see IsActualWithinToleranceOfExpectedTimestampValueComparer */
     public static final ValueComparer isActualWithinOneMinuteNewerOfExpectedTimestamp = new IsActualWithinToleranceOfExpectedTimestampValueComparer(
-	    0, ONE_MINUTE_IN_MILLIS);
+            0, ONE_MINUTE_IN_MILLIS);
 
     /** @see IsActualWithinToleranceOfExpectedTimestampValueComparer */
     public static final ValueComparer isActualWithinOneMinuteOlderOfExpectedTimestamp = new IsActualWithinToleranceOfExpectedTimestampValueComparer(
-	    ONE_MINUTE_IN_MILLIS, 0);
+            ONE_MINUTE_IN_MILLIS, 0);
 
     /**
      * @see IsActualContainingExpectedStringValueComparer

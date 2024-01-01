@@ -37,47 +37,47 @@ import org.xml.sax.InputSource;
  */
 public class StreamingDataSetTest extends ForwardOnlyDataSetTest {
     public StreamingDataSetTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDataSet createDataSet() throws Exception {
-	IDataSetProducer source = new FlatXmlProducer(new InputSource(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
-	return new StreamingDataSet(source);
+        IDataSetProducer source = new FlatXmlProducer(new InputSource(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
+        return new StreamingDataSet(source);
     }
 
     protected IDataSet createDuplicateDataSet() throws Exception {
-	return new StreamingDataSet(new DataSetProducerAdapter(super.createDuplicateDataSet()));
+        return new StreamingDataSet(new DataSetProducerAdapter(super.createDuplicateDataSet()));
     }
 
     public void testReturnsOnException() throws Exception {
-	RuntimeException exceptionToThrow = new IllegalArgumentException(
-		"For this test case we throw something that we normally would never do");
-	ExceptionThrowingProducer source = new ExceptionThrowingProducer(exceptionToThrow);
-	StreamingDataSet streamingDataSet = new StreamingDataSet(source);
-	try {
-	    streamingDataSet.createIterator(false);
-	} catch (DataSetException expected) {
-	    Throwable cause = expected.getCause();
-	    assertEquals(IllegalArgumentException.class, cause.getClass());
-	    assertEquals(exceptionToThrow, cause);
-	}
+        RuntimeException exceptionToThrow = new IllegalArgumentException(
+                "For this test case we throw something that we normally would never do");
+        ExceptionThrowingProducer source = new ExceptionThrowingProducer(exceptionToThrow);
+        StreamingDataSet streamingDataSet = new StreamingDataSet(source);
+        try {
+            streamingDataSet.createIterator(false);
+        } catch (DataSetException expected) {
+            Throwable cause = expected.getCause();
+            assertEquals(IllegalArgumentException.class, cause.getClass());
+            assertEquals(exceptionToThrow, cause);
+        }
     }
 
     private static class ExceptionThrowingProducer implements IDataSetProducer {
-	private RuntimeException exceptionToThrow;
+        private RuntimeException exceptionToThrow;
 
-	public ExceptionThrowingProducer(RuntimeException exceptionToThrow) {
-	    super();
-	    this.exceptionToThrow = exceptionToThrow;
-	}
+        public ExceptionThrowingProducer(RuntimeException exceptionToThrow) {
+            super();
+            this.exceptionToThrow = exceptionToThrow;
+        }
 
-	public void produce() throws DataSetException {
-	    throw exceptionToThrow;
-	}
+        public void produce() throws DataSetException {
+            throw exceptionToThrow;
+        }
 
-	public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-	    // Ignore for this test
-	}
+        public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
+            // Ignore for this test
+        }
 
     }
 }

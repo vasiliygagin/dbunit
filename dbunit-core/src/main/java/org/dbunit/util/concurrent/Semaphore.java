@@ -109,70 +109,70 @@ public class Semaphore implements Sync {
      * releases has pushed the number of permits past 0.
      **/
     public Semaphore(long initialPermits) {
-	permits_ = initialPermits;
+        permits_ = initialPermits;
     }
 
     /** Wait until a permit is available, and take one **/
     public void acquire() throws InterruptedException {
-	logger.debug("acquire() - start");
+        logger.debug("acquire() - start");
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
-	synchronized (this) {
-	    try {
-		while (permits_ <= 0)
-		    wait();
-		--permits_;
-	    } catch (InterruptedException ex) {
-		notify();
-		throw ex;
-	    }
-	}
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        synchronized (this) {
+            try {
+                while (permits_ <= 0)
+                    wait();
+                --permits_;
+            } catch (InterruptedException ex) {
+                notify();
+                throw ex;
+            }
+        }
     }
 
     /** Wait at most msecs millisconds for a permit. **/
     public boolean attempt(long msecs) throws InterruptedException {
-	logger.debug("attempt(msecs={}) - start", String.valueOf(msecs));
+        logger.debug("attempt(msecs={}) - start", String.valueOf(msecs));
 
-	if (Thread.interrupted())
-	    throw new InterruptedException();
+        if (Thread.interrupted())
+            throw new InterruptedException();
 
-	synchronized (this) {
-	    if (permits_ > 0) {
-		--permits_;
-		return true;
-	    } else if (msecs <= 0)
-		return false;
-	    else {
-		try {
-		    long startTime = System.currentTimeMillis();
-		    long waitTime = msecs;
+        synchronized (this) {
+            if (permits_ > 0) {
+                --permits_;
+                return true;
+            } else if (msecs <= 0)
+                return false;
+            else {
+                try {
+                    long startTime = System.currentTimeMillis();
+                    long waitTime = msecs;
 
-		    for (;;) {
-			wait(waitTime);
-			if (permits_ > 0) {
-			    --permits_;
-			    return true;
-			} else {
-			    waitTime = msecs - (System.currentTimeMillis() - startTime);
-			    if (waitTime <= 0)
-				return false;
-			}
-		    }
-		} catch (InterruptedException ex) {
-		    notify();
-		    throw ex;
-		}
-	    }
-	}
+                    for (;;) {
+                        wait(waitTime);
+                        if (permits_ > 0) {
+                            --permits_;
+                            return true;
+                        } else {
+                            waitTime = msecs - (System.currentTimeMillis() - startTime);
+                            if (waitTime <= 0)
+                                return false;
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    notify();
+                    throw ex;
+                }
+            }
+        }
     }
 
     /** Release a permit **/
     public synchronized void release() {
-	logger.debug("release() - start");
+        logger.debug("release() - start");
 
-	++permits_;
-	notify();
+        ++permits_;
+        notify();
     }
 
     /**
@@ -188,14 +188,14 @@ public class Semaphore implements Sync {
      * @exception IllegalArgumentException if n is negative.
      **/
     public synchronized void release(long n) {
-	logger.debug("release(n={}) - start", String.valueOf(n));
+        logger.debug("release(n={}) - start", String.valueOf(n));
 
-	if (n < 0)
-	    throw new IllegalArgumentException("Negative argument");
+        if (n < 0)
+            throw new IllegalArgumentException("Negative argument");
 
-	permits_ += n;
-	for (long i = 0; i < n; ++i)
-	    notify();
+        permits_ += n;
+        for (long i = 0; i < n; ++i)
+            notify();
     }
 
     /**
@@ -203,7 +203,7 @@ public class Semaphore implements Sync {
      * possibly unstable value, that may change immediately after returning.
      **/
     public synchronized long permits() {
-	return permits_;
+        return permits_;
     }
 
 }

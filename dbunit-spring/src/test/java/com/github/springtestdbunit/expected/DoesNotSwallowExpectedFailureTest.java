@@ -34,10 +34,10 @@ import com.github.springtestdbunit.testutils.NotSwallowedException;
 @Transactional
 public class DoesNotSwallowExpectedFailureTest {
 
-	@Test
-	@ExpectedDatabase("/META-INF/db/expectedfail.xml")
-	public void test() throws Exception {
-		throw new NotSwallowedException();
-	}
+    @Test
+    @ExpectedDatabase("/META-INF/db/expectedfail.xml")
+    public void test() throws Exception {
+        throw new NotSwallowedException();
+    }
 
 }

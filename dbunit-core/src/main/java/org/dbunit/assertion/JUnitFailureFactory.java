@@ -33,12 +33,12 @@ import junit.framework.ComparisonFailure;
  */
 public class JUnitFailureFactory implements FailureFactory {
     public Error createFailure(String message, String expected, String actual) {
-	// Return the junit.framework.ComparisonFailure object
-	return new ComparisonFailure(message, expected, actual);
+        // Return the junit.framework.ComparisonFailure object
+        return new ComparisonFailure(message, expected, actual);
     }
 
     public Error createFailure(String message) {
-	// Return the junit.framework.AssertionFailedError object
-	return new AssertionFailedError(message);
+        // Return the junit.framework.AssertionFailedError object
+        return new AssertionFailedError(message);
     }
 }

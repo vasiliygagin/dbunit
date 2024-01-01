@@ -33,13 +33,13 @@ import org.dbunit.testutil.TestUtils;
  */
 public class SortedDataSetTest extends AbstractDataSetDecoratorTest {
     public SortedDataSetTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDataSet createDataSet() throws Exception {
-	IDataSet dataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFileReader("xml/sortedDataSetTest.xml"));
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFileReader("xml/sortedDataSetTest.xml"));
 
-	return new SortedDataSet(dataSet);
+        return new SortedDataSet(dataSet);
     }
 
 }

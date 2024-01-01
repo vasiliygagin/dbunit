@@ -52,21 +52,21 @@ public class H2DataTypeFactory extends DefaultDataTypeFactory {
      */
     @Override
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        }
 
-	if (sqlTypeName.equals("BOOLEAN")) {
-	    return DataType.BOOLEAN;
-	} else if ("UUID".equals(sqlTypeName)) {
-	    return DataType.NVARCHAR;
-	}
+        if (sqlTypeName.equals("BOOLEAN")) {
+            return DataType.BOOLEAN;
+        } else if ("UUID".equals(sqlTypeName)) {
+            return DataType.NVARCHAR;
+        }
 
-	return super.createDataType(sqlType, sqlTypeName);
+        return super.createDataType(sqlType, sqlTypeName);
     }
 }

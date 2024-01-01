@@ -60,27 +60,27 @@ public class Db2DataTypeFactory extends DefaultDataTypeFactory {
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	if (sqlType == Types.DISTINCT) {
-	    if (sqlTypeName.equals(DB2XML_XMLVARCHAR.toString())) {
-		return DB2XML_XMLVARCHAR;
-	    }
+        if (sqlType == Types.DISTINCT) {
+            if (sqlTypeName.equals(DB2XML_XMLVARCHAR.toString())) {
+                return DB2XML_XMLVARCHAR;
+            }
 
-	    if (sqlTypeName.equals(DB2XML_XMLCLOB.toString())) {
-		return DB2XML_XMLCLOB;
-	    }
+            if (sqlTypeName.equals(DB2XML_XMLCLOB.toString())) {
+                return DB2XML_XMLCLOB;
+            }
 
-	    if (sqlTypeName.equals(DB2XML_XMLFILE.toString())) {
-		return DB2XML_XMLFILE;
-	    }
-	}
+            if (sqlTypeName.equals(DB2XML_XMLFILE.toString())) {
+                return DB2XML_XMLFILE;
+            }
+        }
 
-	return super.createDataType(sqlType, sqlTypeName);
+        return super.createDataType(sqlType, sqlTypeName);
     }
 }

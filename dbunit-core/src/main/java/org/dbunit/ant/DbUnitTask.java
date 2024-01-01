@@ -179,49 +179,49 @@ public class DbUnitTask extends Task {
      * Set the JDBC driver to be used.
      */
     public void setDriver(String driver) {
-	logger.trace("setDriver(driver={}) - start", driver);
-	this.driver = driver;
+        logger.trace("setDriver(driver={}) - start", driver);
+        this.driver = driver;
     }
 
     /**
      * Set the DB connection url.
      */
     public void setUrl(String url) {
-	logger.trace("setUrl(url={}) - start", url);
-	this.url = url;
+        logger.trace("setUrl(url={}) - start", url);
+        this.url = url;
     }
 
     /**
      * Set the user name for the DB connection.
      */
     public void setUserid(String userId) {
-	logger.trace("setUserid(userId={}) - start", userId);
-	this.userId = userId;
+        logger.trace("setUserid(userId={}) - start", userId);
+        this.userId = userId;
     }
 
     /**
      * Set the password for the DB connection.
      */
     public void setPassword(String password) {
-	logger.trace("setPassword(password=*****) - start");
-	this.password = password;
+        logger.trace("setPassword(password=*****) - start");
+        this.password = password;
     }
 
     /**
      * Set the schema for the DB connection.
      */
     public void setSchema(String schema) {
-	logger.trace("setSchema(schema={}) - start", schema);
-	this.schema = schema;
+        logger.trace("setSchema(schema={}) - start", schema);
+        this.schema = schema;
     }
 
     /**
      * Set the flag for using the qualified table names.
      */
     public void setUseQualifiedTableNames(Boolean useQualifiedTableNames) {
-	logger.trace("setUseQualifiedTableNames(useQualifiedTableNames={}) - start",
-		String.valueOf(useQualifiedTableNames));
-	this.useQualifiedTableNames = useQualifiedTableNames;
+        logger.trace("setUseQualifiedTableNames(useQualifiedTableNames={}) - start",
+                String.valueOf(useQualifiedTableNames));
+        this.useQualifiedTableNames = useQualifiedTableNames;
     }
 
     /**
@@ -230,28 +230,28 @@ public class DbUnitTask extends Task {
      * it.
      */
     public void setSupportBatchStatement(Boolean supportBatchStatement) {
-	logger.trace("setSupportBatchStatement(supportBatchStatement={}) - start",
-		String.valueOf(supportBatchStatement));
-	this.supportBatchStatement = supportBatchStatement;
+        logger.trace("setSupportBatchStatement(supportBatchStatement={}) - start",
+                String.valueOf(supportBatchStatement));
+        this.supportBatchStatement = supportBatchStatement;
     }
 
     public void setDatatypeWarning(Boolean datatypeWarning) {
-	logger.trace("setDatatypeWarning(datatypeWarning={}) - start", String.valueOf(datatypeWarning));
-	this.datatypeWarning = datatypeWarning;
+        logger.trace("setDatatypeWarning(datatypeWarning={}) - start", String.valueOf(datatypeWarning));
+        this.datatypeWarning = datatypeWarning;
     }
 
     public void setDatatypeFactory(String datatypeFactory) {
-	logger.trace("setDatatypeFactory(datatypeFactory={}) - start", datatypeFactory);
-	this.dataTypeFactory = datatypeFactory;
+        logger.trace("setDatatypeFactory(datatypeFactory={}) - start", datatypeFactory);
+        this.dataTypeFactory = datatypeFactory;
     }
 
     public void setEscapePattern(String escapePattern) {
-	logger.trace("setEscapePattern(escapePattern={}) - start", escapePattern);
-	this.escapePattern = escapePattern;
+        logger.trace("setEscapePattern(escapePattern={}) - start", escapePattern);
+        this.escapePattern = escapePattern;
     }
 
     public DbConfig getDbConfig() {
-	return dbConfig;
+        return dbConfig;
     }
 
 //    public void setDbConfig(DbConfig dbConfig) 
@@ -261,79 +261,79 @@ public class DbUnitTask extends Task {
 //    }
 
     public void addDbConfig(DbConfig dbConfig) {
-	logger.trace("addDbConfig(dbConfig={}) - start", dbConfig);
-	this.dbConfig = dbConfig;
+        logger.trace("addDbConfig(dbConfig={}) - start", dbConfig);
+        this.dbConfig = dbConfig;
     }
 
     /**
      * Set the classpath for loading the driver.
      */
     public void setClasspath(Path classpath) {
-	logger.trace("setClasspath(classpath={}) - start", classpath);
-	if (this.classpath == null) {
-	    this.classpath = classpath;
-	} else {
-	    this.classpath.append(classpath);
-	}
+        logger.trace("setClasspath(classpath={}) - start", classpath);
+        if (this.classpath == null) {
+            this.classpath = classpath;
+        } else {
+            this.classpath.append(classpath);
+        }
     }
 
     /**
      * Create the classpath for loading the driver.
      */
     public Path createClasspath() {
-	logger.trace("createClasspath() - start");
+        logger.trace("createClasspath() - start");
 
-	if (this.classpath == null) {
-	    this.classpath = new Path(getProject());
-	}
-	return this.classpath.createPath();
+        if (this.classpath == null) {
+            this.classpath = new Path(getProject());
+        }
+        return this.classpath.createPath();
     }
 
     /**
      * Set the classpath for loading the driver using the classpath reference.
      */
     public void setClasspathRef(Reference r) {
-	logger.trace("setClasspathRef(r={}) - start", r);
+        logger.trace("setClasspathRef(r={}) - start", r);
 
-	createClasspath().setRefid(r);
+        createClasspath().setRefid(r);
     }
 
     /**
      * Gets the Steps.
      */
     public List getSteps() {
-	return steps;
+        return steps;
     }
 
     /**
      * Adds an Operation.
      */
     public void addOperation(Operation operation) {
-	logger.trace("addOperation({}) - start", operation);
+        logger.trace("addOperation({}) - start", operation);
 
-	steps.add(operation);
+        steps.add(operation);
     }
 
     /**
      * Adds a Compare to the steps List.
      */
     public void addCompare(Compare compare) {
-	logger.trace("addCompare({}) - start", compare);
+        logger.trace("addCompare({}) - start", compare);
 
-	steps.add(compare);
+        steps.add(compare);
     }
 
     /**
      * Adds an Export to the steps List.
      */
     public void addExport(Export export) {
-	logger.trace("addExport(export={}) - start", export);
+        logger.trace("addExport(export={}) - start", export);
 
-	steps.add(export);
+        steps.add(export);
     }
 
     public String getBatchSize() {
-	return batchSize;
+        return batchSize;
     }
 
     /**
@@ -342,109 +342,109 @@ public class DbUnitTask extends Task {
      * @param batchSize
      */
     public void setBatchSize(String batchSize) {
-	this.batchSize = batchSize;
+        this.batchSize = batchSize;
     }
 
     public String getFetchSize() {
-	return fetchSize;
+        return fetchSize;
     }
 
     public void setFetchSize(String fetchSize) {
-	this.fetchSize = fetchSize;
+        this.fetchSize = fetchSize;
     }
 
     public void setSkipOracleRecycleBinTables(Boolean skipOracleRecycleBinTables) {
-	this.skipOracleRecycleBinTables = skipOracleRecycleBinTables;
+        this.skipOracleRecycleBinTables = skipOracleRecycleBinTables;
     }
 
     /**
      * Load the step and then execute it
      */
     public void execute() throws BuildException {
-	logger.trace("execute() - start");
+        logger.trace("execute() - start");
 
-	try {
-	    IDatabaseConnection connection = createConnection();
+        try {
+            IDatabaseConnection connection = createConnection();
 
-	    Iterator stepIter = steps.listIterator();
-	    while (stepIter.hasNext()) {
-		DbUnitTaskStep step = (DbUnitTaskStep) stepIter.next();
-		log(step.getLogMessage(), Project.MSG_INFO);
-		step.execute(connection);
-	    }
-	} catch (DatabaseUnitException e) {
-	    throw new BuildException(e, getLocation());
-	} catch (SQLException e) {
-	    throw new BuildException(e, getLocation());
-	} finally {
-	    try {
-		if (conn != null) {
-		    conn.close();
-		}
-	    } catch (SQLException e) {
-		logger.error("execute()", e);
-	    }
-	}
+            Iterator stepIter = steps.listIterator();
+            while (stepIter.hasNext()) {
+                DbUnitTaskStep step = (DbUnitTaskStep) stepIter.next();
+                log(step.getLogMessage(), Project.MSG_INFO);
+                step.execute(connection);
+            }
+        } catch (DatabaseUnitException e) {
+            throw new BuildException(e, getLocation());
+        } catch (SQLException e) {
+            throw new BuildException(e, getLocation());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.error("execute()", e);
+            }
+        }
     }
 
     protected IDatabaseConnection createConnection() throws SQLException {
-	logger.trace("createConnection() - start");
+        logger.trace("createConnection() - start");
 
-	if (driver == null) {
-	    throw new BuildException("Driver attribute must be set!", getLocation());
-	}
-	if (userId == null) {
-	    throw new BuildException("User Id attribute must be set!", getLocation());
-	}
-	if (password == null) {
-	    throw new BuildException("Password attribute must be set!", getLocation());
-	}
-	if (url == null) {
-	    throw new BuildException("Url attribute must be set!", getLocation());
-	}
-	if (steps.size() == 0) {
-	    throw new BuildException("Must declare at least one step in a <dbunit> task!", getLocation());
-	}
+        if (driver == null) {
+            throw new BuildException("Driver attribute must be set!", getLocation());
+        }
+        if (userId == null) {
+            throw new BuildException("User Id attribute must be set!", getLocation());
+        }
+        if (password == null) {
+            throw new BuildException("Password attribute must be set!", getLocation());
+        }
+        if (url == null) {
+            throw new BuildException("Url attribute must be set!", getLocation());
+        }
+        if (steps.size() == 0) {
+            throw new BuildException("Must declare at least one step in a <dbunit> task!", getLocation());
+        }
 
-	// Instantiate JDBC driver
-	Driver driverInstance = null;
-	try {
-	    Class dc;
-	    if (classpath != null) {
-		log("Loading " + driver + " using AntClassLoader with classpath " + classpath, Project.MSG_VERBOSE);
+        // Instantiate JDBC driver
+        Driver driverInstance = null;
+        try {
+            Class dc;
+            if (classpath != null) {
+                log("Loading " + driver + " using AntClassLoader with classpath " + classpath, Project.MSG_VERBOSE);
 
-		loader = new AntClassLoader(getProject(), classpath);
-		dc = loader.loadClass(driver);
-	    } else {
-		log("Loading " + driver + " using system loader.", Project.MSG_VERBOSE);
-		dc = Class.forName(driver);
-	    }
-	    driverInstance = (Driver) dc.newInstance();
-	} catch (ClassNotFoundException e) {
-	    throw new BuildException("Class Not Found: JDBC driver " + driver + " could not be loaded", e,
-		    getLocation());
-	} catch (IllegalAccessException e) {
-	    throw new BuildException("Illegal Access: JDBC driver " + driver + " could not be loaded", e,
-		    getLocation());
-	} catch (InstantiationException e) {
-	    throw new BuildException("Instantiation Exception: JDBC driver " + driver + " could not be loaded", e,
-		    getLocation());
-	}
+                loader = new AntClassLoader(getProject(), classpath);
+                dc = loader.loadClass(driver);
+            } else {
+                log("Loading " + driver + " using system loader.", Project.MSG_VERBOSE);
+                dc = Class.forName(driver);
+            }
+            driverInstance = (Driver) dc.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Class Not Found: JDBC driver " + driver + " could not be loaded", e,
+                    getLocation());
+        } catch (IllegalAccessException e) {
+            throw new BuildException("Illegal Access: JDBC driver " + driver + " could not be loaded", e,
+                    getLocation());
+        } catch (InstantiationException e) {
+            throw new BuildException("Instantiation Exception: JDBC driver " + driver + " could not be loaded", e,
+                    getLocation());
+        }
 
-	log("connecting to " + url, Project.MSG_VERBOSE);
-	Properties info = new Properties();
-	info.put("user", userId);
-	info.put("password", password);
-	conn = driverInstance.connect(url, info);
+        log("connecting to " + url, Project.MSG_VERBOSE);
+        Properties info = new Properties();
+        info.put("user", userId);
+        info.put("password", password);
+        conn = driverInstance.connect(url, info);
 
-	if (conn == null) {
-	    // Driver doesn't understand the URL
-	    throw new SQLException("No suitable Driver for " + url);
-	}
-	conn.setAutoCommit(true);
+        if (conn == null) {
+            // Driver doesn't understand the URL
+            throw new SQLException("No suitable Driver for " + url);
+        }
+        conn.setAutoCommit(true);
 
-	IDatabaseConnection connection = createDatabaseConnection(conn, schema);
-	return connection;
+        IDatabaseConnection connection = createDatabaseConnection(conn, schema);
+        return connection;
     }
 
     /**
@@ -457,31 +457,31 @@ public class DbUnitTask extends Task {
      * @return The dbunit connection
      */
     protected IDatabaseConnection createDatabaseConnection(Connection jdbcConnection, String dbSchema) {
-	logger.trace("createDatabaseConnection(jdbcConnection={}, dbSchema={}) - start", jdbcConnection, dbSchema);
+        logger.trace("createDatabaseConnection(jdbcConnection={}, dbSchema={}) - start", jdbcConnection, dbSchema);
 
-	IDatabaseConnection connection = null;
-	try {
-	    connection = new DatabaseConnection(jdbcConnection, dbSchema);
-	} catch (DatabaseUnitException e) {
-	    throw new BuildException("Could not create dbunit connection object", e);
-	}
-	DatabaseConfig config = connection.getConfig();
+        IDatabaseConnection connection = null;
+        try {
+            connection = new DatabaseConnection(jdbcConnection, dbSchema);
+        } catch (DatabaseUnitException e) {
+            throw new BuildException("Could not create dbunit connection object", e);
+        }
+        DatabaseConfig config = connection.getConfig();
 
-	if (this.dbConfig != null) {
-	    try {
-		this.dbConfig.copyTo(config);
-	    } catch (DatabaseUnitException e) {
-		throw new BuildException("Could not populate dbunit config object", e, getLocation());
-	    }
-	}
+        if (this.dbConfig != null) {
+            try {
+                this.dbConfig.copyTo(config);
+            } catch (DatabaseUnitException e) {
+                throw new BuildException("Could not populate dbunit config object", e, getLocation());
+            }
+        }
 
-	// For backwards compatibility (old mode overrides the new one) copy the other
-	// attributes to the config
-	copyAttributes(config);
+        // For backwards compatibility (old mode overrides the new one) copy the other
+        // attributes to the config
+        copyAttributes(config);
 
-	log("Created connection for schema '" + schema + "' with config: " + config, Project.MSG_VERBOSE);
+        log("Created connection for schema '" + schema + "' with config: " + config, Project.MSG_VERBOSE);
 
-	return connection;
+        return connection;
     }
 
     /**
@@ -490,45 +490,45 @@ public class DbUnitTask extends Task {
      *             removed in the next major release.
      */
     private void copyAttributes(DatabaseConfig config) {
-	if (supportBatchStatement != null)
-	    config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, supportBatchStatement.booleanValue());
-	if (useQualifiedTableNames != null)
-	    config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, useQualifiedTableNames.booleanValue());
-	if (datatypeWarning != null)
-	    config.setFeature(DatabaseConfig.FEATURE_DATATYPE_WARNING, datatypeWarning.booleanValue());
-	if (skipOracleRecycleBinTables != null)
-	    config.setFeature(DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES,
-		    skipOracleRecycleBinTables.booleanValue());
-	if (allowEmptyFields != null)
-	    config.setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, allowEmptyFields.booleanValue());
+        if (supportBatchStatement != null)
+            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, supportBatchStatement.booleanValue());
+        if (useQualifiedTableNames != null)
+            config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, useQualifiedTableNames.booleanValue());
+        if (datatypeWarning != null)
+            config.setFeature(DatabaseConfig.FEATURE_DATATYPE_WARNING, datatypeWarning.booleanValue());
+        if (skipOracleRecycleBinTables != null)
+            config.setFeature(DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES,
+                    skipOracleRecycleBinTables.booleanValue());
+        if (allowEmptyFields != null)
+            config.setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, allowEmptyFields.booleanValue());
 
-	if (escapePattern != null) {
-	    config.setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, escapePattern);
-	}
-	if (batchSize != null) {
-	    Integer batchSizeInteger = new Integer(batchSize);
-	    config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, batchSizeInteger);
-	}
-	if (fetchSize != null) {
-	    config.setProperty(DatabaseConfig.PROPERTY_FETCH_SIZE, new Integer(fetchSize));
-	}
+        if (escapePattern != null) {
+            config.setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, escapePattern);
+        }
+        if (batchSize != null) {
+            Integer batchSizeInteger = new Integer(batchSize);
+            config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, batchSizeInteger);
+        }
+        if (fetchSize != null) {
+            config.setProperty(DatabaseConfig.PROPERTY_FETCH_SIZE, new Integer(fetchSize));
+        }
 
-	// Setup data type factory
-	if (this.dataTypeFactory != null) {
-	    try {
-		IDataTypeFactory dataTypeFactory = (IDataTypeFactory) Class.forName(this.dataTypeFactory).newInstance();
-		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
-	    } catch (ClassNotFoundException e) {
-		throw new BuildException("Class Not Found: DataType factory " + driver + " could not be loaded", e,
-			getLocation());
-	    } catch (IllegalAccessException e) {
-		throw new BuildException("Illegal Access: DataType factory " + driver + " could not be loaded", e,
-			getLocation());
-	    } catch (InstantiationException e) {
-		throw new BuildException("Instantiation Exception: DataType factory " + driver + " could not be loaded",
-			e, getLocation());
-	    }
-	}
+        // Setup data type factory
+        if (this.dataTypeFactory != null) {
+            try {
+                IDataTypeFactory dataTypeFactory = (IDataTypeFactory) Class.forName(this.dataTypeFactory).newInstance();
+                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
+            } catch (ClassNotFoundException e) {
+                throw new BuildException("Class Not Found: DataType factory " + driver + " could not be loaded", e,
+                        getLocation());
+            } catch (IllegalAccessException e) {
+                throw new BuildException("Illegal Access: DataType factory " + driver + " could not be loaded", e,
+                        getLocation());
+            } catch (InstantiationException e) {
+                throw new BuildException("Instantiation Exception: DataType factory " + driver + " could not be loaded",
+                        e, getLocation());
+            }
+        }
 
     }
 }

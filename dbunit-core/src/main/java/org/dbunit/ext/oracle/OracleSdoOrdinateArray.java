@@ -49,114 +49,114 @@ public class OracleSdoOrdinateArray implements ORAData, ORADataFactory {
     private static final OracleSdoOrdinateArray _OracleSdoOrdinateArrayFactory = new OracleSdoOrdinateArray();
 
     public static ORADataFactory getORADataFactory() {
-	return _OracleSdoOrdinateArrayFactory;
+        return _OracleSdoOrdinateArrayFactory;
     }
 
     /* constructors */
     public OracleSdoOrdinateArray() {
-	this((java.math.BigDecimal[]) null);
+        this((java.math.BigDecimal[]) null);
     }
 
     public OracleSdoOrdinateArray(java.math.BigDecimal[] a) {
-	_array = new MutableArray(2, a, null);
+        _array = new MutableArray(2, a, null);
     }
 
     /* ORAData interface */
     public Datum toDatum(Connection c) throws SQLException {
-	return _array.toDatum(c, _SQL_NAME);
+        return _array.toDatum(c, _SQL_NAME);
     }
 
     /* ORADataFactory interface */
     public ORAData create(Datum d, int sqlType) throws SQLException {
-	if (d == null)
-	    return null;
-	OracleSdoOrdinateArray a = new OracleSdoOrdinateArray();
-	a._array = new MutableArray(2, (ARRAY) d, null);
-	return a;
+        if (d == null)
+            return null;
+        OracleSdoOrdinateArray a = new OracleSdoOrdinateArray();
+        a._array = new MutableArray(2, (ARRAY) d, null);
+        return a;
     }
 
     public int length() throws SQLException {
-	return _array.length();
+        return _array.length();
     }
 
     public int getBaseType() throws SQLException {
-	return _array.getBaseType();
+        return _array.getBaseType();
     }
 
     public String getBaseTypeName() throws SQLException {
-	return _array.getBaseTypeName();
+        return _array.getBaseTypeName();
     }
 
     public ArrayDescriptor getDescriptor() throws SQLException {
-	return _array.getDescriptor();
+        return _array.getDescriptor();
     }
 
     /* array accessor methods */
     public java.math.BigDecimal[] getArray() throws SQLException {
-	return (java.math.BigDecimal[]) _array.getObjectArray();
+        return (java.math.BigDecimal[]) _array.getObjectArray();
     }
 
     public java.math.BigDecimal[] getArray(long index, int count) throws SQLException {
-	return (java.math.BigDecimal[]) _array.getObjectArray(index, count);
+        return (java.math.BigDecimal[]) _array.getObjectArray(index, count);
     }
 
     public void setArray(java.math.BigDecimal[] a) throws SQLException {
-	_array.setObjectArray(a);
+        _array.setObjectArray(a);
     }
 
     public void setArray(java.math.BigDecimal[] a, long index) throws SQLException {
-	_array.setObjectArray(a, index);
+        _array.setObjectArray(a, index);
     }
 
     public java.math.BigDecimal getElement(long index) throws SQLException {
-	return (java.math.BigDecimal) _array.getObjectElement(index);
+        return (java.math.BigDecimal) _array.getObjectElement(index);
     }
 
     public void setElement(java.math.BigDecimal a, long index) throws SQLException {
-	_array.setObjectElement(a, index);
+        _array.setObjectElement(a, index);
     }
 
     public String toString() {
-	try {
-	    String r = "MDSYS.SDO_ORDINATE_ARRAY" + "(";
-	    java.math.BigDecimal[] a = (java.math.BigDecimal[]) getArray();
-	    for (int i = 0; i < a.length;) {
-		r = r + a[i];
-		i++;
-		if (i < a.length)
-		    r = r + ",";
-	    }
-	    r = r + ")";
-	    return r;
-	} catch (SQLException e) {
-	    return e.toString();
-	}
+        try {
+            String r = "MDSYS.SDO_ORDINATE_ARRAY" + "(";
+            java.math.BigDecimal[] a = (java.math.BigDecimal[]) getArray();
+            for (int i = 0; i < a.length;) {
+                r = r + a[i];
+                i++;
+                if (i < a.length)
+                    r = r + ",";
+            }
+            r = r + ")";
+            return r;
+        } catch (SQLException e) {
+            return e.toString();
+        }
     }
 
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
+        if (this == obj) {
+            return true;
+        }
 
-	if ((obj == null) || (!obj.getClass().equals(this.getClass()))) {
-	    return false;
-	}
+        if ((obj == null) || (!obj.getClass().equals(this.getClass()))) {
+            return false;
+        }
 
-	OracleSdoOrdinateArray otherObject = (OracleSdoOrdinateArray) obj;
+        OracleSdoOrdinateArray otherObject = (OracleSdoOrdinateArray) obj;
 
-	try {
-	    return OracleSdoHelper.objectArraysEquals(getArray(), otherObject.getArray());
-	} catch (SQLException ex) {
-	    return false;
-	}
+        try {
+            return OracleSdoHelper.objectArraysEquals(getArray(), otherObject.getArray());
+        } catch (SQLException ex) {
+            return false;
+        }
     }
 
     public int hashCode() {
-	try {
-	    return OracleSdoHelper.objectArrayHashCode(getArray());
-	} catch (SQLException ex) {
-	    return 0;
-	}
+        try {
+            return OracleSdoHelper.objectArrayHashCode(getArray());
+        } catch (SQLException ex) {
+            return 0;
+        }
     }
 
 }

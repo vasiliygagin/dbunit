@@ -34,37 +34,37 @@ import java.math.BigDecimal;
  */
 class OracleSdoHelper {
     public static boolean objectsEqual(Object object1, Object object2) {
-	return (object1 != null && object1.equals(object2)) || (object1 == null && object2 == null) ||
-	// special case for BigDecimal support
-		(object1 != null && object2 != null && object1 instanceof BigDecimal && object2 instanceof BigDecimal
-			&& ((BigDecimal) object1).compareTo((BigDecimal) object2) == 0);
+        return (object1 != null && object1.equals(object2)) || (object1 == null && object2 == null) ||
+        // special case for BigDecimal support
+                (object1 != null && object2 != null && object1 instanceof BigDecimal && object2 instanceof BigDecimal
+                        && ((BigDecimal) object1).compareTo((BigDecimal) object2) == 0);
     }
 
     public static boolean objectArraysEquals(Object[] objects1, Object[] objects2) {
-	if (objects1 == objects2) {
-	    return true;
-	}
+        if (objects1 == objects2) {
+            return true;
+        }
 
-	if (objects1 == null || objects2 == null || objects1.length != objects2.length) {
-	    return false;
-	}
+        if (objects1 == null || objects2 == null || objects1.length != objects2.length) {
+            return false;
+        }
 
-	for (int index = 0; index < objects1.length; index++) {
-	    if (!objectsEqual(objects1[index], objects2[index])) {
-		return false;
-	    }
-	}
+        for (int index = 0; index < objects1.length; index++) {
+            if (!objectsEqual(objects1[index], objects2[index])) {
+                return false;
+            }
+        }
 
-	return true;
+        return true;
     }
 
     public static int objectArrayHashCode(Object[] objects) {
-	int hash = 7;
-	if (objects != null) {
-	    for (int index = 0; index < objects.length; index++) {
-		hash = 31 * hash + (null == objects[index] ? 0 : objects[index].hashCode());
-	    }
-	}
-	return hash;
+        int hash = 7;
+        if (objects != null) {
+            for (int index = 0; index < objects.length; index++) {
+                hash = 31 * hash + (null == objects[index] ? 0 : objects[index].hashCode());
+            }
+        }
+        return hash;
     }
 }

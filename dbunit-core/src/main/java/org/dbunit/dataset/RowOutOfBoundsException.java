@@ -32,14 +32,14 @@ public class RowOutOfBoundsException extends DataSetException {
     }
 
     public RowOutOfBoundsException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public RowOutOfBoundsException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public RowOutOfBoundsException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

@@ -56,7 +56,7 @@ public class QualifiedTableName {
      *                      "MYSCHEMA.MYTABLE"). Can be null
      */
     public QualifiedTableName(String tableName, String defaultSchema) {
-	this(tableName, defaultSchema, null);
+        this(tableName, defaultSchema, null);
     }
 
     /**
@@ -73,11 +73,11 @@ public class QualifiedTableName {
      *                      name. Can be null.
      */
     public QualifiedTableName(String tableName, String defaultSchema, String escapePattern) {
-	if (tableName == null) {
-	    throw new NullPointerException("The parameter 'tableName' must not be null");
-	}
-	parseFullTableName(tableName, defaultSchema);
-	this.escapePattern = escapePattern;
+        if (tableName == null) {
+            throw new NullPointerException("The parameter 'tableName' must not be null");
+        }
+        parseFullTableName(tableName, defaultSchema);
+        this.escapePattern = escapePattern;
     }
 
     /**
@@ -91,24 +91,24 @@ public class QualifiedTableName {
      *                      "MYSCHEMA.MYTABLE"). Can be null
      */
     private void parseFullTableName(String fullTableName, String defaultSchema) {
-	if (fullTableName == null) {
-	    throw new NullPointerException("The parameter 'fullTableName' must not be null");
-	}
-	// check if a schema is in front
-	int firstDotIndex = fullTableName.indexOf(".");
-	if (firstDotIndex != -1) {
-	    // set schema
-	    this.schema = fullTableName.substring(0, firstDotIndex);
-	    // set table name without schema
-	    this.table = fullTableName.substring(firstDotIndex + 1);
-	} else {
-	    // No schema name found in table
-	    this.table = fullTableName;
-	    // If the schema has not been found in the given table name
-	    // (that means there is no "MYSCHEMA.MYTABLE" but only a "MYTABLE")
-	    // then set the schema to the given default schema
-	    this.schema = defaultSchema;
-	}
+        if (fullTableName == null) {
+            throw new NullPointerException("The parameter 'fullTableName' must not be null");
+        }
+        // check if a schema is in front
+        int firstDotIndex = fullTableName.indexOf(".");
+        if (firstDotIndex != -1) {
+            // set schema
+            this.schema = fullTableName.substring(0, firstDotIndex);
+            // set table name without schema
+            this.table = fullTableName.substring(firstDotIndex + 1);
+        } else {
+            // No schema name found in table
+            this.table = fullTableName;
+            // If the schema has not been found in the given table name
+            // (that means there is no "MYSCHEMA.MYTABLE" but only a "MYTABLE")
+            // then set the schema to the given default schema
+            this.schema = defaultSchema;
+        }
     }
 
     /**
@@ -116,14 +116,14 @@ public class QualifiedTableName {
      *         constructor
      */
     public String getSchema() {
-	return schema;
+        return schema;
     }
 
     /**
      * @return The name of the plain, unqualified table
      */
     public String getTable() {
-	return table;
+        return table;
     }
 
     /**
@@ -131,9 +131,9 @@ public class QualifiedTableName {
      *         available
      */
     public String getQualifiedName() {
-	logger.debug("getQualifiedName() - start");
+        logger.debug("getQualifiedName() - start");
 
-	return getQualifiedName(this.schema, this.table, this.escapePattern);
+        return getQualifiedName(this.schema, this.table, this.escapePattern);
     }
 
     /**
@@ -149,26 +149,26 @@ public class QualifiedTableName {
      *         in the given <code>config</code>.
      */
     public String getQualifiedNameIfEnabled(DatabaseConfig config) {
-	logger.debug("getQualifiedNameIfEnabled(config={}) - start", config);
+        logger.debug("getQualifiedNameIfEnabled(config={}) - start", config);
 
-	boolean feature = config.getFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES);
-	if (feature) {
-	    logger.debug("Qualified table names feature is enabled. Returning qualified table name");
-	    return getQualifiedName(this.schema, this.table, this.escapePattern);
-	} else {
-	    logger.debug("Qualified table names feature is disabled. Returning plain table name");
+        boolean feature = config.getFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES);
+        if (feature) {
+            logger.debug("Qualified table names feature is enabled. Returning qualified table name");
+            return getQualifiedName(this.schema, this.table, this.escapePattern);
+        } else {
+            logger.debug("Qualified table names feature is disabled. Returning plain table name");
 //        	return this.table;
-	    return getQualifiedName(null, this.table, this.escapePattern);
-	}
+            return getQualifiedName(null, this.table, this.escapePattern);
+        }
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("schema=").append(schema);
-	sb.append(", table=").append(table);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("schema=").append(schema);
+        sb.append(", table=").append(table);
+        sb.append("]");
+        return sb.toString();
     }
 
     /**
@@ -192,20 +192,20 @@ public class QualifiedTableName {
      * @return The qualified name
      */
     private String getQualifiedName(String prefix, String name, String escapePattern) {
-	if (logger.isDebugEnabled())
-	    logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
-		    new String[] { prefix, name, escapePattern });
+        if (logger.isDebugEnabled())
+            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
+                    new String[] { prefix, name, escapePattern });
 
-	if (escapePattern != null) {
-	    prefix = getEscapedName(prefix, escapePattern);
-	    name = getEscapedName(name, escapePattern);
-	}
+        if (escapePattern != null) {
+            prefix = getEscapedName(prefix, escapePattern);
+            name = getEscapedName(name, escapePattern);
+        }
 
-	if (prefix == null || prefix.equals("") || name.indexOf(".") >= 0) {
-	    return name;
-	}
+        if (prefix == null || prefix.equals("") || name.indexOf(".") >= 0) {
+            return name;
+        }
 
-	return prefix + "." + name;
+        return prefix + "." + name;
     }
 
     /**
@@ -214,39 +214,39 @@ public class QualifiedTableName {
      * @return
      */
     private String getEscapedName(String name, String escapePattern) {
-	logger.debug("getEscapedName(name={}, escapePattern={}) - start", name, escapePattern);
+        logger.debug("getEscapedName(name={}, escapePattern={}) - start", name, escapePattern);
 
-	if (name == null) {
-	    return name;
-	}
+        if (name == null) {
+            return name;
+        }
 
-	if (escapePattern == null) {
-	    throw new NullPointerException("The parameter 'escapePattern' must not be null");
-	}
-	if (escapePattern.trim().equals("")) {
-	    throw new DatabaseUnitRuntimeException("Empty string is an invalid escape pattern!");
-	}
+        if (escapePattern == null) {
+            throw new NullPointerException("The parameter 'escapePattern' must not be null");
+        }
+        if (escapePattern.trim().equals("")) {
+            throw new DatabaseUnitRuntimeException("Empty string is an invalid escape pattern!");
+        }
 
-	int split = name.indexOf(".");
-	if (split > 1) {
-	    return getEscapedName(name.substring(0, split), escapePattern) + "."
-		    + getEscapedName(name.substring(split + 1), escapePattern);
-	}
+        int split = name.indexOf(".");
+        if (split > 1) {
+            return getEscapedName(name.substring(0, split), escapePattern) + "."
+                    + getEscapedName(name.substring(split + 1), escapePattern);
+        }
 
-	int index = escapePattern.indexOf("?");
-	if (index >= 0) {
-	    String prefix = escapePattern.substring(0, index);
-	    String suffix = escapePattern.substring(index + 1);
+        int index = escapePattern.indexOf("?");
+        if (index >= 0) {
+            String prefix = escapePattern.substring(0, index);
+            String suffix = escapePattern.substring(index + 1);
 
-	    return prefix + name + suffix;
-	} else if (escapePattern.length() == 1) {
-	    // No "?" in the escape pattern and only one character.
-	    // use the given escapePattern to surround the given name
-	    return escapePattern + name + escapePattern;
-	} else {
-	    logger.warn("Invalid escape pattern '" + escapePattern + "'. Will not escape name '" + name + "'.");
-	    return name;
-	}
+            return prefix + name + suffix;
+        } else if (escapePattern.length() == 1) {
+            // No "?" in the escape pattern and only one character.
+            // use the given escapePattern to surround the given name
+            return escapePattern + name + escapePattern;
+        } else {
+            logger.warn("Invalid escape pattern '" + escapePattern + "'. Will not escape name '" + name + "'.");
+            return name;
+        }
     }
 
 }

@@ -60,15 +60,15 @@ public class Slot extends SemaphoreControlledChannel {
      **/
 
     public Slot(Class semaphoreClass) throws NoSuchMethodException, SecurityException, InstantiationException,
-	    IllegalAccessException, InvocationTargetException {
-	super(1, semaphoreClass);
+            IllegalAccessException, InvocationTargetException {
+        super(1, semaphoreClass);
     }
 
     /**
      * Create a new Slot using default Semaphore implementations
      **/
     public Slot() {
-	super(1);
+        super(1);
     }
 
     /** The slot **/
@@ -76,20 +76,20 @@ public class Slot extends SemaphoreControlledChannel {
 
     /** Set the item in preparation for a take **/
     protected synchronized void insert(Object x) {
-	item_ = x;
+        item_ = x;
     }
 
     /** Take item known to exist **/
     protected synchronized Object extract() {
-	logger.debug("extract() - start");
+        logger.debug("extract() - start");
 
-	Object x = item_;
-	item_ = null;
-	return x;
+        Object x = item_;
+        item_ = null;
+        return x;
     }
 
     public synchronized Object peek() {
-	return item_;
+        return item_;
     }
 
 }

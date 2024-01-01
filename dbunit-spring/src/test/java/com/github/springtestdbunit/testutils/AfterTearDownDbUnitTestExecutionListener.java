@@ -22,19 +22,20 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.TestExecutionListenerChain;
 
 /**
- * A {@link TestExecutionListenerChain} that triggers a {@link CallAfterTestMethodExecutionListener} as well as
- * transaction and DBUnit listeners.
+ * A {@link TestExecutionListenerChain} that triggers a
+ * {@link CallAfterTestMethodExecutionListener} as well as transaction and
+ * DBUnit listeners.
  *
  * @author Phillip Webb
  */
 public class AfterTearDownDbUnitTestExecutionListener extends TestExecutionListenerChain {
 
-	private static final Class<?> CHAIN[] = { TransactionalTestExecutionListener.class,
-			CallAfterTestMethodExecutionListener.class, DbUnitTestExecutionListener.class };
+    private static final Class<?> CHAIN[] = { TransactionalTestExecutionListener.class,
+            CallAfterTestMethodExecutionListener.class, DbUnitTestExecutionListener.class };
 
-	@Override
-	protected Class<?>[] getChain() {
-		return CHAIN;
-	}
+    @Override
+    protected Class<?>[] getChain() {
+        return CHAIN;
+    }
 
 }
