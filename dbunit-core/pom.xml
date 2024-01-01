@@ -74,8 +74,8 @@
         <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
 
         <!-- Framework versions -->
-        <antTestUtilVersion>1.7.0</antTestUtilVersion>
-        <antVersion>1.6.5</antVersion>
+        <ant-testutil.version>1.10.14</ant-testutil.version>
+        <ant.version>1.10.14</ant.version>
         <gsbaseVersion>2.0.1</gsbaseVersion>
         <junitAddonsVersion>1.4</junitAddonsVersion>
         <mmmockobjectsVersion>1.12.0</mmmockobjectsVersion>
@@ -398,9 +398,9 @@
             <artifactId>hamcrest-library</artifactId>
         </dependency>
         <dependency>
-            <groupId>ant</groupId>
+            <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>${antVersion}</version>
+            <version>${ant.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -430,7 +430,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-testutil</artifactId>
-            <version>${antTestUtilVersion}</version>
+            <version>${ant-testutil.version}</version>
             <optional>true</optional>
             <scope>test</scope>
         </dependency>
@@ -580,44 +580,6 @@
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <encoding>UTF-8</encoding>
-                        <systemProperties>
-                            <property>
-                                <name>dbunit.profile</name>
-                                <value>${dbunit.profile}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.driverClass</name>
-                                <value>${dbunit.profile.driverClass}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.url</name>
-                                <value>${dbunit.profile.url}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.schema</name>
-                                <value>${dbunit.profile.schema}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.user</name>
-                                <value>${dbunit.profile.user}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.password</name>
-                                <value>${dbunit.profile.password}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.unsupportedFeatures</name>
-                                <value>${dbunit.profile.unsupportedFeatures}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.ddl</name>
-                                <value>${dbunit.profile.ddl}</value>
-                            </property>
-                            <property>
-                                <name>dbunit.profile.multiLineSupport</name>
-                                <value>${dbunit.profile.multiLineSupport}</value>
-                            </property>
-                        </systemProperties>
                     </configuration>
                     <executions>
                         <execution>

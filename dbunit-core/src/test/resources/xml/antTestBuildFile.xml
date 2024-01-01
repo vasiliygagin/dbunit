@@ -401,7 +401,7 @@
         sql="SELECT B.* FROM TEST_TABLE A, SECOND_TABLE B WHERE A.COLUMN0 = '@colValue@' AND B.COLUMN0 = A.COLUMN0"/>
     </queryset>
 
-    <dbunit driver="${dbunit.profile.driverClass}"
+    <dbunit id="dbunit-404" driver="${dbunit.profile.driverClass}"
             url="${dbunit.profile.url}"
             userid="${dbunit.profile.user}"
             password="${dbunit.profile.password}">
