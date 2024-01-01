@@ -20,9 +20,10 @@
  */
 package org.dbunit.dataset.stream;
 
-import junit.framework.TestCase;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.datatype.DataType;
+
+import junit.framework.TestCase;
 
 /**
  * @author Manuel Laflamme
@@ -38,7 +39,7 @@ public abstract class AbstractProducerTest extends TestCase {
     }
 
     protected String[] getExpectedNames() throws Exception {
-        return (String[]) TABLE_NAMES.clone();
+        return TABLE_NAMES.clone();
     }
 
     protected int[] getExpectedRowCount() throws Exception {

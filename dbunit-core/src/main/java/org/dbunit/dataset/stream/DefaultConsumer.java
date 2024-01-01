@@ -20,7 +20,6 @@
  */
 package org.dbunit.dataset.stream;
 
-import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITableMetaData;
 
 /**
@@ -32,23 +31,26 @@ import org.dbunit.dataset.ITableMetaData;
  * @version $Revision$
  */
 public class DefaultConsumer implements IDataSetConsumer {
-    public void startDataSet() throws DataSetException {
-        // no op
+
+    public static final IDataSetConsumer NO_OP_CONSUMER = new DefaultConsumer();
+
+    @Override
+    public void startDataSet() {
     }
 
-    public void endDataSet() throws DataSetException {
-        // no op
+    @Override
+    public void endDataSet() {
     }
 
-    public void startTable(ITableMetaData metaData) throws DataSetException {
-        // no op
+    @Override
+    public void startTable(ITableMetaData metaData) {
     }
 
-    public void endTable() throws DataSetException {
-        // no op
+    @Override
+    public void endTable() {
     }
 
-    public void row(Object[] values) throws DataSetException {
-        // no op
+    @Override
+    public void row(Object[] values) {
     }
 }

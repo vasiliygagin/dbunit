@@ -27,8 +27,6 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link IDataSetProducer} based on a given {@link IDataSet}
@@ -41,36 +39,24 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSetProducerAdapter implements IDataSetProducer {
 
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(DataSetProducerAdapter.class);
-
-    private static final IDataSetConsumer EMPTY_CONSUMER = new DefaultConsumer();
-
     private final ITableIterator _iterator;
-    private IDataSetConsumer _consumer = EMPTY_CONSUMER;
+    private IDataSetConsumer _consumer = DefaultConsumer.NO_OP_CONSUMER;
 
     public DataSetProducerAdapter(ITableIterator iterator) {
         _iterator = iterator;
     }
 
     public DataSetProducerAdapter(IDataSet dataSet) throws DataSetException {
-        _iterator = dataSet.iterator();
+        this(dataSet.iterator());
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // IDataSetProducer interface
-
+    @Override
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-        logger.debug("setConsumer(consumer) - start");
-
         _consumer = consumer;
     }
 
+    @Override
     public void produce() throws DataSetException {
-        logger.debug("produce() - start");
-
         _consumer.startDataSet();
         while (_iterator.next()) {
             ITable table = _iterator.getTable();
@@ -85,12 +71,7 @@ public class DataSetProducerAdapter implements IDataSetProducer {
                 }
 
                 for (int i = 0;; i++) {
-                    Object[] values = new Object[columns.length];
-                    for (int j = 0; j < columns.length; j++) {
-                        Column column = columns[j];
-                        values[j] = table.getValue(i, column.getColumnName());
-                    }
-                    _consumer.row(values);
+                    produceRow(table, columns, i);
                 }
             } catch (RowOutOfBoundsException e) {
                 // This exception occurs when records are exhausted
@@ -102,5 +83,14 @@ public class DataSetProducerAdapter implements IDataSetProducer {
             }
         }
         _consumer.endDataSet();
+    }
+
+    private void produceRow(ITable table, Column[] columns, int i) throws DataSetException {
+        Object[] values = new Object[columns.length];
+        for (int j = 0; j < columns.length; j++) {
+            Column column = columns[j];
+            values[j] = table.getValue(i, column.getColumnName());
+        }
+        _consumer.row(values);
     }
 }
