@@ -386,7 +386,7 @@
             url="${dbunit.profile.url}"
             userid="${dbunit.profile.user}"
             password="${dbunit.profile.password}">
-      <export dest="${exporDataSet}" format="flat">
+      <export dest="${exportDataSet}" format="flat">
         <queryset id="someid" refid="someid"/>
       </export>
     </dbunit>
