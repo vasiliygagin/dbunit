@@ -61,7 +61,6 @@ import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.ext.oracle.OracleDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -84,21 +83,37 @@ import org.junit.Test;
  */
 public class DbUnitTaskIT {
 
-    private static Class<DbUnitTaskIT> classUnderTest = DbUnitTaskIT.class;
-
-    private static final String BUILD_FILE_DIR = "xml";
     private static final String OUTPUT_DIR = "target/xml";
 
     private File outputDir;
+
+    private Project project = new Project();
+
+    private StringBuffer logBuffer = new StringBuffer();
+    private StringBuffer fullLogBuffer = new StringBuffer();
+    private StringBuffer outBuffer;
+    private StringBuffer errBuffer;
 
     @Before
     public void setUp() throws Exception {
 	// This line ensure test database is initialized
 	DatabaseEnvironmentLoader.getInstance(null);
 
-	String filePath = BUILD_FILE_DIR + "/antTestBuildFile.xml";
-	assertTrue("Buildfile not found", TestUtils.getFile(filePath).isFile());
-	configureProject(TestUtils.getFileName(filePath));
+	String fileName = "src/test/resources/xml/antTestBuildFile.xml";
+	File file = new File(fileName);
+	assertTrue("Buildfile not found", file.isFile());
+
+	System.clearProperty(MagicNames.PROJECT_BASEDIR);
+
+	project.init();
+	File antFile = new File(System.getProperty(MagicTestNames.TEST_ROOT_DIRECTORY), fileName);
+	project.setUserProperty(MagicNames.ANT_FILE, antFile.getAbsolutePath());
+	// set two new properties to allow to build unique names when running
+	// multithreaded tests
+	project.setProperty(MagicTestNames.TEST_PROCESS_ID, ProcessUtil.getProcessId("<Process>"));
+	project.setProperty(MagicTestNames.TEST_THREAD_NAME, Thread.currentThread().getName());
+	project.addBuildListener(new AntTestListener(Project.MSG_DEBUG));
+	ProjectHelper.configureProject(project, antFile);
 
 	outputDir = new File(getProjectDir(), OUTPUT_DIR);
 	outputDir.mkdirs();
@@ -106,7 +121,11 @@ public class DbUnitTaskIT {
 
     @After
     public void tearDown() throws Exception {
-	super_tearDown();
+	if (project != null) {
+	    if (project.getTargets().containsKey("tearDown")) {
+		project.executeTarget("tearDown");
+	    }
+	}
 
 	outputDir = new File(getProjectDir(), OUTPUT_DIR);
 	FileHelper.deleteDirectory(outputDir);
@@ -615,40 +634,6 @@ public class DbUnitTaskIT {
 	return null;
     }
 
-    private Project project;
-
-    private StringBuffer logBuffer;
-    private StringBuffer fullLogBuffer;
-    private StringBuffer outBuffer;
-    private StringBuffer errBuffer;
-
-    /**
-     * Automatically calls the target called "tearDown" from the build file tested
-     * if it exits.
-     *
-     * This allows to use Ant tasks directly in the build file to clean up after
-     * each test. Note that no "setUp" target is automatically called, since it's
-     * trivial to have a test target depend on it.
-     *
-     * @throws Exception this implementation doesn't throw any exception but we've
-     *                   added it to the signature so that subclasses can throw
-     *                   whatever they need.
-     */
-    private void super_tearDown() throws Exception {
-	if (project == null) {
-	    /*
-	     * Maybe the BuildFileTest was subclassed and there is no initialized project.
-	     * So we could avoid getting a NPE. If there is an initialized project
-	     * getTargets() does not return null as it is initialized by an empty HashSet.
-	     */
-	    return;
-	}
-	final String tearDown = "tearDown";
-	if (project.getTargets().containsKey(tearDown)) {
-	    project.executeTarget(tearDown);
-	}
-    }
-
     /**
      * run a target, expect for any build exception
      *
@@ -657,39 +642,6 @@ public class DbUnitTaskIT {
      */
     private void expectBuildException(String target, String cause) {
 	expectSpecificBuildException(target, cause, null);
-    }
-
-    /**
-     * Sets up to run the named project
-     *
-     * @param filename name of project file to run
-     */
-    private void configureProject(String filename) throws BuildException {
-	configureProject(filename, Project.MSG_DEBUG);
-    }
-
-    /**
-     * Sets up to run the named project
-     *
-     * @param filename name of project file to run
-     * @param logLevel int
-     */
-    private void configureProject(String filename, int logLevel) throws BuildException {
-	logBuffer = new StringBuffer();
-	fullLogBuffer = new StringBuffer();
-	project = new Project();
-	if (Boolean.getBoolean(MagicTestNames.TEST_BASEDIR_IGNORE)) {
-	    System.clearProperty(MagicNames.PROJECT_BASEDIR);
-	}
-	project.init();
-	File antFile = new File(System.getProperty(MagicTestNames.TEST_ROOT_DIRECTORY), filename);
-	project.setUserProperty(MagicNames.ANT_FILE, antFile.getAbsolutePath());
-	// set two new properties to allow to build unique names when running
-	// multithreaded tests
-	project.setProperty(MagicTestNames.TEST_PROCESS_ID, ProcessUtil.getProcessId("<Process>"));
-	project.setProperty(MagicTestNames.TEST_THREAD_NAME, Thread.currentThread().getName());
-	project.addBuildListener(new AntTestListener(logLevel));
-	ProjectHelper.configureProject(project, antFile);
     }
 
     /**
