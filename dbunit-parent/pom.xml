@@ -6,15 +6,31 @@
 
     <groupId>io.github.vasiliygagin</groupId>
     <artifactId>dbunit-parent</artifactId>
-    <version>2.8.4-SNAPSHOT</version>
-    <name>dbUnit JUnit Extension Parent Project</name>
+    <version>2.8.4</version>
     <packaging>pom</packaging>
 
-    <properties>
-        <slf4j.version>2.0.7</slf4j.version>
-        <logback.version>1.3.14</logback.version>
-        <junit.version>4.12</junit.version>
-    </properties>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>DbUnit parent pom</description>
+    <url>https://github.com/vasiliygagin/dbunit</url>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License, Version 2.1</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Vasiliy Gagin</name>
+            <email>vasiliy.gagin@gmail.com</email>
+            <url>https://github.com/vasiliygagin</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
+        <developerConnection>scm:git:git://github.com/vasiliygagin/dbunit.git</developerConnection>
+        <url>https://github.com/vasiliygagin/dbunit</url>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -27,6 +43,12 @@
                 https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <properties>
+        <slf4j.version>2.0.7</slf4j.version>
+        <logback.version>1.3.14</logback.version>
+        <junit.version>4.12</junit.version>
+    </properties>
 
     <build>
         <pluginManagement>
@@ -56,7 +78,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -92,11 +114,14 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

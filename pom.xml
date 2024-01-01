@@ -4,12 +4,10 @@
 
     <groupId>io.github.vasiliygagin</groupId>
     <artifactId>dbunit</artifactId>
-    <version>2.8.4-SNAPSHOT</version>
+    <version>2.8.4</version>
     <packaging>pom</packaging>
 
-    <name>dbUnit JUnit Extension Aggregate Project</name>
-    <url>https://github.com/vasiliygagin/dbunit</url>
-    <inceptionYear>2002</inceptionYear>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>
         dbUnit is a JUnit extension (also usable from Ant and Maven) targeted
         for database-driven projects that, among other things, puts your
@@ -18,7 +16,7 @@
         corrupts the database and causes subsequent tests to fail or exacerbate
         the damage.
     </description>
-
+    <url>https://github.com/vasiliygagin/dbunit</url>
     <licenses>
         <license>
             <name>GNU Lesser General Public License, Version 2.1</name>
@@ -26,12 +24,17 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
+    <developers>
+        <developer>
+            <name>Vasiliy Gagin</name>
+            <email>vasiliy.gagin@gmail.com</email>
+            <url>https://github.com/vasiliygagin</url>
+        </developer>
+    </developers>
     <scm>
         <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
         <developerConnection>scm:git:git://github.com/vasiliygagin/dbunit.git</developerConnection>
         <url>https://github.com/vasiliygagin/dbunit</url>
-        <tag>2.8.3</tag>
     </scm>
 
     <distributionManagement>
@@ -41,8 +44,7 @@
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>
-                https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
@@ -64,6 +66,21 @@
                     <remoteTagging>false</remoteTagging>
                     <updateWorkingCopyVersions>true</updateWorkingCopyVersions>
                     <goals>deploy</goals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>versions-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>2.16.2</version>
+                <configuration>
+                    <processAllModules>true</processAllModules>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
