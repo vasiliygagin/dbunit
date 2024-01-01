@@ -5,16 +5,13 @@
     <parent>
         <groupId>io.github.vasiliygagin</groupId>
         <artifactId>dbunit-parent</artifactId>
-        <version>2.8.4-SNAPSHOT</version>
+        <version>2.8.4</version>
         <relativePath>../dbunit-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>dbunit-core</artifactId>
     <packaging>jar</packaging>
     <name>dbUnit Extension</name>
-
-    <url>http://dbunit.sourceforge.net</url>
-    <inceptionYear>2002</inceptionYear>
     <description>
         dbUnit is a JUnit extension (also usable from Ant and Maven) targeted
         for database-driven projects that, among other things, puts your
@@ -23,7 +20,7 @@
         corrupts the database and causes subsequent tests to fail or exacerbate
         the damage.
     </description>
-
+    <url>https://github.com/vasiliygagin/dbunit/tree/master/dbunit-core</url>
     <licenses>
         <license>
             <name>GNU Lesser General Public License, Version 2.1</name>
@@ -104,195 +101,6 @@
         <!-- Other versions -->
         <wagonSshVersion>2.10</wagonSshVersion>
     </properties>
-
-    <mailingLists>
-        <mailingList>
-            <name>dbUnit User List</name>
-            <subscribe>http://lists.sourceforge.net/lists/listinfo/dbunit-user</subscribe>
-            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/dbunit-user</unsubscribe>
-            <archive>
-                http://sourceforge.net/mailarchive/forum.php?forum_name=dbunit-user</archive>
-        </mailingList>
-        <mailingList>
-            <name>dbUnit Developer List</name>
-            <subscribe>
-                http://lists.sourceforge.net/lists/listinfo/dbunit-developer</subscribe>
-            <unsubscribe>
-                http://lists.sourceforge.net/lists/listinfo/dbunit-developer</unsubscribe>
-            <archive>
-                http://sourceforge.net/mailarchive/forum.php?forum_name=dbunit-developer</archive>
-        </mailingList>
-        <mailingList>
-            <name>dbUnit Commit List</name>
-            <subscribe>http://lists.sourceforge.net/lists/listinfo/dbunit-commit</subscribe>
-            <unsubscribe>
-                http://lists.sourceforge.net/lists/listinfo/dbunit-commit</unsubscribe>
-            <archive>
-                http://sourceforge.net/mailarchive/forum.php?forum_name=dbunit-commit</archive>
-        </mailingList>
-    </mailingLists>
-
-    <!--
-     - Who are the developers for the project, in order of recent activity.
-    -->
-    <developers>
-        <!--
-       - Note: email of first developer is used by the announcements-email plugin
-      -->
-        <developer>
-            <name>Jeff Jensen</name>
-            <id>jeffjensen</id>
-            <email>jeffjensen@users.sourceforge.net</email>
-            <roles>
-                <role>Java Developer (active)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Andrew Landsverk</name>
-            <id>quantas</id>
-            <email>quantas@users.sourceforge.net</email>
-            <roles>
-                <role>Java Developer (active)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Matthias Gommeringer</name>
-            <id>gommma</id>
-            <email>gommma@users.sourceforge.net</email>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>John Hurst</name>
-            <id>jbhurst</id>
-            <email>jbhurst@users.sourceforge.net</email>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Roberto Lo Giacco</name>
-            <id>rlogiacco</id>
-            <email>rlogiacco@users.sourceforge.net</email>
-            <organization>SmartLab</organization>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Felipe Leme</name>
-            <id>felipeal</id>
-            <email>dbunit@felipeal.net</email>
-            <organization>GoldenGate Software</organization>
-            <timezone>-8</timezone>
-            <roles>
-                <role>Java Developer (mostly inactive :-)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>David Eric Pugh</name>
-            <id>dep4b</id>
-            <email>epugh@opensourceconnections.com</email>
-            <organization>OpenSource Connections</organization>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Sebastien Le Callonnec</name>
-            <id>slecallonnec</id>
-            <email>slecallonnec@users.sourceforge.net</email>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Manuel Laflamme</name>
-            <id>mlaflamm</id>
-            <organization>Oz Communication</organization>
-            <roles>
-                <role>Project Founder (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Benjamin Cox</name>
-            <id>bdrum</id>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Federico Spinazzi</name>
-            <id>fspinazzi</id>
-            <email>f.spinazzi@masterhouse.it</email>
-            <organization>Master House S.r.l</organization>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Timothy J. Ruppert</name>
-            <id>zieggy</id>
-            <roles>
-                <role>Java Developer (inactive)</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <contributors>
-        <contributor>
-            <name>Klas Axel</name>
-            <roles>
-                <role>HsqldbDataTypeFactory</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Erik Price</name>
-            <roles>
-                <role>DatabaseSequenceOperation</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Jeremy Stein</name>
-            <roles>
-                <role>InsertIndentityOperation</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Keven Kizer</name>
-            <roles>
-                <role>Early guinea pig</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Mike Bresnahan</name>
-            <roles>
-                <role>DbUnit evangelist</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Andres Almiray</name>
-            <email>aalmiray@users.sourceforge.net</email>
-            <roles>
-                <role>IDatabaseTester creator</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Darryl Pierce</name>
-            <email>mcpierceaim@users.sourceforge.net</email>
-            <roles>
-                <role>SQLServer uniqueidentifier column type</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Lorentz Aberg</name>
-            <email>lorentzforces@users.sourceforge.net</email>
-            <roles>
-                <role>Java developer</role>
-            </roles>
-        </contributor>
-    </contributors>
 
     <dependencyManagement>
         <dependencies>
