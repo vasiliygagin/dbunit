@@ -20,7 +20,6 @@
         corrupts the database and causes subsequent tests to fail or exacerbate
         the damage.
     </description>
-    <url>https://github.com/vasiliygagin/dbunit/tree/master/dbunit-core</url>
     <licenses>
         <license>
             <name>GNU Lesser General Public License, Version 2.1</name>
