@@ -44,7 +44,6 @@ import org.dbunit.dataset.stream.IDataSetProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -58,7 +57,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @version $Revision$ $Date$
  * @since 1.5 (Apr 18, 2003)
  */
-public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer, ContentHandler {
+public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer {
 
     /**
      * Logger for this class
@@ -105,7 +104,8 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
      * The ordered table name map which also holds the currently active
      * {@link ITableMetaData}
      */
-    private OrderedTableNameMap _orderedTableNameMap;
+    private OrderedTableNameMap<ITableMetaData> _orderedTableNameMap;
+    private ITableMetaData lastTable;
 
     public FlatXmlProducer(InputSource xmlSource) {
         this(xmlSource, true);
@@ -199,44 +199,17 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
      * @return ITableMetaData The merged metadata object containing the new columns
      * @throws DataSetException
      */
-    private ITableMetaData mergeTableMetaData(List columnsToMerge, ITableMetaData originalMetaData)
+    private ITableMetaData mergeTableMetaData(List<Column> columnsToMerge, ITableMetaData originalMetaData)
             throws DataSetException {
         Column[] columns = new Column[originalMetaData.getColumns().length + columnsToMerge.size()];
         System.arraycopy(originalMetaData.getColumns(), 0, columns, 0, originalMetaData.getColumns().length);
 
         for (int i = 0; i < columnsToMerge.size(); i++) {
-            Column column = (Column) columnsToMerge.get(i);
+            Column column = columnsToMerge.get(i);
             columns[columns.length - columnsToMerge.size() + i] = column;
         }
 
         return new DefaultTableMetaData(originalMetaData.getTableName(), columns);
-    }
-
-    /**
-     * @return The currently active table metadata or <code>null</code> if no active
-     *         metadata exists.
-     */
-    private ITableMetaData getActiveMetaData() {
-        if (_orderedTableNameMap != null) {
-            String lastTableName = _orderedTableNameMap.getLastTableName();
-            if (lastTableName != null) {
-                return (ITableMetaData) _orderedTableNameMap.get(lastTableName);
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-
-    }
-
-    /**
-     * @param tableName
-     * @return <code>true</code> if the given tableName is a new one which means
-     *         that it differs from the last active table name.
-     */
-    private boolean isNewTable(String tableName) {
-        return !_orderedTableNameMap.isLastTable(tableName);
     }
 
     /**
@@ -257,9 +230,9 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
      * @throws DataSetException
      */
     protected void handleMissingColumns(Attributes attributes) throws DataSetException {
-        List columnsToMerge = new ArrayList();
+        List<Column> columnsToMerge = new ArrayList<>();
 
-        ITableMetaData activeMetaData = getActiveMetaData();
+        ITableMetaData activeMetaData = lastTable;
         // Search all columns that do not yet exist and collect them
         int attributeLength = attributes.getLength();
         for (int i = 0; i < attributeLength; i++) {
@@ -276,13 +249,14 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
                         "Column sensing enabled. Will create a new metaData with potentially new columns if needed");
                 activeMetaData = mergeTableMetaData(columnsToMerge, activeMetaData);
                 _orderedTableNameMap.update(activeMetaData.getTableName(), activeMetaData);
+                lastTable = activeMetaData;
                 // We also need to recreate the table, copying the data already collected from
                 // the old one to the new one
                 _consumer.startTable(activeMetaData);
             } else {
                 StringBuffer extraColumnNames = new StringBuffer();
-                for (Iterator i = columnsToMerge.iterator(); i.hasNext();) {
-                    Column col = (Column) i.next();
+                for (Iterator<Column> i = columnsToMerge.iterator(); i.hasNext();) {
+                    Column col = i.next();
                     extraColumnNames.append(extraColumnNames.length() > 0 ? "," : "").append(col.getColumnName());
                 }
                 String msg = "Extra columns (" + extraColumnNames.toString() + ") on line " + (_lineNumber + 1)
@@ -308,6 +282,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetProducer interface
 
+    @Override
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
         logger.debug("setConsumer(consumer) - start");
 
@@ -318,6 +293,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
         }
     }
 
+    @Override
     public void produce() throws DataSetException {
         logger.debug("produce() - start");
 
@@ -348,6 +324,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
     ////////////////////////////////////////////////////////////////////////////
     // EntityResolver interface
 
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
         logger.debug("resolveEntity(publicId={}, systemId={}) - start", publicId, systemId);
 
@@ -361,6 +338,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
     ////////////////////////////////////////////////////////////////////////////
     // ErrorHandler interface
 
+    @Override
     public void error(SAXParseException e) throws SAXException {
         throw e;
 
@@ -369,22 +347,24 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
     ////////////////////////////////////////////////////////////////////////
     // ContentHandler interface
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (logger.isDebugEnabled())
-            logger.debug("startElement(uri={}, localName={}, qName={}, attributes={}) - start",
-                    new Object[] { uri, localName, qName, attributes });
 
         try {
-            ITableMetaData activeMetaData = getActiveMetaData();
-            // Start of dataset
-            if (activeMetaData == null && qName.equals(DATASET)) {
-                _consumer.startDataSet();
-                _orderedTableNameMap = new OrderedTableNameMap(_caseSensitiveTableNames);
-                return;
+            if (_orderedTableNameMap == null) {
+                if (qName.equals(DATASET)) {
+                    _consumer.startDataSet();
+                    _orderedTableNameMap = new OrderedTableNameMap<ITableMetaData>(_caseSensitiveTableNames);
+                    return;
+                }
+                throw new SAXException("Expected '" + DATASET + "' element");
             }
 
+            ITableMetaData activeMetaData = lastTable;
+            boolean newTable = !_orderedTableNameMap.isLastTable(qName);
+
             // New table
-            if (isNewTable(qName)) {
+            if (newTable) {
                 // If not first table, notify end of previous table to consumer
                 if (activeMetaData != null) {
                     _consumer.endTable();
@@ -392,11 +372,13 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
 
                 // In FlatXML the table might have appeared before already, so check for this
                 if (_orderedTableNameMap.containsTable(qName)) {
-                    activeMetaData = (ITableMetaData) _orderedTableNameMap.get(qName);
+                    activeMetaData = _orderedTableNameMap.get(qName);
                     _orderedTableNameMap.setLastTable(qName);
+                    lastTable = activeMetaData;
                 } else {
                     activeMetaData = createTableMetaData(qName, attributes);
                     _orderedTableNameMap.add(activeMetaData.getTableName(), activeMetaData);
+                    lastTable = activeMetaData;
                 }
 
                 // Notify start of new table to consumer
@@ -411,7 +393,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
                 if (_dtdHandler == null || !_dtdHandler.isDtdPresent()) {
                     handleMissingColumns(attributes);
                     // Since a new MetaData object was created assign it to the local variable
-                    activeMetaData = getActiveMetaData();
+                    activeMetaData = _orderedTableNameMap.getLastTable();
                 }
 
                 _lineNumber++;
@@ -445,6 +427,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
         }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (logger.isDebugEnabled())
             logger.debug("endElement(uri={}, localName={}, qName={}) - start", new Object[] { uri, localName, qName });
@@ -453,7 +436,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
         if (qName.equals(DATASET)) {
             try {
                 // Notify end of active table to consumer
-                if (getActiveMetaData() != null) {
+                if (lastTable != null) {
                     _consumer.endTable();
                 }
 
@@ -485,6 +468,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer,
         ////////////////////////////////////////////////////////////////////////////
         // LexicalHandler interface
 
+        @Override
         public void startDTD(String name, String publicId, String systemId) throws SAXException {
             if (logger.isDebugEnabled())
                 logger.debug("startDTD(name={}, publicId={}, systemId={}) - start",

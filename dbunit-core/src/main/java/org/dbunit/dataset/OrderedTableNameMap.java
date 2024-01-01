@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since 2.4.0
  */
-public class OrderedTableNameMap {
+public class OrderedTableNameMap<T> {
     /**
      * Logger for this class
      */
@@ -58,13 +58,13 @@ public class OrderedTableNameMap {
      * The map for fast access to the existing table names and for associating an
      * arbitrary object with a table name
      */
-    private Map _tableMap = new HashMap();
+    private Map<String, T> _tableMap = new HashMap<>();
     /**
      * Chronologically ordered list of table names - keeps the order in which the
      * table names have been added as well as the case in which the table has been
      * added
      */
-    private List _tableNames = new ArrayList();
+    private List<String> _tableNames = new ArrayList<>();
 
     private String _lastTableNameOverride;
 
@@ -90,7 +90,7 @@ public class OrderedTableNameMap {
      * @param tableName The table name for which the associated object is retrieved
      * @return The object that has been associated with the given table name
      */
-    public Object get(String tableName) {
+    public T get(String tableName) {
         String correctedCaseTableName = this.getTableName(tableName);
         return this._tableMap.get(correctedCaseTableName);
     }
@@ -103,7 +103,7 @@ public class OrderedTableNameMap {
      *         added to this map
      */
     public String[] getTableNames() {
-        return (String[]) this._tableNames.toArray(new String[0]);
+        return this._tableNames.toArray(new String[0]);
     }
 
     /**
@@ -124,9 +124,6 @@ public class OrderedTableNameMap {
      *         has been added to this map.
      */
     public boolean isLastTable(String tableName) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("isLastTable(tableName={}) - start", tableName);
-
         if (this._tableNames.size() == 0) {
             return false;
         } else {
@@ -150,7 +147,7 @@ public class OrderedTableNameMap {
         }
 
         if (_tableNames.size() > 0) {
-            String lastTable = (String) _tableNames.get(this._tableNames.size() - 1);
+            String lastTable = _tableNames.get(this._tableNames.size() - 1);
             return lastTable;
         } else {
             return null;
@@ -177,7 +174,7 @@ public class OrderedTableNameMap {
      *                  null
      * @throws AmbiguousTableNameException If the given table name already exists
      */
-    public void add(String tableName, Object object) throws AmbiguousTableNameException {
+    public void add(String tableName, T object) throws AmbiguousTableNameException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("add(tableName={}, object={}) - start", tableName, object);
 
@@ -197,14 +194,14 @@ public class OrderedTableNameMap {
     /**
      * @return The values of this map ordered in the sequence they have been added
      */
-    public Collection orderedValues() {
+    public Collection<T> orderedValues() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("orderedValues() - start");
 
-        List orderedValues = new ArrayList(this._tableNames.size());
-        for (Iterator iterator = _tableNames.iterator(); iterator.hasNext();) {
-            String tableName = (String) iterator.next();
-            Object object = this.get(tableName);
+        List<T> orderedValues = new ArrayList<>(this._tableNames.size());
+        for (Iterator<String> iterator = _tableNames.iterator(); iterator.hasNext();) {
+            String tableName = iterator.next();
+            T object = this.get(tableName);
             orderedValues.add(object);
         }
         return orderedValues;
@@ -217,7 +214,7 @@ public class OrderedTableNameMap {
      * @param tableName The table name for which the association should be updated
      * @param object    The new object to be associated with the given table name
      */
-    public void update(String tableName, Object object) {
+    public void update(String tableName, T object) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("update(tableName={}, object={}) - start", tableName, object);
 
@@ -252,6 +249,7 @@ public class OrderedTableNameMap {
         return result;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");
@@ -262,4 +260,12 @@ public class OrderedTableNameMap {
         return sb.toString();
     }
 
+    public T getLastTable() {
+        String lastTableName = getLastTableName();
+        if (lastTableName != null) {
+            return get(lastTableName);
+        } else {
+            return null;
+        }
+    }
 }
