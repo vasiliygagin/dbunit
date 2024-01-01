@@ -29,7 +29,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/vasiliygagin/dbunit.git</connection>
-        <developerConnection>scm:git:git://github.com:vasiliygagin/dbunit.git</developerConnection>
+        <developerConnection>scm:git:git://github.com/vasiliygagin/dbunit.git</developerConnection>
         <url>https://github.com/vasiliygagin/dbunit</url>
       <tag>2.8.0</tag>
   </scm>
