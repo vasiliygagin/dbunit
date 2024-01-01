@@ -26,6 +26,10 @@ Code in those artifacts is largely original. Though there are small changes in i
 Currently I am working on cleaning and upgrading dependencies. Attempts will be made to maintain compatibility in the future.
 More artifacts will be split of original artifacts in the future releases. Like support for ant and junit 2 and junit 4 will probably moved to dbunit-ant, dbunit-junit2 and dbunit-junit4. So I can amputate those easier when time comes.
 
+Broken things
+=============
+- Something is not working in ant support. Test cases are failing, no guarantees that it will work. Upgraded ant version, things got worse.
+
 Changes to original DBUnit
 ==========================
 - If no database connections configured via DbUnitConfiguration, and no connections found with common names "dbUnitDatabaseConnection"
