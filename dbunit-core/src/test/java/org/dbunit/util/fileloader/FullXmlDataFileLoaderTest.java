@@ -39,16 +39,16 @@ public class FullXmlDataFileLoaderTest extends TestCase {
      * {@inheritDoc}
      */
     protected void setUp() throws Exception {
-        loader = new FullXmlDataFileLoader();
+	loader = new FullXmlDataFileLoader();
     }
 
     /**
      * Test can load the specified file.
      */
     public void testLoad() throws DataSetException {
-        String filename = "/xml/xmlTableTest.xml";
-        IDataSet ds = loader.load(filename);
-        assertTrue("No tables found in dataset.", ds.getTableNames().length > 0);
-        // DataSet loading tests verify data accuracy
+	String filename = "/xml/xmlTableTest.xml";
+	IDataSet ds = loader.load(filename);
+	assertTrue("No tables found in dataset.", ds.getTableNames().length > 0);
+	// DataSet loading tests verify data accuracy
     }
 }

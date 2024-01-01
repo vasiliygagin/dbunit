@@ -33,19 +33,19 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Feb 20, 2002
  */
-public class CachedResultSetTable extends CachedTable implements IResultSetTable
-{
+public class CachedResultSetTable extends CachedTable implements IResultSetTable {
     /**
      * @param metaData
      * @param resultSet
      * @throws SQLException
      * @throws DataSetException
-     * @deprecated since 2.3.0 prefer direct usage of {@link ForwardOnlyResultSetTable#ForwardOnlyResultSetTable(ITableMetaData, ResultSet)} and then invoke {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)}
+     * @deprecated since 2.3.0 prefer direct usage of
+     *             {@link ForwardOnlyResultSetTable#ForwardOnlyResultSetTable(ITableMetaData, ResultSet)}
+     *             and then invoke
+     *             {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)}
      */
-    public CachedResultSetTable(ITableMetaData metaData, ResultSet resultSet)
-            throws SQLException, DataSetException
-    {
-        this(new ForwardOnlyResultSetTable(metaData, resultSet));
+    public CachedResultSetTable(ITableMetaData metaData, ResultSet resultSet) throws SQLException, DataSetException {
+	this(new ForwardOnlyResultSetTable(metaData, resultSet));
     }
 
     /**
@@ -53,37 +53,29 @@ public class CachedResultSetTable extends CachedTable implements IResultSetTable
      * @param connection
      * @throws SQLException
      * @throws DataSetException
-     * @deprecated since 2.4.4 prefer direct usage of {@link ForwardOnlyResultSetTable#ForwardOnlyResultSetTable(ITableMetaData, IDatabaseConnection)} and then invoke {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)} 
+     * @deprecated since 2.4.4 prefer direct usage of
+     *             {@link ForwardOnlyResultSetTable#ForwardOnlyResultSetTable(ITableMetaData, IDatabaseConnection)}
+     *             and then invoke
+     *             {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)}
      */
-    public CachedResultSetTable(ITableMetaData metaData,
-            IDatabaseConnection connection) throws SQLException, DataSetException
-    {
-        this(new ForwardOnlyResultSetTable(metaData, connection));
+    public CachedResultSetTable(ITableMetaData metaData, IDatabaseConnection connection)
+	    throws SQLException, DataSetException {
+	this(new ForwardOnlyResultSetTable(metaData, connection));
     }
 
-    public CachedResultSetTable(IResultSetTable table) throws DataSetException, SQLException
-    {
-        super(table.getTableMetaData());
-        try
-        {
-            addTableRows(table);
-        }
-        finally
-        {
-            table.close();
-        }
+    public CachedResultSetTable(IResultSetTable table) throws DataSetException, SQLException {
+	super(table.getTableMetaData());
+	try {
+	    addTableRows(table);
+	} finally {
+	    table.close();
+	}
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IResultSetTable interface
 
-    public void close() throws DataSetException
-    {
-        // nothing to do, resultset already been closed
+    public void close() throws DataSetException {
+	// nothing to do, resultset already been closed
     }
 }
-
-
-
-
-

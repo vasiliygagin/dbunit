@@ -11,15 +11,13 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 
-public class XlsDataSetWriterTest
-{
+public class XlsDataSetWriterTest {
     private static final File OUTPUT_DIR = new File("target", "excel");
 
-    private static final String INPUT_EXCEL_FILE =
-            "/excel/XlsDataSetWriterCellStyleCaching.xlsx";
+    private static final String INPUT_EXCEL_FILE = "/excel/XlsDataSetWriterCellStyleCaching.xlsx";
 
     private static final File OUTPUT_EXCEL_FILE = new File(OUTPUT_DIR,
-            "XlsDataSetWriterCellStyleCachingTestOutput.xls");
+	    "XlsDataSetWriterCellStyleCachingTestOutput.xls");
 
     /**
      * Test for issue 377. Without 377's changes, test fails with:
@@ -27,16 +25,14 @@ public class XlsDataSetWriterTest
      * exceeded. You can define up to 4000 styles in a .xls workbook
      */
     @Test
-    public void testTimestampTzOffsets()
-            throws URISyntaxException, DataSetException, IOException
-    {
-        OUTPUT_DIR.mkdir();
+    public void testTimestampTzOffsets() throws URISyntaxException, DataSetException, IOException {
+	OUTPUT_DIR.mkdir();
 
-        URL excelFileUrl = getClass().getResource(INPUT_EXCEL_FILE);
-        URI excelFileUri = excelFileUrl.toURI();
-        File file = new File(excelFileUri);
-        IDataSet dataSet = new XlsDataSet(file);
-        FileOutputStream outputStream = new FileOutputStream(OUTPUT_EXCEL_FILE);
-        XlsDataSet.write(dataSet, outputStream);
+	URL excelFileUrl = getClass().getResource(INPUT_EXCEL_FILE);
+	URI excelFileUri = excelFileUrl.toURI();
+	File file = new File(excelFileUri);
+	IDataSet dataSet = new XlsDataSet(file);
+	FileOutputStream outputStream = new FileOutputStream(OUTPUT_EXCEL_FILE);
+	XlsDataSet.write(dataSet, outputStream);
     }
 }

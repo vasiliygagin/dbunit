@@ -8,12 +8,10 @@ import java.util.Map;
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public interface ValueComparerDefaults
-{
+public interface ValueComparerDefaults {
     ValueComparer getDefaultValueComparer();
 
     Map<String, Map<String, ValueComparer>> getDefaultTableColumnValueComparerMap();
 
-    Map<String, ValueComparer> getDefaultColumnValueComparerMapForTable(
-            String tableName);
+    Map<String, ValueComparer> getDefaultColumnValueComparerMapForTable(String tableName);
 }

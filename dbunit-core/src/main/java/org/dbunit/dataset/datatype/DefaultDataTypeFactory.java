@@ -35,11 +35,10 @@ import org.slf4j.LoggerFactory;
  * @since May 17, 2003
  * @version $Revision$
  */
-public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelatable
-{
+public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelatable {
 
-	private ToleratedDeltaMap _toleratedDeltaMap = new ToleratedDeltaMap();
-	
+    private ToleratedDeltaMap _toleratedDeltaMap = new ToleratedDeltaMap();
+
     /**
      * Logger for this class
      */
@@ -53,106 +52,99 @@ public class DefaultDataTypeFactory implements IDataTypeFactory, IDbProductRelat
      * @see IDbProductRelatable#getValidDbProducts()
      */
     @Override
-    public Collection getValidDbProducts()
-    {
-      return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
     /**
-     * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int, java.lang.String)
+     * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int,
+     *      java.lang.String)
      */
     @Override
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled()) {
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
-        }
-
-        DataType dataType = DataType.UNKNOWN;
-        if (sqlType != Types.OTHER)
-        {
-            dataType = DataType.forSqlType(sqlType);
-        }
-        else
-        {
-            // Necessary for compatibility with DbUnit 1.5 and older
-            // BLOB
-            if ("BLOB".equals(sqlTypeName))
-            {
-                return DataType.BLOB;
-            }
-
-            // CLOB
-            if ("CLOB".equals(sqlTypeName))
-            {
-                return DataType.CLOB;
-            }
-        }
-        return dataType;
-    }
-    
-    /**
-     * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int, java.lang.String, java.lang.String, java.lang.String)
-     */
-    @Override
-    public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled()) {
-            logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start", 
-        		new Integer(sqlType), sqlTypeName, tableName, columnName );
-        }
-
-        if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL)
-        {
-        	// Check if the user has set a tolerance delta for this floating point field
-        	ToleratedDelta delta = _toleratedDeltaMap.findToleratedDelta(tableName, columnName);
-            // Found a toleratedDelta object
-            if(delta!=null) {
-                if(logger.isDebugEnabled()) {
-                    logger.debug("Creating NumberTolerantDataType for table={}, column={}, toleratedDelta={}", 
-            			tableName, columnName, delta.getToleratedDelta());
-                }
-                
-                return new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", 
-                		sqlType, delta.getToleratedDelta());
-            }
-        }
-        
-        // In all other cases (default) use the default data type creation
-        return this.createDataType(sqlType, sqlTypeName);
-    }
-
-    
-	/**
-	 * @return The whole map of tolerated delta objects that have been set until now
-	 * @since 2.3.0
-	 */
-	public ToleratedDeltaMap getToleratedDeltaMap() 
-	{
-		return _toleratedDeltaMap;
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", new Integer(sqlType), sqlTypeName);
 	}
 
-    /**
-     * Adds a tolerated delta to this data type factory to be used for numeric comparisons
-     * @param delta The new tolerated delta object
-	 * @since 2.3.0
-     */
-    public void addToleratedDelta(ToleratedDelta delta)
-    {
-    	this._toleratedDeltaMap.addToleratedDelta(delta);
+	DataType dataType = DataType.UNKNOWN;
+	if (sqlType != Types.OTHER) {
+	    dataType = DataType.forSqlType(sqlType);
+	} else {
+	    // Necessary for compatibility with DbUnit 1.5 and older
+	    // BLOB
+	    if ("BLOB".equals(sqlTypeName)) {
+		return DataType.BLOB;
+	    }
+
+	    // CLOB
+	    if ("CLOB".equals(sqlTypeName)) {
+		return DataType.CLOB;
+	    }
+	}
+	return dataType;
     }
-    
+
     /**
-     * Returns a string representation of this {@link DefaultDataTypeFactory} instance
+     * @see org.dbunit.dataset.datatype.IDataTypeFactory#createDataType(int,
+     *      java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
+	    throws DataTypeException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("createDataType(sqlType={} , sqlTypeName={}, tableName={}, columnName={}) - start",
+		    new Integer(sqlType), sqlTypeName, tableName, columnName);
+	}
+
+	if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
+	    // Check if the user has set a tolerance delta for this floating point field
+	    ToleratedDelta delta = _toleratedDeltaMap.findToleratedDelta(tableName, columnName);
+	    // Found a toleratedDelta object
+	    if (delta != null) {
+		if (logger.isDebugEnabled()) {
+		    logger.debug("Creating NumberTolerantDataType for table={}, column={}, toleratedDelta={}",
+			    tableName, columnName, delta.getToleratedDelta());
+		}
+
+		return new NumberTolerantDataType("NUMERIC_WITH_TOLERATED_DELTA", sqlType, delta.getToleratedDelta());
+	    }
+	}
+
+	// In all other cases (default) use the default data type creation
+	return this.createDataType(sqlType, sqlTypeName);
+    }
+
+    /**
+     * @return The whole map of tolerated delta objects that have been set until now
+     * @since 2.3.0
+     */
+    public ToleratedDeltaMap getToleratedDeltaMap() {
+	return _toleratedDeltaMap;
+    }
+
+    /**
+     * Adds a tolerated delta to this data type factory to be used for numeric
+     * comparisons
+     * 
+     * @param delta The new tolerated delta object
+     * @since 2.3.0
+     */
+    public void addToleratedDelta(ToleratedDelta delta) {
+	this._toleratedDeltaMap.addToleratedDelta(delta);
+    }
+
+    /**
+     * Returns a string representation of this {@link DefaultDataTypeFactory}
+     * instance
+     * 
      * @since 2.4.6
      */
     @Override
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("_toleratedDeltaMap=").append(_toleratedDeltaMap);
-        sb.append("]");
-        return sb.toString();
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append("_toleratedDeltaMap=").append(_toleratedDeltaMap);
+	sb.append("]");
+	return sb.toString();
     }
 }

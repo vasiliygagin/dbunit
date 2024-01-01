@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since 2.2
  */
-public class JdbcDatabaseTester extends AbstractDatabaseTester
-{
+public class JdbcDatabaseTester extends AbstractDatabaseTester {
 
     /**
      * Logger for this class
@@ -53,82 +52,79 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester
      * Creates a new JdbcDatabaseTester with the specified properties.<br>
      * Username and Password are set to null.
      *
-     * @param driverClass the classname of the JDBC driver to use
+     * @param driverClass   the classname of the JDBC driver to use
      * @param connectionUrl the connection url
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not found
+     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
+     *                                found
      */
-    public JdbcDatabaseTester( String driverClass, String connectionUrl ) 
-    throws ClassNotFoundException
-    {
-        this( driverClass, connectionUrl, null, null );
+    public JdbcDatabaseTester(String driverClass, String connectionUrl) throws ClassNotFoundException {
+	this(driverClass, connectionUrl, null, null);
     }
 
     /**
      * Creates a new JdbcDatabaseTester with the specified properties.
      *
-     * @param driverClass the classname of the JDBC driver to use
+     * @param driverClass   the classname of the JDBC driver to use
      * @param connectionUrl the connection url
-     * @param username a username that can has access to the database
-     * @param password the user's password
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not found
+     * @param username      a username that can has access to the database
+     * @param password      the user's password
+     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
+     *                                found
      */
-    public JdbcDatabaseTester( String driverClass, String connectionUrl, String username,
-            String password ) 
-    throws ClassNotFoundException
-    {
-        this(driverClass, connectionUrl, username, password, null);
+    public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password)
+	    throws ClassNotFoundException {
+	this(driverClass, connectionUrl, username, password, null);
     }
 
     /**
      * Creates a new JdbcDatabaseTester with the specified properties.
      *
-     * @param driverClass the classname of the JDBC driver to use
+     * @param driverClass   the classname of the JDBC driver to use
      * @param connectionUrl the connection url
-     * @param username a username that can has access to the database - can be <code>null</code>
-     * @param password the user's password - can be <code>null</code>
-     * @param schema the database schema to be tested - can be <code>null</code>
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not found
+     * @param username      a username that can has access to the database - can be
+     *                      <code>null</code>
+     * @param password      the user's password - can be <code>null</code>
+     * @param schema        the database schema to be tested - can be
+     *                      <code>null</code>
+     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
+     *                                found
      * @since 2.4.3
      */
-    public JdbcDatabaseTester( String driverClass, String connectionUrl, String username,
-            String password, String schema ) 
-    throws ClassNotFoundException
-    {
-        super(schema);
-        this.driverClass = driverClass;
-        this.connectionUrl = connectionUrl;
-        this.username = username;
-        this.password = password;
-        
-        assertNotNullNorEmpty( "driverClass", driverClass );
-        Class.forName( driverClass );
+    public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password, String schema)
+	    throws ClassNotFoundException {
+	super(schema);
+	this.driverClass = driverClass;
+	this.connectionUrl = connectionUrl;
+	this.username = username;
+	this.password = password;
+
+	assertNotNullNorEmpty("driverClass", driverClass);
+	Class.forName(driverClass);
     }
 
-    public IDatabaseConnection getConnection() throws Exception
-    {
-        logger.debug("getConnection() - start");
+    public IDatabaseConnection getConnection() throws Exception {
+	logger.debug("getConnection() - start");
 
-        assertNotNullNorEmpty( "connectionUrl", connectionUrl );
-        Connection conn = null;
-        if( username == null && password == null ){
-            conn = DriverManager.getConnection( connectionUrl );
-        }else{
-            conn = DriverManager.getConnection( connectionUrl, username, password );
-        }
-        return new DatabaseConnection( conn, getSchema() );
+	assertNotNullNorEmpty("connectionUrl", connectionUrl);
+	Connection conn = null;
+	if (username == null && password == null) {
+	    conn = DriverManager.getConnection(connectionUrl);
+	} else {
+	    conn = DriverManager.getConnection(connectionUrl, username, password);
+	}
+	return new DatabaseConnection(conn, getSchema());
     }
 
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("connectionUrl=").append(this.connectionUrl);
-        sb.append(", driverClass=").append(this.driverClass);
-        sb.append(", username=").append(this.username);
-        sb.append(", password=**********");
-        sb.append(", schema=").append(super.getSchema());
-        sb.append("]");
-        return sb.toString();
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append("connectionUrl=").append(this.connectionUrl);
+	sb.append(", driverClass=").append(this.driverClass);
+	sb.append(", username=").append(this.username);
+	sb.append(", password=**********");
+	sb.append(", schema=").append(super.getSchema());
+	sb.append("]");
+	return sb.toString();
     }
 
 }

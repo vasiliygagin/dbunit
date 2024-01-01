@@ -28,28 +28,24 @@ import java.sql.Types;
  * @version $Revision$
  */
 
-public class BitDataTypeTest extends BooleanDataTypeTest
-{
+public class BitDataTypeTest extends BooleanDataTypeTest {
     private final static DataType THIS_TYPE = DataType.BIT;
 
-    public BitDataTypeTest(String name)
-    {
-        super(name);
+    public BitDataTypeTest(String name) {
+	super(name);
     }
 
     /**
      *
      */
-    public void testToString() throws Exception
-    {
-        assertEquals("name", "BIT", THIS_TYPE.toString());
+    public void testToString() throws Exception {
+	assertEquals("name", "BIT", THIS_TYPE.toString());
     }
 
-    public void testSqlType() throws Exception
-    {
-        assertEquals("forSqlType", THIS_TYPE, DataType.forSqlType(Types.BIT));
-        assertEquals("forSqlTypeName", THIS_TYPE, DataType.forSqlTypeName(THIS_TYPE.toString()));
-        assertEquals("getSqlType", Types.BIT, THIS_TYPE.getSqlType());
+    public void testSqlType() throws Exception {
+	assertEquals("forSqlType", THIS_TYPE, DataType.forSqlType(Types.BIT));
+	assertEquals("forSqlTypeName", THIS_TYPE, DataType.forSqlTypeName(THIS_TYPE.toString()));
+	assertEquals("getSqlType", Types.BIT, THIS_TYPE.getSqlType());
     }
 
 }

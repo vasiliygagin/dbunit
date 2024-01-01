@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public class DefaultTable extends AbstractTable
-{
+public class DefaultTable extends AbstractTable {
 
     /**
      * Logger for this class
@@ -47,168 +46,152 @@ public class DefaultTable extends AbstractTable
 
     /**
      * Creates a new empty table with specified metadata and values.
+     * 
      * @deprecated Use public mutators to initialize table values instead
      */
-    public DefaultTable(ITableMetaData metaData, List list)
-    {
-        _metaData = metaData;
-        _rowList = list;
+    public DefaultTable(ITableMetaData metaData, List list) {
+	_metaData = metaData;
+	_rowList = list;
     }
 
     /**
      * Creates a new empty table having the specified name.
      */
-    public DefaultTable(String tableName)
-    {
-        _metaData = new DefaultTableMetaData(tableName, new Column[0]);
-        _rowList = new ArrayList();
+    public DefaultTable(String tableName) {
+	_metaData = new DefaultTableMetaData(tableName, new Column[0]);
+	_rowList = new ArrayList();
     }
 
     /**
      * Creates a new empty table with specified metadata and values.
+     * 
      * @deprecated Use public mutators to initialize table values instead
      */
-    public DefaultTable(String tableName, Column[] columns, List list)
-    {
-        _metaData = new DefaultTableMetaData(tableName, columns);
-        _rowList = list;
+    public DefaultTable(String tableName, Column[] columns, List list) {
+	_metaData = new DefaultTableMetaData(tableName, columns);
+	_rowList = list;
     }
 
     /**
      * Creates a new empty table with specified metadata.
      */
-    public DefaultTable(String tableName, Column[] columns)
-    {
-        _metaData = new DefaultTableMetaData(tableName, columns);
-        _rowList = new ArrayList();
+    public DefaultTable(String tableName, Column[] columns) {
+	_metaData = new DefaultTableMetaData(tableName, columns);
+	_rowList = new ArrayList();
     }
 
-    public DefaultTable(ITableMetaData metaData)
-    {
-        _metaData = metaData;
-        _rowList = new ArrayList();
+    public DefaultTable(ITableMetaData metaData) {
+	_metaData = metaData;
+	_rowList = new ArrayList();
     }
 
     /**
      * Inserts a new empty row. You can add values with {@link #setValue}.
      */
-    public void addRow() throws DataSetException
-    {
-        logger.debug("addRow() - start");
+    public void addRow() throws DataSetException {
+	logger.debug("addRow() - start");
 
-        int columnCount = _metaData.getColumns().length;
-        _rowList.add(new Object[columnCount]);
+	int columnCount = _metaData.getColumns().length;
+	_rowList.add(new Object[columnCount]);
     }
 
     /**
      * Inserts a new row initialized with specified array of values.
+     * 
      * @param values The array of values. Each value correspond to the column at the
-     * same index from {@link ITableMetaData#getColumns}.
+     *               same index from {@link ITableMetaData#getColumns}.
      * @see #getTableMetaData
      */
-    public void addRow(Object[] values) throws DataSetException
-    {
-        logger.debug("addRow(values={}) - start", values);
+    public void addRow(Object[] values) throws DataSetException {
+	logger.debug("addRow(values={}) - start", values);
 
-        _rowList.add(values);
+	_rowList.add(values);
     }
 
     /**
      * Inserts all rows from the specified table.
+     * 
      * @param table The source table.
      */
-    public void addTableRows(ITable table) throws DataSetException
-    {
-        logger.debug("addTableRows(table={}) - start", table);
+    public void addTableRows(ITable table) throws DataSetException {
+	logger.debug("addTableRows(table={}) - start", table);
 
-        try
-        {
-            Column[] columns = _metaData.getColumns();
-            if (columns.length <= 0)
-            {
-            	logger.warn("The table '" + table + "' does not have any columns. Cannot add table rows. This should never happen...");
-            	return;
-            }
-            
-            for (int i = 0; ; i++)
-            {
-                Object[] rowValues = new Object[columns.length];
-                for (int j = 0; j < columns.length; j++)
-                {
-                    Column column = columns[j];
-                    rowValues[j] = table.getValue(i, column.getColumnName());
-                }
-                _rowList.add(rowValues);
-            }
-        }
-        catch(RowOutOfBoundsException e)
-        {
-            // end of table
-        	// ignore error.
-        }
+	try {
+	    Column[] columns = _metaData.getColumns();
+	    if (columns.length <= 0) {
+		logger.warn("The table '" + table
+			+ "' does not have any columns. Cannot add table rows. This should never happen...");
+		return;
+	    }
+
+	    for (int i = 0;; i++) {
+		Object[] rowValues = new Object[columns.length];
+		for (int j = 0; j < columns.length; j++) {
+		    Column column = columns[j];
+		    rowValues[j] = table.getValue(i, column.getColumnName());
+		}
+		_rowList.add(rowValues);
+	    }
+	} catch (RowOutOfBoundsException e) {
+	    // end of table
+	    // ignore error.
+	}
     }
 
     /**
-     * Replaces the value at the specified position in this table with the specified value.
-     * @param row The row index
+     * Replaces the value at the specified position in this table with the specified
+     * value.
+     * 
+     * @param row    The row index
      * @param column The column name
-     * @param value The value to store at the specified location
+     * @param value  The value to store at the specified location
      * @return the value previously at the specified location
      * @throws RowOutOfBoundsException if the row index is out of range
-     * @throws NoSuchColumnException if the column does not exist
-     * @throws DataSetException if an unexpected error occurs
+     * @throws NoSuchColumnException   if the column does not exist
+     * @throws DataSetException        if an unexpected error occurs
      */
     public Object setValue(int row, String column, Object value)
-            throws RowOutOfBoundsException, NoSuchColumnException, DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("setValue(row={}, column={}, value={}) - start", new Object[] {Integer.toString(row), column, value});
+	    throws RowOutOfBoundsException, NoSuchColumnException, DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("setValue(row={}, column={}, value={}) - start",
+		    new Object[] { Integer.toString(row), column, value });
 
-        assertValidRowIndex(row);
+	assertValidRowIndex(row);
 
-        Object[] rowValues = (Object[])_rowList.get(row);
-        int columnIndex = getColumnIndex(column);
-        Object oldValue = rowValues[columnIndex];
-        rowValues[columnIndex] = value;
-        return oldValue;
+	Object[] rowValues = (Object[]) _rowList.get(row);
+	int columnIndex = getColumnIndex(column);
+	Object oldValue = rowValues[columnIndex];
+	rowValues[columnIndex] = value;
+	return oldValue;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
-    public ITableMetaData getTableMetaData()
-    {
-        return _metaData;
+    public ITableMetaData getTableMetaData() {
+	return _metaData;
     }
 
-    public int getRowCount()
-    {
-        return _rowList.size();
+    public int getRowCount() {
+	return _rowList.size();
     }
 
-    public Object getValue(int row, String column) throws DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("getValue(row={}, column={}) - start", Integer.toString(row), column);
+    public Object getValue(int row, String column) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getValue(row={}, column={}) - start", Integer.toString(row), column);
 
-        assertValidRowIndex(row);
+	assertValidRowIndex(row);
 
-        Object[] rowValues = (Object[])_rowList.get(row);
-        return rowValues[getColumnIndex(column)];
+	Object[] rowValues = (Object[]) _rowList.get(row);
+	return rowValues[getColumnIndex(column)];
     }
 
-    public String toString()
-    {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append(getClass().getName()).append("[");
-    	sb.append("_metaData=").append(this._metaData == null ? "null" : this._metaData.toString());
-    	sb.append(", _rowList.size()=").append(this._rowList == null ? "null" : ""+this._rowList.size());
-    	sb.append("]");
-    	return sb.toString();
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append("_metaData=").append(this._metaData == null ? "null" : this._metaData.toString());
+	sb.append(", _rowList.size()=").append(this._rowList == null ? "null" : "" + this._rowList.size());
+	sb.append("]");
+	return sb.toString();
     }
 }
-
-
-
-
-

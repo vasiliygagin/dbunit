@@ -14,15 +14,13 @@ import org.dbunit.dataset.datatype.DataType;
  * @since 2.6.0
  */
 @FunctionalInterface
-public interface ValueComparerSelector
-{
+public interface ValueComparerSelector {
     /**
-     * @return The selected {@link ValueComparer} from the specified
-     *         valueComparers map.
+     * @return The selected {@link ValueComparer} from the specified valueComparers
+     *         map.
      * @throws DatabaseUnitException
      */
-    ValueComparer select(ITable expectedTable, ITable actualTable, int rowNum,
-            String columnName, DataType dataType, Object expectedValue,
-            Object actualValue, Map<Object, ValueComparer> valueComparers)
-            throws DatabaseUnitException;
+    ValueComparer select(ITable expectedTable, ITable actualTable, int rowNum, String columnName, DataType dataType,
+	    Object expectedValue, Object actualValue, Map<Object, ValueComparer> valueComparers)
+	    throws DatabaseUnitException;
 }

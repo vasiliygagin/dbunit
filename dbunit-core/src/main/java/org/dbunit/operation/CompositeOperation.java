@@ -39,8 +39,7 @@ import java.util.Arrays;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class CompositeOperation extends DatabaseOperation
-{
+public class CompositeOperation extends DatabaseOperation {
 
     /**
      * Logger for this class
@@ -52,45 +51,34 @@ public class CompositeOperation extends DatabaseOperation
     /**
      * Creates a new composite operation combining the two specified operations.
      */
-    public CompositeOperation(DatabaseOperation action1, DatabaseOperation action2)
-    {
-        _actions = new DatabaseOperation[]{action1, action2};
+    public CompositeOperation(DatabaseOperation action1, DatabaseOperation action2) {
+	_actions = new DatabaseOperation[] { action1, action2 };
     }
 
     /**
      * Creates a new composite operation combining the specified operations.
      */
-    public CompositeOperation(DatabaseOperation[] actions)
-    {
-        _actions = actions;
+    public CompositeOperation(DatabaseOperation[] actions) {
+	_actions = actions;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet)
-            throws DatabaseUnitException, SQLException
-    {
-        logger.debug("execute(connection={}, , dataSet={}) - start", connection, dataSet);
+    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+	logger.debug("execute(connection={}, , dataSet={}) - start", connection, dataSet);
 
-        for (int i = 0; i < _actions.length; i++)
-        {
-            DatabaseOperation action = _actions[i];
-            action.execute(connection, dataSet);
-        }
+	for (int i = 0; i < _actions.length; i++) {
+	    DatabaseOperation action = _actions[i];
+	    action.execute(connection, dataSet);
+	}
     }
-    
-    public String toString()
-    {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append(getClass().getName()).append("[");
-    	sb.append("_actions=").append(this._actions==null ? "null" : Arrays.asList(this._actions).toString());
-    	sb.append("]");
-    	return sb.toString();
+
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append("_actions=").append(this._actions == null ? "null" : Arrays.asList(this._actions).toString());
+	sb.append("]");
+	return sb.toString();
     }
 }
-
-
-
-
-

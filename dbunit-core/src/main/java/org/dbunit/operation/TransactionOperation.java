@@ -38,8 +38,7 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Feb 21, 2002
  */
-public class TransactionOperation extends DatabaseOperation
-{
+public class TransactionOperation extends DatabaseOperation {
 
     /**
      * Logger for this class
@@ -51,51 +50,38 @@ public class TransactionOperation extends DatabaseOperation
     /**
      * Creates a TransactionOperation that decorates the specified operation.
      */
-    public TransactionOperation(DatabaseOperation operation)
-    {
-        _operation = operation;
+    public TransactionOperation(DatabaseOperation operation) {
+	_operation = operation;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet)
-            throws DatabaseUnitException, SQLException
-    {
-        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
+    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+	logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-        IDatabaseConnection databaseConnection = connection;
-        Connection jdbcConnection = databaseConnection.getConnection();
+	IDatabaseConnection databaseConnection = connection;
+	Connection jdbcConnection = databaseConnection.getConnection();
 
-        if (jdbcConnection.getAutoCommit() == false)
-        {
-            throw new ExclusiveTransactionException();
-        }
+	if (jdbcConnection.getAutoCommit() == false) {
+	    throw new ExclusiveTransactionException();
+	}
 
-        jdbcConnection.setAutoCommit(false);
-        try
-        {
-            _operation.execute(databaseConnection, dataSet);
-            jdbcConnection.commit();
-        }
-        catch (DatabaseUnitException e)
-        {
-            jdbcConnection.rollback();
-            throw e;
-        }
-        catch (SQLException e)
-        {
-            jdbcConnection.rollback();
-            throw e;
-        }
-        catch (RuntimeException e)
-        {
-            jdbcConnection.rollback();
-            throw e;
-        }
-        finally
-        {
-            jdbcConnection.setAutoCommit(true);
-        }
+	jdbcConnection.setAutoCommit(false);
+	try {
+	    _operation.execute(databaseConnection, dataSet);
+	    jdbcConnection.commit();
+	} catch (DatabaseUnitException e) {
+	    jdbcConnection.rollback();
+	    throw e;
+	} catch (SQLException e) {
+	    jdbcConnection.rollback();
+	    throw e;
+	} catch (RuntimeException e) {
+	    jdbcConnection.rollback();
+	    throw e;
+	} finally {
+	    jdbcConnection.setAutoCommit(true);
+	}
     }
 }

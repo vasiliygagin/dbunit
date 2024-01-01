@@ -28,27 +28,29 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 
 /**
- * This class constructs an {@link IDataSet} given a directory containing control
- * files. It handles translations of "null"(the string), into null.
+ * This class constructs an {@link IDataSet} given a directory containing
+ * control files. It handles translations of "null"(the string), into null.
  * <p>
- * Example usage:
- * <code><pre>
+ * Example usage: <code><pre>
  * File ctlDir = new File("src/sqlloader");
  * File orderedTablesFile = new File("src/sqlloader/tables.lst");
  * IDataSet dataSet = new SqlLoaderControlDataSet(ctlDir, orderedTablesFile);
- * </pre></code>
- * The file <code>orderedTablesFile</code> must contain the names of the tables to
- * be imported. As a convention the .ctl file must have the same name as the table names file.
- * Here an example of the &quot;tables.lst&quot; file:
- * <br>
+ * </pre></code> The file <code>orderedTablesFile</code> must contain the names
+ * of the tables to be imported. As a convention the .ctl file must have the
+ * same name as the table names file. Here an example of the
+ * &quot;tables.lst&quot; file: <br>
  * <table border="1">
- * <tr><td>LANGUAGE<br>COUNTRY</td></tr>
+ * <tr>
+ * <td>LANGUAGE<br>
+ * COUNTRY</td>
+ * </tr>
  * </table>
- * The <code>ctlDir</code> directory must then contain the files <code>COUNTRY.ctl</code>
- * and <code>LANGUAGE.ctl</code>.
+ * The <code>ctlDir</code> directory must then contain the files
+ * <code>COUNTRY.ctl</code> and <code>LANGUAGE.ctl</code>.
  * </p>
  * 
- * @author Stephan Strittmatter (stritti AT users.sourceforge.net), gommma (gommma AT users.sourceforge.net)
+ * @author Stephan Strittmatter (stritti AT users.sourceforge.net), gommma
+ *         (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.0
@@ -58,43 +60,38 @@ public class SqlLoaderControlDataSet extends CachedDataSet implements IDataSet {
     /**
      * The Constructor.
      * 
-     * @param ctlDir the control files directory
+     * @param ctlDir            the control files directory
      * @param orderedTablesFile the table order file
      * 
      * @throws DataSetException the data set exception
      */
-    public SqlLoaderControlDataSet(String ctlDir, String orderedTablesFile) 
-    throws DataSetException 
-    {
-        super(new SqlLoaderControlProducer(ctlDir, orderedTablesFile));
+    public SqlLoaderControlDataSet(String ctlDir, String orderedTablesFile) throws DataSetException {
+	super(new SqlLoaderControlProducer(ctlDir, orderedTablesFile));
     }
 
     /**
      * The Constructor.
      * 
-     * @param ctlDir the control files directory
+     * @param ctlDir            the control files directory
      * @param orderedTablesFile the table order file
      * 
      * @throws DataSetException the data set exception
      */
-    public SqlLoaderControlDataSet(File ctlDir, File orderedTablesFile) 
-    throws DataSetException 
-    {
-        super(new SqlLoaderControlProducer(ctlDir, orderedTablesFile));
+    public SqlLoaderControlDataSet(File ctlDir, File orderedTablesFile) throws DataSetException {
+	super(new SqlLoaderControlProducer(ctlDir, orderedTablesFile));
     }
-    
+
     /**
      * The Constructor.
      * 
-     * @param ctlDir the control files directory
-     * @param orderedTableNames a list of strings that contains the ordered table names
+     * @param ctlDir            the control files directory
+     * @param orderedTableNames a list of strings that contains the ordered table
+     *                          names
      * 
      * @throws DataSetException the data set exception
      */
-    public SqlLoaderControlDataSet(File ctlDir, List orderedTableNames) 
-    throws DataSetException 
-    {
-        super(new SqlLoaderControlProducer(ctlDir, orderedTableNames));
+    public SqlLoaderControlDataSet(File ctlDir, List orderedTableNames) throws DataSetException {
+	super(new SqlLoaderControlProducer(ctlDir, orderedTableNames));
     }
 
 }

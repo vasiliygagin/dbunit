@@ -43,20 +43,21 @@ public class CloseConnectionOperation extends DatabaseOperation {
     private final DatabaseOperation _operation;
 
     /**
-     * Creates a CloseConnectionOperation object that decorates the specified operation.
+     * Creates a CloseConnectionOperation object that decorates the specified
+     * operation.
      */
     public CloseConnectionOperation(DatabaseOperation operation) {
-        _operation = operation;
+	_operation = operation;
     }
 
     @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
-        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
+	logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-        try {
-            _operation.execute(connection, dataSet);
-        } finally {
-            connection.close();
-        }
+	try {
+	    _operation.execute(connection, dataSet);
+	} finally {
+	    connection.close();
+	}
     }
 }

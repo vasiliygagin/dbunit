@@ -32,84 +32,65 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 16, 2002
  */
-public class MockBatchStatement implements IBatchStatement, Verifiable
-{
-    private ExpectationCounter _executeBatchCalls =
-            new ExpectationCounter("MockBatchStatement.executeBatch");;
-    private ExpectationCounter _clearBatchCalls =
-            new ExpectationCounter("MockBatchStatement.clearBatch");;
-    private ExpectationCounter _closeCalls =
-            new ExpectationCounter("MockBatchStatement.close");;
-    private ExpectationList _batchStrings =
-            new ExpectationList("MockBatchStatement.batchStrings");
+public class MockBatchStatement implements IBatchStatement, Verifiable {
+    private ExpectationCounter _executeBatchCalls = new ExpectationCounter("MockBatchStatement.executeBatch");;
+    private ExpectationCounter _clearBatchCalls = new ExpectationCounter("MockBatchStatement.clearBatch");;
+    private ExpectationCounter _closeCalls = new ExpectationCounter("MockBatchStatement.close");;
+    private ExpectationList _batchStrings = new ExpectationList("MockBatchStatement.batchStrings");
     private int _addBatchCalls = 0;
 
-    public MockBatchStatement()
-    {
+    public MockBatchStatement() {
     }
 
-    public void addExpectedBatchString(String sql)
-    {
-        _batchStrings.addExpected(sql);
+    public void addExpectedBatchString(String sql) {
+	_batchStrings.addExpected(sql);
     }
 
-    public void addExpectedBatchStrings(String[] sql)
-    {
-        _batchStrings.addExpectedMany(sql);
+    public void addExpectedBatchStrings(String[] sql) {
+	_batchStrings.addExpectedMany(sql);
     }
 
-    public void setExpectedExecuteBatchCalls(int callsCount)
-    {
-        _executeBatchCalls.setExpected(callsCount);
+    public void setExpectedExecuteBatchCalls(int callsCount) {
+	_executeBatchCalls.setExpected(callsCount);
     }
 
-    public void setExpectedClearBatchCalls(int callsCount)
-    {
-        _clearBatchCalls.setExpected(callsCount);
+    public void setExpectedClearBatchCalls(int callsCount) {
+	_clearBatchCalls.setExpected(callsCount);
     }
 
-    public void setExpectedCloseCalls(int callsCount)
-    {
-        _closeCalls.setExpected(callsCount);
+    public void setExpectedCloseCalls(int callsCount) {
+	_closeCalls.setExpected(callsCount);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
-    public void verify()
-    {
-        _executeBatchCalls.verify();
-        _clearBatchCalls.verify();
-        _closeCalls.verify();
-        _batchStrings.verify();
+    public void verify() {
+	_executeBatchCalls.verify();
+	_clearBatchCalls.verify();
+	_closeCalls.verify();
+	_batchStrings.verify();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IBatchStatement interface
 
-    public void addBatch(String sql) throws SQLException
-    {
-        _batchStrings.addActual(sql);
-        _addBatchCalls++;
+    public void addBatch(String sql) throws SQLException {
+	_batchStrings.addActual(sql);
+	_addBatchCalls++;
     }
 
-    public int executeBatch() throws SQLException
-    {
-        _executeBatchCalls.inc();
-        return _addBatchCalls;
+    public int executeBatch() throws SQLException {
+	_executeBatchCalls.inc();
+	return _addBatchCalls;
     }
 
-    public void clearBatch() throws SQLException
-    {
-        _clearBatchCalls.inc();
-        _addBatchCalls = 0;
+    public void clearBatch() throws SQLException {
+	_clearBatchCalls.inc();
+	_addBatchCalls = 0;
     }
 
-    public void close() throws SQLException
-    {
-        _closeCalls.inc();
+    public void close() throws SQLException {
+	_closeCalls.inc();
     }
 }
-
-
-

@@ -40,8 +40,7 @@ import org.slf4j.LoggerFactory;
  * @since Jul 17, 2003
  * @version $Revision$
  */
-public class Db2DataTypeFactory extends DefaultDataTypeFactory
-{
+public class Db2DataTypeFactory extends DefaultDataTypeFactory {
 
     /**
      * Logger for this class
@@ -51,46 +50,37 @@ public class Db2DataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"db2"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "db2" });
 
-    static final DataType DB2XML_XMLVARCHAR = new StringDataType(
-            "DB2XML.XMLVARCHAR", Types.DISTINCT);
-    static final DataType DB2XML_XMLCLOB = new StringDataType(
-            "DB2XML.XMLCLOB", Types.DISTINCT);
-    static final DataType DB2XML_XMLFILE = new StringDataType(
-            "DB2XML.XMLFILE", Types.DISTINCT);
+    static final DataType DB2XML_XMLVARCHAR = new StringDataType("DB2XML.XMLVARCHAR", Types.DISTINCT);
+    static final DataType DB2XML_XMLCLOB = new StringDataType("DB2XML.XMLCLOB", Types.DISTINCT);
+    static final DataType DB2XML_XMLFILE = new StringDataType("DB2XML.XMLFILE", Types.DISTINCT);
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts()
-    {
-      return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        if (sqlType == Types.DISTINCT)
-        {
-            if (sqlTypeName.equals(DB2XML_XMLVARCHAR.toString()))
-            {
-                return DB2XML_XMLVARCHAR;
-            }
+	if (sqlType == Types.DISTINCT) {
+	    if (sqlTypeName.equals(DB2XML_XMLVARCHAR.toString())) {
+		return DB2XML_XMLVARCHAR;
+	    }
 
-            if (sqlTypeName.equals(DB2XML_XMLCLOB.toString()))
-            {
-                return DB2XML_XMLCLOB;
-            }
+	    if (sqlTypeName.equals(DB2XML_XMLCLOB.toString())) {
+		return DB2XML_XMLCLOB;
+	    }
 
-            if (sqlTypeName.equals(DB2XML_XMLFILE.toString()))
-            {
-                return DB2XML_XMLFILE;
-            }
-        }
+	    if (sqlTypeName.equals(DB2XML_XMLFILE.toString())) {
+		return DB2XML_XMLFILE;
+	    }
+	}
 
-        return super.createDataType(sqlType, sqlTypeName);
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }

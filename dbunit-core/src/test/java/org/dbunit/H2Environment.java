@@ -34,61 +34,51 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class H2Environment extends DatabaseEnvironment
-{
+public class H2Environment extends DatabaseEnvironment {
     public static final String USERNAME_DEFAULT = "sa";
     public static final String PASSWORD_DEFAULT = "";
 
-    public H2Environment(DatabaseProfile profile) throws Exception
-    {
-        super(profile);
+    public H2Environment(DatabaseProfile profile) throws Exception {
+	super(profile);
     }
 
-    public static Connection createJdbcConnection(String databaseName) throws Exception
-    {
-        return createJdbcConnection(databaseName, USERNAME_DEFAULT, PASSWORD_DEFAULT);
+    public static Connection createJdbcConnection(String databaseName) throws Exception {
+	return createJdbcConnection(databaseName, USERNAME_DEFAULT, PASSWORD_DEFAULT);
     }
 
-    public static Connection createJdbcConnection(String databaseName,
-            String username, String password) throws Exception
-    {
-        Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:mem:" + databaseName,
-                username, password);
+    public static Connection createJdbcConnection(String databaseName, String username, String password)
+	    throws Exception {
+	Class.forName("org.h2.Driver");
+	return DriverManager.getConnection("jdbc:h2:mem:" + databaseName, username, password);
     }
 
     @Override
-    public void closeConnection() throws Exception
-    {
-        DatabaseOperation.DELETE_ALL.execute(getConnection(), getInitDataSet());
+    public void closeConnection() throws Exception {
+	DatabaseOperation.DELETE_ALL.execute(getConnection(), getInitDataSet());
     }
 
     public static void shutdown(Connection connection) throws SQLException {
-        DdlExecutor.executeSql( connection, "SHUTDOWN IMMEDIATELY" );
+	DdlExecutor.executeSql(connection, "SHUTDOWN IMMEDIATELY");
     }
 
     public static void deleteFiles(final String filename) {
-        deleteFiles(new File("."), filename);
+	deleteFiles(new File("."), filename);
     }
 
     public static void deleteFiles(File directory, final String filename) {
-        File[] files = directory.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                if (name.indexOf(filename) != -1)
-                {
-                    return true;
-                }
-                return false;
-            }
-        });
+	File[] files = directory.listFiles(new FilenameFilter() {
+	    public boolean accept(File dir, String name) {
+		if (name.indexOf(filename) != -1) {
+		    return true;
+		}
+		return false;
+	    }
+	});
 
-        for (int i = 0; i < files.length; i++)
-        {
-            File file = files[i];
-            file.delete();
-        }
+	for (int i = 0; i < files.length; i++) {
+	    File file = files[i];
+	    file.delete();
+	}
 
     }
 }

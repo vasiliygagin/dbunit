@@ -21,36 +21,25 @@
 
 package org.dbunit.dataset;
 
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 17, 2002
  */
 
-public class RowOutOfBoundsException extends DataSetException
-{
-    public RowOutOfBoundsException()
-    {
+public class RowOutOfBoundsException extends DataSetException {
+    public RowOutOfBoundsException() {
     }
 
-    public RowOutOfBoundsException(String msg)
-    {
-        super(msg);
+    public RowOutOfBoundsException(String msg) {
+	super(msg);
     }
 
-    public RowOutOfBoundsException(String msg, Throwable e)
-    {
-        super(msg, e);
+    public RowOutOfBoundsException(String msg, Throwable e) {
+	super(msg, e);
     }
 
-    public RowOutOfBoundsException(Throwable e)
-    {
-        super(e);
+    public RowOutOfBoundsException(Throwable e) {
+	super(e);
     }
 }
-
-
-
-
-

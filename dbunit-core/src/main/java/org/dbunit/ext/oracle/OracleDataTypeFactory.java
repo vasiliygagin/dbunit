@@ -34,12 +34,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Specialized factory that recognizes Oracle data types.
+ * 
  * @author manuel.laflamme
  * @since Jul 17, 2003
  * @version $Revision$
  */
-public class OracleDataTypeFactory extends DefaultDataTypeFactory
-{
+public class OracleDataTypeFactory extends DefaultDataTypeFactory {
 
     /**
      * Logger for this class
@@ -48,119 +48,101 @@ public class OracleDataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"oracle"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "oracle" });
 
     public static final DataType ORACLE_BLOB = new OracleBlobDataType();
     public static final DataType ORACLE_CLOB = new OracleClobDataType();
     public static final DataType ORACLE_NCLOB = new OracleNClobDataType();
     public static final DataType ORACLE_XMLTYPE = new OracleXMLTypeDataType();
     public static final DataType ORACLE_SDO_GEOMETRY_TYPE = new OracleSdoGeometryDataType();
-    
-    public static final DataType LONG_RAW = new BinaryStreamDataType(
-            "LONG RAW", Types.LONGVARBINARY);
-    
+
+    public static final DataType LONG_RAW = new BinaryStreamDataType("LONG RAW", Types.LONGVARBINARY);
+
     public static final DataType ROWID_TYPE = new StringDataType("ROWID", Types.OTHER);
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts()
-    {
-      return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        // Map Oracle DATE to TIMESTAMP
-        if (sqlType == Types.DATE)
-        {
-            return DataType.TIMESTAMP;
-        }
+	// Map Oracle DATE to TIMESTAMP
+	if (sqlType == Types.DATE) {
+	    return DataType.TIMESTAMP;
+	}
 
-        // TIMESTAMP
-        if (sqlTypeName.startsWith("TIMESTAMP"))
-        {
-            return DataType.TIMESTAMP;
-        }
+	// TIMESTAMP
+	if (sqlTypeName.startsWith("TIMESTAMP")) {
+	    return DataType.TIMESTAMP;
+	}
 
-        // XMLTYPE
-        if ("XMLTYPE".equals(sqlTypeName) || "SYS.XMLTYPE".equals(sqlTypeName))
-        {
-            return ORACLE_XMLTYPE;
-        }
+	// XMLTYPE
+	if ("XMLTYPE".equals(sqlTypeName) || "SYS.XMLTYPE".equals(sqlTypeName)) {
+	    return ORACLE_XMLTYPE;
+	}
 
-        // BLOB
-        if ("BLOB".equals(sqlTypeName))
-        {
-            return ORACLE_BLOB;
-        }
+	// BLOB
+	if ("BLOB".equals(sqlTypeName)) {
+	    return ORACLE_BLOB;
+	}
 
-        // CLOB
-        if ("CLOB".equals(sqlTypeName))
-        {
-            return ORACLE_CLOB;
-        }
-        
-        // NCLOB
-        if  ("NCLOB".equals(sqlTypeName))
-        {
-            return ORACLE_NCLOB;
-        }
+	// CLOB
+	if ("CLOB".equals(sqlTypeName)) {
+	    return ORACLE_CLOB;
+	}
 
-        // NVARCHAR2
-        if ("NVARCHAR2".equals(sqlTypeName))
-        {
-            return DataType.VARCHAR;
-        }
+	// NCLOB
+	if ("NCLOB".equals(sqlTypeName)) {
+	    return ORACLE_NCLOB;
+	}
 
-		// NCHAR
-        if (sqlTypeName.startsWith("NCHAR"))
-        {
-            return DataType.CHAR;
-        }
+	// NVARCHAR2
+	if ("NVARCHAR2".equals(sqlTypeName)) {
+	    return DataType.VARCHAR;
+	}
 
-        // FLOAT
-        if ("FLOAT".equals(sqlTypeName))
-        {
-            return DataType.FLOAT;
-        }
+	// NCHAR
+	if (sqlTypeName.startsWith("NCHAR")) {
+	    return DataType.CHAR;
+	}
 
-        // LONG RAW
-        if (LONG_RAW.toString().equals(sqlTypeName))
-        {
-            return LONG_RAW;
-        }
+	// FLOAT
+	if ("FLOAT".equals(sqlTypeName)) {
+	    return DataType.FLOAT;
+	}
 
-        // BINARY_DOUBLE/BINARY_FLOAT
-        // Note that you have to configure your driver appropriate:
-        // Oracle-specific property to support IEEE floating-point is enabled setting the following property
-        // <value>SetFloatAndDoubleUseBinary=true</value>
-        if ("BINARY_DOUBLE".equals(sqlTypeName)) 
-        {
-            return DataType.DOUBLE;
-        }
-        if ("BINARY_FLOAT".equals(sqlTypeName)) 
-        {
-            return DataType.FLOAT;
-        }
+	// LONG RAW
+	if (LONG_RAW.toString().equals(sqlTypeName)) {
+	    return LONG_RAW;
+	}
 
-        // ROWID
-        if ("ROWID".equals(sqlTypeName))
-        {
-            return ROWID_TYPE;
-        }
+	// BINARY_DOUBLE/BINARY_FLOAT
+	// Note that you have to configure your driver appropriate:
+	// Oracle-specific property to support IEEE floating-point is enabled setting
+	// the following property
+	// <value>SetFloatAndDoubleUseBinary=true</value>
+	if ("BINARY_DOUBLE".equals(sqlTypeName)) {
+	    return DataType.DOUBLE;
+	}
+	if ("BINARY_FLOAT".equals(sqlTypeName)) {
+	    return DataType.FLOAT;
+	}
 
-        // SDO_GEOMETRY
-        if ("SDO_GEOMETRY".equals(sqlTypeName) || "MDSYS.SDO_GEOMETRY".equals(sqlTypeName))
-        {
-            return ORACLE_SDO_GEOMETRY_TYPE;
-        }
+	// ROWID
+	if ("ROWID".equals(sqlTypeName)) {
+	    return ROWID_TYPE;
+	}
 
-        return super.createDataType(sqlType, sqlTypeName);
+	// SDO_GEOMETRY
+	if ("SDO_GEOMETRY".equals(sqlTypeName) || "MDSYS.SDO_GEOMETRY".equals(sqlTypeName)) {
+	    return ORACLE_SDO_GEOMETRY_TYPE;
+	}
+
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }
-
- 	  	 

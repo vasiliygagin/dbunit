@@ -34,8 +34,7 @@ import org.dbunit.dataset.DataSetException;
  * @since Apr 17, 2004
  * @version $Revision$
  */
-public class DefaultTableFilter extends AbstractTableFilter implements ITableFilter
-{
+public class DefaultTableFilter extends AbstractTableFilter implements ITableFilter {
 
     /**
      * Logger for this class
@@ -46,42 +45,34 @@ public class DefaultTableFilter extends AbstractTableFilter implements ITableFil
     private final ExcludeTableFilter _excludeFilter = new ExcludeTableFilter();
 
     /**
-     * Add a new accepted table name pattern.
-     * The following wildcard characters are supported:
-     * '*' matches zero or more characters,
-     * '?' matches one character.
+     * Add a new accepted table name pattern. The following wildcard characters are
+     * supported: '*' matches zero or more characters, '?' matches one character.
      */
-    public void includeTable(String patternName)
-    {
-        logger.debug("includeTable(patternName=" + patternName + ") - start");
+    public void includeTable(String patternName) {
+	logger.debug("includeTable(patternName=" + patternName + ") - start");
 
-        _includeFilter.includeTable(patternName);
+	_includeFilter.includeTable(patternName);
     }
 
     /**
-     * Add a new refused table pattern name.
-     * The following wildcard characters are supported:
-     * '*' matches zero or more characters,
-     * '?' matches one character.
+     * Add a new refused table pattern name. The following wildcard characters are
+     * supported: '*' matches zero or more characters, '?' matches one character.
      */
-    public void excludeTable(String patternName)
-    {
-        logger.debug("excludeTable(patternName=" + patternName + ") - start");
+    public void excludeTable(String patternName) {
+	logger.debug("excludeTable(patternName=" + patternName + ") - start");
 
-        _excludeFilter.excludeTable(patternName);
+	_excludeFilter.excludeTable(patternName);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractTableFilter interface
 
-    public boolean isValidName(String tableName) throws DataSetException
-    {
-        logger.debug("isValidName(tableName=" + tableName + ") - start");
+    public boolean isValidName(String tableName) throws DataSetException {
+	logger.debug("isValidName(tableName=" + tableName + ") - start");
 
-        if (_includeFilter.isEmpty() || _includeFilter.accept(tableName))
-        {
-            return _excludeFilter.accept(tableName);
-        }
-        return false;
+	if (_includeFilter.isEmpty() || _includeFilter.accept(tableName)) {
+	    return _excludeFilter.accept(tableName);
+	}
+	return false;
     }
 }

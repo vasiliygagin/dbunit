@@ -32,8 +32,7 @@ import org.dbunit.dataset.ITableIterator;
  * @since Mar 7, 2003
  * @version $Revision$
  */
-public interface ITableFilter extends ITableFilterSimple
-{
+public interface ITableFilter extends ITableFilterSimple {
 
     /**
      * Returns the table names allowed by this filter from the specified dataset.
@@ -47,6 +46,5 @@ public interface ITableFilter extends ITableFilterSimple
      *
      * @param dataSet the filtered dataset
      */
-    public ITableIterator iterator(IDataSet dataSet, boolean reversed)
-            throws DataSetException;
+    public ITableIterator iterator(IDataSet dataSet, boolean reversed) throws DataSetException;
 }

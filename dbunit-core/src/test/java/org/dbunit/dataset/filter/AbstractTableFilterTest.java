@@ -31,39 +31,28 @@ import java.io.FileReader;
  * @since Mar 9, 2003
  * @version $Revision$
  */
-public abstract class AbstractTableFilterTest
-        extends AbstractTest
-{
+public abstract class AbstractTableFilterTest extends AbstractTest {
 
-    public AbstractTableFilterTest(String s)
-    {
-        super(s);
+    public AbstractTableFilterTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        IDataSet dataSet1 = new XmlDataSet(
-                TestUtils.getFileReader("xml/dataSetTest.xml"));
-        IDataSet dataSet2 = new DefaultDataSet(
-                new DefaultTable(getExtraTableName()));
+    protected IDataSet createDataSet() throws Exception {
+	IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
+	IDataSet dataSet2 = new DefaultDataSet(new DefaultTable(getExtraTableName()));
 
-        IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2);
-        assertEquals("count before filter", getExpectedNames().length + 1,
-                dataSet.getTableNames().length);
-        return dataSet;
+	IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2);
+	assertEquals("count before filter", getExpectedNames().length + 1, dataSet.getTableNames().length);
+	return dataSet;
     }
 
-    protected IDataSet createDuplicateDataSet() throws Exception
-    {
-        IDataSet dataSet1 = new XmlDataSet(
-                TestUtils.getFileReader("xml/xmlDataSetDuplicateTest.xml"));
-        IDataSet dataSet2 = new DefaultDataSet(
-                new DefaultTable(getExtraTableName()));
+    protected IDataSet createDuplicateDataSet() throws Exception {
+	IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/xmlDataSetDuplicateTest.xml"));
+	IDataSet dataSet2 = new DefaultDataSet(new DefaultTable(getExtraTableName()));
 
-        IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2, false);
-        assertEquals("count before filter", getExpectedDuplicateNames().length + 1,
-                dataSet.getTableNames().length);
-        return dataSet;
+	IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2, false);
+	assertEquals("count before filter", getExpectedDuplicateNames().length + 1, dataSet.getTableNames().length);
+	return dataSet;
     }
 
     public abstract void testAccept() throws Exception;

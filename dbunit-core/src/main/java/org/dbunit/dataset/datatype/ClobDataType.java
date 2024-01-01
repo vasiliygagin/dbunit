@@ -36,38 +36,34 @@ import java.sql.Clob;
  * @version $Revision$ $Date$
  * @since Jan 12, 2004
  */
-public class ClobDataType extends StringDataType
-{
+public class ClobDataType extends StringDataType {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(ClobDataType.class);
 
-    public ClobDataType()
-    {
-        super("CLOB", Types.CLOB);
+    public ClobDataType() {
+	super("CLOB", Types.CLOB);
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-        Clob value = resultSet.getClob(column);
-        if (value == null || resultSet.wasNull())
-        {
-            return null;
-        }
-        return typeCast(value);
+	Clob value = resultSet.getClob(column);
+	if (value == null || resultSet.wasNull()) {
+	    return null;
+	}
+	return typeCast(value);
     }
 
-    public void setSqlValue(Object value, int column, PreparedStatement statement) throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-        		new Object[]{value, new Integer(column), statement} );
+    public void setSqlValue(Object value, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, new Integer(column), statement });
 
-        statement.setObject(column, typeCast(value), getSqlType());
+	statement.setObject(column, typeCast(value), getSqlType());
     }
 }

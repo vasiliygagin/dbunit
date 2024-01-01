@@ -30,18 +30,16 @@ import org.dbunit.dataset.RowOutOfBoundsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Implementation of {@link IDataSetProducer} based on a given {@link IDataSet} or a
- * {@link ITableIterator}.
+ * Implementation of {@link IDataSetProducer} based on a given {@link IDataSet}
+ * or a {@link ITableIterator}.
  * 
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since Apr 17, 2003
  */
-public class DataSetProducerAdapter implements IDataSetProducer
-{
+public class DataSetProducerAdapter implements IDataSetProducer {
 
     /**
      * Logger for this class
@@ -53,68 +51,56 @@ public class DataSetProducerAdapter implements IDataSetProducer
     private final ITableIterator _iterator;
     private IDataSetConsumer _consumer = EMPTY_CONSUMER;
 
-    public DataSetProducerAdapter(ITableIterator iterator)
-    {
-        _iterator = iterator;
+    public DataSetProducerAdapter(ITableIterator iterator) {
+	_iterator = iterator;
     }
 
-    public DataSetProducerAdapter(IDataSet dataSet) throws DataSetException
-    {
-        _iterator = dataSet.iterator();
+    public DataSetProducerAdapter(IDataSet dataSet) throws DataSetException {
+	_iterator = dataSet.iterator();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetProducer interface
 
-    public void setConsumer(IDataSetConsumer consumer) throws DataSetException
-    {
-        logger.debug("setConsumer(consumer) - start");
+    public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
+	logger.debug("setConsumer(consumer) - start");
 
-        _consumer = consumer;
+	_consumer = consumer;
     }
 
-    public void produce() throws DataSetException
-    {
-        logger.debug("produce() - start");
+    public void produce() throws DataSetException {
+	logger.debug("produce() - start");
 
-        _consumer.startDataSet();
-        while(_iterator.next())
-        {
-            ITable table = _iterator.getTable();
-            ITableMetaData metaData = table.getTableMetaData();
+	_consumer.startDataSet();
+	while (_iterator.next()) {
+	    ITable table = _iterator.getTable();
+	    ITableMetaData metaData = table.getTableMetaData();
 
-            _consumer.startTable(metaData);
-            try
-            {
-                Column[] columns = metaData.getColumns();
-                if (columns.length == 0)
-                {
-                    _consumer.endTable();
-                    continue;
-                }
+	    _consumer.startTable(metaData);
+	    try {
+		Column[] columns = metaData.getColumns();
+		if (columns.length == 0) {
+		    _consumer.endTable();
+		    continue;
+		}
 
-                for (int i = 0; ; i++)
-                {
-                    Object[] values = new Object[columns.length];
-                    for (int j = 0; j < columns.length; j++)
-                    {
-                        Column column = columns[j];
-                        values[j] = table.getValue(i, column.getColumnName());
-                    }
-                    _consumer.row(values);
-                }
-            }
-            catch (RowOutOfBoundsException e)
-            {
-            	// This exception occurs when records are exhausted
-            	// and we reach the end of the table.  Ignore this error
-            	// and close table.
+		for (int i = 0;; i++) {
+		    Object[] values = new Object[columns.length];
+		    for (int j = 0; j < columns.length; j++) {
+			Column column = columns[j];
+			values[j] = table.getValue(i, column.getColumnName());
+		    }
+		    _consumer.row(values);
+		}
+	    } catch (RowOutOfBoundsException e) {
+		// This exception occurs when records are exhausted
+		// and we reach the end of the table. Ignore this error
+		// and close table.
 
-                // end of table
-                _consumer.endTable();
-            }
-        }
-        _consumer.endDataSet();
+		// end of table
+		_consumer.endTable();
+	    }
+	}
+	_consumer.endDataSet();
     }
 }
-

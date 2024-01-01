@@ -31,24 +31,26 @@ import org.dbunit.dataset.filter.IColumnFilter;
  */
 public interface DatabaseAssertion {
 
-	/**
-	 * Assert that the specified {@link IDataSet dataSets} are conceptually equal.
-	 * @param expectedDataSet the expected dataset
-	 * @param actualDataSet the actual dataset
-	 * @param columnFilters any column filters to apply
-	 * @throws DatabaseUnitException if the datasets are not equal
-	 */
-	void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException;
+    /**
+     * Assert that the specified {@link IDataSet dataSets} are conceptually equal.
+     * 
+     * @param expectedDataSet the expected dataset
+     * @param actualDataSet   the actual dataset
+     * @param columnFilters   any column filters to apply
+     * @throws DatabaseUnitException if the datasets are not equal
+     */
+    void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException;
 
-	/**
-	 * Assert that the specified {@link IDataSet dataSets} are conceptually equal.
-	 * @param expectedTable the expected table
-	 * @param actualTable the actual table
-	 * @param columnFilters any column filters to apply
-	 * @throws DatabaseUnitException if the tables are not equal
-	 */
-	void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException;
+    /**
+     * Assert that the specified {@link IDataSet dataSets} are conceptually equal.
+     * 
+     * @param expectedTable the expected table
+     * @param actualTable   the actual table
+     * @param columnFilters any column filters to apply
+     * @throws DatabaseUnitException if the tables are not equal
+     */
+    void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException;
 
 }

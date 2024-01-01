@@ -20,73 +20,65 @@
  */
 package org.dbunit;
 
-
 /**
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 1.0
  */
-public class DatabaseUnitRuntimeException extends RuntimeException
-{
+public class DatabaseUnitRuntimeException extends RuntimeException {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3238403495229458202L;
-
+     * 
+     */
+    private static final long serialVersionUID = -3238403495229458202L;
 
     /**
      * Constructs an <code>DatabaseUnitRuntimeException</code> with no specified
      * detail message and no encapsulated exception.
      */
-    public DatabaseUnitRuntimeException()
-    {
-        super();
+    public DatabaseUnitRuntimeException() {
+	super();
     }
 
     /**
      * Constructs an <code>DatabaseUnitRuntimeException</code> with the specified
      * detail message and no encapsulated exception.
+     * 
      * @param msg Exception message
      */
-    public DatabaseUnitRuntimeException(String msg)
-    {
-        super(msg);
+    public DatabaseUnitRuntimeException(String msg) {
+	super(msg);
     }
 
     /**
      * Constructs an <code>DatabaseUnitRuntimeException</code> with the specified
      * detail message and encapsulated exception.
+     * 
      * @param msg
      * @param cause The cause of this exception
      */
-    public DatabaseUnitRuntimeException(String msg, Throwable cause)
-    {
-        super(msg, cause);
+    public DatabaseUnitRuntimeException(String msg, Throwable cause) {
+	super(msg, cause);
     }
 
     /**
      * Constructs an <code>DatabaseUnitRuntimeException</code> with the encapsulated
      * exception and use its message as detail message.
+     * 
      * @param cause The cause of this exception
      */
-    public DatabaseUnitRuntimeException(Throwable cause)
-    {
-        super(cause.toString(), cause);
+    public DatabaseUnitRuntimeException(Throwable cause) {
+	super(cause.toString(), cause);
     }
 
     /**
      * Returns the encapsulated exception or <code>null</code> if none.
+     * 
      * @deprecated Use {@link Exception#getCause()} instead
      */
-    public Throwable getException()
-    {
-        return super.getCause();
+    public Throwable getException() {
+	return super.getCause();
     }
 
 }
-
-
-
-

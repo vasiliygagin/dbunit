@@ -14,26 +14,26 @@ public class DbUnitContext {
     private DatabaseOperationLookup databaseOperationLookup;
 
     public DatabaseConnections getDatabaseConnections() {
-        return databaseConnections;
+	return databaseConnections;
     }
 
     public void setDatabaseConnections(DatabaseConnections databaseConnections) {
-        this.databaseConnections = databaseConnections;
+	this.databaseConnections = databaseConnections;
     }
 
     public DataSetLoader getDataSetLoader() {
-        return dataSetLoader;
+	return dataSetLoader;
     }
 
     public void setDataSetLoader(DataSetLoader dataSetLoader) {
-        this.dataSetLoader = dataSetLoader;
+	this.dataSetLoader = dataSetLoader;
     }
 
     public DatabaseOperationLookup getDatabaseOperationLookup() {
-        return databaseOperationLookup;
+	return databaseOperationLookup;
     }
 
     public void setDatabaseOperationLookup(DatabaseOperationLookup databaseOperationLookup) {
-        this.databaseOperationLookup = databaseOperationLookup;
+	this.databaseOperationLookup = databaseOperationLookup;
     }
 }

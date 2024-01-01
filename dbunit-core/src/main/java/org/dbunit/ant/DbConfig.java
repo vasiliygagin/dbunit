@@ -40,8 +40,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DbConfig extends ProjectComponent
-{
+public class DbConfig extends ProjectComponent {
     /**
      * Logger for this class
      */
@@ -49,63 +48,60 @@ public class DbConfig extends ProjectComponent
 
     private Set properties = new HashSet();
     private Set features = new HashSet();
-    
-    public DbConfig()
-    {
+
+    public DbConfig() {
     }
 
-    public void addProperty(Property property)
-    {
-        logger.trace("addProperty(property={}) - start)", property);
-        
-        this.properties.add(property);
+    public void addProperty(Property property) {
+	logger.trace("addProperty(property={}) - start)", property);
+
+	this.properties.add(property);
     }
 
-    public void addFeature(Feature feature)
-    {
-        logger.trace("addFeature(feature={}) - start)", feature);
-        
-        this.features.add(feature);
+    public void addFeature(Feature feature) {
+	logger.trace("addFeature(feature={}) - start)", feature);
+
+	this.features.add(feature);
     }
 
     /**
      * Copies the parameters set in this configuration via ant into the given
      * {@link DatabaseConfig} that is used by the dbunit connection.
+     * 
      * @param config The configuration object to be initialized/updated
-     * @throws DatabaseUnitException 
+     * @throws DatabaseUnitException
      */
-    public void copyTo(DatabaseConfig config) throws DatabaseUnitException 
-    {
-        Properties javaProps = new Properties();
-        
-        for (Iterator iterator = this.features.iterator(); iterator.hasNext();) {
-            Feature feature = (Feature)iterator.next();
-            
-            String propName = feature.getName();
-            String propValue = String.valueOf(feature.isValue());
-            
-            logger.debug("Setting property {}", feature);
-            javaProps.setProperty(propName, propValue);
-        }
-        
-        // Copy the properties into java.util.Properties
-        for (Iterator iterator = this.properties.iterator(); iterator.hasNext();) {
-            Property prop = (Property) iterator.next();
-            
-            String propName = prop.getName();
-            String propValue = prop.getValue();
+    public void copyTo(DatabaseConfig config) throws DatabaseUnitException {
+	Properties javaProps = new Properties();
 
-            if(propName==null)
-                throw new NullPointerException("The propName must not be null");
-            
-            if(propValue==null)
-                throw new NullPointerException("The propValue must not be null");
+	for (Iterator iterator = this.features.iterator(); iterator.hasNext();) {
+	    Feature feature = (Feature) iterator.next();
 
-            logger.debug("Setting property {}", prop);
-            javaProps.setProperty(propName, propValue);
-        }
-        
-        config.setPropertiesByString(javaProps);
+	    String propName = feature.getName();
+	    String propValue = String.valueOf(feature.isValue());
+
+	    logger.debug("Setting property {}", feature);
+	    javaProps.setProperty(propName, propValue);
+	}
+
+	// Copy the properties into java.util.Properties
+	for (Iterator iterator = this.properties.iterator(); iterator.hasNext();) {
+	    Property prop = (Property) iterator.next();
+
+	    String propName = prop.getName();
+	    String propValue = prop.getValue();
+
+	    if (propName == null)
+		throw new NullPointerException("The propName must not be null");
+
+	    if (propValue == null)
+		throw new NullPointerException("The propValue must not be null");
+
+	    logger.debug("Setting property {}", prop);
+	    javaProps.setProperty(propName, propValue);
+	}
+
+	config.setPropertiesByString(javaProps);
     }
 
     /**
@@ -114,22 +110,24 @@ public class DbConfig extends ProjectComponent
      * @version $Revision$ $Date$
      * @since 2.4.0
      */
-    public static class Feature
-    {
-        private String name;
-        private boolean value;
-        
-        public String getName() {
-            return name;
-        }
-        public void setName(String name) {
-            this.name = name;
-        }
-        public boolean isValue() {
-            return value;
-        }
-        public void setValue(boolean value) {
-            this.value = value;
-        }
+    public static class Feature {
+	private String name;
+	private boolean value;
+
+	public String getName() {
+	    return name;
+	}
+
+	public void setName(String name) {
+	    this.name = name;
+	}
+
+	public boolean isValue() {
+	    return value;
+	}
+
+	public void setValue(boolean value) {
+	    this.value = value;
+	}
     }
 }

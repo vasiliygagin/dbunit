@@ -28,8 +28,7 @@ package org.dbunit;
  * @version $Revision$ $Date$
  * @since 2.5.2
  */
-public interface PrepAndExpectedTestCaseSteps
-{
+public interface PrepAndExpectedTestCaseSteps {
     /**
      * Run the specific test steps.
      *

@@ -32,84 +32,73 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DatabaseConfigTest extends TestCase
-{
-    public void testSetProperty_InvalidType_Array() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        String simpleString = "TABLE";
-        try {
-            config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, simpleString);
-            fail("The property 'table type' should be a string array");
-        }
-        catch(IllegalArgumentException expected){
-            String expectedMsg = "Cannot cast object of type 'class java.lang.String' to allowed type 'class [Ljava.lang.String;'.";
-            assertEquals(expectedMsg, expected.getMessage());
-        }
-    }
-    
-    public void testSetProperty_CorrectType_Array() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        String[] stringArray = new String[] {"TABLE"};
-        config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, stringArray);
-        assertEquals(stringArray, config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE));
+public class DatabaseConfigTest extends TestCase {
+    public void testSetProperty_InvalidType_Array() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	String simpleString = "TABLE";
+	try {
+	    config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, simpleString);
+	    fail("The property 'table type' should be a string array");
+	} catch (IllegalArgumentException expected) {
+	    String expectedMsg = "Cannot cast object of type 'class java.lang.String' to allowed type 'class [Ljava.lang.String;'.";
+	    assertEquals(expectedMsg, expected.getMessage());
+	}
     }
 
-    public void testSetProperty_Interface() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        IDataTypeFactory myFactory = new IDataTypeFactory() {
-        
-            public DataType createDataType(int sqlType, String sqlTypeName,
-                    String tableName, String columnName) throws DataTypeException {
-                return null;
-            }
-        
-            public DataType createDataType(int sqlType, String sqlTypeName)
-                    throws DataTypeException {
-                return null;
-            }
-        };
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, myFactory);
-        assertEquals(myFactory, config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY));
-    }
-    
-    public void testSetPropertyToNullWhereNotAllowed() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        try {
-            config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, null);
-            assertEquals(null, config.getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
-            fail("Should not be able to set a not-nullable property to null");
-        }
-        catch(IllegalArgumentException expected){
-            String expectedMsg = "The property 'http://www.dbunit.org/properties/batchSize' is not nullable.";
-            assertEquals(expectedMsg, expected.getMessage());
-        }
+    public void testSetProperty_CorrectType_Array() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	String[] stringArray = new String[] { "TABLE" };
+	config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, stringArray);
+	assertEquals(stringArray, config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE));
     }
 
-    public void testSetPropertyToNullWhereAllowed() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, null);
-        assertEquals(null, config.getProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER));
+    public void testSetProperty_Interface() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	IDataTypeFactory myFactory = new IDataTypeFactory() {
+
+	    public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
+		    throws DataTypeException {
+		return null;
+	    }
+
+	    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+		return null;
+	    }
+	};
+	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, myFactory);
+	assertEquals(myFactory, config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY));
     }
 
-    public void testSetFeatureViaSetPropertyMethod() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, "true");
-        assertEquals(Boolean.TRUE, config.getProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
-        assertEquals(true, config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+    public void testSetPropertyToNullWhereNotAllowed() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	try {
+	    config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, null);
+	    assertEquals(null, config.getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+	    fail("Should not be able to set a not-nullable property to null");
+	} catch (IllegalArgumentException expected) {
+	    String expectedMsg = "The property 'http://www.dbunit.org/properties/batchSize' is not nullable.";
+	    assertEquals(expectedMsg, expected.getMessage());
+	}
     }
 
-    public void testSetFeatureViaSetFeatureMethod() throws Exception
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, true);
-        assertEquals(Boolean.TRUE, config.getProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
-        assertEquals(true, config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+    public void testSetPropertyToNullWhereAllowed() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, null);
+	assertEquals(null, config.getProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER));
+    }
+
+    public void testSetFeatureViaSetPropertyMethod() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, "true");
+	assertEquals(Boolean.TRUE, config.getProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+	assertEquals(true, config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+    }
+
+    public void testSetFeatureViaSetFeatureMethod() throws Exception {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, true);
+	assertEquals(Boolean.TRUE, config.getProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+	assertEquals(true, config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
     }
 
 }

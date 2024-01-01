@@ -13,47 +13,42 @@ import org.dbunit.dataset.datatype.TypeCastException;
 
 public class GeometryType extends AbstractDataType {
     public GeometryType() {
-        super("geometry", Types.OTHER, String.class, false);
+	super("geometry", Types.OTHER, String.class, false);
     }
 
-    public Object getSqlValue(int column, ResultSet resultSet)
-            throws SQLException, TypeCastException {
-        return resultSet.getString(column);
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	return resultSet.getString(column);
     }
 
     public void setSqlValue(Object geom, int column, PreparedStatement statement)
-            throws SQLException, TypeCastException {
-        statement.setObject(column,
-                getGeometry(geom, statement.getConnection()));
+	    throws SQLException, TypeCastException {
+	statement.setObject(column, getGeometry(geom, statement.getConnection()));
     }
 
     public Object typeCast(Object arg0) throws TypeCastException {
-        return arg0.toString();
+	return arg0.toString();
     }
 
-    private Object getGeometry(Object value, Connection connection)
-            throws TypeCastException {
-        Object tempgeom = null;
+    private Object getGeometry(Object value, Connection connection) throws TypeCastException {
+	Object tempgeom = null;
 
-        try {
-            Class aPGIntervalClass = super.loadClass("net.postgis.jdbc.PGgeometry",
-                    connection);
-            Constructor ct = aPGIntervalClass
-                    .getConstructor(new Class[] { String.class });
+	try {
+	    Class aPGIntervalClass = super.loadClass("net.postgis.jdbc.PGgeometry", connection);
+	    Constructor ct = aPGIntervalClass.getConstructor(new Class[] { String.class });
 
-            tempgeom = ct.newInstance(new Object[] { value });
-        } catch (ClassNotFoundException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InvocationTargetException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (NoSuchMethodException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (IllegalAccessException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InstantiationException e) {
-            throw new TypeCastException(value, this, e);
-        }
+	    tempgeom = ct.newInstance(new Object[] { value });
+	} catch (ClassNotFoundException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InvocationTargetException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (NoSuchMethodException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (IllegalAccessException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InstantiationException e) {
+	    throw new TypeCastException(value, this, e);
+	}
 
-        return tempgeom;
+	return tempgeom;
     }
 }

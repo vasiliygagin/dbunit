@@ -29,7 +29,10 @@ package org.dbunit.dataset.common.handlers;
  */
 public interface PipelineComponent extends Handler {
     void setSuccessor(PipelineComponent successor);
+
     void accept(char c);
-    void setPipeline (Pipeline line);
+
+    void setPipeline(Pipeline line);
+
     Pipeline getPipeline();
 }

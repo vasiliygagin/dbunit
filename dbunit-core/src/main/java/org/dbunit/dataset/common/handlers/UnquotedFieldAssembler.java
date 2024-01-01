@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author fede
  * @author Last changed by: $Author$
@@ -43,10 +42,10 @@ public class UnquotedFieldAssembler extends AbstractPipelineComponent {
     LinkedList addedComponents;
 
     public UnquotedFieldAssembler() {
-        setAddedComponents(new LinkedList());
-        getPipeline().putFront(SeparatorHandler.ENDPIECE());
-        getPipeline().putFront(IsAlnumHandler.QUOTE());
-        getPipeline().putFront(WhitespacesHandler.IGNORE());
+	setAddedComponents(new LinkedList());
+	getPipeline().putFront(SeparatorHandler.ENDPIECE());
+	getPipeline().putFront(IsAlnumHandler.QUOTE());
+	getPipeline().putFront(WhitespacesHandler.IGNORE());
     }
 
 //    private LinkedList getAddedComponents() {
@@ -56,31 +55,31 @@ public class UnquotedFieldAssembler extends AbstractPipelineComponent {
 //    }
 
     private void setAddedComponents(LinkedList addedComponents) {
-        logger.debug("setAddedComponents(addedComponents={}) - start", addedComponents);
+	logger.debug("setAddedComponents(addedComponents={}) - start", addedComponents);
 
-        this.addedComponents = addedComponents;
+	this.addedComponents = addedComponents;
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        if(logger.isDebugEnabled())
-            logger.debug("canHandle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-        return true;
+	return true;
     }
 
     static protected class ASSEMBLE extends Helper {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(ASSEMBLE.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(ASSEMBLE.class);
 
-        void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
+	void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-            getHandler().getPipeline().thePieceIsDone();
-        }
+	    getHandler().getPipeline().thePieceIsDone();
+	}
     }
 
 }

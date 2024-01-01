@@ -31,45 +31,39 @@ import java.sql.Types;
  * @since Aug 13, 2003
  * @version $Revision$
  */
-public class Db2DataTypeFactoryTest extends AbstractDataTypeFactoryTest
-{
-    public Db2DataTypeFactoryTest(String s)
-    {
-        super(s);
+public class Db2DataTypeFactoryTest extends AbstractDataTypeFactoryTest {
+    public Db2DataTypeFactoryTest(String s) {
+	super(s);
     }
 
-    public IDataTypeFactory createFactory() throws Exception
-    {
-        return new Db2DataTypeFactory();
+    public IDataTypeFactory createFactory() throws Exception {
+	return new Db2DataTypeFactory();
     }
 
-    public void testCreateXmlVarcharDataType() throws Exception
-    {
-        DataType expected = Db2DataTypeFactory.DB2XML_XMLVARCHAR;
-        int sqlType = Types.DISTINCT;
-        String sqlTypeName = "DB2XML.XMLVARCHAR";
+    public void testCreateXmlVarcharDataType() throws Exception {
+	DataType expected = Db2DataTypeFactory.DB2XML_XMLVARCHAR;
+	int sqlType = Types.DISTINCT;
+	String sqlTypeName = "DB2XML.XMLVARCHAR";
 
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateXmlClobDataType() throws Exception
-    {
-        DataType expected = Db2DataTypeFactory.DB2XML_XMLCLOB;
-        int sqlType = Types.DISTINCT;
-        String sqlTypeName = "DB2XML.XMLCLOB";
+    public void testCreateXmlClobDataType() throws Exception {
+	DataType expected = Db2DataTypeFactory.DB2XML_XMLCLOB;
+	int sqlType = Types.DISTINCT;
+	String sqlTypeName = "DB2XML.XMLCLOB";
 
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 
-    public void testCreateXmlFileDataType() throws Exception
-    {
-        DataType expected = Db2DataTypeFactory.DB2XML_XMLFILE;
-        int sqlType = Types.DISTINCT;
-        String sqlTypeName = "DB2XML.XMLFILE";
+    public void testCreateXmlFileDataType() throws Exception {
+	DataType expected = Db2DataTypeFactory.DB2XML_XMLFILE;
+	int sqlType = Types.DISTINCT;
+	String sqlTypeName = "DB2XML.XMLFILE";
 
-        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-        assertSame("type", expected, actual);
+	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+	assertSame("type", expected, actual);
     }
 }

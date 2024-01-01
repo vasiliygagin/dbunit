@@ -30,10 +30,9 @@ import java.sql.SQLException;
 /**
  * @author Manuel Laflamme
  * @version $Revision$
- * @since Feb 20, 2002 
+ * @since Feb 20, 2002
  */
-public class CompoundStatement extends AbstractBatchStatement
-{
+public class CompoundStatement extends AbstractBatchStatement {
 
     /**
      * Logger for this class
@@ -42,35 +41,26 @@ public class CompoundStatement extends AbstractBatchStatement
 
     private StringBuffer _buffer = new StringBuffer();
 
-    CompoundStatement(Connection connection) throws SQLException
-    {
-        super(connection);
+    CompoundStatement(Connection connection) throws SQLException {
+	super(connection);
     }
 
-    public void addBatch(String sql) throws SQLException
-    {
-        logger.debug("addBatch(sql={}) - start", sql);
+    public void addBatch(String sql) throws SQLException {
+	logger.debug("addBatch(sql={}) - start", sql);
 
-        _buffer.append(sql);
-        _buffer.append(";");
+	_buffer.append(sql);
+	_buffer.append(";");
     }
 
-    public int executeBatch() throws SQLException
-    {
-        logger.debug("executeBatch() - start");
+    public int executeBatch() throws SQLException {
+	logger.debug("executeBatch() - start");
 
-        return _statement.executeUpdate(_buffer.toString());
+	return _statement.executeUpdate(_buffer.toString());
     }
 
-    public void clearBatch() throws SQLException
-    {
-        logger.debug("clearBatch() - start");
+    public void clearBatch() throws SQLException {
+	logger.debug("clearBatch() - start");
 
-        _buffer = new StringBuffer();
+	_buffer = new StringBuffer();
     }
 }
-
-
-
-
-

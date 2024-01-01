@@ -34,82 +34,65 @@ import java.io.Reader;
  * @version $Revision$
  * @since May 7, 2002
  */
-public class AbstractBatchOperationIT extends AbstractDatabaseIT
-{
-    public AbstractBatchOperationIT(String s)
-    {
-        super(s);
+public class AbstractBatchOperationIT extends AbstractDatabaseIT {
+    public AbstractBatchOperationIT(String s) {
+	super(s);
     }
 
-    public void testGetOperationMetaDataAndMissingColumns() throws Exception
-    {
-        Reader in = TestUtils.getFileReader("xml/missingColumnTest.xml");
-        IDataSet xmlDataSet = new XmlDataSet(in);
+    public void testGetOperationMetaDataAndMissingColumns() throws Exception {
+	Reader in = TestUtils.getFileReader("xml/missingColumnTest.xml");
+	IDataSet xmlDataSet = new XmlDataSet(in);
 
-        ITable[] xmlTables = DataSetUtils.getTables(xmlDataSet);
-        for (int i = 0; i < xmlTables.length; i++)
-        {
-            ITable xmlTable = xmlTables[i];
-            ITableMetaData xmlMetaData = xmlTable.getTableMetaData();
-            String tableName = xmlMetaData.getTableName();
+	ITable[] xmlTables = DataSetUtils.getTables(xmlDataSet);
+	for (int i = 0; i < xmlTables.length; i++) {
+	    ITable xmlTable = xmlTables[i];
+	    ITableMetaData xmlMetaData = xmlTable.getTableMetaData();
+	    String tableName = xmlMetaData.getTableName();
 
-            ITable databaseTable = _connection.createDataSet().getTable(tableName);
-            ITableMetaData databaseMetaData = databaseTable.getTableMetaData();
+	    ITable databaseTable = _connection.createDataSet().getTable(tableName);
+	    ITableMetaData databaseMetaData = databaseTable.getTableMetaData();
 
-            // ensure xml table is missing some columns present in database table
-            assertTrue(tableName + " missing columns", xmlMetaData.getColumns().length <
-                    databaseMetaData.getColumns().length);
+	    // ensure xml table is missing some columns present in database table
+	    assertTrue(tableName + " missing columns",
+		    xmlMetaData.getColumns().length < databaseMetaData.getColumns().length);
 
-            ITableMetaData resultMetaData =
-                    AbstractBatchOperation.getOperationMetaData(_connection, xmlMetaData);
+	    ITableMetaData resultMetaData = AbstractBatchOperation.getOperationMetaData(_connection, xmlMetaData);
 
-            // result metadata must contains database columns matching the xml columns
-            Column[] resultColumns = resultMetaData.getColumns();
-            assertEquals("result columns count", xmlMetaData.getColumns().length,
-                    resultColumns.length);
-            for (int j = 0; j < resultColumns.length; j++)
-            {
-                Column resultColumn = resultColumns[j];
-                Column databaseColumn = Columns.getColumn(resultColumn.getColumnName(), databaseMetaData.getColumns());
-                Column xmlColumn = xmlMetaData.getColumns()[j];
+	    // result metadata must contains database columns matching the xml columns
+	    Column[] resultColumns = resultMetaData.getColumns();
+	    assertEquals("result columns count", xmlMetaData.getColumns().length, resultColumns.length);
+	    for (int j = 0; j < resultColumns.length; j++) {
+		Column resultColumn = resultColumns[j];
+		Column databaseColumn = Columns.getColumn(resultColumn.getColumnName(), databaseMetaData.getColumns());
+		Column xmlColumn = xmlMetaData.getColumns()[j];
 
-                assertEquals("column name", convertString(xmlColumn.getColumnName()),
-                        resultColumn.getColumnName());
-                assertSame("column instance", resultColumn, databaseColumn);
-            }
+		assertEquals("column name", convertString(xmlColumn.getColumnName()), resultColumn.getColumnName());
+		assertSame("column instance", resultColumn, databaseColumn);
+	    }
 
-            // result metadata must contains database primary keys
-            Column[] resultPrimaryKeys = resultMetaData.getPrimaryKeys();
-            assertEquals("key count", databaseMetaData.getPrimaryKeys().length,
-                    resultPrimaryKeys.length);
-            for (int j = 0; j < resultPrimaryKeys.length; j++)
-            {
-                Column resultPrimaryKey = resultPrimaryKeys[j];
-                Column databasePrimaryKey = databaseMetaData.getPrimaryKeys()[j];
-                assertSame("key instance", databasePrimaryKey, resultPrimaryKey);
-            }
-        }
+	    // result metadata must contains database primary keys
+	    Column[] resultPrimaryKeys = resultMetaData.getPrimaryKeys();
+	    assertEquals("key count", databaseMetaData.getPrimaryKeys().length, resultPrimaryKeys.length);
+	    for (int j = 0; j < resultPrimaryKeys.length; j++) {
+		Column resultPrimaryKey = resultPrimaryKeys[j];
+		Column databasePrimaryKey = databaseMetaData.getPrimaryKeys()[j];
+		assertSame("key instance", databasePrimaryKey, resultPrimaryKey);
+	    }
+	}
     }
 
-    public void testGetOperationMetaDataAndUnknownColumns() throws Exception
-    {
-        String tableName = "PK_TABLE";
-        Reader in = TestUtils.getFileReader("xml/unknownColumnTest.xml");
-        IDataSet xmlDataSet = new XmlDataSet(in);
+    public void testGetOperationMetaDataAndUnknownColumns() throws Exception {
+	String tableName = "PK_TABLE";
+	Reader in = TestUtils.getFileReader("xml/unknownColumnTest.xml");
+	IDataSet xmlDataSet = new XmlDataSet(in);
 
-        ITable xmlTable = xmlDataSet.getTable(tableName);
+	ITable xmlTable = xmlDataSet.getTable(tableName);
 
-        try
-        {
-            AbstractBatchOperation.getOperationMetaData(_connection,
-                    xmlTable.getTableMetaData());
-            fail("Should throw a NoSuchColumnException");
-        }
-        catch (NoSuchColumnException e)
-        {
-        }
+	try {
+	    AbstractBatchOperation.getOperationMetaData(_connection, xmlTable.getTableMetaData());
+	    fail("Should throw a NoSuchColumnException");
+	} catch (NoSuchColumnException e) {
+	}
     }
 
 }
-
-

@@ -35,8 +35,7 @@ import org.dbunit.dataset.ITable;
  * @since 2.4.0
  * @since 2.6.0 added failMessage
  */
-public class Difference
-{
+public class Difference {
     private ITable expectedTable;
     private ITable actualTable;
     private int rowIndex;
@@ -45,81 +44,66 @@ public class Difference
     private Object actualValue;
     private String failMessage;
 
-    public Difference(final ITable expectedTable, final ITable actualTable,
-            final int rowIndex, final String columnName,
-            final Object expectedValue, final Object actualValue)
-    {
-        this(expectedTable, actualTable, rowIndex, columnName, expectedValue,
-                actualValue, "");
+    public Difference(final ITable expectedTable, final ITable actualTable, final int rowIndex, final String columnName,
+	    final Object expectedValue, final Object actualValue) {
+	this(expectedTable, actualTable, rowIndex, columnName, expectedValue, actualValue, "");
     }
 
-    public Difference(final ITable expectedTable, final ITable actualTable,
-            final int rowIndex, final String columnName,
-            final Object expectedValue, final Object actualValue,
-            final String failMessage)
-    {
-        this.expectedTable = expectedTable;
-        this.actualTable = actualTable;
-        this.rowIndex = rowIndex;
-        this.columnName = columnName;
-        this.expectedValue = expectedValue;
-        this.actualValue = actualValue;
-        this.failMessage = failMessage;
+    public Difference(final ITable expectedTable, final ITable actualTable, final int rowIndex, final String columnName,
+	    final Object expectedValue, final Object actualValue, final String failMessage) {
+	this.expectedTable = expectedTable;
+	this.actualTable = actualTable;
+	this.rowIndex = rowIndex;
+	this.columnName = columnName;
+	this.expectedValue = expectedValue;
+	this.actualValue = actualValue;
+	this.failMessage = failMessage;
     }
 
     @Override
-    public String toString()
-    {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName()).append("[");
-        sb.append("expectedTable=").append(expectedTable);
-        sb.append(", actualTable=").append(actualTable);
-        sb.append(", rowIndex=").append(rowIndex);
-        sb.append(", columnName=").append(columnName);
-        sb.append(", expectedValue=").append(expectedValue);
-        sb.append(", actualValue=").append(actualValue);
-        sb.append(", failMessage=").append(failMessage);
-        sb.append("]");
-        return sb.toString();
+    public String toString() {
+	final StringBuilder sb = new StringBuilder();
+	sb.append(getClass().getName()).append("[");
+	sb.append("expectedTable=").append(expectedTable);
+	sb.append(", actualTable=").append(actualTable);
+	sb.append(", rowIndex=").append(rowIndex);
+	sb.append(", columnName=").append(columnName);
+	sb.append(", expectedValue=").append(expectedValue);
+	sb.append(", actualValue=").append(actualValue);
+	sb.append(", failMessage=").append(failMessage);
+	sb.append("]");
+	return sb.toString();
     }
 
-    public ITable getExpectedTable()
-    {
-        return expectedTable;
+    public ITable getExpectedTable() {
+	return expectedTable;
     }
 
-    public ITable getActualTable()
-    {
-        return actualTable;
+    public ITable getActualTable() {
+	return actualTable;
     }
 
-    public int getRowIndex()
-    {
-        return rowIndex;
+    public int getRowIndex() {
+	return rowIndex;
     }
 
-    public String getColumnName()
-    {
-        return columnName;
+    public String getColumnName() {
+	return columnName;
     }
 
-    public Object getExpectedValue()
-    {
-        return expectedValue;
+    public Object getExpectedValue() {
+	return expectedValue;
     }
 
-    public Object getActualValue()
-    {
-        return actualValue;
+    public Object getActualValue() {
+	return actualValue;
     }
 
-    public String getFailMessage()
-    {
-        return failMessage;
+    public String getFailMessage() {
+	return failMessage;
     }
 
-    public void setFailMessage(final String failMessage)
-    {
-        this.failMessage = failMessage;
+    public void setFailMessage(final String failMessage) {
+	this.failMessage = failMessage;
     }
 }

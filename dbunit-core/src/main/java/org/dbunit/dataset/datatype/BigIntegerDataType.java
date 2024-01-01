@@ -40,86 +40,68 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.6
  */
-public class BigIntegerDataType extends AbstractDataType
-{
+public class BigIntegerDataType extends AbstractDataType {
 
     /**
      * Logger for this class
      */
-    private static final Logger logger = LoggerFactory
-            .getLogger(BigIntegerDataType.class);
+    private static final Logger logger = LoggerFactory.getLogger(BigIntegerDataType.class);
 
-    public BigIntegerDataType()
-    {
-        super("BIGINT", Types.BIGINT, BigInteger.class, true);
+    public BigIntegerDataType() {
+	super("BIGINT", Types.BIGINT, BigInteger.class, true);
     }
 
     // //////////////////////////////////////////////////////////////////////////
     // DataType class
 
     @Override
-    public Object typeCast(Object value) throws TypeCastException
-    {
-        logger.debug("typeCast(value={}) - start", value);
+    public Object typeCast(Object value) throws TypeCastException {
+	logger.debug("typeCast(value={}) - start", value);
 
-        if (value == null || value == ITable.NO_VALUE)
-        {
-            return null;
-        }
+	if (value == null || value == ITable.NO_VALUE) {
+	    return null;
+	}
 
-        if (value instanceof BigInteger)
-        {
-            return value;
-        } else if (value instanceof BigDecimal)
-        {
-            return ((BigDecimal) value).toBigInteger();
-        } else if (value instanceof Number)
-        {
-            long l = ((Number) value).longValue();
-            return new BigInteger(String.valueOf(l));
-        }
+	if (value instanceof BigInteger) {
+	    return value;
+	} else if (value instanceof BigDecimal) {
+	    return ((BigDecimal) value).toBigInteger();
+	} else if (value instanceof Number) {
+	    long l = ((Number) value).longValue();
+	    return new BigInteger(String.valueOf(l));
+	}
 
-        try
-        {
-            BigDecimal bd = new BigDecimal(value.toString());
-            return bd.toBigInteger();
-        } catch (java.lang.NumberFormatException e)
-        {
-            throw new TypeCastException(value, this, e);
-        }
+	try {
+	    BigDecimal bd = new BigDecimal(value.toString());
+	    return bd.toBigInteger();
+	} catch (java.lang.NumberFormatException e) {
+	    throw new TypeCastException(value, this, e);
+	}
     }
 
     @Override
-    public Object getSqlValue(int column, ResultSet resultSet)
-            throws SQLException, TypeCastException
-    {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("getSqlValue(column={}, resultSet={}) - start",
-                    new Integer(column), resultSet);
-        }
+    public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+	}
 
-        BigDecimal value = resultSet.getBigDecimal(column);
-        if (resultSet.wasNull())
-        {
-            return null;
-        }
-        return value.toBigInteger();
+	BigDecimal value = resultSet.getBigDecimal(column);
+	if (resultSet.wasNull()) {
+	    return null;
+	}
+	return value.toBigInteger();
     }
 
     @Override
-    public void setSqlValue(Object value, int column,
-            PreparedStatement statement) throws SQLException, TypeCastException
-    {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug(
-                    "setSqlValue(value={}, column={}, statement={}) - start",
-                    new Object[] {value, new Integer(column), statement});
-        }
+    public void setSqlValue(Object value, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, new Integer(column), statement });
+	}
 
-        BigInteger val = (BigInteger) typeCast(value);
-        BigDecimal valueBigDecimal = (val == null) ? null : new BigDecimal(val);
-        statement.setBigDecimal(column, valueBigDecimal);
+	BigInteger val = (BigInteger) typeCast(value);
+	BigDecimal valueBigDecimal = (val == null) ? null : new BigDecimal(val);
+	statement.setBigDecimal(column, valueBigDecimal);
     }
 }

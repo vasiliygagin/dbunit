@@ -32,12 +32,9 @@ import java.sql.Connection;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class HsqldbConnection extends DatabaseConnection
-{
-    public HsqldbConnection(Connection connection, String schema) throws DatabaseUnitException
-    {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new HsqldbDataTypeFactory());
+public class HsqldbConnection extends DatabaseConnection {
+    public HsqldbConnection(Connection connection, String schema) throws DatabaseUnitException {
+	super(connection, schema);
+	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
     }
 }

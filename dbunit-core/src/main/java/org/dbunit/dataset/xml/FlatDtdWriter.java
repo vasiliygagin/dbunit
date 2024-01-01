@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since Jun 13, 2003
  */
-public class FlatDtdWriter //implements IDataSetConsumer
+public class FlatDtdWriter // implements IDataSetConsumer
 {
 
     /**
@@ -44,73 +44,64 @@ public class FlatDtdWriter //implements IDataSetConsumer
     private static final Logger logger = LoggerFactory.getLogger(FlatDtdWriter.class);
 
     public static final ContentModel SEQUENCE = new SequenceModel();
-    public static final ContentModel CHOICE   = new ChoiceModel();
+    public static final ContentModel CHOICE = new ChoiceModel();
 
     private Writer _writer;
     private ContentModel _contentModel;
 
-    public FlatDtdWriter(Writer writer)
-    {
-        _writer = writer;
-        _contentModel = SEQUENCE;
+    public FlatDtdWriter(Writer writer) {
+	_writer = writer;
+	_contentModel = SEQUENCE;
     }
 
-    public void setContentModel(ContentModel contentModel)
-    {
-        logger.debug("setContentModel(contentModel={}) - start", contentModel);
-        _contentModel = contentModel;
+    public void setContentModel(ContentModel contentModel) {
+	logger.debug("setContentModel(contentModel={}) - start", contentModel);
+	_contentModel = contentModel;
     }
 
-    public void write(IDataSet dataSet) throws DataSetException
-    {
-        logger.debug("write(dataSet={}) - start", dataSet);
+    public void write(IDataSet dataSet) throws DataSetException {
+	logger.debug("write(dataSet={}) - start", dataSet);
 
-        PrintWriter printOut = new PrintWriter(_writer);
-        String[] tableNames = dataSet.getTableNames();
+	PrintWriter printOut = new PrintWriter(_writer);
+	String[] tableNames = dataSet.getTableNames();
 
-        // dataset element
-        printOut.print("<!ELEMENT dataset (\n");
-        for (int i = 0; i < tableNames.length; i++)
-        {
-            _contentModel.write(printOut, tableNames[i], i, tableNames.length);
-        }
-        printOut.print(")>\n");
-        printOut.print("\n");
+	// dataset element
+	printOut.print("<!ELEMENT dataset (\n");
+	for (int i = 0; i < tableNames.length; i++) {
+	    _contentModel.write(printOut, tableNames[i], i, tableNames.length);
+	}
+	printOut.print(")>\n");
+	printOut.print("\n");
 
-        // tables
-        for (int i = 0; i < tableNames.length; i++)
-        {
-            // table element
-            String tableName = tableNames[i];
-            printOut.print("<!ELEMENT ");
-            printOut.print(tableName);
-            printOut.print(" EMPTY>\n");
+	// tables
+	for (int i = 0; i < tableNames.length; i++) {
+	    // table element
+	    String tableName = tableNames[i];
+	    printOut.print("<!ELEMENT ");
+	    printOut.print(tableName);
+	    printOut.print(" EMPTY>\n");
 
-            // column attributes
-            printOut.print("<!ATTLIST ");
-            printOut.print(tableName);
-            printOut.print("\n");
-            // Add the columns
-            Column[] columns = dataSet.getTableMetaData(tableName).getColumns();
-            for (int j = 0; j < columns.length; j++)
-            {
-                Column column = columns[j];
-                printOut.print("    ");
-                printOut.print(column.getColumnName());
-                if (column.getNullable() == Column.NO_NULLS  && column.getDefaultValue() == null)
-                {
-                    printOut.print(" CDATA " + FlatDtdProducer.REQUIRED + "\n");
-                }
-                else
-                {
-                    printOut.print(" CDATA " + FlatDtdProducer.IMPLIED + "\n");
-                }
-            }
-            printOut.print(">\n");
-            printOut.print("\n");
-        }
+	    // column attributes
+	    printOut.print("<!ATTLIST ");
+	    printOut.print(tableName);
+	    printOut.print("\n");
+	    // Add the columns
+	    Column[] columns = dataSet.getTableMetaData(tableName).getColumns();
+	    for (int j = 0; j < columns.length; j++) {
+		Column column = columns[j];
+		printOut.print("    ");
+		printOut.print(column.getColumnName());
+		if (column.getNullable() == Column.NO_NULLS && column.getDefaultValue() == null) {
+		    printOut.print(" CDATA " + FlatDtdProducer.REQUIRED + "\n");
+		} else {
+		    printOut.print(" CDATA " + FlatDtdProducer.IMPLIED + "\n");
+		}
+	    }
+	    printOut.print(">\n");
+	    printOut.print("\n");
+	}
 
-        printOut.flush();
+	printOut.flush();
     }
 
     /**
@@ -119,62 +110,18 @@ public class FlatDtdWriter //implements IDataSetConsumer
      * @version $Revision$ $Date$
      * @since Jun 13, 2003
      */
-    public static abstract class ContentModel
-    {
-        private final String _name;
+    public static abstract class ContentModel {
+	private final String _name;
 
-        private ContentModel(String name)
-        {
-            _name = name;
-        }
+	private ContentModel(String name) {
+	    _name = name;
+	}
 
-        public String toString()
-        {
-            return _name;
-        }
+	public String toString() {
+	    return _name;
+	}
 
-        public abstract void write(PrintWriter writer, String tableName,
-                int tableIndex, int tableCount);
-    }
-
-    
-    /**
-     * @author Manuel Laflamme
-     * @author Last changed by: $Author$
-     * @version $Revision$ $Date$
-     * @since Jun 13, 2003
-     */
-    public static class SequenceModel extends ContentModel
-    {
-
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(SequenceModel.class);
-
-        private SequenceModel()
-        {
-            super("sequence");
-        }
-
-        public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount)
-        {
-        	if (logger.isDebugEnabled())
-        	{
-        		logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
-        				new Object[]{ writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount)});
-        	}
-
-            boolean last = (tableIndex + 1) == tableCount;
-
-            writer.print("    ");
-            writer.print(tableName);
-            writer.print("*");
-            if (!last)
-            {
-                writer.print(",\n");
-            }
-        }
+	public abstract void write(PrintWriter writer, String tableName, int tableIndex, int tableCount);
     }
 
     /**
@@ -183,48 +130,72 @@ public class FlatDtdWriter //implements IDataSetConsumer
      * @version $Revision$ $Date$
      * @since Jun 13, 2003
      */
-    public static class ChoiceModel extends ContentModel
-    {
+    public static class SequenceModel extends ContentModel {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(ChoiceModel.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(SequenceModel.class);
 
-        private ChoiceModel()
-        {
-            super("sequence");
-        }
+	private SequenceModel() {
+	    super("sequence");
+	}
 
-        public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount)
-        {
-        	if (logger.isDebugEnabled())
-        	{
-        		logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
-        				new Object[]{ writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount)});
-        	}
+	public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount) {
+	    if (logger.isDebugEnabled()) {
+		logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
+			new Object[] { writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount) });
+	    }
 
-            boolean first = tableIndex == 0;
-            boolean last = (tableIndex + 1) == tableCount;
+	    boolean last = (tableIndex + 1) == tableCount;
 
-            if (first)
-            {
-                writer.print("   (");
-            }
-            else
-            {
-                writer.print("    ");
-            }
-            writer.print(tableName);
+	    writer.print("    ");
+	    writer.print(tableName);
+	    writer.print("*");
+	    if (!last) {
+		writer.print(",\n");
+	    }
+	}
+    }
 
-            if (!last)
-            {
-                writer.print("|\n");
-            }
-            else
-            {
-                writer.print(")*");
-            }
-        }
+    /**
+     * @author Manuel Laflamme
+     * @author Last changed by: $Author$
+     * @version $Revision$ $Date$
+     * @since Jun 13, 2003
+     */
+    public static class ChoiceModel extends ContentModel {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(ChoiceModel.class);
+
+	private ChoiceModel() {
+	    super("sequence");
+	}
+
+	public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount) {
+	    if (logger.isDebugEnabled()) {
+		logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
+			new Object[] { writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount) });
+	    }
+
+	    boolean first = tableIndex == 0;
+	    boolean last = (tableIndex + 1) == tableCount;
+
+	    if (first) {
+		writer.print("   (");
+	    } else {
+		writer.print("    ");
+	    }
+	    writer.print(tableName);
+
+	    if (!last) {
+		writer.print("|\n");
+	    } else {
+		writer.print(")*");
+	    }
+	}
     }
 }

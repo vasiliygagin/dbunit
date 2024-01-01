@@ -37,8 +37,7 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 6, 2002
  */
-public interface IDatabaseConnection
-{
+public interface IDatabaseConnection {
     /**
      * Returns a JDBC database connection.
      */
@@ -60,33 +59,33 @@ public interface IDatabaseConnection
     public IDataSet createDataSet() throws SQLException;
 
     /**
-     * Creates a dataset containing only the specified tables from
-     * the database.
+     * Creates a dataset containing only the specified tables from the database.
+     * 
      * @param tableNames The tables for which a dataset shall be created
      * @return The new dataset
      * @throws SQLException
      * @throws DataSetException
      */
-    public IDataSet createDataSet(String[] tableNames) 
-            throws SQLException, DataSetException;
+    public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException;
 
     /**
-     * Creates a table with the result of the specified SQL statement. The
-     * table can be the result of a join statement.
+     * Creates a table with the result of the specified SQL statement. The table can
+     * be the result of a join statement.
      *
-     * @param tableName The name to be returned by {@link org.dbunit.dataset.ITableMetaData#getTableName}.
-     * @param sql The SQL <code>SELECT</code> statement
+     * @param tableName The name to be returned by
+     *                  {@link org.dbunit.dataset.ITableMetaData#getTableName}.
+     * @param sql       The SQL <code>SELECT</code> statement
      * @return The new table
      * @throws DataSetException
      * @throws SQLException
      */
-    public ITable createQueryTable(String tableName, String sql)
-            throws DataSetException, SQLException;
+    public ITable createQueryTable(String tableName, String sql) throws DataSetException, SQLException;
 
     /**
      * Creates a table using the given PreparedStatement to retrieve a ResultSet.
      *
-     * @param tableName The name to be returned by {@link org.dbunit.dataset.ITableMetaData#getTableName}.
+     * @param tableName         The name to be returned by
+     *                          {@link org.dbunit.dataset.ITableMetaData#getTableName}.
      * @param preparedStatement The statement to be executed as query
      * @return The new table
      * @throws DataSetException
@@ -94,17 +93,18 @@ public interface IDatabaseConnection
      * @since 2.4.4
      */
     public ITable createTable(String tableName, PreparedStatement preparedStatement)
-            throws DataSetException, SQLException;
+	    throws DataSetException, SQLException;
 
     /**
-     * Creates a table with the result of a <code>select * from <i>tableName</i></code> SQL statement. 
+     * Creates a table with the result of a
+     * <code>select * from <i>tableName</i></code> SQL statement.
      *
-     * @param tableName The name of the database table to be queried which is also returned by 
-     * {@link org.dbunit.dataset.ITableMetaData#getTableName}.
+     * @param tableName The name of the database table to be queried which is also
+     *                  returned by
+     *                  {@link org.dbunit.dataset.ITableMetaData#getTableName}.
      */
-    public ITable createTable(String tableName)
-            throws DataSetException, SQLException;
-    
+    public ITable createTable(String tableName) throws DataSetException, SQLException;
+
     /**
      * Returns the specified table row count.
      *
@@ -116,7 +116,7 @@ public interface IDatabaseConnection
     /**
      * Returns the specified table row count according specified where clause.
      *
-     * @param tableName the table name
+     * @param tableName   the table name
      * @param whereClause the where clause
      * @return the row count
      */
@@ -132,11 +132,3 @@ public interface IDatabaseConnection
      */
     public IStatementFactory getStatementFactory();
 }
-
-
-
-
-
-
-
-

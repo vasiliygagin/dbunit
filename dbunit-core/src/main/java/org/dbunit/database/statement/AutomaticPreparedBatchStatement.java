@@ -33,8 +33,7 @@ import java.sql.SQLException;
  * @since Jun 12, 2003
  * @version $Revision$
  */
-public class AutomaticPreparedBatchStatement implements IPreparedBatchStatement
-{
+public class AutomaticPreparedBatchStatement implements IPreparedBatchStatement {
 
     /**
      * Logger for this class
@@ -46,56 +45,48 @@ public class AutomaticPreparedBatchStatement implements IPreparedBatchStatement
     private int _threshold;
     private int _result = 0;
 
-    public AutomaticPreparedBatchStatement(IPreparedBatchStatement statement, int threshold)
-    {
-        _statement = statement;
-        _threshold = threshold;
+    public AutomaticPreparedBatchStatement(IPreparedBatchStatement statement, int threshold) {
+	_statement = statement;
+	_threshold = threshold;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IPreparedBatchStatement interface
 
-    public void addValue(Object value, DataType dataType) throws TypeCastException,
-            SQLException
-    {
-        logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
+    public void addValue(Object value, DataType dataType) throws TypeCastException, SQLException {
+	logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
 
-        _statement.addValue(value, dataType);
+	_statement.addValue(value, dataType);
     }
 
-    public void addBatch() throws SQLException
-    {
-        logger.debug("addBatch() - start");
+    public void addBatch() throws SQLException {
+	logger.debug("addBatch() - start");
 
-        _statement.addBatch();
-        _batchCount++;
+	_statement.addBatch();
+	_batchCount++;
 
-        if (_batchCount % _threshold == 0)
-        {
-            _result += _statement.executeBatch();
-        }
+	if (_batchCount % _threshold == 0) {
+	    _result += _statement.executeBatch();
+	}
     }
 
-    public int executeBatch() throws SQLException
-    {
-        logger.debug("executeBatch() - start");
+    public int executeBatch() throws SQLException {
+	logger.debug("executeBatch() - start");
 
-        _result += _statement.executeBatch();
-        return _result;
+	_result += _statement.executeBatch();
+	return _result;
     }
 
-    public void clearBatch() throws SQLException
-    {
-        logger.debug("clearBatch() - start");
+    public void clearBatch() throws SQLException {
+	logger.debug("clearBatch() - start");
 
-        _statement.clearBatch();
-        _batchCount = 0;
+	_statement.clearBatch();
+	_batchCount = 0;
     }
 
-    public void close() throws SQLException
-    {
-        logger.debug("close() - start");
+    public void close() throws SQLException {
+	logger.debug("close() - start");
 
-        _statement.close();
+	_statement.close();
     }
 }

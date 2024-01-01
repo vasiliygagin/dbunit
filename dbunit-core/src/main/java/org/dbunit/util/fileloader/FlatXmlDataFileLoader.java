@@ -44,67 +44,59 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
     /**
      * Create new instance with replacement objects.
      * 
-     * @param replacementObjects
-     *            The replacement objects for use with
-     *            {@link org.dbunit.dataset.ReplacementDataSet}.
+     * @param replacementObjects The replacement objects for use with
+     *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FlatXmlDataFileLoader(Map ro) {
-        super(ro);
+	super(ro);
     }
 
     /**
      * Create new instance with replacement objects and replacement substrings.
      * 
-     * @param ro
-     *            The replacement objects for use with
-     *            {@link org.dbunit.dataset.ReplacementDataSet}.
-     * @param rs
-     *            The replacement substrings for use with
-     *            {@link org.dbunit.dataset.ReplacementDataSet}.
+     * @param ro The replacement objects for use with
+     *           {@link org.dbunit.dataset.ReplacementDataSet}.
+     * @param rs The replacement substrings for use with
+     *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FlatXmlDataFileLoader(Map ro, Map rs) {
-        super(ro, rs);
+	super(ro, rs);
     }
 
     /**
      * Create new instance with replacement objects, replacement substrings, and
      * {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder}.
      * 
-     * @param ro
-     *            The replacement objects for use with
-     *            {@link org.dbunit.dataset.ReplacementDataSet}.
-     * @param rs
-     *            The replacement substrings for use with
-     *            {@link org.dbunit.dataset.ReplacementDataSet}.
-     * @param builder
-     *            The {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder} to
-     *            use.
+     * @param ro      The replacement objects for use with
+     *                {@link org.dbunit.dataset.ReplacementDataSet}.
+     * @param rs      The replacement substrings for use with
+     *                {@link org.dbunit.dataset.ReplacementDataSet}.
+     * @param builder The {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder} to
+     *                use.
      */
     public FlatXmlDataFileLoader(Map ro, Map rs, FlatXmlDataSetBuilder builder) {
-        super(ro, rs);
-        this.builder = builder;
+	super(ro, rs);
+	this.builder = builder;
     }
 
     /**
      * Create new instance with a
      * {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder}.
      * 
-     * @param builder
-     *            The {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder} to
-     *            use.
+     * @param builder The {@link org.dbunit.dataset.xml.FlatXmlDataSetBuilder} to
+     *                use.
      */
     public FlatXmlDataFileLoader(FlatXmlDataSetBuilder builder) {
-        this.builder = builder;
+	this.builder = builder;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IDataSet loadDataSet(URL url) throws DataSetException,
-            IOException {
-        IDataSet ds = builder.build(url);
+    public IDataSet loadDataSet(URL url) throws DataSetException, IOException {
+	IDataSet ds = builder.build(url);
 
-        return ds;
+	return ds;
     }
 
     /**
@@ -115,7 +107,7 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      * @return The builder.
      */
     public FlatXmlDataSetBuilder getBuilder() {
-        return builder;
+	return builder;
     }
 
     /**
@@ -123,10 +115,9 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      * 
      * @see {@link builder}.
      * 
-     * @param builder
-     *            The builder to set.
+     * @param builder The builder to set.
      */
     public void setBuilder(FlatXmlDataSetBuilder builder) {
-        this.builder = builder;
+	this.builder = builder;
     }
 }

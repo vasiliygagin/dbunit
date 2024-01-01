@@ -23,7 +23,6 @@ package org.dbunit.dataset.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This filter exposes only allowed tables from the filtered dataset. This
  * implementation do not modify the original table sequence from the filtered
@@ -33,8 +32,7 @@ import org.slf4j.LoggerFactory;
  * @since Mar 7, 2003
  * @version $Revision$
  */
-public class IncludeTableFilter extends AbstractTableFilter implements ITableFilter
-{
+public class IncludeTableFilter extends AbstractTableFilter implements ITableFilter {
 
     /**
      * Logger for this class
@@ -47,49 +45,41 @@ public class IncludeTableFilter extends AbstractTableFilter implements ITableFil
      * Create a new empty IncludeTableFilter. Use {@link #includeTable} to allow
      * access to some tables.
      */
-    public IncludeTableFilter()
-    {
+    public IncludeTableFilter() {
     }
 
     /**
      * Create a new IncludeTableFilter which allow access to specified tables.
      */
-    public IncludeTableFilter(String[] tableNames)
-    {
-        for (int i = 0; i < tableNames.length; i++)
-        {
-            String tableName = tableNames[i];
-            includeTable(tableName);
-        }
+    public IncludeTableFilter(String[] tableNames) {
+	for (int i = 0; i < tableNames.length; i++) {
+	    String tableName = tableNames[i];
+	    includeTable(tableName);
+	}
     }
 
     /**
-     * Add a new accepted table name pattern.
-     * The following wildcard characters are supported:
-     * '*' matches zero or more characters,
-     * '?' matches one character.
+     * Add a new accepted table name pattern. The following wildcard characters are
+     * supported: '*' matches zero or more characters, '?' matches one character.
      */
-    public void includeTable(String patternName)
-    {
-        logger.debug("includeTable(patternName={} - start", patternName);
+    public void includeTable(String patternName) {
+	logger.debug("includeTable(patternName={} - start", patternName);
 
-        _patternMatcher.addPattern(patternName);
+	_patternMatcher.addPattern(patternName);
     }
 
-    public boolean isEmpty()
-    {
-        logger.debug("isEmpty() - start");
+    public boolean isEmpty() {
+	logger.debug("isEmpty() - start");
 
-        return _patternMatcher.isEmpty();
+	return _patternMatcher.isEmpty();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
-    public boolean isValidName(String tableName)
-    {
-        logger.debug("isValidName(tableName={}) - start", tableName);
+    public boolean isValidName(String tableName) {
+	logger.debug("isValidName(tableName={}) - start", tableName);
 
-        return _patternMatcher.accept(tableName);
+	return _patternMatcher.accept(tableName);
     }
 }

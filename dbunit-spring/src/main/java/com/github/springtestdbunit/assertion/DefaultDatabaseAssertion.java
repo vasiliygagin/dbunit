@@ -25,21 +25,22 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.filter.IColumnFilter;
 
 /**
- * Default database assertion strategy which uses DbUnit {@link Assertion#assertEquals(IDataSet, IDataSet)}.
+ * Default database assertion strategy which uses DbUnit
+ * {@link Assertion#assertEquals(IDataSet, IDataSet)}.
  *
  * @author Mario Zagar
  * @author Sunitha Rajarathnam
  */
 class DefaultDatabaseAssertion implements DatabaseAssertion {
 
-	public void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException {
-		Assertion.assertEquals(expectedDataSet, actualDataSet);
-	}
+    public void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException {
+	Assertion.assertEquals(expectedDataSet, actualDataSet);
+    }
 
-	public void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
-			throws DatabaseUnitException {
-		Assertion.assertEquals(expectedTable, actualTable);
-	}
+    public void assertEquals(ITable expectedTable, ITable actualTable, List<IColumnFilter> columnFilters)
+	    throws DatabaseUnitException {
+	Assertion.assertEquals(expectedTable, actualTable);
+    }
 
 }

@@ -20,7 +20,6 @@
  */
 package org.dbunit.dataset;
 
-
 /**
  * Provides arbitrary values for one single database/ITable row.
  * 
@@ -31,9 +30,12 @@ package org.dbunit.dataset;
  */
 public interface IRowValueProvider {
 
-	/**
-	 * Returns the column value for the column with the given name of the currently processed row
-     * @param columnName The db column name for which the value should be provided (current row's value)
+    /**
+     * Returns the column value for the column with the given name of the currently
+     * processed row
+     * 
+     * @param columnName The db column name for which the value should be provided
+     *                   (current row's value)
      * @return The value of the given column in the current row
      * @throws DataSetException
      */

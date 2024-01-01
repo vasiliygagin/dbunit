@@ -23,8 +23,8 @@ package org.dbunit;
 import org.dbunit.database.IDatabaseConnection;
 
 /**
- * Default implementation of AbstractDatabaseTester, which does not know how
- * to get a connection by itself.
+ * Default implementation of AbstractDatabaseTester, which does not know how to
+ * get a connection by itself.
  *
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
@@ -33,17 +33,17 @@ import org.dbunit.database.IDatabaseConnection;
 
 public class DefaultDatabaseTester extends AbstractDatabaseTester {
 
-  final IDatabaseConnection connection;
+    final IDatabaseConnection connection;
 
-  /**
-   * Creates a new DefaultDatabaseTester with the supplied connection.
-   */
-  public DefaultDatabaseTester( final IDatabaseConnection connection ) {
-    this.connection = connection;
-  }
+    /**
+     * Creates a new DefaultDatabaseTester with the supplied connection.
+     */
+    public DefaultDatabaseTester(final IDatabaseConnection connection) {
+	this.connection = connection;
+    }
 
-  public IDatabaseConnection getConnection() throws Exception {
-    return this.connection;
-  }
+    public IDatabaseConnection getConnection() throws Exception {
+	return this.connection;
+    }
 
 }

@@ -23,8 +23,8 @@ package org.dbunit.dataset.datatype;
 import java.util.Collection;
 
 /**
- * Reports what database products this object relates to.
- * Typically implemented by an <code>IDaatTypeFactory</code>.
+ * Reports what database products this object relates to. Typically implemented
+ * by an <code>IDaatTypeFactory</code>.
  *
  * @author John Hurst
  * @author Last changed by: $Author: $
@@ -32,11 +32,12 @@ import java.util.Collection;
  * @since 2.4.6 (Septemeber 11, 2009)
  * @see IDataTypeFactory
  */
-public interface IDbProductRelatable
-{
-  /**
-   * Returns a set of Strings representing database product names that this object relates to.
-   * @return Set of Strings.
-   */
-  public Collection getValidDbProducts();
+public interface IDbProductRelatable {
+    /**
+     * Returns a set of Strings representing database product names that this object
+     * relates to.
+     * 
+     * @return Set of Strings.
+     */
+    public Collection getValidDbProducts();
 }

@@ -21,29 +21,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A bounded variant of 
- * LinkedQueue 
- * class. This class may be
- * preferable to 
- * BoundedBuffer 
- * because it allows a bit more
- * concurency among puts and takes,  because it does not
- * pre-allocate fixed storage for elements, and allows 
- * capacity to be dynamically reset.
- * On the other hand, since it allocates a node object
- * on each put, it can be slow on systems with slow
- * allocation and GC.
- * Also, it may be
- * preferable to 
- * LinkedQueue 
- * when you need to limit
- * the capacity to prevent resource exhaustion. This protection
- * normally does not hurt much performance-wise: When the
- * queue is not empty or full, most puts and
- * takes are still usually able to execute concurrently.
- * @see LinkedQueue 
- * @see BoundedBuffer 
- * <p>[<a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html"> Introduction to this package. </a>] <p>
+ * A bounded variant of LinkedQueue class. This class may be preferable to
+ * BoundedBuffer because it allows a bit more concurency among puts and takes,
+ * because it does not pre-allocate fixed storage for elements, and allows
+ * capacity to be dynamically reset. On the other hand, since it allocates a
+ * node object on each put, it can be slow on systems with slow allocation and
+ * GC. Also, it may be preferable to LinkedQueue when you need to limit the
+ * capacity to prevent resource exhaustion. This protection normally does not
+ * hurt much performance-wise: When the queue is not empty or full, most puts
+ * and takes are still usually able to execute concurrently.
+ * 
+ * @see LinkedQueue
+ * @see BoundedBuffer
+ *      <p>
+ *      [<a href=
+ *      "http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html">
+ *      Introduction to this package. </a>]
+ *      <p>
  * 
  * @author Doug Lea
  * @author Last changed by: $Author$
@@ -57,355 +51,337 @@ public class BoundedLinkedQueue implements BoundedChannel {
      */
     private static final Logger logger = LoggerFactory.getLogger(BoundedLinkedQueue.class);
 
-  /*
-   * It might be a bit nicer if this were declared as
-   * a subclass of LinkedQueue, or a sibling class of
-   * a common abstract class. It shares much of the
-   * basic design and bookkeeping fields. But too 
-   * many details differ to make this worth doing.
-   */
+    /*
+     * It might be a bit nicer if this were declared as a subclass of LinkedQueue,
+     * or a sibling class of a common abstract class. It shares much of the basic
+     * design and bookkeeping fields. But too many details differ to make this worth
+     * doing.
+     */
 
+    /**
+     * Dummy header node of list. The first actual node, if it exists, is always at
+     * head_.next. After each take, the old first node becomes the head.
+     **/
+    protected LinkedNode head_;
 
+    /**
+     * The last node of list. Put() appends to list, so modifies last_
+     **/
+    protected LinkedNode last_;
 
-  /** 
-   * Dummy header node of list. The first actual node, if it exists, is always 
-   * at head_.next. After each take, the old first node becomes the head.
-   **/
-  protected LinkedNode head_;
+    /**
+     * Helper monitor. Ensures that only one put at a time executes.
+     **/
 
-  /** 
-   * The last node of list. Put() appends to list, so modifies last_
-   **/
-  protected LinkedNode last_;
+    protected final Object putGuard_ = new Object();
 
+    /**
+     * Helper monitor. Protects and provides wait queue for takes
+     **/
 
-  /**
-   * Helper monitor. Ensures that only one put at a time executes.
-   **/
+    protected final Object takeGuard_ = new Object();
 
-  protected final Object putGuard_ = new Object();
+    /** Number of elements allowed **/
+    protected int capacity_;
 
-  /**
-   * Helper monitor. Protects and provides wait queue for takes
-   **/
+    /**
+     * One side of a split permit count. The counts represent permits to do a put.
+     * (The queue is full when zero). Invariant: putSidePutPermits_ +
+     * takeSidePutPermits_ = capacity_ - length. (The length is never separately
+     * recorded, so this cannot be checked explicitly.) To minimize contention
+     * between puts and takes, the put side uses up all of its permits before
+     * transfering them from the take side. The take side just increments the count
+     * upon each take. Thus, most puts and take can run independently of each other
+     * unless the queue is empty or full. Initial value is queue capacity.
+     **/
 
-  protected final Object takeGuard_ = new Object();
+    protected int putSidePutPermits_;
 
+    /** Number of takes since last reconcile **/
+    protected int takeSidePutPermits_ = 0;
 
-  /** Number of elements allowed **/
-  protected int capacity_;
+    /**
+     * Create a queue with the given capacity
+     * 
+     * @exception IllegalArgumentException if capacity less or equal to zero
+     **/
+    public BoundedLinkedQueue(int capacity) {
+	if (capacity <= 0)
+	    throw new IllegalArgumentException();
+	capacity_ = capacity;
+	putSidePutPermits_ = capacity;
+	head_ = new LinkedNode(null);
+	last_ = head_;
+    }
 
-  
-  /**
-   * One side of a split permit count. 
-   * The counts represent permits to do a put. (The queue is full when zero).
-   * Invariant: putSidePutPermits_ + takeSidePutPermits_ = capacity_ - length.
-   * (The length is never separately recorded, so this cannot be
-   * checked explicitly.)
-   * To minimize contention between puts and takes, the
-   * put side uses up all of its permits before transfering them from
-   * the take side. The take side just increments the count upon each take.
-   * Thus, most puts and take can run independently of each other unless
-   * the queue is empty or full. 
-   * Initial value is queue capacity.
-   **/
+    /**
+     * Create a queue with the current default capacity
+     **/
 
-  protected int putSidePutPermits_; 
+    public BoundedLinkedQueue() {
+	this(DefaultChannelCapacity.get());
+    }
 
-  /** Number of takes since last reconcile **/
-  protected int takeSidePutPermits_ = 0;
+    /**
+     * Move put permits from take side to put side; return the number of put side
+     * permits that are available. Call only under synch on puGuard_ AND this.
+     **/
+    protected final int reconcilePutPermits() {
+	logger.debug("reconcilePutPermits() - start");
 
+	putSidePutPermits_ += takeSidePutPermits_;
+	takeSidePutPermits_ = 0;
+	return putSidePutPermits_;
+    }
 
-  /**
-   * Create a queue with the given capacity
-   * @exception IllegalArgumentException if capacity less or equal to zero
-   **/
-  public BoundedLinkedQueue(int capacity) {
-    if (capacity <= 0) throw new IllegalArgumentException();
-    capacity_ = capacity;
-    putSidePutPermits_ = capacity;
-    head_ =  new LinkedNode(null); 
-    last_ = head_;
-  }
+    /** Return the current capacity of this queue **/
+    public synchronized int capacity() {
+	logger.debug("capacity() - start");
+	return capacity_;
+    }
 
-  /**
-   * Create a queue with the current default capacity
-   **/
+    /**
+     * Return the number of elements in the queue. This is only a snapshot value,
+     * that may be in the midst of changing. The returned value will be unreliable
+     * in the presence of active puts and takes, and should only be used as a
+     * heuristic estimate, for example for resource monitoring purposes.
+     **/
+    public synchronized int size() {
+	logger.debug("size() - start");
 
-  public BoundedLinkedQueue() { 
-    this(DefaultChannelCapacity.get()); 
-  }
+	/*
+	 * This should ideally synch on putGuard_, but doing so would cause it to block
+	 * waiting for an in-progress put, which might be stuck. So we instead use
+	 * whatever value of putSidePutPermits_ that we happen to read.
+	 */
+	return capacity_ - (takeSidePutPermits_ + putSidePutPermits_);
+    }
 
-  /**
-   * Move put permits from take side to put side; 
-   * return the number of put side permits that are available.
-   * Call only under synch on puGuard_ AND this.
-   **/
-  protected final int reconcilePutPermits() {
-        logger.debug("reconcilePutPermits() - start");
+    /**
+     * Reset the capacity of this queue. If the new capacity is less than the old
+     * capacity, existing elements are NOT removed, but incoming puts will not
+     * proceed until the number of elements is less than the new capacity.
+     * 
+     * @exception IllegalArgumentException if capacity less or equal to zero
+     **/
 
-    putSidePutPermits_ += takeSidePutPermits_;
-    takeSidePutPermits_ = 0;
-    return putSidePutPermits_;
-  }
+    public void setCapacity(int newCapacity) {
+	logger.debug("setCapacity(newCapacity=" + newCapacity + ") - start");
 
+	if (newCapacity <= 0)
+	    throw new IllegalArgumentException();
+	synchronized (putGuard_) {
+	    synchronized (this) {
+		takeSidePutPermits_ += (newCapacity - capacity_);
+		capacity_ = newCapacity;
 
-  /** Return the current capacity of this queue **/
-  public synchronized int capacity() {
-        logger.debug("capacity() - start");
- return capacity_; }
+		// Force immediate reconcilation.
+		reconcilePutPermits();
+		notifyAll();
+	    }
+	}
+    }
 
+    /** Main mechanics for take/poll **/
+    protected synchronized Object extract() {
+	logger.debug("extract() - start");
 
-  /** 
-   * Return the number of elements in the queue.
-   * This is only a snapshot value, that may be in the midst 
-   * of changing. The returned value will be unreliable in the presence of
-   * active puts and takes, and should only be used as a heuristic
-   * estimate, for example for resource monitoring purposes.
-   **/
-  public synchronized int size() {
-        logger.debug("size() - start");
+	synchronized (head_) {
+	    Object x = null;
+	    LinkedNode first = head_.next;
+	    if (first != null) {
+		x = first.value;
+		first.value = null;
+		head_ = first;
+		++takeSidePutPermits_;
+		notify();
+	    }
+	    return x;
+	}
+    }
+
+    public Object peek() {
+	logger.debug("peek() - start");
+
+	synchronized (head_) {
+	    LinkedNode first = head_.next;
+	    if (first != null)
+		return first.value;
+	    else
+		return null;
+	}
+    }
+
+    public Object take() throws InterruptedException {
+	logger.debug("take() - start");
+
+	if (Thread.interrupted())
+	    throw new InterruptedException();
+	Object x = extract();
+	if (x != null)
+	    return x;
+	else {
+	    synchronized (takeGuard_) {
+		try {
+		    for (;;) {
+			x = extract();
+			if (x != null) {
+			    return x;
+			} else {
+			    takeGuard_.wait();
+			}
+		    }
+		} catch (InterruptedException ex) {
+		    takeGuard_.notify();
+		    throw ex;
+		}
+	    }
+	}
+    }
+
+    public Object poll(long msecs) throws InterruptedException {
+	logger.debug("poll(msecs=" + msecs + ") - start");
+
+	if (Thread.interrupted())
+	    throw new InterruptedException();
+	Object x = extract();
+	if (x != null)
+	    return x;
+	else {
+	    synchronized (takeGuard_) {
+		try {
+		    long waitTime = msecs;
+		    long start = (msecs <= 0) ? 0 : System.currentTimeMillis();
+		    for (;;) {
+			x = extract();
+			if (x != null || waitTime <= 0) {
+			    return x;
+			} else {
+			    takeGuard_.wait(waitTime);
+			    waitTime = msecs - (System.currentTimeMillis() - start);
+			}
+		    }
+		} catch (InterruptedException ex) {
+		    takeGuard_.notify();
+		    throw ex;
+		}
+	    }
+	}
+    }
+
+    /** Notify a waiting take if needed **/
+    protected final void allowTake() {
+	logger.debug("allowTake() - start");
+
+	synchronized (takeGuard_) {
+	    takeGuard_.notify();
+	}
+    }
+
+    /**
+     * Create and insert a node. Call only under synch on putGuard_
+     **/
+    protected void insert(Object x) {
+	logger.debug("insert(x=" + x + ") - start");
+
+	--putSidePutPermits_;
+	LinkedNode p = new LinkedNode(x);
+	synchronized (last_) {
+	    last_.next = p;
+	    last_ = p;
+	}
+    }
 
     /*
-      This should ideally synch on putGuard_, but
-      doing so would cause it to block waiting for an in-progress
-      put, which might be stuck. So we instead use whatever
-      value of putSidePutPermits_ that we happen to read.
-    */
-    return capacity_ - (takeSidePutPermits_ + putSidePutPermits_);
-  }
+     * put and offer(ms) differ only in policy before insert/allowTake
+     */
 
+    public void put(Object x) throws InterruptedException {
+	logger.debug("put(x=" + x + ") - start");
 
-  /**
-   * Reset the capacity of this queue.
-   * If the new capacity is less than the old capacity,
-   * existing elements are NOT removed, but
-   * incoming puts will not proceed until the number of elements
-   * is less than the new capacity.
-   * @exception IllegalArgumentException if capacity less or equal to zero
-   **/
+	if (x == null)
+	    throw new IllegalArgumentException();
+	if (Thread.interrupted())
+	    throw new InterruptedException();
 
-  public void setCapacity(int newCapacity) {
-        logger.debug("setCapacity(newCapacity=" + newCapacity + ") - start");
+	synchronized (putGuard_) {
 
-    if (newCapacity <= 0) throw new IllegalArgumentException();
-    synchronized (putGuard_) {
-      synchronized(this) {
-        takeSidePutPermits_ += (newCapacity - capacity_);
-        capacity_ = newCapacity;
-        
-        // Force immediate reconcilation.
-        reconcilePutPermits();
-        notifyAll();
-      }
-    }
-  }
-
-
-  /** Main mechanics for take/poll **/
-  protected synchronized Object extract() {
-        logger.debug("extract() - start");
-
-    synchronized(head_) {
-      Object x = null;
-      LinkedNode first = head_.next;
-      if (first != null) {
-        x = first.value;
-        first.value = null;
-        head_ = first; 
-        ++takeSidePutPermits_;
-        notify();
-      }
-      return x;
-    }
-  }
-
-  public Object peek() {
-        logger.debug("peek() - start");
-
-    synchronized(head_) {
-      LinkedNode first = head_.next;
-      if (first != null) 
-        return first.value;
-      else
-        return null;
-    }
-  }
-
-  public Object take() throws InterruptedException {
-        logger.debug("take() - start");
-
-    if (Thread.interrupted()) throw new InterruptedException();
-    Object x = extract();
-    if (x != null) 
-      return x;
-    else {
-      synchronized(takeGuard_) {
-        try {
-          for (;;) {
-            x = extract();
-            if (x != null) {
-              return x;
-            }
-            else {
-              takeGuard_.wait(); 
-            }
-          }
-        }
-        catch(InterruptedException ex) {
-          takeGuard_.notify();
-          throw ex; 
-        }
-      }
-    }
-  }
-
-  public Object poll(long msecs) throws InterruptedException {
-        logger.debug("poll(msecs=" + msecs + ") - start");
-
-    if (Thread.interrupted()) throw new InterruptedException();
-    Object x = extract();
-    if (x != null) 
-      return x;
-    else {
-      synchronized(takeGuard_) {
-        try {
-          long waitTime = msecs;
-          long start = (msecs <= 0)? 0: System.currentTimeMillis();
-          for (;;) {
-            x = extract();
-            if (x != null || waitTime <= 0) {
-              return x;
-            }
-            else {
-              takeGuard_.wait(waitTime); 
-              waitTime = msecs - (System.currentTimeMillis() - start);
-            }
-          }
-        }
-        catch(InterruptedException ex) {
-          takeGuard_.notify();
-          throw ex; 
-        }
-      }
-    }
-  }
-
-  /** Notify a waiting take if needed **/
-  protected final void allowTake() {
-        logger.debug("allowTake() - start");
-
-    synchronized(takeGuard_) {
-      takeGuard_.notify();
-    }
-  }
-
-
-  /**
-   * Create and insert a node.
-   * Call only under synch on putGuard_
-   **/
-  protected void insert(Object x) {
-        logger.debug("insert(x=" + x + ") - start");
- 
-    --putSidePutPermits_;
-    LinkedNode p = new LinkedNode(x);
-    synchronized(last_) {
-      last_.next = p;
-      last_ = p;
-    }
-  }
-
-
-  /* 
-     put and offer(ms) differ only in policy before insert/allowTake
-  */
-
-  public void put(Object x) throws InterruptedException {
-        logger.debug("put(x=" + x + ") - start");
-
-    if (x == null) throw new IllegalArgumentException();
-    if (Thread.interrupted()) throw new InterruptedException();
-
-    synchronized(putGuard_) {
-
-      if (putSidePutPermits_ <= 0) { // wait for permit. 
-        synchronized(this) {
-          if (reconcilePutPermits() <= 0) {
-            try {
-              for(;;) {
-                wait();
-                if (reconcilePutPermits() > 0) {
-                  break;
-                }
-              }
-            }
-            catch (InterruptedException ex) {
-              notify(); 
-              throw ex; 
-            }
-          }
-        }
-      }
-      insert(x);
-    }
-    // call outside of lock to loosen put/take coupling
-    allowTake();
-  }
-
-  public boolean offer(Object x, long msecs) throws InterruptedException {
-        logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
-
-    if (x == null) throw new IllegalArgumentException();
-    if (Thread.interrupted()) throw new InterruptedException();
-
-    synchronized(putGuard_) {
-
-      if (putSidePutPermits_ <= 0) {
-        synchronized(this) {
-          if (reconcilePutPermits() <= 0) {
-            if (msecs <= 0)
-              return false;
-            else {
-              try {
-                long waitTime = msecs;
-                long start = System.currentTimeMillis();
-                
-                for(;;) {
-                  wait(waitTime);
-                  if (reconcilePutPermits() > 0) {
-                    break;
-                  }
-                  else {
-                    waitTime = msecs - (System.currentTimeMillis() - start);
-                    if (waitTime <= 0) {
-                      return false;
-                    }
-                  }
-                }
-              }
-              catch (InterruptedException ex) {
-                notify(); 
-                throw ex; 
-              }
-            }
-          }
-        }
-      }
-
-      insert(x);
+	    if (putSidePutPermits_ <= 0) { // wait for permit.
+		synchronized (this) {
+		    if (reconcilePutPermits() <= 0) {
+			try {
+			    for (;;) {
+				wait();
+				if (reconcilePutPermits() > 0) {
+				    break;
+				}
+			    }
+			} catch (InterruptedException ex) {
+			    notify();
+			    throw ex;
+			}
+		    }
+		}
+	    }
+	    insert(x);
+	}
+	// call outside of lock to loosen put/take coupling
+	allowTake();
     }
 
-    allowTake();
-    return true;
-  }
+    public boolean offer(Object x, long msecs) throws InterruptedException {
+	logger.debug("offer(x=" + x + ", msecs=" + msecs + ") - start");
 
-  public boolean isEmpty() {
-        logger.debug("isEmpty() - start");
+	if (x == null)
+	    throw new IllegalArgumentException();
+	if (Thread.interrupted())
+	    throw new InterruptedException();
 
-    synchronized(head_) {
-      return head_.next == null;
+	synchronized (putGuard_) {
+
+	    if (putSidePutPermits_ <= 0) {
+		synchronized (this) {
+		    if (reconcilePutPermits() <= 0) {
+			if (msecs <= 0)
+			    return false;
+			else {
+			    try {
+				long waitTime = msecs;
+				long start = System.currentTimeMillis();
+
+				for (;;) {
+				    wait(waitTime);
+				    if (reconcilePutPermits() > 0) {
+					break;
+				    } else {
+					waitTime = msecs - (System.currentTimeMillis() - start);
+					if (waitTime <= 0) {
+					    return false;
+					}
+				    }
+				}
+			    } catch (InterruptedException ex) {
+				notify();
+				throw ex;
+			    }
+			}
+		    }
+		}
+	    }
+
+	    insert(x);
+	}
+
+	allowTake();
+	return true;
     }
-  }    
-    
+
+    public boolean isEmpty() {
+	logger.debug("isEmpty() - start");
+
+	synchronized (head_) {
+	    return head_.next == null;
+	}
+    }
+
 }

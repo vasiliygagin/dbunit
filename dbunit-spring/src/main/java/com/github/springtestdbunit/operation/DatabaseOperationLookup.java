@@ -19,7 +19,8 @@ package com.github.springtestdbunit.operation;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 
 /**
- * Strategy used to lookup a DBUnit {@link org.dbunit.operation.DatabaseOperation Database Operation} from a
+ * Strategy used to lookup a DBUnit
+ * {@link org.dbunit.operation.DatabaseOperation Database Operation} from a
  * {@link DatabaseOperation enum value}.
  *
  * @author Phillip Webb
@@ -28,12 +29,14 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
  */
 public interface DatabaseOperationLookup {
 
-	/**
-	 * Returns the DBUnit {@link org.dbunit.operation.DatabaseOperation Database Operation} that should be used for the
-	 * specified enum or {@code null} if the operation is not supported.
-	 * @param operation the enum value
-	 * @return the DBUnit databsae operation or {@code null}.
-	 */
-	org.dbunit.operation.DatabaseOperation get(DatabaseOperation operation);
+    /**
+     * Returns the DBUnit {@link org.dbunit.operation.DatabaseOperation Database
+     * Operation} that should be used for the specified enum or {@code null} if the
+     * operation is not supported.
+     * 
+     * @param operation the enum value
+     * @return the DBUnit databsae operation or {@code null}.
+     */
+    org.dbunit.operation.DatabaseOperation get(DatabaseOperation operation);
 
 }

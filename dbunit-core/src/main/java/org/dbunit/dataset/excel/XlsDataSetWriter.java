@@ -53,25 +53,24 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class XlsDataSetWriter 
-{
+public class XlsDataSetWriter {
     private static final Logger logger = LoggerFactory.getLogger(XlsDataSetWriter.class);
 
     public static final String ZEROS = "0000000000000000000000000000000000000000000000000000";
 
     /**
      * A special format pattern used to create a custom {@link DataFormat} which
-     * marks {@link Date} values that are stored via POI to an XLS file.
-     * Note that it might produce problems if a normal numeric value uses this format
-     * pattern incidentally.
+     * marks {@link Date} values that are stored via POI to an XLS file. Note that
+     * it might produce problems if a normal numeric value uses this format pattern
+     * incidentally.
      */
     public static final String DATE_FORMAT_AS_NUMBER_DBUNIT = "####################";
 
     /**
-     * Instead of recreating a new style object for each numeric cell, which
-     * will cause the code to hit the POI limit of 4000 styles pretty quickly,
-     * only create one per format and reuse the same style for all cells with
-     * the same format.
+     * Instead of recreating a new style object for each numeric cell, which will
+     * cause the code to hit the POI limit of 4000 styles pretty quickly, only
+     * create one per format and reuse the same style for all cells with the same
+     * format.
      */
     private static final Map<Workbook, Map> cellStyleMap = new HashMap<Workbook, Map>();
 
@@ -80,125 +79,107 @@ public class XlsDataSetWriter
     /**
      * Write the specified dataset to the specified Excel document.
      */
-    public void write(IDataSet dataSet, OutputStream out)
-            throws IOException, DataSetException
-    {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+    public void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
+	logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
 
-        Workbook workbook = createWorkbook();
+	Workbook workbook = createWorkbook();
 
-        this.dateCellStyle = createDateCellStyle(workbook);
-        
-        int index = 0;
-        ITableIterator iterator = dataSet.iterator();
-        while(iterator.next())
-        {
-            // create the table i.e. sheet
-            ITable table = iterator.getTable();
-            ITableMetaData metaData = table.getTableMetaData();
-            Sheet sheet = workbook.createSheet(metaData.getTableName());
+	this.dateCellStyle = createDateCellStyle(workbook);
 
-            // write table metadata i.e. first row in sheet
-            workbook.setSheetName(index, metaData.getTableName());
+	int index = 0;
+	ITableIterator iterator = dataSet.iterator();
+	while (iterator.next()) {
+	    // create the table i.e. sheet
+	    ITable table = iterator.getTable();
+	    ITableMetaData metaData = table.getTableMetaData();
+	    Sheet sheet = workbook.createSheet(metaData.getTableName());
 
-            Row headerRow = sheet.createRow(0);
-            Column[] columns = metaData.getColumns();
-            for (int j = 0; j < columns.length; j++)
-            {
-                Column column = columns[j];
-                Cell cell = headerRow.createCell(j);
-                cell.setCellValue(column.getColumnName());
-            }
-            
-            // write table data
-            for (int j = 0; j < table.getRowCount(); j++)
-            {
-                Row row = sheet.createRow(j + 1);
-                for (int k = 0; k < columns.length; k++)
-                {
-                    Column column = columns[k];
-                    Object value = table.getValue(j, column.getColumnName());
-                    if (value != null)
-                    {
-                        Cell cell = row.createCell(k);
-                        if(value instanceof Date){
-                            setDateCell(cell, (Date)value, workbook);
-                        }
-                        else if(value instanceof BigDecimal){
-                            setNumericCell(cell, (BigDecimal)value, workbook);
-                        }
-                        else if(value instanceof Long){
-                            setDateCell(cell, new Date( ((Long)value).longValue()), workbook);
-                        }
-                        else {
-                            cell.setCellValue(DataType.asString(value));
-                        }
-                    }
-                }
-            }
+	    // write table metadata i.e. first row in sheet
+	    workbook.setSheetName(index, metaData.getTableName());
 
-            index++;
-        }
+	    Row headerRow = sheet.createRow(0);
+	    Column[] columns = metaData.getColumns();
+	    for (int j = 0; j < columns.length; j++) {
+		Column column = columns[j];
+		Cell cell = headerRow.createCell(j);
+		cell.setCellValue(column.getColumnName());
+	    }
 
-        // write xls document
-        workbook.write(out);
-        out.flush();
+	    // write table data
+	    for (int j = 0; j < table.getRowCount(); j++) {
+		Row row = sheet.createRow(j + 1);
+		for (int k = 0; k < columns.length; k++) {
+		    Column column = columns[k];
+		    Object value = table.getValue(j, column.getColumnName());
+		    if (value != null) {
+			Cell cell = row.createCell(k);
+			if (value instanceof Date) {
+			    setDateCell(cell, (Date) value, workbook);
+			} else if (value instanceof BigDecimal) {
+			    setNumericCell(cell, (BigDecimal) value, workbook);
+			} else if (value instanceof Long) {
+			    setDateCell(cell, new Date(((Long) value).longValue()), workbook);
+			} else {
+			    cell.setCellValue(DataType.asString(value));
+			}
+		    }
+		}
+	    }
+
+	    index++;
+	}
+
+	// write xls document
+	workbook.write(out);
+	out.flush();
     }
-    
+
     protected static CellStyle createDateCellStyle(Workbook workbook) {
-        DataFormat format = workbook.createDataFormat();
-        short dateFormatCode = format.getFormat(DATE_FORMAT_AS_NUMBER_DBUNIT);
-        return getCellStyle(workbook, dateFormatCode);
+	DataFormat format = workbook.createDataFormat();
+	short dateFormatCode = format.getFormat(DATE_FORMAT_AS_NUMBER_DBUNIT);
+	return getCellStyle(workbook, dateFormatCode);
     }
 
-    protected static CellStyle getCellStyle(Workbook workbook, short formatCode)
-    {
-        Map<Short, CellStyle> map = findWorkbookCellStyleMap(workbook);
-        CellStyle cellStyle = findCellStyle(workbook, formatCode, map);
+    protected static CellStyle getCellStyle(Workbook workbook, short formatCode) {
+	Map<Short, CellStyle> map = findWorkbookCellStyleMap(workbook);
+	CellStyle cellStyle = findCellStyle(workbook, formatCode, map);
 
-        return cellStyle;
+	return cellStyle;
     }
 
-    protected static Map<Short, CellStyle> findWorkbookCellStyleMap(
-            Workbook workbook)
-    {
-        Map<Short, CellStyle> map = cellStyleMap.get(workbook);
-        if (map == null)
-        {
-            map = new HashMap<Short, CellStyle>();
-            cellStyleMap.put(workbook, map);
-        }
+    protected static Map<Short, CellStyle> findWorkbookCellStyleMap(Workbook workbook) {
+	Map<Short, CellStyle> map = cellStyleMap.get(workbook);
+	if (map == null) {
+	    map = new HashMap<Short, CellStyle>();
+	    cellStyleMap.put(workbook, map);
+	}
 
-        return map;
+	return map;
     }
 
-    protected static CellStyle findCellStyle(Workbook workbook,
-            Short formatCode, Map<Short, CellStyle> map)
-    {
-        CellStyle cellStyle = map.get(formatCode);
-        if (cellStyle == null)
-        {
-            cellStyle = workbook.createCellStyle();
-            cellStyle.setDataFormat(formatCode);
-            map.put(formatCode, cellStyle);
-        }
+    protected static CellStyle findCellStyle(Workbook workbook, Short formatCode, Map<Short, CellStyle> map) {
+	CellStyle cellStyle = map.get(formatCode);
+	if (cellStyle == null) {
+	    cellStyle = workbook.createCellStyle();
+	    cellStyle.setDataFormat(formatCode);
+	    map.put(formatCode, cellStyle);
+	}
 
-        return cellStyle;
+	return cellStyle;
     }
 
-    protected void setDateCell(Cell cell, Date value, Workbook workbook) 
-    {
+    protected void setDateCell(Cell cell, Date value, Workbook workbook) {
 //        double excelDateValue = HSSFDateUtil.getExcelDate(value);
 //        cell.setCellValue(excelDateValue);
 //        cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 
-        long timeMillis = value.getTime();
-        cell.setCellValue( (double)timeMillis );
-        cell.setCellType(CellType.NUMERIC);
-        cell.setCellStyle(this.dateCellStyle);
-        
+	long timeMillis = value.getTime();
+	cell.setCellValue((double) timeMillis);
+	cell.setCellType(CellType.NUMERIC);
+	cell.setCellStyle(this.dateCellStyle);
+
 //      System.out.println(HSSFDataFormat.getBuiltinFormats());
-        // TODO Find out correct cell styles for date objects
+	// TODO Find out correct cell styles for date objects
 //        HSSFCellStyle cellStyleDate = workbook.createCellStyle();
 //        cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
 //
@@ -248,29 +229,27 @@ public class XlsDataSetWriter
 
     }
 
-    protected void setNumericCell(Cell cell, BigDecimal value, Workbook workbook)
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("setNumericCell(cell={}, value={}, workbook={}) - start", 
-                new Object[] {cell, value, workbook} );
+    protected void setNumericCell(Cell cell, BigDecimal value, Workbook workbook) {
+	if (logger.isDebugEnabled())
+	    logger.debug("setNumericCell(cell={}, value={}, workbook={}) - start",
+		    new Object[] { cell, value, workbook });
 
-        cell.setCellValue( ((BigDecimal)value).doubleValue() );
+	cell.setCellValue(((BigDecimal) value).doubleValue());
 
-        DataFormat df = workbook.createDataFormat();
-        int scale = ((BigDecimal)value).scale();
-        short format;
-        if(scale <= 0){
-            format = df.getFormat("####");
-        }
-        else {
-            String zeros = createZeros(((BigDecimal)value).scale());
-            format = df.getFormat("####." + zeros);
-        }
-        if(logger.isDebugEnabled())
-            logger.debug("Using format '{}' for value '{}'.", String.valueOf(format), value);
+	DataFormat df = workbook.createDataFormat();
+	int scale = ((BigDecimal) value).scale();
+	short format;
+	if (scale <= 0) {
+	    format = df.getFormat("####");
+	} else {
+	    String zeros = createZeros(((BigDecimal) value).scale());
+	    format = df.getFormat("####." + zeros);
+	}
+	if (logger.isDebugEnabled())
+	    logger.debug("Using format '{}' for value '{}'.", String.valueOf(format), value);
 
-        CellStyle cellStyleNumber = getCellStyle(workbook, format);
-        cell.setCellStyle(cellStyleNumber);
+	CellStyle cellStyleNumber = getCellStyle(workbook, format);
+	cell.setCellStyle(cellStyleNumber);
     }
 
 //    public static Date get1900(Date date) {
@@ -295,10 +274,10 @@ public class XlsDataSetWriter
 //    }
 
     private static String createZeros(int count) {
-        return ZEROS.substring(0, count);
+	return ZEROS.substring(0, count);
     }
-    
+
     protected Workbook createWorkbook() {
-        return new HSSFWorkbook();
+	return new HSSFWorkbook();
     }
 }

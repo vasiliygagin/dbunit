@@ -30,16 +30,9 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 16, 2002
  */
-public interface IStatementFactory
-{
-    IBatchStatement createBatchStatement(IDatabaseConnection connection)
-            throws SQLException;
+public interface IStatementFactory {
+    IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException;
 
-    IPreparedBatchStatement createPreparedBatchStatement(String sql,
-            IDatabaseConnection connection) throws SQLException;
+    IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
+	    throws SQLException;
 }
-
-
-
-
-

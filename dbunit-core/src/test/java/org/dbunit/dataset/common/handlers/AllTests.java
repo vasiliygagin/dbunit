@@ -29,14 +29,12 @@ import junit.framework.TestSuite;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(EnforceHandlerTest.class));
-        suite.addTest(new TestSuite(HandlersTest.class));
-        suite.addTest(new TestSuite(PipelineTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(EnforceHandlerTest.class));
+	suite.addTest(new TestSuite(HandlersTest.class));
+	suite.addTest(new TestSuite(PipelineTest.class));
+	return suite;
     }
 }

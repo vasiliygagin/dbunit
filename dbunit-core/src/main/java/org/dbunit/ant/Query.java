@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since Dec 10, 2002
  */
-public class Query
-{
+public class Query {
 
     /**
      * Logger for this class
@@ -43,56 +42,35 @@ public class Query
     private String name;
     private String sql;
 
-    public Query()
-    {
+    public Query() {
     }
 
-    public String getName()
-    {
-        return name;
+    public String getName() {
+	return name;
     }
 
-    public void setName(String name)
-    {
-        logger.debug("setName(name={}) - start", name);
+    public void setName(String name) {
+	logger.debug("setName(name={}) - start", name);
 
-        this.name = name;
+	this.name = name;
     }
 
+    public String toString() {
+	StringBuffer result = new StringBuffer();
+	result.append("Query: ");
+	result.append(" name=" + name);
+	result.append(" sql=" + sql);
 
-    public String toString()
-    {
-        StringBuffer result = new StringBuffer();
-        result.append("Query: ");
-        result.append(" name=" + name);
-        result.append(" sql=" + sql);
-
-
-        return result.toString();
+	return result.toString();
     }
 
-    public String getSql()
-    {
-        return sql;
+    public String getSql() {
+	return sql;
     }
 
-    public void setSql(String sql)
-    {
-        logger.debug("setSql(sql={}) - start", sql);
+    public void setSql(String sql) {
+	logger.debug("setSql(sql={}) - start", sql);
 
-        this.sql = sql;
+	this.sql = sql;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

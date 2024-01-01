@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * @since May 19, 2003
  * @version $Revision$
  */
-public class MsSqlDataTypeFactory extends DefaultDataTypeFactory
-{
+public class MsSqlDataTypeFactory extends DefaultDataTypeFactory {
 
     /**
      * Logger for this class
@@ -47,44 +46,46 @@ public class MsSqlDataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"mssql", "Microsoft SQL Server"});
-    
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "mssql", "Microsoft SQL Server" });
+
     private static final DateTimeOffsetType DATE_TIME_OFFSET_TYPE = new DateTimeOffsetType();
 
     public static final int NCHAR = -8;
     public static final int NVARCHAR = -9;
     public static final int NTEXT = -10;
     public static final int NTEXT_MSSQL_2005 = -16;
-    
+
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts()
-    {
-      return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        // TODO : Process MS SQL Server custom datatype here
-        if(sqlType == Types.CHAR)
-        {
-            if (UniqueIdentifierType.UNIQUE_IDENTIFIER_TYPE.equals(sqlTypeName))
-            {
-                return new UniqueIdentifierType();
-            }
-        }
+	// TODO : Process MS SQL Server custom datatype here
+	if (sqlType == Types.CHAR) {
+	    if (UniqueIdentifierType.UNIQUE_IDENTIFIER_TYPE.equals(sqlTypeName)) {
+		return new UniqueIdentifierType();
+	    }
+	}
 
-        switch(sqlType) {
-            case NCHAR: return DataType.CHAR; // nchar
-            case NVARCHAR: return DataType.VARCHAR; // nvarchar
-            case NTEXT: return DataType.LONGVARCHAR; // ntext
-            case NTEXT_MSSQL_2005: return DataType.LONGVARCHAR; // ntext
-            case DateTimeOffsetType.TYPE: return DATE_TIME_OFFSET_TYPE;
-            default: return super.createDataType(sqlType, sqlTypeName);
-        }
+	switch (sqlType) {
+	case NCHAR:
+	    return DataType.CHAR; // nchar
+	case NVARCHAR:
+	    return DataType.VARCHAR; // nvarchar
+	case NTEXT:
+	    return DataType.LONGVARCHAR; // ntext
+	case NTEXT_MSSQL_2005:
+	    return DataType.LONGVARCHAR; // ntext
+	case DateTimeOffsetType.TYPE:
+	    return DATE_TIME_OFFSET_TYPE;
+	default:
+	    return super.createDataType(sqlType, sqlTypeName);
+	}
     }
 }

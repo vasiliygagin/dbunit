@@ -22,40 +22,41 @@ package org.dbunit.database.search;
 
 import org.dbunit.util.search.Edge;
 
-
 /**
  * 
  * FIXME remove - duplicates {@link ForeignKeyRelationshipEdge}
+ * 
  * @author Felipe Leme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.2.0
- * @deprecated this class duplicates {@link ForeignKeyRelationshipEdge} and should be removed
+ * @deprecated this class duplicates {@link ForeignKeyRelationshipEdge} and
+ *             should be removed
  */
 public class FKRelationshipEdge extends Edge {
 
-  // TODO: support multiple columns
-  private String fkColumn;
-  private String pkColumn;
-  
-  public FKRelationshipEdge(String tableFrom, String tableTo, String fkColumn, String pkColumn) {
-    super(tableFrom, tableTo);
-    this.fkColumn = fkColumn;
-    this.pkColumn = pkColumn;
-  }
+    // TODO: support multiple columns
+    private String fkColumn;
+    private String pkColumn;
 
-  public String getFKColumn() {
-    return fkColumn;
-  }
-  
-  public String getPKColumn() {
-    return pkColumn;
-  }
-  
-  public String toString() {
-    return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
-  }
-  
-  // TODO: hashcode and equals
+    public FKRelationshipEdge(String tableFrom, String tableTo, String fkColumn, String pkColumn) {
+	super(tableFrom, tableTo);
+	this.fkColumn = fkColumn;
+	this.pkColumn = pkColumn;
+    }
+
+    public String getFKColumn() {
+	return fkColumn;
+    }
+
+    public String getPKColumn() {
+	return pkColumn;
+    }
+
+    public String toString() {
+	return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
+    }
+
+    // TODO: hashcode and equals
 
 }

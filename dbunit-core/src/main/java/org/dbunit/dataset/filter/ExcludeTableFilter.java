@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import org.dbunit.dataset.DataSetException;
 
-
 /**
  * This filter hides specified tables from the filtered dataset. This
  * implementation do not modify the original table order from the filtered
@@ -35,8 +34,7 @@ import org.dbunit.dataset.DataSetException;
  * @since Mar 7, 2003
  * @version $Revision$
  */
-public class ExcludeTableFilter extends AbstractTableFilter implements ITableFilter
-{
+public class ExcludeTableFilter extends AbstractTableFilter implements ITableFilter {
 
     /**
      * Logger for this class
@@ -46,52 +44,44 @@ public class ExcludeTableFilter extends AbstractTableFilter implements ITableFil
     private final PatternMatcher _patternMatcher = new PatternMatcher();
 
     /**
-     * Create a new empty ExcludeTableFilter. Use {@link #excludeTable} to hide
-     * some tables.
+     * Create a new empty ExcludeTableFilter. Use {@link #excludeTable} to hide some
+     * tables.
      */
-    public ExcludeTableFilter()
-    {
+    public ExcludeTableFilter() {
     }
 
     /**
      * Create a new ExcludeTableFilter which prevent access to specified tables.
      */
-    public ExcludeTableFilter(String[] tableNames)
-    {
-        for (int i = 0; i < tableNames.length; i++)
-        {
-            String tableName = tableNames[i];
-            excludeTable(tableName);
-        }
+    public ExcludeTableFilter(String[] tableNames) {
+	for (int i = 0; i < tableNames.length; i++) {
+	    String tableName = tableNames[i];
+	    excludeTable(tableName);
+	}
     }
 
     /**
-     * Add a new refused table pattern name.
-     * The following wildcard characters are supported:
-     * '*' matches zero or more characters,
-     * '?' matches one character.
+     * Add a new refused table pattern name. The following wildcard characters are
+     * supported: '*' matches zero or more characters, '?' matches one character.
      */
-    public void excludeTable(String patternName)
-    {
-        logger.debug("excludeTable(patternName=" + patternName + ") - start");
+    public void excludeTable(String patternName) {
+	logger.debug("excludeTable(patternName=" + patternName + ") - start");
 
-        _patternMatcher.addPattern(patternName);
+	_patternMatcher.addPattern(patternName);
     }
 
-    public boolean isEmpty()
-    {
-        logger.debug("isEmpty() - start");
+    public boolean isEmpty() {
+	logger.debug("isEmpty() - start");
 
-        return _patternMatcher.isEmpty();
+	return _patternMatcher.isEmpty();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
-    public boolean isValidName(String tableName) throws DataSetException
-    {
-        logger.debug("isValidName(tableName=" + tableName + ") - start");
+    public boolean isValidName(String tableName) throws DataSetException {
+	logger.debug("isValidName(tableName=" + tableName + ") - start");
 
-        return !_patternMatcher.accept(tableName);
+	return !_patternMatcher.accept(tableName);
     }
 }

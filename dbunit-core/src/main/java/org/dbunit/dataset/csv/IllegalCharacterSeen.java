@@ -21,7 +21,6 @@
 
 package org.dbunit.dataset.csv;
 
-
 /**
  * @author fede
  * @author Last changed by: $Author$
@@ -30,6 +29,6 @@ package org.dbunit.dataset.csv;
  */
 public class IllegalCharacterSeen extends CsvParserException {
     public IllegalCharacterSeen(String message) {
-        super(message);
+	super(message);
     }
 }

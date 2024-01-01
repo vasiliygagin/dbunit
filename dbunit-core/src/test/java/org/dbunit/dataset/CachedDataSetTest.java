@@ -33,60 +33,49 @@ import org.xml.sax.InputSource;
  * @version $Revision$ $Date$
  * @since 1.x (Apr 18, 2003)
  */
-public class CachedDataSetTest extends AbstractDataSetDecoratorTest
-{
-    public CachedDataSetTest(String s)
-    {
-        super(s);
+public class CachedDataSetTest extends AbstractDataSetDecoratorTest {
+    public CachedDataSetTest(String s) {
+	super(s);
     }
 
-    protected IDataSet createDataSet() throws Exception
-    {
-        FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
-        return new CachedDataSet(new FlatXmlProducer(new InputSource(reader)));
+    protected IDataSet createDataSet() throws Exception {
+	FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
+	return new CachedDataSet(new FlatXmlProducer(new InputSource(reader)));
     }
 
-    public void testGetTable() throws Exception
-    {
-        super.testGetTable();
+    public void testGetTable() throws Exception {
+	super.testGetTable();
     }
 
     /**
      * Test constructor CacheDataSet(IDataSet dataSet).
      *
-     * The automated test inherited from AbstractDataSetDecoratorTest do not
-     * test this constructor.
+     * The automated test inherited from AbstractDataSetDecoratorTest do not test
+     * this constructor.
      */
     @Test
-    public void testCachedDataSetDataSetConstructor() throws Exception
-    {
-        final IDataSet cachedDataSetCreatedByProducer = createDataSet();
+    public void testCachedDataSetDataSetConstructor() throws Exception {
+	final IDataSet cachedDataSetCreatedByProducer = createDataSet();
 
-        // createDateSet() returns a CacheDataSet that was created using the
-        // producer constructor. By wrapping its returned value in another
-        // CachedDataSet, we test the CacheDataSet(IDataSet dataSet)
-        // constructor which this test is designed for.
-        final CachedDataSet cachedDataSetCreatedByDataSetConstructor =
-                new CachedDataSet(cachedDataSetCreatedByProducer);
+	// createDateSet() returns a CacheDataSet that was created using the
+	// producer constructor. By wrapping its returned value in another
+	// CachedDataSet, we test the CacheDataSet(IDataSet dataSet)
+	// constructor which this test is designed for.
+	final CachedDataSet cachedDataSetCreatedByDataSetConstructor = new CachedDataSet(
+		cachedDataSetCreatedByProducer);
 
-        // The test consist of iterating through all the tables found in
-        // cachedDataSetCreatedByProducer and see if
-        // cachedDataSetCreatedByDataSetConstructor has them also. If they
-        // are missing, something went wrong.
-        final ITableIterator iterator =
-                cachedDataSetCreatedByProducer.iterator();
-        while (iterator.next())
-        {
-            final String tableNameFromProducer =
-                    iterator.getTable().getTableMetaData().getTableName();
-            try
-            {
-                assertNotNull(cachedDataSetCreatedByDataSetConstructor
-                        .getTable(tableNameFromProducer));
-            } catch (final Exception exception)
-            {
-                fail("Table " + tableNameFromProducer + " was not cached.");
-            }
-        }
+	// The test consist of iterating through all the tables found in
+	// cachedDataSetCreatedByProducer and see if
+	// cachedDataSetCreatedByDataSetConstructor has them also. If they
+	// are missing, something went wrong.
+	final ITableIterator iterator = cachedDataSetCreatedByProducer.iterator();
+	while (iterator.next()) {
+	    final String tableNameFromProducer = iterator.getTable().getTableMetaData().getTableName();
+	    try {
+		assertNotNull(cachedDataSetCreatedByDataSetConstructor.getTable(tableNameFromProducer));
+	    } catch (final Exception exception) {
+		fail("Table " + tableNameFromProducer + " was not cached.");
+	    }
+	}
     }
 }

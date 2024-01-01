@@ -29,22 +29,13 @@ import junit.framework.TestSuite;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(DefaultFailureHandlerTest.class));
-        suite.addTest(new TestSuite(DbUnitAssertIT.class));
-        suite.addTest(new TestSuite(DiffCollectingFailureHandlerTest.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() throws Exception {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(DefaultFailureHandlerTest.class));
+	suite.addTest(new TestSuite(DbUnitAssertIT.class));
+	suite.addTest(new TestSuite(DiffCollectingFailureHandlerTest.class));
+	return suite;
     }
 
 }
-
-
-
-
-
-
-

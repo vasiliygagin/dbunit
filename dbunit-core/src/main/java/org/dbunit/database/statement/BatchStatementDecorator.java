@@ -36,10 +36,9 @@ import java.util.StringTokenizer;
 /**
  * @author Manuel Laflamme
  * @version $Revision$
- * @since Mar 16, 2002 
+ * @since Mar 16, 2002
  */
-public class BatchStatementDecorator implements IPreparedBatchStatement
-{
+public class BatchStatementDecorator implements IPreparedBatchStatement {
 
     /**
      * Logger for this class
@@ -51,77 +50,64 @@ public class BatchStatementDecorator implements IPreparedBatchStatement
     private StringBuffer _sqlBuffer;
     private int _index;
 
-    BatchStatementDecorator(String sql, IBatchStatement statement)
-    {
-        List list = new ArrayList();
-        StringTokenizer tokenizer = new StringTokenizer(sql, "?");
-        while (tokenizer.hasMoreTokens())
-        {
-            list.add(tokenizer.nextToken());
-        }
+    BatchStatementDecorator(String sql, IBatchStatement statement) {
+	List list = new ArrayList();
+	StringTokenizer tokenizer = new StringTokenizer(sql, "?");
+	while (tokenizer.hasMoreTokens()) {
+	    list.add(tokenizer.nextToken());
+	}
 
-        if (sql.endsWith("?"))
-        {
-            list.add("");
-        }
+	if (sql.endsWith("?")) {
+	    list.add("");
+	}
 
-        _sqlTemplate = (String[])list.toArray(new String[0]);
-        _statement = statement;
+	_sqlTemplate = (String[]) list.toArray(new String[0]);
+	_statement = statement;
 
-        // reset sql buffer
-        _index = 0;
-        _sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
+	// reset sql buffer
+	_index = 0;
+	_sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IPreparedBatchStatement interface
 
-    public void addValue(Object value, DataType dataType)
-            throws TypeCastException, SQLException
-    {
-        logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
+    public void addValue(Object value, DataType dataType) throws TypeCastException, SQLException {
+	logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
 
-        _sqlBuffer.append(DataSetUtils.getSqlValueString(value, dataType));
-        _sqlBuffer.append(_sqlTemplate[_index++]);
+	_sqlBuffer.append(DataSetUtils.getSqlValueString(value, dataType));
+	_sqlBuffer.append(_sqlTemplate[_index++]);
     }
 
-    public void addBatch() throws SQLException
-    {
-        logger.debug("addBatch() - start");
+    public void addBatch() throws SQLException {
+	logger.debug("addBatch() - start");
 
-        _statement.addBatch(_sqlBuffer.toString());
+	_statement.addBatch(_sqlBuffer.toString());
 
-        // reset sql buffer
-        _index = 0;
-        _sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
+	// reset sql buffer
+	_index = 0;
+	_sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
     }
 
-    public int executeBatch() throws SQLException
-    {
-        logger.debug("executeBatch() - start");
+    public int executeBatch() throws SQLException {
+	logger.debug("executeBatch() - start");
 
-        return _statement.executeBatch();
+	return _statement.executeBatch();
     }
 
-    public void clearBatch() throws SQLException
-    {
-        logger.debug("clearBatch() - start");
+    public void clearBatch() throws SQLException {
+	logger.debug("clearBatch() - start");
 
-        _statement.clearBatch();
+	_statement.clearBatch();
 
-        // reset sql buffer
-        _index = 0;
-        _sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
+	// reset sql buffer
+	_index = 0;
+	_sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
     }
 
-    public void close() throws SQLException
-    {
-        logger.debug("close() - start");
+    public void close() throws SQLException {
+	logger.debug("close() - start");
 
-        _statement.close();
+	_statement.close();
     }
 }
-
-
-
-

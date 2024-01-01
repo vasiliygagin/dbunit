@@ -30,21 +30,19 @@ import org.dbunit.dataset.ITable;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public interface FailureHandler extends DifferenceListener, FailureFactory
-{
+public interface FailureHandler extends DifferenceListener, FailureFactory {
 
     /**
-     * Returns a string to be appended to the assertion failure message. Is used to 
+     * Returns a string to be appended to the assertion failure message. Is used to
      * provide some more information about a failure (for example to print out some
      * PK columns for identifying the failed rows in the DB).
+     * 
      * @param expectedTable
      * @param actualTable
-     * @param row The row for which the assertion failed
-     * @param columnName The column for which the assertion failed
+     * @param row           The row for which the assertion failed
+     * @param columnName    The column for which the assertion failed
      * @return A string that is appended to the assertion failure message
      */
-    public String getAdditionalInfo(ITable expectedTable, ITable actualTable,
-            int row, String columnName);
-
+    public String getAdditionalInfo(ITable expectedTable, ITable actualTable, int row, String columnName);
 
 }

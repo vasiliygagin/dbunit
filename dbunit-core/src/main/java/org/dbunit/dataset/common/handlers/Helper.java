@@ -24,7 +24,6 @@ package org.dbunit.dataset.common.handlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author fede
  * @author Last changed by: $Author$
@@ -43,15 +42,15 @@ public abstract class Helper {
     abstract void helpWith(char c) throws PipelineException;
 
     public boolean allowForNoMoreInput() throws IllegalStateException {
-        return true;
+	return true;
     }
 
     PipelineComponent getHandler() {
-        return handler;
+	return handler;
     }
 
     void setHandler(PipelineComponent handler) {
-        logger.debug("setHandler(handler={}) - start", handler);
-        this.handler = handler;
+	logger.debug("setHandler(handler={}) - start", handler);
+	this.handler = handler;
     }
 }

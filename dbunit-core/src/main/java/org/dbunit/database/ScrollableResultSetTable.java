@@ -36,8 +36,7 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public class ScrollableResultSetTable extends AbstractResultSetTable
-{
+public class ScrollableResultSetTable extends AbstractResultSetTable {
 
     /**
      * Logger for this class
@@ -47,113 +46,92 @@ public class ScrollableResultSetTable extends AbstractResultSetTable
     private final int _rowCount;
 
     public ScrollableResultSetTable(ITableMetaData metaData, ResultSet resultSet)
-            throws SQLException, DataSetException
-    {
-        super(metaData, resultSet);
+	    throws SQLException, DataSetException {
+	super(metaData, resultSet);
 
-        try
-        {
-            if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY)
-            {
-                throw new SQLException("Forward only ResultSet not supported");
-            }
+	try {
+	    if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY) {
+		throw new SQLException("Forward only ResultSet not supported");
+	    }
 
-            _resultSet.last();
-            _rowCount = _resultSet.getRow();
-        }
-        catch (SQLException e)
-        {
-            close();
-            throw e;
-        }
+	    _resultSet.last();
+	    _rowCount = _resultSet.getRow();
+	} catch (SQLException e) {
+	    close();
+	    throw e;
+	}
     }
 
-    public ScrollableResultSetTable(ITableMetaData metaData,
-            IDatabaseConnection connection) throws DataSetException, SQLException
-    {
-        super(metaData, connection);
+    public ScrollableResultSetTable(ITableMetaData metaData, IDatabaseConnection connection)
+	    throws DataSetException, SQLException {
+	super(metaData, connection);
 
-        try
-        {
-            if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY)
-            {
-                throw new SQLException("Forward only ResultSet not supported");
-            }
+	try {
+	    if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY) {
+		throw new SQLException("Forward only ResultSet not supported");
+	    }
 
-            _resultSet.last();
-            _rowCount = _resultSet.getRow();
-        }
-        catch (SQLException e)
-        {
-            close();
-            throw e;
-        }
+	    _resultSet.last();
+	    _rowCount = _resultSet.getRow();
+	} catch (SQLException e) {
+	    close();
+	    throw e;
+	}
     }
 
-    public ScrollableResultSetTable(String tableName, String selectStatement,
-            IDatabaseConnection connection) throws DataSetException, SQLException
-    {
-        super(tableName, selectStatement, connection);
+    public ScrollableResultSetTable(String tableName, String selectStatement, IDatabaseConnection connection)
+	    throws DataSetException, SQLException {
+	super(tableName, selectStatement, connection);
 
-        try
-        {
-            if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY)
-            {
-                throw new SQLException("Forward only ResultSet not supported");
-            }
+	try {
+	    if (_resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY) {
+		throw new SQLException("Forward only ResultSet not supported");
+	    }
 
-            _resultSet.last();
-            _rowCount = _resultSet.getRow();
-        }
-        catch (SQLException e)
-        {
-            close();
-            throw e;
-        }
+	    _resultSet.last();
+	    _rowCount = _resultSet.getRow();
+	} catch (SQLException e) {
+	    close();
+	    throw e;
+	}
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
-    public int getRowCount()
-    {
-        return _rowCount;
+    public int getRowCount() {
+	return _rowCount;
     }
 
-    public Object getValue(int row, String columnName) throws DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), columnName);
+    public Object getValue(int row, String columnName) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), columnName);
 
-        assertValidRowIndex(row);
+	assertValidRowIndex(row);
 
-        try
-        {
-            _resultSet.absolute(row + 1);
+	try {
+	    _resultSet.absolute(row + 1);
 
-            int columnIndex = getColumnIndex(columnName);
-            Column column = _metaData.getColumns()[columnIndex];
-            return column.getDataType().getSqlValue(columnIndex + 1, _resultSet);
-        }
-        catch (SQLException e)
-        {
-            throw new DataSetException(e);
-        }
+	    int columnIndex = getColumnIndex(columnName);
+	    Column column = _metaData.getColumns()[columnIndex];
+	    return column.getDataType().getSqlValue(columnIndex + 1, _resultSet);
+	} catch (SQLException e) {
+	    throw new DataSetException(e);
+	}
     }
 
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder(2000);
+    public String toString() {
+	StringBuilder sb = new StringBuilder(2000);
 
-        sb.append(super.toString());
-        sb.append(", ");
-        sb.append(getClass().getName()).append("[");
-        sb.append("_rowCount=[").append(_rowCount).append("]");
-        sb.append("]");
+	sb.append(super.toString());
+	sb.append(", ");
+	sb.append(getClass().getName()).append("[");
+	sb.append("_rowCount=[").append(_rowCount).append("]");
+	sb.append("]");
 
-        return sb.toString();
+	return sb.toString();
     }
 }

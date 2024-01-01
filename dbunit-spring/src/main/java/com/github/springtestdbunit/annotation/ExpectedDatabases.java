@@ -19,10 +19,11 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface ExpectedDatabases {
 
-	/**
-	 * The {@link ExpectedDatabase} annotations to apply.
-	 * @return the {@link ExpectedDatabase} annotations
-	 */
-	ExpectedDatabase[] value();
+    /**
+     * The {@link ExpectedDatabase} annotations to apply.
+     * 
+     * @return the {@link ExpectedDatabase} annotations
+     */
+    ExpectedDatabase[] value();
 
 }

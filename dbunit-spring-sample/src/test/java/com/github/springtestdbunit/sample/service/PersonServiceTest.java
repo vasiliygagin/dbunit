@@ -22,22 +22,22 @@ import com.github.springtestdbunit.sample.entity.Person;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class PersonServiceTest {
 
-	@Autowired
-	private PersonService personService;
+    @Autowired
+    private PersonService personService;
 
-	@Test
-	@DatabaseSetup("sampleData.xml")
-	public void testFind() throws Exception {
-		List<Person> personList = this.personService.find("hil");
-		assertEquals(1, personList.size());
-		assertEquals("Phillip", personList.get(0).getFirstName());
-	}
+    @Test
+    @DatabaseSetup("sampleData.xml")
+    public void testFind() throws Exception {
+	List<Person> personList = this.personService.find("hil");
+	assertEquals(1, personList.size());
+	assertEquals("Phillip", personList.get(0).getFirstName());
+    }
 
-	@Test
-	@DatabaseSetup("sampleData.xml")
-	@ExpectedDatabase("expectedData.xml")
-	public void testRemove() throws Exception {
-		this.personService.remove(1);
-	}
+    @Test
+    @DatabaseSetup("sampleData.xml")
+    @ExpectedDatabase("expectedData.xml")
+    public void testRemove() throws Exception {
+	this.personService.remove(1);
+    }
 
 }

@@ -46,149 +46,142 @@ import org.dbunit.util.search.SearchException;
  */
 public class TablesDependencyHelperTest extends TestCase {
 
-  
     private Connection jdbcConnection;
-  
+
     private IDatabaseConnection connection;
-  
-    protected void setUp( String sqlFile ) throws Exception {
-    	this.setUp(new String[]{sqlFile});
+
+    protected void setUp(String sqlFile) throws Exception {
+	this.setUp(new String[] { sqlFile });
     }
 
-    protected void setUp( String[] sqlFileList ) throws Exception {
-        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-        for (int i = 0; i < sqlFileList.length; i++) {
-        	File sql = TestUtils.getFile("sql/" + sqlFileList[i]);
-            DdlExecutor.executeDdlFile(sql, this.jdbcConnection);
-		}
-        this.connection = new DatabaseConnection(jdbcConnection);
+    protected void setUp(String[] sqlFileList) throws Exception {
+	this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
+	for (int i = 0; i < sqlFileList.length; i++) {
+	    File sql = TestUtils.getFile("sql/" + sqlFileList[i]);
+	    DdlExecutor.executeDdlFile(sql, this.jdbcConnection);
+	}
+	this.connection = new DatabaseConnection(jdbcConnection);
     }
 
     protected void tearDown() throws Exception {
-        HypersonicEnvironment.shutdown(this.jdbcConnection);
-        this.jdbcConnection.close();
+	HypersonicEnvironment.shutdown(this.jdbcConnection);
+	this.jdbcConnection.close();
 //      HypersonicEnvironment.deleteFiles( "tempdb" );
-    }   
-
-
-    public void testGetDependentTablesFromOneTable() throws Exception {    
-        setUp( ImportNodesFilterSearchCallbackTest.SQL_FILE );    
-        String[][] allInput = ImportNodesFilterSearchCallbackTest.SINGLE_INPUT;
-        String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            String[] actualOutput = TablesDependencyHelper.getDependentTables( this.connection, input[0]);
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutput );
-        }           
     }
 
-    public void testGetDependentTablesFromOneTable_RootTableDoesNotExist() throws Exception {    
-        setUp( ImportNodesFilterSearchCallbackTest.SQL_FILE );    
-
-        try
-        {
-            TablesDependencyHelper.getDependentTables( this.connection, "XXXXXX_TABLE_NON_EXISTING");
-            fail("Should not be able to get the dependent tables for a non existing input table");
-        }
-        catch(SearchException expected)
-        {
-            Throwable cause = expected.getCause();
-            assertTrue(cause instanceof NoSuchTableException);
-            String expectedMessage = "The table 'XXXXXX_TABLE_NON_EXISTING' does not exist in schema 'null'";
-            assertEquals(expectedMessage, cause.getMessage());
-        }
+    public void testGetDependentTablesFromOneTable() throws Exception {
+	setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+	String[][] allInput = ImportNodesFilterSearchCallbackTest.SINGLE_INPUT;
+	String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.SINGLE_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    String[] actualOutput = TablesDependencyHelper.getDependentTables(this.connection, input[0]);
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+	}
     }
 
-    public void testGetDependentTablesFromManyTables() throws Exception {    
-        setUp( ImportNodesFilterSearchCallbackTest.SQL_FILE );    
-        String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
-        String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            String[] actualOutput = TablesDependencyHelper.getDependentTables( this.connection, input);
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutput );
-        }           
+    public void testGetDependentTablesFromOneTable_RootTableDoesNotExist() throws Exception {
+	setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+
+	try {
+	    TablesDependencyHelper.getDependentTables(this.connection, "XXXXXX_TABLE_NON_EXISTING");
+	    fail("Should not be able to get the dependent tables for a non existing input table");
+	} catch (SearchException expected) {
+	    Throwable cause = expected.getCause();
+	    assertTrue(cause instanceof NoSuchTableException);
+	    String expectedMessage = "The table 'XXXXXX_TABLE_NON_EXISTING' does not exist in schema 'null'";
+	    assertEquals(expectedMessage, cause.getMessage());
+	}
     }
 
-    public void testGetAllDependentTablesFromOneTable() throws Exception {    
-        setUp( ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE );    
-        String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            String[] actualOutput = TablesDependencyHelper.getAllDependentTables( this.connection, input[0]);
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutput );
-        }           
+    public void testGetDependentTablesFromManyTables() throws Exception {
+	setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+	String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
+	String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    String[] actualOutput = TablesDependencyHelper.getDependentTables(this.connection, input);
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+	}
     }
 
-    public void testGetAllDependentTablesFromManyTables() throws Exception {    
-        setUp( ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE );    
-        String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.COMPOUND_INPUT;
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.COMPOUND_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            String[] actualOutput = TablesDependencyHelper.getAllDependentTables( this.connection, input);
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutput );
-        }           
+    public void testGetAllDependentTablesFromOneTable() throws Exception {
+	setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
+	String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
+	String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    String[] actualOutput = TablesDependencyHelper.getAllDependentTables(this.connection, input[0]);
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+	}
     }
 
-    public void testGetAllDatasetFromOneTable() throws Exception {    
-        setUp( ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE );    
-        String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            IDataSet actualOutput = TablesDependencyHelper.getAllDataset( this.connection, input[0], new HashSet());
-            String[] actualOutputTables = actualOutput.getTableNames();
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutputTables );
-        }           
+    public void testGetAllDependentTablesFromManyTables() throws Exception {
+	setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
+	String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.COMPOUND_INPUT;
+	String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.COMPOUND_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    String[] actualOutput = TablesDependencyHelper.getAllDependentTables(this.connection, input);
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+	}
+    }
+
+    public void testGetAllDatasetFromOneTable() throws Exception {
+	setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
+	String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
+	String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
+	    String[] actualOutputTables = actualOutput.getTableNames();
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
+	}
     }
 
     public void testGetAllDatasetFromOneTable_SeparateSchema() throws Exception {
-        setUp( new String[] {
-        		"hypersonic_switch_schema.sql", 
-        		ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE
-        		} );
-        
-        String[][] allInputWithSchema = ImportAndExportKeysSearchCallbackOwnFileTest.getSingleInputWithSchema("TEST_SCHEMA");
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInputWithSchema.length; i++) {
-            String[] input = allInputWithSchema[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            IDataSet actualOutput = TablesDependencyHelper.getAllDataset( this.connection, input[0], new HashSet());
-            String[] actualOutputTables = actualOutput.getTableNames();
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutputTables );
-        }
+	setUp(new String[] { "hypersonic_switch_schema.sql", ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE });
+
+	String[][] allInputWithSchema = ImportAndExportKeysSearchCallbackOwnFileTest
+		.getSingleInputWithSchema("TEST_SCHEMA");
+	String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
+	for (int i = 0; i < allInputWithSchema.length; i++) {
+	    String[] input = allInputWithSchema[i];
+	    String[] expectedOutput = allExpectedOutput[i];
+	    IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
+	    String[] actualOutputTables = actualOutput.getTableNames();
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
+	}
     }
 
     /**
-     * Ensure the order is not lost on the way because of the conversion between Map and Array
+     * Ensure the order is not lost on the way because of the conversion between Map
+     * and Array
+     * 
      * @throws Exception
      */
-    public void testGetDatasetFromManyTables() throws Exception 
-    {    
-        setUp( ImportNodesFilterSearchCallbackTest.SQL_FILE );    
-        String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
-        String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            PkTableMap inputMap = new PkTableMap();
-            for (int j = 0; j < input.length; j++) {
-                inputMap.put(input[j], new TreeSet());
-            }
+    public void testGetDatasetFromManyTables() throws Exception {
+	setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+	String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
+	String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;
+	for (int i = 0; i < allInput.length; i++) {
+	    String[] input = allInput[i];
+	    PkTableMap inputMap = new PkTableMap();
+	    for (int j = 0; j < input.length; j++) {
+		inputMap.put(input[j], new TreeSet());
+	    }
 
-            String[] expectedOutput = allExpectedOutput[i];
-            IDataSet actualOutput = TablesDependencyHelper.getDataset( this.connection, inputMap);
-            String[] actualOutputArray = actualOutput.getTableNames();
-            ArrayAssert.assertEquals( "output didn't match for i=" + i, expectedOutput, actualOutputArray );
-        }           
+	    String[] expectedOutput = allExpectedOutput[i];
+	    IDataSet actualOutput = TablesDependencyHelper.getDataset(this.connection, inputMap);
+	    String[] actualOutputArray = actualOutput.getTableNames();
+	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputArray);
+	}
     }
-
 
     // TODO ImportAndExportKeysSearchCallbackOwnFileTest
 

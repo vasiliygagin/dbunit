@@ -30,102 +30,93 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 2.3.0
  */
-public class QualifiedTableNameTest extends TestCase 
-{
+public class QualifiedTableNameTest extends TestCase {
 
-	public void testQualifiedTableNamePresent_PrecedesDefaultSchemaName()
-	{
-		QualifiedTableName qualifiedTableName = new QualifiedTableName("MYSCHEMA.MYTABLE", "DEFAULT_SCHEMA");
-		assertEquals("MYSCHEMA", qualifiedTableName.getSchema());
-		assertEquals("MYTABLE", qualifiedTableName.getTable());
-		assertEquals("MYSCHEMA.MYTABLE", qualifiedTableName.getQualifiedName());
-	}
-
-	public void testQualifiedTableNameNotPresentUsingDefaultSchema()
-	{
-		QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", "DEFAULT_SCHEMA");
-		assertEquals("DEFAULT_SCHEMA", qualifiedTableName.getSchema());
-		assertEquals("MYTABLE", qualifiedTableName.getTable());
-		assertEquals("DEFAULT_SCHEMA.MYTABLE", qualifiedTableName.getQualifiedName());
-	}
-
-	public void testQualifiedTableNameNotPresentAndNoDefaultSchema()
-	{
-		QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", null);
-		assertEquals(null, qualifiedTableName.getSchema());
-		assertEquals("MYTABLE", qualifiedTableName.getTable());
-		assertEquals("MYTABLE", qualifiedTableName.getQualifiedName());
-	}
-
-	public void testQualifiedTableNameNotPresentAndEmptyDefaultSchema()
-	{
-		QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", "");
-		assertEquals("", qualifiedTableName.getSchema());
-		assertEquals("MYTABLE", qualifiedTableName.getTable());
-		assertEquals("MYTABLE", qualifiedTableName.getQualifiedName());
-	}
-
-	public void testGetQualifiedTableName()
-	{
-		String qualifiedName = new QualifiedTableName("MY_SCHEMA.MY_TABLE", null, "'?'").getQualifiedName();
-		assertEquals("'MY_SCHEMA'.'MY_TABLE'", qualifiedName);
-	}
-	
-	public void testGetQualifiedTableName_DefaultSchema()
-	{
-		String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'").getQualifiedName();
-		assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
-	}
-	
-	public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled()
-	{
-		DatabaseConfig config = new DatabaseConfig();
-		config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
-		String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null).getQualifiedNameIfEnabled(config);
-		assertEquals("DEFAULT_SCHEMA.MY_TABLE", qualifiedName);
-	}
-
-	public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled()
-	{
-		DatabaseConfig config = new DatabaseConfig();
-		config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
-		String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null).getQualifiedNameIfEnabled(config);
-		assertEquals("MY_TABLE", qualifiedName);
-	}
-
-	public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_Escaping()
-	{
-		DatabaseConfig config = new DatabaseConfig();
-		config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
-		String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'").getQualifiedNameIfEnabled(config);
-		assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
-	}
-
-	public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled_Escaping()
-	{
-		DatabaseConfig config = new DatabaseConfig();
-		config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
-		String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'").getQualifiedNameIfEnabled(config);
-		assertEquals("'MY_TABLE'", qualifiedName);
-	}
-	
-	public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_EscapingWithoutQuestionmark()
-    {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
-        String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'").getQualifiedNameIfEnabled(config);
-        assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
+    public void testQualifiedTableNamePresent_PrecedesDefaultSchemaName() {
+	QualifiedTableName qualifiedTableName = new QualifiedTableName("MYSCHEMA.MYTABLE", "DEFAULT_SCHEMA");
+	assertEquals("MYSCHEMA", qualifiedTableName.getSchema());
+	assertEquals("MYTABLE", qualifiedTableName.getTable());
+	assertEquals("MYSCHEMA.MYTABLE", qualifiedTableName.getQualifiedName());
     }
 
-	public void testConstructorWithNullTable()
-	{
-		try {
-			new QualifiedTableName(null, "SCHEMA");
-			fail("Should not be able to create object with null table");
-		}
-		catch(NullPointerException expected){
-			assertEquals("The parameter 'tableName' must not be null", expected.getMessage());
-		}
+    public void testQualifiedTableNameNotPresentUsingDefaultSchema() {
+	QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", "DEFAULT_SCHEMA");
+	assertEquals("DEFAULT_SCHEMA", qualifiedTableName.getSchema());
+	assertEquals("MYTABLE", qualifiedTableName.getTable());
+	assertEquals("DEFAULT_SCHEMA.MYTABLE", qualifiedTableName.getQualifiedName());
+    }
+
+    public void testQualifiedTableNameNotPresentAndNoDefaultSchema() {
+	QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", null);
+	assertEquals(null, qualifiedTableName.getSchema());
+	assertEquals("MYTABLE", qualifiedTableName.getTable());
+	assertEquals("MYTABLE", qualifiedTableName.getQualifiedName());
+    }
+
+    public void testQualifiedTableNameNotPresentAndEmptyDefaultSchema() {
+	QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", "");
+	assertEquals("", qualifiedTableName.getSchema());
+	assertEquals("MYTABLE", qualifiedTableName.getTable());
+	assertEquals("MYTABLE", qualifiedTableName.getQualifiedName());
+    }
+
+    public void testGetQualifiedTableName() {
+	String qualifiedName = new QualifiedTableName("MY_SCHEMA.MY_TABLE", null, "'?'").getQualifiedName();
+	assertEquals("'MY_SCHEMA'.'MY_TABLE'", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema() {
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'").getQualifiedName();
+	assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled() {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null)
+		.getQualifiedNameIfEnabled(config);
+	assertEquals("DEFAULT_SCHEMA.MY_TABLE", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled() {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null)
+		.getQualifiedNameIfEnabled(config);
+	assertEquals("MY_TABLE", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_Escaping() {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'")
+		.getQualifiedNameIfEnabled(config);
+	assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled_Escaping() {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'")
+		.getQualifiedNameIfEnabled(config);
+	assertEquals("'MY_TABLE'", qualifiedName);
+    }
+
+    public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_EscapingWithoutQuestionmark() {
+	DatabaseConfig config = new DatabaseConfig();
+	config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+	String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'")
+		.getQualifiedNameIfEnabled(config);
+	assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
+    }
+
+    public void testConstructorWithNullTable() {
+	try {
+	    new QualifiedTableName(null, "SCHEMA");
+	    fail("Should not be able to create object with null table");
+	} catch (NullPointerException expected) {
+	    assertEquals("The parameter 'tableName' must not be null", expected.getMessage());
 	}
+    }
 
 }

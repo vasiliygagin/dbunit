@@ -35,15 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapter to handle conversion between Postgresql
- * native UUID type and Strings.
+ * Adapter to handle conversion between Postgresql native UUID type and Strings.
  *
  * @author Jarvis Cochrane (jarvis@cochrane.com.au)
  * @author Last changed by: $Author$
  * @since Apr 27, 2009
  */
-public class UuidType
-        extends AbstractDataType {
+public class UuidType extends AbstractDataType {
 
     /**
      * Logger for this class
@@ -51,51 +49,51 @@ public class UuidType
     private static final Logger logger = LoggerFactory.getLogger(UuidType.class);
 
     public UuidType() {
-        super("uuid", Types.OTHER, String.class, false);
+	super("uuid", Types.OTHER, String.class, false);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-        return resultSet.getString(column);
+	return resultSet.getString(column);
     }
 
-    public void setSqlValue(Object uuid, int column,
-                            PreparedStatement statement) throws SQLException, TypeCastException {
-        statement.setObject(column, getUUID(uuid, statement.getConnection()));
+    public void setSqlValue(Object uuid, int column, PreparedStatement statement)
+	    throws SQLException, TypeCastException {
+	statement.setObject(column, getUUID(uuid, statement.getConnection()));
     }
 
     public Object typeCast(Object arg0) throws TypeCastException {
-        return (arg0 == null) ? null : arg0.toString();
+	return (arg0 == null) ? null : arg0.toString();
     }
 
     private Object getUUID(Object value, Connection connection) throws TypeCastException {
 
-        logger.debug("getUUID(value={}, connection={}) - start", value, connection);
+	logger.debug("getUUID(value={}, connection={}) - start", value, connection);
 
-        Object tempUUID = null;
+	Object tempUUID = null;
 
-        try {
-            Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
-            Constructor ct = aPGObjectClass.getConstructor(null);
-            tempUUID = ct.newInstance(null);
+	try {
+	    Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
+	    Constructor ct = aPGObjectClass.getConstructor(null);
+	    tempUUID = ct.newInstance(null);
 
-            Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[]{String.class});
-            setTypeMethod.invoke(tempUUID, new Object[]{"uuid"});
+	    Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
+	    setTypeMethod.invoke(tempUUID, new Object[] { "uuid" });
 
-            Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[]{String.class});
-            setValueMethod.invoke(tempUUID, new Object[]{value.toString()});
+	    Method setValueMethod = aPGObjectClass.getMethod("setValue", new Class[] { String.class });
+	    setValueMethod.invoke(tempUUID, new Object[] { value.toString() });
 
-        } catch (ClassNotFoundException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InvocationTargetException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (NoSuchMethodException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (IllegalAccessException e) {
-            throw new TypeCastException(value, this, e);
-        } catch (InstantiationException e) {
-            throw new TypeCastException(value, this, e);
-        }
+	} catch (ClassNotFoundException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InvocationTargetException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (NoSuchMethodException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (IllegalAccessException e) {
+	    throw new TypeCastException(value, this, e);
+	} catch (InstantiationException e) {
+	    throw new TypeCastException(value, this, e);
+	}
 
-        return tempUUID;
+	return tempUUID;
     }
 }

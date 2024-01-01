@@ -29,28 +29,23 @@ import org.dbunit.dataset.MockDataSet;
  * @since Apr 6, 2003
  * @version $Revision$
  */
-public class SequenceTableIteratorTest extends AbstractTableIteratorTest
-{
-    public SequenceTableIteratorTest(String s)
-    {
-        super(s);
+public class SequenceTableIteratorTest extends AbstractTableIteratorTest {
+    public SequenceTableIteratorTest(String s) {
+	super(s);
     }
 
-    protected ITableIterator getIterator() throws Exception
-    {
-        String[] expectedNames = getExpectedNames();
-        MockDataSet dataSet = new MockDataSet();
-        for (int i = 0; i < expectedNames.length; i++)
-        {
-            String tableName = expectedNames[i];
-            dataSet.addEmptyTable(tableName);
-        }
+    protected ITableIterator getIterator() throws Exception {
+	String[] expectedNames = getExpectedNames();
+	MockDataSet dataSet = new MockDataSet();
+	for (int i = 0; i < expectedNames.length; i++) {
+	    String tableName = expectedNames[i];
+	    dataSet.addEmptyTable(tableName);
+	}
 
-        return new SequenceTableIterator(expectedNames, dataSet);
+	return new SequenceTableIterator(expectedNames, dataSet);
     }
 
-    protected ITableIterator getEmptyIterator() throws Exception
-    {
-        return new SequenceTableIterator(new String[0], new MockDataSet());
+    protected ITableIterator getEmptyIterator() throws Exception {
+	return new SequenceTableIterator(new String[0], new MockDataSet());
     }
 }

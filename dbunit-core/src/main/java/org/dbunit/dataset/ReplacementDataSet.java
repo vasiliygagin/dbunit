@@ -27,15 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Decorator that replace configured values from the decorated dataset
- * with replacement values.
+ * Decorator that replace configured values from the decorated dataset with
+ * replacement values.
  *
  * @author Manuel Laflamme
  * @since Mar 17, 2003
  * @version $Revision$
  */
-public class ReplacementDataSet extends AbstractDataSet
-{
+public class ReplacementDataSet extends AbstractDataSet {
 
     /**
      * Logger for this class
@@ -49,178 +48,159 @@ public class ReplacementDataSet extends AbstractDataSet
     private String _endDelim;
     private boolean _strictReplacement;
 
-
     /**
      * Create a new ReplacementDataSet object that decorates the specified dataset.
      *
      * @param dataSet the decorated table
      */
-    public ReplacementDataSet(IDataSet dataSet)
-    {
-        this(dataSet, new HashMap(), new HashMap());
+    public ReplacementDataSet(IDataSet dataSet) {
+	this(dataSet, new HashMap(), new HashMap());
     }
 
     /**
      * Create a new ReplacementDataSet object that decorates the specified dataset.
      *
-     * @param dataSet the decorated dataset
-     * @param objectMap the replacement objects mapping
+     * @param dataSet      the decorated dataset
+     * @param objectMap    the replacement objects mapping
      * @param substringMap the replacement substrings mapping
      */
-    public ReplacementDataSet(IDataSet dataSet, Map objectMap, Map substringMap)
-    {
-        super(dataSet.isCaseSensitiveTableNames());
-        _dataSet = dataSet;
-        _objectMap = objectMap == null ? new HashMap() : objectMap;
-        _substringMap = substringMap == null ? new HashMap() : substringMap;
+    public ReplacementDataSet(IDataSet dataSet, Map objectMap, Map substringMap) {
+	super(dataSet.isCaseSensitiveTableNames());
+	_dataSet = dataSet;
+	_objectMap = objectMap == null ? new HashMap() : objectMap;
+	_substringMap = substringMap == null ? new HashMap() : substringMap;
     }
 
     /**
-     * Setting this property to true indicates that when no replacement
-     * is found for a delimited substring the replacement will fail fast.
+     * Setting this property to true indicates that when no replacement is found for
+     * a delimited substring the replacement will fail fast.
      * 
      * @param strictReplacement true if replacement should be strict
      */
     public void setStrictReplacement(boolean strictReplacement) {
-        this._strictReplacement = strictReplacement;
+	this._strictReplacement = strictReplacement;
     }
-    
+
     /**
      * Add a new Object replacement mapping.
      *
-     * @param originalObject the object to replace
+     * @param originalObject    the object to replace
      * @param replacementObject the replacement object
      */
-    public void addReplacementObject(Object originalObject, Object replacementObject)
-    {
-        logger.debug("addReplacementObject(originalObject={}, replacementObject={}) - start", originalObject, replacementObject);
+    public void addReplacementObject(Object originalObject, Object replacementObject) {
+	logger.debug("addReplacementObject(originalObject={}, replacementObject={}) - start", originalObject,
+		replacementObject);
 
-        _objectMap.put(originalObject, replacementObject);
+	_objectMap.put(originalObject, replacementObject);
     }
 
     /**
      * Add a new substring replacement mapping.
      *
-     * @param originalSubstring the substring to replace
+     * @param originalSubstring    the substring to replace
      * @param replacementSubstring the replacement substring
      */
-    public void addReplacementSubstring(String originalSubstring,
-            String replacementSubstring)
-    {
-        logger.debug("addReplacementSubstring(originalSubstring={}, replacementSubstring={}) - start", originalSubstring, replacementSubstring);
+    public void addReplacementSubstring(String originalSubstring, String replacementSubstring) {
+	logger.debug("addReplacementSubstring(originalSubstring={}, replacementSubstring={}) - start",
+		originalSubstring, replacementSubstring);
 
-        if (originalSubstring == null || replacementSubstring == null)
-        {
-            throw new NullPointerException();
-        }
+	if (originalSubstring == null || replacementSubstring == null) {
+	    throw new NullPointerException();
+	}
 
-        _substringMap.put(originalSubstring, replacementSubstring);
+	_substringMap.put(originalSubstring, replacementSubstring);
     }
 
     /**
      * Sets substring delimiters.
      */
-    public void setSubstringDelimiters(String startDelimiter, String endDelimiter)
-    {
-        logger.debug("setSubstringDelimiters(startDelimiter={}, endDelimiter={}) - start", startDelimiter, endDelimiter);
+    public void setSubstringDelimiters(String startDelimiter, String endDelimiter) {
+	logger.debug("setSubstringDelimiters(startDelimiter={}, endDelimiter={}) - start", startDelimiter,
+		endDelimiter);
 
-        if (startDelimiter == null || endDelimiter == null)
-        {
-            throw new NullPointerException();
-        }
+	if (startDelimiter == null || endDelimiter == null) {
+	    throw new NullPointerException();
+	}
 
-        _startDelim = startDelimiter;
-        _endDelim = endDelimiter;
+	_startDelim = startDelimiter;
+	_endDelim = endDelimiter;
     }
 
-    private ReplacementTable createReplacementTable(ITable table)
-    {
-        logger.debug("createReplacementTable(table={}) - start", table);
-        
-        ReplacementTable replacementTable = new ReplacementTable(
-                table, _objectMap, _substringMap, _startDelim, _endDelim);
-        replacementTable.setStrictReplacement(_strictReplacement);
-        return replacementTable;
+    private ReplacementTable createReplacementTable(ITable table) {
+	logger.debug("createReplacementTable(table={}) - start", table);
+
+	ReplacementTable replacementTable = new ReplacementTable(table, _objectMap, _substringMap, _startDelim,
+		_endDelim);
+	replacementTable.setStrictReplacement(_strictReplacement);
+	return replacementTable;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
-    protected ITableIterator createIterator(boolean reversed)
-            throws DataSetException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-        return new ReplacementIterator(reversed ?
-                _dataSet.reverseIterator() : _dataSet.iterator());
+	return new ReplacementIterator(reversed ? _dataSet.reverseIterator() : _dataSet.iterator());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
-    public String[] getTableNames() throws DataSetException
-    {
-        logger.debug("getTableNames() - start");
+    public String[] getTableNames() throws DataSetException {
+	logger.debug("getTableNames() - start");
 
-        return _dataSet.getTableNames();
+	return _dataSet.getTableNames();
     }
 
-    public ITableMetaData getTableMetaData(String tableName)
-            throws DataSetException
-    {
-        logger.debug("getTableMetaData(tableName={}) - start", tableName);
+    public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
+	logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
-        return _dataSet.getTableMetaData(tableName);
+	return _dataSet.getTableMetaData(tableName);
     }
 
-    public ITable getTable(String tableName) throws DataSetException
-    {
-        logger.debug("getTable(tableName={}) - start", tableName);
+    public ITable getTable(String tableName) throws DataSetException {
+	logger.debug("getTable(tableName={}) - start", tableName);
 
-        return createReplacementTable(_dataSet.getTable(tableName));
+	return createReplacementTable(_dataSet.getTable(tableName));
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ReplacementIterator class
 
-    private class ReplacementIterator implements ITableIterator
-    {
+    private class ReplacementIterator implements ITableIterator {
 
-        /**
-         * Logger for this class
-         */
-        private final Logger logger = LoggerFactory.getLogger(ReplacementIterator.class);
+	/**
+	 * Logger for this class
+	 */
+	private final Logger logger = LoggerFactory.getLogger(ReplacementIterator.class);
 
-        private final ITableIterator _iterator;
+	private final ITableIterator _iterator;
 
-        public ReplacementIterator(ITableIterator iterator)
-        {
-            _iterator = iterator;
-        }
+	public ReplacementIterator(ITableIterator iterator) {
+	    _iterator = iterator;
+	}
 
-        ////////////////////////////////////////////////////////////////////////
-        // ITableIterator interface
+	////////////////////////////////////////////////////////////////////////
+	// ITableIterator interface
 
-        public boolean next() throws DataSetException
-        {
-            logger.debug("next() - start");
+	public boolean next() throws DataSetException {
+	    logger.debug("next() - start");
 
-            return _iterator.next();
-        }
+	    return _iterator.next();
+	}
 
-        public ITableMetaData getTableMetaData() throws DataSetException
-        {
-            logger.debug("getTableMetaData() - start");
+	public ITableMetaData getTableMetaData() throws DataSetException {
+	    logger.debug("getTableMetaData() - start");
 
-            return _iterator.getTableMetaData();
-        }
+	    return _iterator.getTableMetaData();
+	}
 
-        public ITable getTable() throws DataSetException
-        {
-            logger.debug("getTable() - start");
+	public ITable getTable() throws DataSetException {
+	    logger.debug("getTable() - start");
 
-            return createReplacementTable(_iterator.getTable());
-        }
+	    return createReplacementTable(_iterator.getTable());
+	}
     }
 }

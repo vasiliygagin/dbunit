@@ -21,35 +21,24 @@
 
 package org.dbunit.dataset;
 
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public class NoSuchTableException extends DataSetException
-{
-    public NoSuchTableException()
-    {
+public class NoSuchTableException extends DataSetException {
+    public NoSuchTableException() {
     }
 
-    public NoSuchTableException(String msg)
-    {
-        super(msg);
+    public NoSuchTableException(String msg) {
+	super(msg);
     }
 
-    public NoSuchTableException(String msg, Throwable e)
-    {
-        super(msg, e);
+    public NoSuchTableException(String msg, Throwable e) {
+	super(msg, e);
     }
 
-    public NoSuchTableException(Throwable e)
-    {
-        super(e);
+    public NoSuchTableException(Throwable e) {
+	super(e);
     }
 }
-
-
-
-
-

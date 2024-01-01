@@ -32,6 +32,7 @@ import org.dbunit.dataset.datatype.TypeCastException;
 
 /**
  * NCLOB handler
+ * 
  * @author cris.daniluk
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -45,15 +46,14 @@ public class OracleNClobDataType extends OracleClobDataType {
     private static final Logger logger = LoggerFactory.getLogger(OracleNClobDataType.class);
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-            throws SQLException, TypeCastException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-    				new Object[]{value, new Integer(column), statement} );
+	    throws SQLException, TypeCastException {
+	if (logger.isDebugEnabled())
+	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+		    new Object[] { value, new Integer(column), statement });
 
-        OraclePreparedStatement oraclePreparedStatement = (OraclePreparedStatement) statement;
-        oraclePreparedStatement.setFormOfUse(column, OraclePreparedStatement.FORM_NCHAR);
-        statement.setObject(column, getClob(value, statement.getConnection()));
+	OraclePreparedStatement oraclePreparedStatement = (OraclePreparedStatement) statement;
+	oraclePreparedStatement.setFormOfUse(column, OraclePreparedStatement.FORM_NCHAR);
+	statement.setObject(column, getClob(value, statement.getConnection()));
     }
-    
+
 }

@@ -37,90 +37,84 @@ public class IsAlnumHandler extends AbstractPipelineComponent {
      */
     private static final Logger logger = LoggerFactory.getLogger(IsAlnumHandler.class);
 
-    private IsAlnumHandler() 
-    {
+    private IsAlnumHandler() {
     }
 
-    public static final PipelineComponent ACCEPT () {
-        logger.debug("ACCEPT() - start");
-        return createPipelineComponent(new IsAlnumHandler(), new ACCEPT());
+    public static final PipelineComponent ACCEPT() {
+	logger.debug("ACCEPT() - start");
+	return createPipelineComponent(new IsAlnumHandler(), new ACCEPT());
     }
 
-    public static final PipelineComponent IGNORE () {
-        logger.debug("IGNORE() - start");
-        return createPipelineComponent(new IsAlnumHandler(), new IGNORE());
+    public static final PipelineComponent IGNORE() {
+	logger.debug("IGNORE() - start");
+	return createPipelineComponent(new IsAlnumHandler(), new IGNORE());
     }
 
-    public static final PipelineComponent QUOTE () {
-        logger.debug("QUOTE() - start");
-        return createPipelineComponent(new IsAlnumHandler(), new QUOTE());
+    public static final PipelineComponent QUOTE() {
+	logger.debug("QUOTE() - start");
+	return createPipelineComponent(new IsAlnumHandler(), new QUOTE());
     }
 
-/*
-    public static final PipelineComponent UNQUOTE () {
-        return createPipelineComponent(new IsAlnumHandler(), new UNQUOTE());
-    }
-*/
-
+    /*
+     * public static final PipelineComponent UNQUOTE () { return
+     * createPipelineComponent(new IsAlnumHandler(), new UNQUOTE()); }
+     */
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-        if(logger.isDebugEnabled())
-            logger.debug("canHandle(c={}) - start", String.valueOf(c));
+	if (logger.isDebugEnabled())
+	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-        PipelineConfig pipelineConfig = this.getPipelineConfig();
-        if (c != pipelineConfig.getSeparatorChar()
-                && !Character.isWhitespace(c)
-                && c != pipelineConfig.getEscapeChar()) {
-            return true;
-        }
-        return false;
+	PipelineConfig pipelineConfig = this.getPipelineConfig();
+	if (c != pipelineConfig.getSeparatorChar() && !Character.isWhitespace(c)
+		&& c != pipelineConfig.getEscapeChar()) {
+	    return true;
+	}
+	return false;
     }
-
 
     static protected class QUOTE extends Helper {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(QUOTE.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(QUOTE.class);
 
 //        private boolean add = true;
 
-        public void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
-            
-            getHandler().getPipeline().putFront(SeparatorHandler.ENDPIECE());
-            getHandler().getPipeline().putFront(IsAlnumHandler.ACCEPT());
-            getHandler().getPipeline().putFront(WhitespacesHandler.ACCEPT());
-            //getHandler().getPipeline().putFront(IsAlnumHandler.UNQUOTE());
+	public void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-            getHandler().accept(c);
-        }
+	    getHandler().getPipeline().putFront(SeparatorHandler.ENDPIECE());
+	    getHandler().getPipeline().putFront(IsAlnumHandler.ACCEPT());
+	    getHandler().getPipeline().putFront(WhitespacesHandler.ACCEPT());
+	    // getHandler().getPipeline().putFront(IsAlnumHandler.UNQUOTE());
+
+	    getHandler().accept(c);
+	}
     }
 
     static protected class UNQUOTE extends Helper {
 
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(UNQUOTE.class);
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(UNQUOTE.class);
 
+	public void helpWith(char c) {
+	    if (logger.isDebugEnabled())
+		logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-        public void helpWith(char c) {
-            if(logger.isDebugEnabled())
-                logger.debug("helpWith(c={}) - start", String.valueOf(c));
-
-            try {
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-                getHandler().getPipeline().removeFront();
-            } catch (PipelineException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            // ignore the char
-        }
+	    try {
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+		getHandler().getPipeline().removeFront();
+	    } catch (PipelineException e) {
+		throw new RuntimeException(e.getMessage());
+	    }
+	    // ignore the char
+	}
     }
 
 }

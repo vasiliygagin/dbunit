@@ -22,15 +22,13 @@ import org.slf4j.LoggerFactory;
  * otherwise, use the
  * {@link ConditionalSetBiValueComparer#notInValuesValueComparer} on the row.
  *
- * @param <T>
- *            The type of the value used to determine which
+ * @param <T> The type of the value used to determine which
  *            {@link ValueComparer} to use.
  *
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public class ConditionalSetBiValueComparer<T> extends ValueComparerBase
-{
+public class ConditionalSetBiValueComparer<T> extends ValueComparerBase {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final ValueFactory<T> actualValueFactory;
@@ -39,84 +37,70 @@ public class ConditionalSetBiValueComparer<T> extends ValueComparerBase
     private final ValueComparer notInValuesValueComparer;
 
     /**
-     * @param actualValueFactory
-     *            Factory to make the value to lookup in the values list.
-     * @param values
-     *            List of values that mean to use the inValuesValueComparer.
-     * @param inValuesValueComparer
-     *            The {@link ValueComparer} used when the value from the
-     *            actualValueFactory is in the values map.
-     * @param notInValuesValueComparer
-     *            The {@link ValueComparer} used when the value from the
-     *            actualValueFactory is not in the values map.
+     * @param actualValueFactory       Factory to make the value to lookup in the
+     *                                 values list.
+     * @param values                   List of values that mean to use the
+     *                                 inValuesValueComparer.
+     * @param inValuesValueComparer    The {@link ValueComparer} used when the value
+     *                                 from the actualValueFactory is in the values
+     *                                 map.
+     * @param notInValuesValueComparer The {@link ValueComparer} used when the value
+     *                                 from the actualValueFactory is not in the
+     *                                 values map.
      */
-    public ConditionalSetBiValueComparer(
-            final ValueFactory<T> actualValueFactory, final Set<T> values,
-            final ValueComparer inValuesValueComparer,
-            final ValueComparer notInValuesValueComparer)
-    {
-        assertNotNull("actualValueFactory is null.", actualValueFactory);
-        assertNotNull("values is null.", values);
-        assertNotNull("inValuesValueComparer is null.", inValuesValueComparer);
-        assertNotNull("notInValuesValueComparer is null.",
-                notInValuesValueComparer);
+    public ConditionalSetBiValueComparer(final ValueFactory<T> actualValueFactory, final Set<T> values,
+	    final ValueComparer inValuesValueComparer, final ValueComparer notInValuesValueComparer) {
+	assertNotNull("actualValueFactory is null.", actualValueFactory);
+	assertNotNull("values is null.", values);
+	assertNotNull("inValuesValueComparer is null.", inValuesValueComparer);
+	assertNotNull("notInValuesValueComparer is null.", notInValuesValueComparer);
 
-        this.actualValueFactory = actualValueFactory;
-        this.values = values;
-        this.inValuesValueComparer = inValuesValueComparer;
-        this.notInValuesValueComparer = notInValuesValueComparer;
+	this.actualValueFactory = actualValueFactory;
+	this.values = values;
+	this.inValuesValueComparer = inValuesValueComparer;
+	this.notInValuesValueComparer = notInValuesValueComparer;
     }
 
     @Override
-    public String doCompare(final ITable expectedTable,
-            final ITable actualTable, final int rowNum, final String columnName,
-            final DataType dataType, final Object expectedValue,
-            final Object actualValue) throws DatabaseUnitException
-    {
-        final String failMessage;
+    public String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
+	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+	    throws DatabaseUnitException {
+	final String failMessage;
 
-        final boolean isInValues = isActualValueInValues(actualTable, rowNum);
+	final boolean isInValues = isActualValueInValues(actualTable, rowNum);
 
-        if (isInValues)
-        {
-            failMessage = inValuesValueComparer.compare(expectedTable,
-                    actualTable, rowNum, columnName, dataType, expectedValue,
-                    actualValue);
-        } else
-        {
-            failMessage = notInValuesValueComparer.compare(expectedTable,
-                    actualTable, rowNum, columnName, dataType, expectedValue,
-                    actualValue);
-        }
+	if (isInValues) {
+	    failMessage = inValuesValueComparer.compare(expectedTable, actualTable, rowNum, columnName, dataType,
+		    expectedValue, actualValue);
+	} else {
+	    failMessage = notInValuesValueComparer.compare(expectedTable, actualTable, rowNum, columnName, dataType,
+		    expectedValue, actualValue);
+	}
 
-        return failMessage;
+	return failMessage;
     }
 
-    protected boolean isActualValueInValues(final ITable actualTable,
-            final int rowNum) throws DataSetException
-    {
-        final T actualValue = actualValueFactory.make(actualTable, rowNum);
-        final boolean isListContains = values.contains(actualValue);
+    protected boolean isActualValueInValues(final ITable actualTable, final int rowNum) throws DataSetException {
+	final T actualValue = actualValueFactory.make(actualTable, rowNum);
+	final boolean isListContains = values.contains(actualValue);
 
-        log.debug("isActualValueInValues: actualValue={}, isListContains={}",
-                actualValue, isListContains);
+	log.debug("isActualValueInValues: actualValue={}, isListContains={}", actualValue, isListContains);
 
-        return isListContains;
+	return isListContains;
     }
 
     @Override
-    public String toString()
-    {
-        final StringBuilder sb = new StringBuilder(400);
-        sb.append(super.toString());
-        sb.append(": [values=");
-        sb.append(values);
-        sb.append(", inValuesValueComparer=");
-        sb.append(inValuesValueComparer);
-        sb.append(", notInValuesValueComparer=");
-        sb.append(notInValuesValueComparer);
-        sb.append("]");
+    public String toString() {
+	final StringBuilder sb = new StringBuilder(400);
+	sb.append(super.toString());
+	sb.append(": [values=");
+	sb.append(values);
+	sb.append(", inValuesValueComparer=");
+	sb.append(inValuesValueComparer);
+	sb.append(", notInValuesValueComparer=");
+	sb.append(notInValuesValueComparer);
+	sb.append("]");
 
-        return sb.toString();
+	return sb.toString();
     }
 }

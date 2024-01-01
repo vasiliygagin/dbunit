@@ -34,35 +34,26 @@ import org.dbunit.operation.DatabaseOperation;
  * @version $Revision$
  * @since Feb 19, 2002
  */
-public class ScrollableResultSetTableTest extends AbstractTableTest
-{
-    public ScrollableResultSetTableTest(String s)
-    {
-        super(s);
+public class ScrollableResultSetTableTest extends AbstractTableTest {
+    public ScrollableResultSetTableTest(String s) {
+	super(s);
     }
-    
+
     protected boolean runTest(String testName) {
-      return AbstractDatabaseIT.environmentHasFeature(TestFeature.SCROLLABLE_RESULTSET);
-    }
-    
-    protected ITable createTable() throws Exception
-    {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
-        IDatabaseConnection connection = env.getConnection();
-
-        DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
-
-        String selectStatement = "select * from TEST_TABLE order by COLUMN0";
-        return new ScrollableResultSetTable("TEST_TABLE", selectStatement, connection);
+	return AbstractDatabaseIT.environmentHasFeature(TestFeature.SCROLLABLE_RESULTSET);
     }
 
-    public void testGetMissingValue() throws Exception
-    {
-        // Do not test this!
+    protected ITable createTable() throws Exception {
+	DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
+	IDatabaseConnection connection = env.getConnection();
+
+	DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
+
+	String selectStatement = "select * from TEST_TABLE order by COLUMN0";
+	return new ScrollableResultSetTable("TEST_TABLE", selectStatement, connection);
+    }
+
+    public void testGetMissingValue() throws Exception {
+	// Do not test this!
     }
 }
-
-
-
-
-

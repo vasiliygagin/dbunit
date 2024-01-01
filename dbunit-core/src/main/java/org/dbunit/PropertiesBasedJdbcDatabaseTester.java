@@ -22,21 +22,18 @@
 package org.dbunit;
 
 /**
- * DatabaseTester that configures a DriverManager from environment properties.<br>
+ * DatabaseTester that configures a DriverManager from environment
+ * properties.<br>
  * This class defines a set of keys for system properties that need to be
- * present in the environment before using it. Example:
- * <xmp>
+ * present in the environment before using it. Example: <xmp>
  * System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS,
- *             "com.mycompany.myDriver" );
- * System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL,
- *             "jdbc:mydb://host/dbname" );
- * System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME,
- *             "myuser" );
+ * "com.mycompany.myDriver" ); System.setProperty(
+ * PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL,
+ * "jdbc:mydb://host/dbname" ); System.setProperty(
+ * PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, "myuser" );
  * System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD,
- *             "mypasswd" );
- * System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA,
- *             "myschema" );
- * </xmp>
+ * "mypasswd" ); System.setProperty(
+ * PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA, "myschema" ); </xmp>
  *
  * @author Andres Almiray(aalmiray@users.sourceforge.net)
  * @author Felipe Leme (dbunit@felipeal.net)
@@ -44,8 +41,7 @@ package org.dbunit;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class PropertiesBasedJdbcDatabaseTester extends JdbcDatabaseTester
-{
+public class PropertiesBasedJdbcDatabaseTester extends JdbcDatabaseTester {
 
     /** A key for property that defines the connection url */
     public static final String DBUNIT_CONNECTION_URL = "dbunit.connectionUrl";
@@ -59,18 +55,15 @@ public class PropertiesBasedJdbcDatabaseTester extends JdbcDatabaseTester
     public static final String DBUNIT_SCHEMA = "dbunit.schema";
 
     /**
-     * Creates a new {@link JdbcDatabaseTester} using specific {@link System#getProperty(String)}
-     * values as initialization parameters
+     * Creates a new {@link JdbcDatabaseTester} using specific
+     * {@link System#getProperty(String)} values as initialization parameters
+     * 
      * @throws Exception
      */
-    public PropertiesBasedJdbcDatabaseTester() throws Exception 
-    {
-        super(  System.getProperty(DBUNIT_DRIVER_CLASS), 
-                System.getProperty(DBUNIT_CONNECTION_URL), 
-                System.getProperty(DBUNIT_USERNAME), 
-                System.getProperty(DBUNIT_PASSWORD), 
-                System.getProperty(DBUNIT_SCHEMA)
-            );
+    public PropertiesBasedJdbcDatabaseTester() throws Exception {
+	super(System.getProperty(DBUNIT_DRIVER_CLASS), System.getProperty(DBUNIT_CONNECTION_URL),
+		System.getProperty(DBUNIT_USERNAME), System.getProperty(DBUNIT_PASSWORD),
+		System.getProperty(DBUNIT_SCHEMA));
     }
 
 }

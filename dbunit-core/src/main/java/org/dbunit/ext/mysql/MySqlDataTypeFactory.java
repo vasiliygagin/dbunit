@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 1.5 (Sep 3, 2003)
  */
-public class MySqlDataTypeFactory extends DefaultDataTypeFactory
-{
+public class MySqlDataTypeFactory extends DefaultDataTypeFactory {
     public static final String UNSIGNED_SUFFIX = " UNSIGNED";
     public static final String SQL_TYPE_NAME_TINYINT_UNSIGNED = "TINYINT" + UNSIGNED_SUFFIX;
 
@@ -50,57 +49,51 @@ public class MySqlDataTypeFactory extends DefaultDataTypeFactory
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] {"mysql"});
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "mysql" });
+
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts()
-    {
-        return DATABASE_PRODUCTS;
+    public Collection getValidDbProducts() {
+	return DATABASE_PRODUCTS;
     }
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        if (sqlType == Types.OTHER)
-        {
-            // CLOB
-            if ("longtext".equalsIgnoreCase(sqlTypeName))
-            {
-                return DataType.CLOB;
-            }
-            // MySQL 5.0 Boolean
-            else if("bit".equalsIgnoreCase(sqlTypeName))
-            {
-                return DataType.BOOLEAN;
-            }
-            else if("point".equalsIgnoreCase(sqlTypeName))
-            {
-                return DataType.BINARY;
-            }
-        }
-        // Treat BIT as TINYINT
-        else if("bit".equalsIgnoreCase(sqlTypeName))
-        {
-            return DataType.TINYINT;
-        }
+	if (sqlType == Types.OTHER) {
+	    // CLOB
+	    if ("longtext".equalsIgnoreCase(sqlTypeName)) {
+		return DataType.CLOB;
+	    }
+	    // MySQL 5.0 Boolean
+	    else if ("bit".equalsIgnoreCase(sqlTypeName)) {
+		return DataType.BOOLEAN;
+	    } else if ("point".equalsIgnoreCase(sqlTypeName)) {
+		return DataType.BINARY;
+	    }
+	}
+	// Treat BIT as TINYINT
+	else if ("bit".equalsIgnoreCase(sqlTypeName)) {
+	    return DataType.TINYINT;
+	}
 
+	// Special handling for "TINYINT UNSIGNED"
+	if (SQL_TYPE_NAME_TINYINT_UNSIGNED.equalsIgnoreCase(sqlTypeName)) {
+	    return DataType.TINYINT; // It is a bit of a waste here - we could better use a "Short" instead of an
+				     // "Integer" type
+	}
 
-        // Special handling for "TINYINT UNSIGNED"
-        if(SQL_TYPE_NAME_TINYINT_UNSIGNED.equalsIgnoreCase(sqlTypeName)){
-            return DataType.TINYINT; // It is a bit of a waste here - we could better use a "Short" instead of an "Integer" type
-        }
+	// If we have an unsigned datatype check for some specialties
+	// See
+	// http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-type-conversions.html
+	if (sqlTypeName.endsWith(UNSIGNED_SUFFIX)) {
+	    if (sqlType == Types.INTEGER) {
+		return DataType.BIGINT;
+	    }
+	}
 
-        // If we have an unsigned datatype check for some specialties
-        // See http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-type-conversions.html
-        if(sqlTypeName.endsWith(UNSIGNED_SUFFIX)) {
-            if(sqlType == Types.INTEGER) {
-                return DataType.BIGINT;
-            }
-        }
-
-        return super.createDataType(sqlType, sqlTypeName);
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }

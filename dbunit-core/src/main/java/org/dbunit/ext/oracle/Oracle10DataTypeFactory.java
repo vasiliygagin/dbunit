@@ -30,46 +30,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Specialized factory that recognizes Oracle data types for Oracle 10 and higher.
- * <br>
- * Handles the CLOBs and BLOBs as string and binary stream respectively which is supported
- * since oracle 10.
- * <br>
- * This is recommended by oracle: 
- * <a href="http://www.oracle.com/technology/sample_code/tech/java/codesnippet/jdbc/clob10g/handlingclobsinoraclejdbc10g.html">
+ * Specialized factory that recognizes Oracle data types for Oracle 10 and
+ * higher. <br>
+ * Handles the CLOBs and BLOBs as string and binary stream respectively which is
+ * supported since oracle 10. <br>
+ * This is recommended by oracle: <a href=
+ * "http://www.oracle.com/technology/sample_code/tech/java/codesnippet/jdbc/clob10g/handlingclobsinoraclejdbc10g.html">
  * Oracle technology sample code</a>
  * 
  * @author gommma
  * @since 2.3.0
  * @version $Revision$
  */
-public class Oracle10DataTypeFactory extends OracleDataTypeFactory
-{
+public class Oracle10DataTypeFactory extends OracleDataTypeFactory {
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(Oracle10DataTypeFactory.class);
 
-	
     protected static final DataType CLOB_AS_STRING = new StringDataType("CLOB", Types.CLOB);
     protected static final DataType BLOB_AS_STREAM = new BinaryStreamDataType("BLOB", Types.BLOB);
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
-    	
-        // BLOB
-        if ("BLOB".equals(sqlTypeName))
-        {
-            return BLOB_AS_STREAM;
-        }
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-        // CLOB
-        if ("CLOB".equals(sqlTypeName))
-        {
-            return CLOB_AS_STRING;
-        }
-        return super.createDataType(sqlType, sqlTypeName);
+	// BLOB
+	if ("BLOB".equals(sqlTypeName)) {
+	    return BLOB_AS_STREAM;
+	}
+
+	// CLOB
+	if ("CLOB".equals(sqlTypeName)) {
+	    return CLOB_AS_STRING;
+	}
+	return super.createDataType(sqlType, sqlTypeName);
     }
 }

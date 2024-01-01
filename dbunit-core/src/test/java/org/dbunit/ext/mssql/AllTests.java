@@ -28,17 +28,15 @@ import junit.framework.TestSuite;
  * @since Apr 11, 2003
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
+public class AllTests extends TestSuite {
+    public static Test suite() throws Exception {
+	TestSuite suite = new TestSuite();
 
-        suite.addTest(new TestSuite(InsertIdentityOperationIT.class));
-        suite.addTest(new TestSuite(MsSqlDataTypeFactoryTest.class));
-        suite.addTest(new TestSuite(UniqueIdentifierTypeTest.class));
+	suite.addTest(new TestSuite(InsertIdentityOperationIT.class));
+	suite.addTest(new TestSuite(MsSqlDataTypeFactoryTest.class));
+	suite.addTest(new TestSuite(UniqueIdentifierTypeTest.class));
 
-        return suite;
+	return suite;
     }
 
 }

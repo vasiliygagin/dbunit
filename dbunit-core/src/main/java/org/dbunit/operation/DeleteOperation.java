@@ -44,66 +44,57 @@ import org.dbunit.dataset.NoPrimaryKeyException;
  * @version $Revision$
  * @since Feb 19, 2002
  */
-public class DeleteOperation extends AbstractBatchOperation
-{
+public class DeleteOperation extends AbstractBatchOperation {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(DeleteOperation.class);
 
-    DeleteOperation()
-    {
-        _reverseRowOrder = true;
+    DeleteOperation() {
+	_reverseRowOrder = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractBatchOperation class
 
-    protected ITableIterator iterator(IDataSet dataSet) throws DatabaseUnitException
-    {
-        logger.debug("iterator(dataSet={}) - start", dataSet);
-        return dataSet.reverseIterator();
+    protected ITableIterator iterator(IDataSet dataSet) throws DatabaseUnitException {
+	logger.debug("iterator(dataSet={}) - start", dataSet);
+	return dataSet.reverseIterator();
     }
 
-    public OperationData getOperationData(ITableMetaData metaData, BitSet ignoreMapping, IDatabaseConnection connection) throws DataSetException
-    {
-    	if (logger.isDebugEnabled())
-    	{
-    		logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start",
-    				new Object[]{ metaData, ignoreMapping, connection });
-    	}
+    public OperationData getOperationData(ITableMetaData metaData, BitSet ignoreMapping, IDatabaseConnection connection)
+	    throws DataSetException {
+	if (logger.isDebugEnabled()) {
+	    logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start",
+		    new Object[] { metaData, ignoreMapping, connection });
+	}
 
-        // cannot construct where clause if no primary key
-        Column[] primaryKeys = metaData.getPrimaryKeys();
-        if (primaryKeys.length == 0)
-        {
-            throw new NoPrimaryKeyException(metaData.getTableName());
-        }
+	// cannot construct where clause if no primary key
+	Column[] primaryKeys = metaData.getPrimaryKeys();
+	if (primaryKeys.length == 0) {
+	    throw new NoPrimaryKeyException(metaData.getTableName());
+	}
 
-        // delete from
-        StringBuffer sqlBuffer = new StringBuffer(128);
-        sqlBuffer.append("delete from ");
-        sqlBuffer.append(getQualifiedName(connection.getSchema(),
-                metaData.getTableName(), connection));
+	// delete from
+	StringBuffer sqlBuffer = new StringBuffer(128);
+	sqlBuffer.append("delete from ");
+	sqlBuffer.append(getQualifiedName(connection.getSchema(), metaData.getTableName(), connection));
 
-        // where
-        sqlBuffer.append(" where ");
-        for (int i = 0; i < primaryKeys.length; i++)
-        {
-            // escape column name
-            String columnName = getQualifiedName(null,
-                    primaryKeys[i].getColumnName(), connection);
-            sqlBuffer.append(columnName);
+	// where
+	sqlBuffer.append(" where ");
+	for (int i = 0; i < primaryKeys.length; i++) {
+	    // escape column name
+	    String columnName = getQualifiedName(null, primaryKeys[i].getColumnName(), connection);
+	    sqlBuffer.append(columnName);
 
-            sqlBuffer.append(" = ?");
-            if (i + 1 < primaryKeys.length)
-            {
-                sqlBuffer.append(" and ");
-            }
-        }
+	    sqlBuffer.append(" = ?");
+	    if (i + 1 < primaryKeys.length) {
+		sqlBuffer.append(" and ");
+	    }
+	}
 
-        return new OperationData(sqlBuffer.toString(), primaryKeys);
+	return new OperationData(sqlBuffer.toString(), primaryKeys);
     }
 
 }

@@ -28,53 +28,45 @@ import org.slf4j.LoggerFactory;
  * @since Apr 5, 2003
  * @version $Revision$
  */
-public class DefaultTableIterator implements ITableIterator
-{
-	private Logger logger = LoggerFactory.getLogger(DefaultTableIterator.class);
-	
+public class DefaultTableIterator implements ITableIterator {
+    private Logger logger = LoggerFactory.getLogger(DefaultTableIterator.class);
+
     private final ITable[] _tables;
     private int _index = -1;
 
-    public DefaultTableIterator(ITable[] tables)
-    {
-        _tables = tables;
+    public DefaultTableIterator(ITable[] tables) {
+	_tables = tables;
     }
 
-    public DefaultTableIterator(ITable[] tables, boolean reversed)
-    {
-        if (reversed)
-        {
-            ITable[] reverseTables = new ITable[tables.length];
-            for (int i = 0; i < tables.length; i++)
-            {
-                reverseTables[tables.length - 1 - i] = tables[i];
-            }
-            tables = reverseTables;
-        }
+    public DefaultTableIterator(ITable[] tables, boolean reversed) {
+	if (reversed) {
+	    ITable[] reverseTables = new ITable[tables.length];
+	    for (int i = 0; i < tables.length; i++) {
+		reverseTables[tables.length - 1 - i] = tables[i];
+	    }
+	    tables = reverseTables;
+	}
 
-        _tables = tables;
+	_tables = tables;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
-    public boolean next() throws DataSetException
-    {
-        _index++;
-        return _index < _tables.length;
+    public boolean next() throws DataSetException {
+	_index++;
+	return _index < _tables.length;
     }
 
-    public ITableMetaData getTableMetaData() throws DataSetException
-    {
-    	logger.debug("getTableMetaData() - start");
-    	
-        return getTable().getTableMetaData();
+    public ITableMetaData getTableMetaData() throws DataSetException {
+	logger.debug("getTableMetaData() - start");
+
+	return getTable().getTableMetaData();
     }
 
-    public ITable getTable() throws DataSetException
-    {
-    	logger.debug("getTable() - start");
+    public ITable getTable() throws DataSetException {
+	logger.debug("getTable() - start");
 
-    	return _tables[_index];
+	return _tables[_index];
     }
 }

@@ -34,8 +34,7 @@ import org.dbunit.operation.DatabaseOperation;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public interface IDatabaseTester
-{
+public interface IDatabaseTester {
     /**
      * Close the specified connection.
      *
@@ -74,8 +73,8 @@ public interface IDatabaseTester
      * Sets the schema value.
      *
      * @deprecated since 2.4.3 Should not be used anymore. Every concrete
-     *             {@link IDatabaseTester} implementation that needs a schema
-     *             has the possibility to set it somehow in the constructor
+     *             {@link IDatabaseTester} implementation that needs a schema has
+     *             the possibility to set it somehow in the constructor
      */
     @Deprecated
     void setSchema(String schema);
@@ -101,9 +100,8 @@ public interface IDatabaseTester
     void onTearDown() throws Exception;
 
     /**
-     * @param operationListener
-     *            The operation listener that is invoked on specific events in
-     *            the {@link IDatabaseTester}.
+     * @param operationListener The operation listener that is invoked on specific
+     *                          events in the {@link IDatabaseTester}.
      * @since 2.4.4
      */
     void setOperationListener(IOperationListener operationListener);

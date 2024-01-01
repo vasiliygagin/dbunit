@@ -27,99 +27,95 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * NetezzaDataTypeFactory - This class is for the DBUnit data type factory for Netezza database
+ * NetezzaDataTypeFactory - This class is for the DBUnit data type factory for
+ * Netezza database
  * 
  * @author Ameet (amit3011 AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.6
  */
-public class NetezzaDataTypeFactory extends DefaultDataTypeFactory
-{
+public class NetezzaDataTypeFactory extends DefaultDataTypeFactory {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(NetezzaDataTypeFactory.class);
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = LoggerFactory.getLogger(NetezzaDataTypeFactory.class);
 
-	public static final int RECADDR = 1;
-	public static final int NUMERIC = 2;
-	public static final int DECIMAL = 3;
-	public static final int INTEGER = 4;
-	public static final int SMALLINT = 5;
-	public static final int DOUBLE = 8;
-	public static final int INTERVAL = 10;
-	public static final int BOOLEAN = -7;
-	public static final int CHAR = -1;
-	public static final int FLOAT = 6;
-	public static final int REAL = 7;
-	public static final int VARCHAR = 12;
-	public static final int DATE = 91;
-	public static final int TIME = 92;
-	public static final int TIMESTAMP = 93;
-	public static final int TIMETZ = 1266;
-	public static final int UNKNOWN = 18;
-	public static final int BYTEINT = -6;
-	public static final int INT8 = 20;
-	public static final int VARFIXEDCHAR = 21;
-	public static final int NUCL = 22;
-	public static final int PROT = 23;
-	public static final int BLOB = 24;
-	public static final int BIGINT = -5;
-	public static final int NCHAR = -8;
-	public static final int NVARCHAR = -9;
-	public static final int NTEXT = 27;
+    public static final int RECADDR = 1;
+    public static final int NUMERIC = 2;
+    public static final int DECIMAL = 3;
+    public static final int INTEGER = 4;
+    public static final int SMALLINT = 5;
+    public static final int DOUBLE = 8;
+    public static final int INTERVAL = 10;
+    public static final int BOOLEAN = -7;
+    public static final int CHAR = -1;
+    public static final int FLOAT = 6;
+    public static final int REAL = 7;
+    public static final int VARCHAR = 12;
+    public static final int DATE = 91;
+    public static final int TIME = 92;
+    public static final int TIMESTAMP = 93;
+    public static final int TIMETZ = 1266;
+    public static final int UNKNOWN = 18;
+    public static final int BYTEINT = -6;
+    public static final int INT8 = 20;
+    public static final int VARFIXEDCHAR = 21;
+    public static final int NUCL = 22;
+    public static final int PROT = 23;
+    public static final int BLOB = 24;
+    public static final int BIGINT = -5;
+    public static final int NCHAR = -8;
+    public static final int NVARCHAR = -9;
+    public static final int NTEXT = 27;
 
-	public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException
-	{
-		if (logger.isDebugEnabled())
-			logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+	if (logger.isDebugEnabled())
+	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-		switch (sqlType)
-		{
-			case RECADDR:
-				return DataType.VARCHAR;
+	switch (sqlType) {
+	case RECADDR:
+	    return DataType.VARCHAR;
 
-			case INTEGER:
-				return DataType.INTEGER;
+	case INTEGER:
+	    return DataType.INTEGER;
 
-			case INTERVAL:
-				return DataType.TIMESTAMP;
-			case TIMETZ:
-				return DataType.TIMESTAMP;
-			case BOOLEAN:
-				return DataType.BOOLEAN;
-			case SMALLINT:
-				return DataType.SMALLINT;
+	case INTERVAL:
+	    return DataType.TIMESTAMP;
+	case TIMETZ:
+	    return DataType.TIMESTAMP;
+	case BOOLEAN:
+	    return DataType.BOOLEAN;
+	case SMALLINT:
+	    return DataType.SMALLINT;
 
-			case REAL:
-				return DataType.FLOAT;
-			case BYTEINT:
-				return DataType.INTEGER;
-			case INT8:
-				return DataType.BIGINT;
-			case VARFIXEDCHAR:
-				return DataType.CHAR;
-			case NUCL:
-				return DataType.CHAR;
-			case PROT:
-				return DataType.CHAR;
-			case DATE:
-				return DataType.DATE;
-			case BLOB:
-				return DataType.BLOB;
-			case NCHAR:
-				return DataType.CHAR;
-			case NVARCHAR:
-				return DataType.VARCHAR;
-			case NTEXT:
-				return DataType.LONGVARCHAR;
-			case VARCHAR:
-				return DataType.VARCHAR;
-			default:
-				return super.createDataType(sqlType, sqlTypeName);
-		}
+	case REAL:
+	    return DataType.FLOAT;
+	case BYTEINT:
+	    return DataType.INTEGER;
+	case INT8:
+	    return DataType.BIGINT;
+	case VARFIXEDCHAR:
+	    return DataType.CHAR;
+	case NUCL:
+	    return DataType.CHAR;
+	case PROT:
+	    return DataType.CHAR;
+	case DATE:
+	    return DataType.DATE;
+	case BLOB:
+	    return DataType.BLOB;
+	case NCHAR:
+	    return DataType.CHAR;
+	case NVARCHAR:
+	    return DataType.VARCHAR;
+	case NTEXT:
+	    return DataType.LONGVARCHAR;
+	case VARCHAR:
+	    return DataType.VARCHAR;
+	default:
+	    return super.createDataType(sqlType, sqlTypeName);
 	}
+    }
 }
-
- 	  	 

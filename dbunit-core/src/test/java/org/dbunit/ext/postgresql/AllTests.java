@@ -28,13 +28,11 @@ import junit.framework.TestSuite;
  * @since Aug 13, 2003
  * @version $Revision$
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(PostgresqlDataTypeFactoryTest.class));
-        suite.addTest(new TestSuite(SQLHelperDomainPostgreSQLIT.class));
-        return suite;
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(PostgresqlDataTypeFactoryTest.class));
+	suite.addTest(new TestSuite(SQLHelperDomainPostgreSQLIT.class));
+	return suite;
     }
 }

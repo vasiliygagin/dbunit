@@ -33,9 +33,8 @@ import java.sql.SQLException;
 
 /**
  * Truncate tables present in the specified dataset. If the dataset does not
- * contains a particular table, but that table exists in the database,
- * the database table is not affected. Table are truncated in
- * reverse sequence.
+ * contains a particular table, but that table exists in the database, the
+ * database table is not affected. Table are truncated in reverse sequence.
  * <p>
  * This operation has the same effect of as {@link DeleteAllOperation}.
  * TruncateTableOperation is faster, and it is non-logged, meaning it cannot be
@@ -47,45 +46,37 @@ import java.sql.SQLException;
  * @version $Revision$
  * @see DeleteAllOperation
  */
-public class TruncateTableOperation extends DeleteAllOperation
-{
+public class TruncateTableOperation extends DeleteAllOperation {
 
     /**
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(TruncateTableOperation.class);
 
-    TruncateTableOperation()
-    {
+    TruncateTableOperation() {
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DeleteAllOperation class
 
-    protected String getDeleteAllCommand()
-    {
-        return "truncate table ";
+    protected String getDeleteAllCommand() {
+	return "truncate table ";
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet)
-            throws DatabaseUnitException, SQLException
-    {
-        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
+    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+	logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-        // Patch to make it work with MS SQL Server
-        DatabaseConfig config = connection.getConfig();
-        boolean oldValue = config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
-        try
-        {
-            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, false);
-            super.execute(connection, dataSet);
-        }
-        finally
-        {
-            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, oldValue);
-        }
+	// Patch to make it work with MS SQL Server
+	DatabaseConfig config = connection.getConfig();
+	boolean oldValue = config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
+	try {
+	    config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, false);
+	    super.execute(connection, dataSet);
+	} finally {
+	    config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, oldValue);
+	}
     }
 }

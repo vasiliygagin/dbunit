@@ -21,7 +21,6 @@
 
 package org.dbunit.dataset.csv;
 
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,33 +38,29 @@ import org.dbunit.testutil.TestUtils;
  * @since 2.1.0
  */
 public class CsvURLDataSetTest extends TestCase {
-    
+
     public CsvURLDataSetTest(String s) {
-        super(s);
+	super(s);
     }
 
     public void testNullColumns() throws DataSetException, MalformedURLException {
-		URL csvDir = TestUtils.getFile("csv/orders/").toURL();
-    	CsvURLDataSet dataSet = new CsvURLDataSet(csvDir);
-    	
-    	ITable table = dataSet.getTable("orders");
-    	assertNull(table.getValue(4, "description"));
+	URL csvDir = TestUtils.getFile("csv/orders/").toURL();
+	CsvURLDataSet dataSet = new CsvURLDataSet(csvDir);
+
+	ITable table = dataSet.getTable("orders");
+	assertNull(table.getValue(4, "description"));
     }
 
     public void testSpacesInColumns() throws DataSetException, MalformedURLException {
-		URL csvDir = TestUtils.getFile("csv/accounts/").toURL();
-    	CsvURLDataSet dataSet = new CsvURLDataSet(csvDir);
-    	
-    	ITable table = dataSet.getTable("accounts");
-    	assertEquals("   123", table.getValue(0, "acctid"));
-    	assertEquals("  2", table.getValue(1, "acctid"));
-    	assertEquals("   3spaces", table.getValue(2, "acctid"));
-    	assertEquals("    -4", table.getValue(3, "acctid"));
-    	assertEquals("     5     ", table.getValue(4, "acctid"));
+	URL csvDir = TestUtils.getFile("csv/accounts/").toURL();
+	CsvURLDataSet dataSet = new CsvURLDataSet(csvDir);
+
+	ITable table = dataSet.getTable("accounts");
+	assertEquals("   123", table.getValue(0, "acctid"));
+	assertEquals("  2", table.getValue(1, "acctid"));
+	assertEquals("   3spaces", table.getValue(2, "acctid"));
+	assertEquals("    -4", table.getValue(3, "acctid"));
+	assertEquals("     5     ", table.getValue(4, "acctid"));
     }
 
 }
-
-
-
-

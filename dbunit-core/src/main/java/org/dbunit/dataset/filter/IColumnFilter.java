@@ -25,23 +25,25 @@ import org.dbunit.dataset.Column;
 /**
  * A filter for database columns.
  * 
- * <p> Instances of this interface may be passed to the 
- * <code>{@link org.dbunit.dataset.FilteredTableMetaData#FilteredTableMetaData(org.dbunit.dataset.ITableMetaData, IColumnFilter)}</code> 
- * method of the <code>{@link org.dbunit.dataset.FilteredTableMetaData}</code> class.
+ * <p>
+ * Instances of this interface may be passed to the
+ * <code>{@link org.dbunit.dataset.FilteredTableMetaData#FilteredTableMetaData(org.dbunit.dataset.ITableMetaData, IColumnFilter)}</code>
+ * method of the <code>{@link org.dbunit.dataset.FilteredTableMetaData}</code>
+ * class.
  * 
  * @author Manuel Laflamme
  * @since Apr 17, 2004
  * @version $Revision$
  */
-public interface IColumnFilter
-{
-	/**
-	 * Tests whether or not the specified column of the specified tableName
-	 * should be included by this filter.
-	 *
-	 * @param tableName The tableName to be tested
-	 * @param column The column to be tested
-	 * @return <code>true</code> if and only if the given parameter set should be included
-	 */
-	public boolean accept(String tableName, Column column);
+public interface IColumnFilter {
+    /**
+     * Tests whether or not the specified column of the specified tableName should
+     * be included by this filter.
+     *
+     * @param tableName The tableName to be tested
+     * @param column    The column to be tested
+     * @return <code>true</code> if and only if the given parameter set should be
+     *         included
+     */
+    public boolean accept(String tableName, Column column);
 }

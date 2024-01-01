@@ -29,21 +29,16 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
  * @version $Revision$
  * @since DbUnit 2.4.7
  */
-public class PostgresqlEnvironment extends DatabaseEnvironment
-{
-    public PostgresqlEnvironment(DatabaseProfile profile) throws Exception
-    {
-        super(profile);
+public class PostgresqlEnvironment extends DatabaseEnvironment {
+    public PostgresqlEnvironment(DatabaseProfile profile) throws Exception {
+	super(profile);
     }
 
-    protected void setupDatabaseConfig(DatabaseConfig config)
-    {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+    protected void setupDatabaseConfig(DatabaseConfig config) {
+	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
     }
 
-    public String convertString(String str)
-    {
-      return str == null ? null : str.toLowerCase();
+    public String convertString(String str) {
+	return str == null ? null : str.toLowerCase();
     }
 }
-

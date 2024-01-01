@@ -31,10 +31,8 @@ import java.sql.SQLException;
  * @version $Revision$
  * @since Mar 15, 2002
  */
-public interface IPreparedBatchStatement
-{
-    void addValue(Object value, DataType dataType) throws TypeCastException,
-            SQLException;
+public interface IPreparedBatchStatement {
+    void addValue(Object value, DataType dataType) throws TypeCastException, SQLException;
 
     void addBatch() throws SQLException;
 
@@ -45,7 +43,3 @@ public interface IPreparedBatchStatement
     void close() throws SQLException;
 
 }
-
-
-
-

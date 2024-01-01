@@ -21,81 +21,73 @@
 package org.dbunit.assertion;
 
 /**
- * Exception signaling a DbUnit assertion failure while comparing values. 
- * Is used to avoid the direct dependency to any other testing framework.
+ * Exception signaling a DbUnit assertion failure while comparing values. Is
+ * used to avoid the direct dependency to any other testing framework.
  * 
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DbComparisonFailure extends AssertionError
-{
+public class DbComparisonFailure extends AssertionError {
     private static final long serialVersionUID = 1L;
 
     private String reason;
     private String expected;
     private String actual;
-    
+
     /**
-     * @param reason The reason for the comparison failure
+     * @param reason   The reason for the comparison failure
      * @param expected The expected value
-     * @param actual The actual value
+     * @param actual   The actual value
      */
-    public DbComparisonFailure(String reason, String expected, String actual) 
-    {
-        super(reason);
-        this.reason = reason;
-        this.expected = expected;
-        this.actual = actual;
-    }
-    
-    public String getMessage() 
-    {
-        return buildMessage(this.reason, this.expected, this.actual);
+    public DbComparisonFailure(String reason, String expected, String actual) {
+	super(reason);
+	this.reason = reason;
+	this.expected = expected;
+	this.actual = actual;
     }
 
-    public String getReason() 
-    {
-        return reason;
+    public String getMessage() {
+	return buildMessage(this.reason, this.expected, this.actual);
     }
 
-    public String getExpected() 
-    {
-        return expected;
+    public String getReason() {
+	return reason;
     }
 
-    public String getActual() 
-    {
-        return actual;
+    public String getExpected() {
+	return expected;
     }
 
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append(reason);
-        sb.append("expected:<").append(expected);
-        sb.append(">but was:<").append(actual).append(">");
-        sb.append("]");
-        return sb.toString();
+    public String getActual() {
+	return actual;
     }
-    
-    
+
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append(reason);
+	sb.append("expected:<").append(expected);
+	sb.append(">but was:<").append(actual).append(">");
+	sb.append("]");
+	return sb.toString();
+    }
+
     /**
      * Creates a formatted message string from the given parameters
-     * @param reason The reason for an assertion or comparison failure
+     * 
+     * @param reason   The reason for an assertion or comparison failure
      * @param expected The expected result
-     * @param actual The actual result
+     * @param actual   The actual result
      * @return The formatted message
      */
-    public static final String buildMessage(String reason, String expected, String actual)
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(reason);
-        sb.append(" expected:<").append(expected).append(">");
-        sb.append(" but was:<").append(actual).append(">");
-        return sb.toString();
+    public static final String buildMessage(String reason, String expected, String actual) {
+	StringBuffer sb = new StringBuffer();
+	sb.append(reason);
+	sb.append(" expected:<").append(expected).append(">");
+	sb.append(" but was:<").append(actual).append(">");
+	return sb.toString();
 
     }
 }

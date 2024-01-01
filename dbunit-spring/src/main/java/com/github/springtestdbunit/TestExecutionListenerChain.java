@@ -26,119 +26,125 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 
 /**
- * A {@link TestExecutionListener} implementation that works by chaining together other {@link TestExecutionListener}s
- * and ensures that methods are called in the correct order. The {@link #prepareTestInstance}, {@link #beforeTestClass}
- * and {@link #afterTestClass} methods will delegate to the chain in the order that it is defined. The
- * {@link #afterTestClass} and {@link #afterTestMethod} methods will delegate in reverse order. methods.
+ * A {@link TestExecutionListener} implementation that works by chaining
+ * together other {@link TestExecutionListener}s and ensures that methods are
+ * called in the correct order. The {@link #prepareTestInstance},
+ * {@link #beforeTestClass} and {@link #afterTestClass} methods will delegate to
+ * the chain in the order that it is defined. The {@link #afterTestClass} and
+ * {@link #afterTestMethod} methods will delegate in reverse order. methods.
  * <p>
- * For example, a typical call on a chain containing items "a" and "b" would be: <code>a.beforeTestMethod</code>,
- * <code>b.beforeTestMethod</code>, <code>b.afterTestMethod</code>, <code>a.afterTestMethod</code>.
+ * For example, a typical call on a chain containing items "a" and "b" would be:
+ * <code>a.beforeTestMethod</code>, <code>b.beforeTestMethod</code>,
+ * <code>b.afterTestMethod</code>, <code>a.afterTestMethod</code>.
  *
  * @author Phillip Webb
  */
 public abstract class TestExecutionListenerChain implements TestExecutionListener {
 
-	private List<TestExecutionListener> chain;
+    private List<TestExecutionListener> chain;
 
-	private List<TestExecutionListener> reverseChain;
+    private List<TestExecutionListener> reverseChain;
 
-	public TestExecutionListenerChain() {
-		this.chain = createChain();
-		this.reverseChain = new ArrayList<TestExecutionListener>(this.chain);
-		Collections.reverse(this.reverseChain);
+    public TestExecutionListenerChain() {
+	this.chain = createChain();
+	this.reverseChain = new ArrayList<TestExecutionListener>(this.chain);
+	Collections.reverse(this.reverseChain);
+    }
+
+    /**
+     * Returns the chain of {@link TestExecutionListener} classes in the correct
+     * order.
+     * 
+     * @return The chain
+     */
+    protected abstract Class<?>[] getChain();
+
+    /**
+     * Factory method used to create the chain. By default this method will
+     * construct the chain using the classes from {@link #getChain()}.
+     * 
+     * @return The chain
+     */
+    protected List<TestExecutionListener> createChain() {
+	Class<?>[] chainClasses = getChain();
+	try {
+	    List<TestExecutionListener> chain = new ArrayList<TestExecutionListener>(chainClasses.length);
+	    for (int i = 0; i < chainClasses.length; i++) {
+		chain.add((TestExecutionListener) chainClasses[i].newInstance());
+	    }
+	    return chain;
+	} catch (Exception ex) {
+	    throw new IllegalStateException("Unable to create chain for classes " + Arrays.asList(chainClasses), ex);
 	}
+    }
 
-	/**
-	 * Returns the chain of {@link TestExecutionListener} classes in the correct order.
-	 * @return The chain
-	 */
-	protected abstract Class<?>[] getChain();
+    public void beforeTestClass(final TestContext testContext) throws Exception {
+	forwards(new Call() {
+	    public void call(TestExecutionListener listener) throws Exception {
+		listener.beforeTestClass(testContext);
+	    }
+	});
+    }
 
-	/**
-	 * Factory method used to create the chain. By default this method will construct the chain using the classes from
-	 * {@link #getChain()}.
-	 * @return The chain
-	 */
-	protected List<TestExecutionListener> createChain() {
-		Class<?>[] chainClasses = getChain();
-		try {
-			List<TestExecutionListener> chain = new ArrayList<TestExecutionListener>(chainClasses.length);
-			for (int i = 0; i < chainClasses.length; i++) {
-				chain.add((TestExecutionListener) chainClasses[i].newInstance());
-			}
-			return chain;
-		} catch (Exception ex) {
-			throw new IllegalStateException("Unable to create chain for classes " + Arrays.asList(chainClasses), ex);
-		}
+    public void prepareTestInstance(final TestContext testContext) throws Exception {
+	forwards(new Call() {
+	    public void call(TestExecutionListener listener) throws Exception {
+		listener.prepareTestInstance(testContext);
+	    }
+	});
+    }
+
+    public void beforeTestMethod(final TestContext testContext) throws Exception {
+	forwards(new Call() {
+	    public void call(TestExecutionListener listener) throws Exception {
+		listener.beforeTestMethod(testContext);
+	    }
+	});
+    }
+
+    public void afterTestMethod(final TestContext testContext) throws Exception {
+	backwards(new Call() {
+	    public void call(TestExecutionListener listener) throws Exception {
+		listener.afterTestMethod(testContext);
+	    }
+	});
+    }
+
+    public void afterTestClass(final TestContext testContext) throws Exception {
+	backwards(new Call() {
+	    public void call(TestExecutionListener listener) throws Exception {
+		listener.afterTestClass(testContext);
+	    }
+	});
+    }
+
+    private void forwards(Call call) throws Exception {
+	runChain(this.chain.iterator(), call);
+    }
+
+    private void backwards(Call call) throws Exception {
+	runChain(this.reverseChain.iterator(), call);
+    }
+
+    private void runChain(Iterator<TestExecutionListener> iterator, Call call) throws Exception {
+	Throwable lastException = null;
+	while (iterator.hasNext()) {
+	    try {
+		call.call(iterator.next());
+	    } catch (Throwable ex) {
+		lastException = ex;
+	    }
 	}
-
-	public void beforeTestClass(final TestContext testContext) throws Exception {
-		forwards(new Call() {
-			public void call(TestExecutionListener listener) throws Exception {
-				listener.beforeTestClass(testContext);
-			}
-		});
+	if (lastException != null) {
+	    if (lastException instanceof Exception) {
+		throw (Exception) lastException;
+	    }
+	    throw new Exception(lastException);
 	}
+    }
 
-	public void prepareTestInstance(final TestContext testContext) throws Exception {
-		forwards(new Call() {
-			public void call(TestExecutionListener listener) throws Exception {
-				listener.prepareTestInstance(testContext);
-			}
-		});
-	}
-
-	public void beforeTestMethod(final TestContext testContext) throws Exception {
-		forwards(new Call() {
-			public void call(TestExecutionListener listener) throws Exception {
-				listener.beforeTestMethod(testContext);
-			}
-		});
-	}
-
-	public void afterTestMethod(final TestContext testContext) throws Exception {
-		backwards(new Call() {
-			public void call(TestExecutionListener listener) throws Exception {
-				listener.afterTestMethod(testContext);
-			}
-		});
-	}
-
-	public void afterTestClass(final TestContext testContext) throws Exception {
-		backwards(new Call() {
-			public void call(TestExecutionListener listener) throws Exception {
-				listener.afterTestClass(testContext);
-			}
-		});
-	}
-
-	private void forwards(Call call) throws Exception {
-		runChain(this.chain.iterator(), call);
-	}
-
-	private void backwards(Call call) throws Exception {
-		runChain(this.reverseChain.iterator(), call);
-	}
-
-	private void runChain(Iterator<TestExecutionListener> iterator, Call call) throws Exception {
-		Throwable lastException = null;
-		while (iterator.hasNext()) {
-			try {
-				call.call(iterator.next());
-			} catch (Throwable ex) {
-				lastException = ex;
-			}
-		}
-		if (lastException != null) {
-			if (lastException instanceof Exception) {
-				throw (Exception) lastException;
-			}
-			throw new Exception(lastException);
-		}
-	}
-
-	private static interface Call {
-		public void call(TestExecutionListener listener) throws Exception;
-	}
+    private static interface Call {
+	public void call(TestExecutionListener listener) throws Exception;
+    }
 
 }

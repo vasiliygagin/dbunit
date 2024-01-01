@@ -23,26 +23,22 @@ package org.dbunit;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
 
-public class MsSqlEnvironment extends DatabaseEnvironment
-{
-    public MsSqlEnvironment(DatabaseProfile profile) throws Exception
-    {
-        super(profile);
+public class MsSqlEnvironment extends DatabaseEnvironment {
+    public MsSqlEnvironment(DatabaseProfile profile) throws Exception {
+	super(profile);
     }
 
-    protected void setupDatabaseConfig(DatabaseConfig config)
-    {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new MsSqlDataTypeFactory());
+    protected void setupDatabaseConfig(DatabaseConfig config) {
+	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
     }
 
     /**
      * Preserve case for MS SQL
+     * 
      * @see DatabaseEnvironment#convertString(String)
      */
     @Override
-    public String convertString(final String str)
-    {
-        return str;
+    public String convertString(final String str) {
+	return str;
     }
 }

@@ -31,23 +31,19 @@ import org.dbunit.IDatabaseTester;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class JdbcDatabaseTesterConnectionIT extends AbstractDatabaseTesterConnectionIT
-{
-   private JdbcDatabaseTester databaseTester;
+public class JdbcDatabaseTesterConnectionIT extends AbstractDatabaseTesterConnectionIT {
+    private JdbcDatabaseTester databaseTester;
 
-   public JdbcDatabaseTesterConnectionIT( String s )
-   {
-      super( s );
-   }
+    public JdbcDatabaseTesterConnectionIT(String s) {
+	super(s);
+    }
 
-   protected IDatabaseTester getDatabaseTester() throws Exception
-   {
-      if( databaseTester == null ){
-         DatabaseProfile profile = getEnvironment().getProfile();
-         databaseTester = new JdbcDatabaseTester( profile.getDriverClass(),
-               profile.getConnectionUrl(), profile.getUser(), profile.getPassword(), 
-               profile.getSchema() );
-      }
-      return databaseTester;
-   }
+    protected IDatabaseTester getDatabaseTester() throws Exception {
+	if (databaseTester == null) {
+	    DatabaseProfile profile = getEnvironment().getProfile();
+	    databaseTester = new JdbcDatabaseTester(profile.getDriverClass(), profile.getConnectionUrl(),
+		    profile.getUser(), profile.getPassword(), profile.getSchema());
+	}
+	return databaseTester;
+    }
 }

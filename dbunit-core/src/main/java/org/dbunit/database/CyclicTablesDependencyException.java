@@ -29,24 +29,21 @@ import org.dbunit.dataset.DataSetException;
  * @since Mar 23, 2003
  * @version $Revision$
  */
-public class CyclicTablesDependencyException extends DataSetException
-{
-    public CyclicTablesDependencyException(String message)
-    {
-        super(message);
+public class CyclicTablesDependencyException extends DataSetException {
+    public CyclicTablesDependencyException(String message) {
+	super(message);
     }
-    
+
     /**
      * @param tableName
      * @param cyclicTableNames
      * @since 2.4.2
      */
-    public CyclicTablesDependencyException(String tableName, Set cyclicTableNames)
-    {
-        this(buildMessage(tableName, cyclicTableNames));
+    public CyclicTablesDependencyException(String tableName, Set cyclicTableNames) {
+	this(buildMessage(tableName, cyclicTableNames));
     }
 
     private static String buildMessage(String tableName, Set cyclicTableNames) {
-        return "Table: " + tableName + " (" + cyclicTableNames.toString() + ")";
+	return "Table: " + tableName + " (" + cyclicTableNames.toString() + ")";
     }
 }

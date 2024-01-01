@@ -28,15 +28,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Decorator that replaces configured values from the decorated table
- * with replacement values.
+ * Decorator that replaces configured values from the decorated table with
+ * replacement values.
  *
  * @author Manuel Laflamme
  * @since Mar 17, 2003
  * @version $Revision$
  */
-public class ReplacementTable implements ITable
-{
+public class ReplacementTable implements ITable {
 
     /**
      * Logger for this class
@@ -55,229 +54,196 @@ public class ReplacementTable implements ITable
      *
      * @param table the decorated table
      */
-    public ReplacementTable(ITable table)
-    {
-        this(table, new HashMap(), new HashMap(), null, null);
+    public ReplacementTable(ITable table) {
+	this(table, new HashMap(), new HashMap(), null, null);
     }
 
-    public ReplacementTable(ITable table, Map objectMap, Map substringMap,
-            String startDelimiter, String endDelimiter)
-    {
-        _table = table;
-        _objectMap = objectMap;
-        _substringMap = substringMap;
-        _startDelim = startDelimiter;
-        _endDelim = endDelimiter;
+    public ReplacementTable(ITable table, Map objectMap, Map substringMap, String startDelimiter, String endDelimiter) {
+	_table = table;
+	_objectMap = objectMap;
+	_substringMap = substringMap;
+	_startDelim = startDelimiter;
+	_endDelim = endDelimiter;
     }
 
     /**
-     * Setting this property to true indicates that when no replacement
-     * is found for a delimited substring the replacement will fail fast.
+     * Setting this property to true indicates that when no replacement is found for
+     * a delimited substring the replacement will fail fast.
      * 
      * @param strictReplacement true if replacement should be strict
      */
-    public void setStrictReplacement(boolean strictReplacement) 
-    {
-    	if(logger.isDebugEnabled())
-    		logger.debug("setStrictReplacement(strictReplacement={}) - start", String.valueOf(strictReplacement));
-    	
-        this._strictReplacement = strictReplacement;
+    public void setStrictReplacement(boolean strictReplacement) {
+	if (logger.isDebugEnabled())
+	    logger.debug("setStrictReplacement(strictReplacement={}) - start", String.valueOf(strictReplacement));
+
+	this._strictReplacement = strictReplacement;
     }
-    
+
     /**
      * Add a new Object replacement mapping.
      *
-     * @param originalObject the object to replace
+     * @param originalObject    the object to replace
      * @param replacementObject the replacement object
      */
-    public void addReplacementObject(Object originalObject, Object replacementObject)
-    {
-        logger.debug("addReplacementObject(originalObject={}, replacementObject={}) - start", originalObject, replacementObject);
+    public void addReplacementObject(Object originalObject, Object replacementObject) {
+	logger.debug("addReplacementObject(originalObject={}, replacementObject={}) - start", originalObject,
+		replacementObject);
 
-        _objectMap.put(originalObject, replacementObject);
+	_objectMap.put(originalObject, replacementObject);
     }
 
     /**
      * Add a new substring replacement mapping.
      *
-     * @param originalSubstring the substring to replace
+     * @param originalSubstring    the substring to replace
      * @param replacementSubstring the replacement substring
      */
-    public void addReplacementSubstring(String originalSubstring,
-            String replacementSubstring)
-    {
-        logger.debug("addReplacementSubstring(originalSubstring={}, replacementSubstring={}) - start", originalSubstring, replacementSubstring);
+    public void addReplacementSubstring(String originalSubstring, String replacementSubstring) {
+	logger.debug("addReplacementSubstring(originalSubstring={}, replacementSubstring={}) - start",
+		originalSubstring, replacementSubstring);
 
-        if (originalSubstring == null || replacementSubstring == null)
-        {
-            throw new NullPointerException();
-        }
+	if (originalSubstring == null || replacementSubstring == null) {
+	    throw new NullPointerException();
+	}
 
-        _substringMap.put(originalSubstring, replacementSubstring);
+	_substringMap.put(originalSubstring, replacementSubstring);
     }
 
     /**
      * Sets substring delimiters.
      */
-    public void setSubstringDelimiters(String startDelimiter, String endDelimiter)
-    {
-        logger.debug("setSubstringDelimiters(startDelimiter={}, endDelimiter={}) - start", startDelimiter, endDelimiter);
+    public void setSubstringDelimiters(String startDelimiter, String endDelimiter) {
+	logger.debug("setSubstringDelimiters(startDelimiter={}, endDelimiter={}) - start", startDelimiter,
+		endDelimiter);
 
-        if (startDelimiter == null || endDelimiter == null)
-        {
-            throw new NullPointerException();
-        }
+	if (startDelimiter == null || endDelimiter == null) {
+	    throw new NullPointerException();
+	}
 
-        _startDelim = startDelimiter;
-        _endDelim = endDelimiter;
+	_startDelim = startDelimiter;
+	_endDelim = endDelimiter;
     }
 
     /**
      * Replace occurrences of source in text with target. Operates directly on text.
      */
     private void replaceAll(StringBuffer text, String source, String target) {
-        int index = 0;
-        while((index = text.toString().indexOf(source, index)) != -1)
-        {
-            text.replace(index, index+source.length(), target);
-            index += target.length();
-        }
+	int index = 0;
+	while ((index = text.toString().indexOf(source, index)) != -1) {
+	    text.replace(index, index + source.length(), target);
+	    index += target.length();
+	}
     }
-    
+
     private String replaceStrings(String value, String lDelim, String rDelim) {
-        StringBuffer buffer = new StringBuffer(value);
+	StringBuffer buffer = new StringBuffer(value);
 
-        for (Iterator it = _substringMap.entrySet().iterator(); it.hasNext();)
-        {
-            Map.Entry entry = (Map.Entry)it.next();
-            String original = (String)entry.getKey();
-            String replacement = (String)entry.getValue();
-            replaceAll(buffer, lDelim + original + rDelim, replacement);
-        }
+	for (Iterator it = _substringMap.entrySet().iterator(); it.hasNext();) {
+	    Map.Entry entry = (Map.Entry) it.next();
+	    String original = (String) entry.getKey();
+	    String replacement = (String) entry.getValue();
+	    replaceAll(buffer, lDelim + original + rDelim, replacement);
+	}
 
-        return buffer == null ? value : buffer.toString();        
+	return buffer == null ? value : buffer.toString();
     }
-    
-    private String replaceSubstrings(String value)
-    {
-        return replaceStrings(value, "", "");
-    }    
+
+    private String replaceSubstrings(String value) {
+	return replaceStrings(value, "", "");
+    }
 
     /**
      * @throws DataSetException when stringReplacement fails
      */
-    private String replaceDelimitedSubstrings(String value) throws DataSetException
-    {
-        StringBuffer buffer = null;
+    private String replaceDelimitedSubstrings(String value) throws DataSetException {
+	StringBuffer buffer = null;
 
-        int startIndex = 0;
-        int endIndex = 0;
-        int lastEndIndex = 0;
-        for(;;)
-        {
-            startIndex = value.indexOf(_startDelim, lastEndIndex);
-            if (startIndex != -1)
-            {
-                endIndex = value.indexOf(_endDelim, startIndex + _startDelim.length());
-                if (endIndex != -1)
-                {
-                    if (buffer == null)
-                    {
-                        buffer = new StringBuffer();
-                    }
+	int startIndex = 0;
+	int endIndex = 0;
+	int lastEndIndex = 0;
+	for (;;) {
+	    startIndex = value.indexOf(_startDelim, lastEndIndex);
+	    if (startIndex != -1) {
+		endIndex = value.indexOf(_endDelim, startIndex + _startDelim.length());
+		if (endIndex != -1) {
+		    if (buffer == null) {
+			buffer = new StringBuffer();
+		    }
 
-                    String substring = value.substring(
-                            startIndex + _startDelim.length(), endIndex);
-                    if (_substringMap.containsKey(substring))
-                    {
-                        buffer.append(value.substring(lastEndIndex, startIndex));
-                        buffer.append(_substringMap.get(substring));
-                    }
-                    else if (_strictReplacement)
-                    {
-                        throw new DataSetException(
-                                "Strict Replacement was set to true, but no"
-                                + " replacement was found for substring '" 
-                                + substring + "' in the value '" + value + "'");
-                    }
-                    else
-                    {
-                        logger.debug("Did not find a replacement map entry for substring={}. " +
-                        		"Leaving original value there.", substring);
-                        buffer.append(value.substring(
-                                lastEndIndex, endIndex + _endDelim.length()));
-                    }
+		    String substring = value.substring(startIndex + _startDelim.length(), endIndex);
+		    if (_substringMap.containsKey(substring)) {
+			buffer.append(value.substring(lastEndIndex, startIndex));
+			buffer.append(_substringMap.get(substring));
+		    } else if (_strictReplacement) {
+			throw new DataSetException(
+				"Strict Replacement was set to true, but no" + " replacement was found for substring '"
+					+ substring + "' in the value '" + value + "'");
+		    } else {
+			logger.debug("Did not find a replacement map entry for substring={}. "
+				+ "Leaving original value there.", substring);
+			buffer.append(value.substring(lastEndIndex, endIndex + _endDelim.length()));
+		    }
 
-                    lastEndIndex = endIndex + _endDelim.length();
-                }
-            }
+		    lastEndIndex = endIndex + _endDelim.length();
+		}
+	    }
 
-            // No more delimited substring
-            if (startIndex == -1 || endIndex == -1)
-            {
-                if (buffer != null)
-                {
-                    buffer.append(value.substring(lastEndIndex));
-                }
-                break;
-            }
-        }
+	    // No more delimited substring
+	    if (startIndex == -1 || endIndex == -1) {
+		if (buffer != null) {
+		    buffer.append(value.substring(lastEndIndex));
+		}
+		break;
+	    }
+	}
 
-        return buffer == null ? value : buffer.toString();
+	return buffer == null ? value : buffer.toString();
     }
 
     ////////////////////////////////////////////////////////////////////////
     // ITable interface
 
-    public ITableMetaData getTableMetaData()
-    {
-        return _table.getTableMetaData();
+    public ITableMetaData getTableMetaData() {
+	return _table.getTableMetaData();
     }
 
-    public int getRowCount()
-    {
-        return _table.getRowCount();
+    public int getRowCount() {
+	return _table.getRowCount();
     }
 
-    public Object getValue(int row, String column) throws DataSetException
-    {
-        if(logger.isDebugEnabled())
-            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+    public Object getValue(int row, String column) throws DataSetException {
+	if (logger.isDebugEnabled())
+	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-        Object value = _table.getValue(row, column);
+	Object value = _table.getValue(row, column);
 
-        // Object replacement
-        if (_objectMap.containsKey(value))
-        {
-            return _objectMap.get(value);
-        }
+	// Object replacement
+	if (_objectMap.containsKey(value)) {
+	    return _objectMap.get(value);
+	}
 
-        // Stop here if substring replacement not applicable
-        if (_substringMap.size() == 0 || !(value instanceof String))
-        {
-            return value;
-        }
+	// Stop here if substring replacement not applicable
+	if (_substringMap.size() == 0 || !(value instanceof String)) {
+	    return value;
+	}
 
-        // Substring replacement
-        if (_startDelim != null && _endDelim != null)
-        {
-            return replaceDelimitedSubstrings((String)value);
-        }
-        return replaceSubstrings((String)value);
+	// Substring replacement
+	if (_startDelim != null && _endDelim != null) {
+	    return replaceDelimitedSubstrings((String) value);
+	}
+	return replaceSubstrings((String) value);
     }
-    
-    
-    public String toString()
-    {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append(getClass().getName()).append("[");
-    	sb.append("_strictReplacement=").append(_strictReplacement);
-    	sb.append(", _table=").append(_table);
-    	sb.append(", _objectMap=").append(_objectMap);
-    	sb.append(", _substringMap=").append(_substringMap);
-    	sb.append(", _startDelim=").append(_startDelim);
-    	sb.append(", _endDelim=").append(_endDelim);
-    	sb.append("]");
-    	return sb.toString();
+
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append(getClass().getName()).append("[");
+	sb.append("_strictReplacement=").append(_strictReplacement);
+	sb.append(", _table=").append(_table);
+	sb.append(", _objectMap=").append(_objectMap);
+	sb.append(", _substringMap=").append(_substringMap);
+	sb.append(", _startDelim=").append(_startDelim);
+	sb.append(", _endDelim=").append(_endDelim);
+	sb.append("]");
+	return sb.toString();
     }
 }

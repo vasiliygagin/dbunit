@@ -29,17 +29,15 @@ import junit.framework.TestSuite;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public class AllTests extends TestSuite
-{
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new TestSuite(ExcludeTableFilterTest.class));
-        suite.addTest(new TestSuite(IncludeTableFilterTest.class));
-        suite.addTest(new TestSuite(SequenceTableFilterTest.class));
-        suite.addTest(new TestSuite(SequenceTableIteratorTest.class));
+public class AllTests extends TestSuite {
+    public static Test suite() {
+	TestSuite suite = new TestSuite();
+	suite.addTest(new TestSuite(ExcludeTableFilterTest.class));
+	suite.addTest(new TestSuite(IncludeTableFilterTest.class));
+	suite.addTest(new TestSuite(SequenceTableFilterTest.class));
+	suite.addTest(new TestSuite(SequenceTableIteratorTest.class));
 
-        return suite;
+	return suite;
     }
 
 }
