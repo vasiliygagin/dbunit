@@ -23,19 +23,19 @@ public abstract class ValueComparerTemplateBase extends ValueComparerBase {
      */
     @Override
     protected String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException {
-	final String failMessage;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException {
+        final String failMessage;
 
-	final boolean isExpected = isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-		actualValue);
-	if (isExpected) {
-	    failMessage = null;
-	} else {
-	    failMessage = makeFailMessage(expectedValue, actualValue);
-	}
+        final boolean isExpected = isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
+                actualValue);
+        if (isExpected) {
+            failMessage = null;
+        } else {
+            failMessage = makeFailMessage(expectedValue, actualValue);
+        }
 
-	return failMessage;
+        return failMessage;
     }
 
     /**
@@ -44,14 +44,14 @@ public abstract class ValueComparerTemplateBase extends ValueComparerBase {
      * @return the formatted fail message with the fail phrase.
      */
     protected String makeFailMessage(final Object expectedValue, final Object actualValue) {
-	final String failPhrase = getFailPhrase();
-	return String.format(BASE_FAIL_MSG, actualValue, failPhrase, expectedValue);
+        final String failPhrase = getFailPhrase();
+        return String.format(BASE_FAIL_MSG, actualValue, failPhrase, expectedValue);
     }
 
     /** @return true if comparing actual to expected is as expected. */
     protected abstract boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException;
 
     /** @return The text snippet for substitution in {@link #BASE_FAIL_MSG}. */
     protected abstract String getFailPhrase();

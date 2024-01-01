@@ -8,15 +8,15 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.util.search.SearchException;
 
 public abstract class AbstractImportedAndExportedKeysFilteredByPKsTestCase
-	extends AbstractSearchCallbackFilteredByPKsTestCase {
+        extends AbstractSearchCallbackFilteredByPKsTestCase {
 
     public AbstractImportedAndExportedKeysFilteredByPKsTestCase(String testName, String sqlFile) {
-	super(testName, sqlFile);
+        super(testName, sqlFile);
     }
 
     protected IDataSet getDataset() throws SQLException, SearchException, DataSetException {
-	IDataSet dataset = TablesDependencyHelper.getAllDataset(getConnection(), getInput());
-	return dataset;
+        IDataSet dataset = TablesDependencyHelper.getAllDataset(getConnection(), getInput());
+        return dataset;
     }
 
 }

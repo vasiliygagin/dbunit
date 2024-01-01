@@ -41,15 +41,15 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractDatabaseIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected DatabaseEnvironment getEnvironment() throws Exception {
-	return DatabaseEnvironmentLoader.getInstance(null);
+        return DatabaseEnvironmentLoader.getInstance(null);
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
-	return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
+        return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
 //        String sql = "select * from " + tableName + " order by " + orderByColumn;
 //        return _connection.createQueryTable(tableName, sql);
     }
@@ -64,65 +64,65 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
      * @return The identifier converted according to database rules.
      */
     protected String convertString(String str) throws Exception {
-	return getEnvironment().convertString(str);
+        return getEnvironment().convertString(str);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	_connection = getDatabaseTester().getConnection();
-	setUpDatabaseConfig(_connection.getConfig());
+        _connection = getDatabaseTester().getConnection();
+        setUpDatabaseConfig(_connection.getConfig());
     }
 
     protected IDatabaseTester getDatabaseTester() throws Exception {
-	try {
-	    return getEnvironment().getDatabaseTester();
-	} catch (Exception e) {
-	    // TODO matthias: this here hides original exceptions from being shown in the
-	    // JUnit results
-	    // (logger is not configured for unit tests). Think about how exceptions can be
-	    // passed through
-	    // So I temporarily added the "e.printStackTrace()"...
-	    logger.error("getDatabaseTester()", e);
-	    e.printStackTrace();
-	}
-	return super.getDatabaseTester();
+        try {
+            return getEnvironment().getDatabaseTester();
+        } catch (Exception e) {
+            // TODO matthias: this here hides original exceptions from being shown in the
+            // JUnit results
+            // (logger is not configured for unit tests). Think about how exceptions can be
+            // passed through
+            // So I temporarily added the "e.printStackTrace()"...
+            logger.error("getDatabaseTester()", e);
+            e.printStackTrace();
+        }
+        return super.getDatabaseTester();
     }
 
     protected void setUpDatabaseConfig(DatabaseConfig config) {
-	try {
-	    getEnvironment().setupDatabaseConfig(config);
-	} catch (Exception ex) {
-	    throw new RuntimeException(ex); // JH_TODO: is this the "DbUnit way" to handle exceptions?
-	}
+        try {
+            getEnvironment().setupDatabaseConfig(config);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex); // JH_TODO: is this the "DbUnit way" to handle exceptions?
+        }
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
 
-	DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
+        DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
 
-	_connection.close();
+        _connection.close();
 
-	_connection = null;
+        _connection = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseTestCase class
 
     protected IDatabaseConnection getConnection() throws Exception {
-	IDatabaseConnection connection = getEnvironment().getConnection();
-	return connection;
+        IDatabaseConnection connection = getEnvironment().getConnection();
+        return connection;
 
 //        return new DatabaseEnvironment(getEnvironment().getProfile()).getConnection();
 //        return new DatabaseConnection(connection.getConnection(), connection.getSchema());
     }
 
     protected IDataSet getDataSet() throws Exception {
-	return getEnvironment().getInitDataSet();
+        return getEnvironment().getInitDataSet();
     }
 
     protected void closeConnection(IDatabaseConnection connection) throws Exception {
@@ -142,27 +142,27 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
      * @return flag indicating if the test should be executed or not
      */
     protected boolean runTest(String testName) {
-	return true;
+        return true;
     }
 
     protected void runTest() throws Throwable {
-	if (runTest(getName())) {
-	    super.runTest();
-	} else {
-	    if (logger.isDebugEnabled()) {
-		logger.debug("Skipping test " + getClass().getName() + "." + getName());
-	    }
-	}
+        if (runTest(getName())) {
+            super.runTest();
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Skipping test " + getClass().getName() + "." + getName());
+            }
+        }
     }
 
     public static boolean environmentHasFeature(TestFeature feature) {
-	try {
-	    final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
-	    final boolean runIt = environment.support(feature);
-	    return runIt;
-	} catch (Exception e) {
-	    throw new DatabaseUnitRuntimeException(e);
-	}
+        try {
+            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+            final boolean runIt = environment.support(feature);
+            return runIt;
+        } catch (Exception e) {
+            throw new DatabaseUnitRuntimeException(e);
+        }
     }
 
 }

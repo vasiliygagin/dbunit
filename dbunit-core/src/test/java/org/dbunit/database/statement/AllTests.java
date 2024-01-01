@@ -30,9 +30,9 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new TestSuite(BatchStatementDecoratorTest.class));
+        TestSuite suite = new TestSuite();
+        suite.addTest(new TestSuite(BatchStatementDecoratorTest.class));
 
-	return suite;
+        return suite;
     }
 }

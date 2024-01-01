@@ -38,14 +38,14 @@ public class SearchException extends DatabaseUnitException {
     }
 
     public SearchException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public SearchException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public SearchException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

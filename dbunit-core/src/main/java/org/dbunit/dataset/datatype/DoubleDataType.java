@@ -43,48 +43,48 @@ public class DoubleDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(DoubleDataType.class);
 
     DoubleDataType(String name, int sqlType) {
-	super(name, sqlType, Double.class, true);
+        super(name, sqlType, Double.class, true);
     }
 
     /////////////////////////////////////////////////////////////////////////////
     // DataType methods
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof Number) {
-	    return new Double(((Number) value).doubleValue());
-	}
+        if (value instanceof Number) {
+            return new Double(((Number) value).doubleValue());
+        }
 
-	try {
-	    return typeCast(new BigDecimal(value.toString()));
-	} catch (java.lang.NumberFormatException e) {
-	    throw new TypeCastException(value, this, e);
-	}
+        try {
+            return typeCast(new BigDecimal(value.toString()));
+        } catch (java.lang.NumberFormatException e) {
+            throw new TypeCastException(value, this, e);
+        }
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	double value = resultSet.getDouble(column);
-	if (resultSet.wasNull()) {
-	    return null;
-	}
-	return new Double(value);
+        double value = resultSet.getDouble(column);
+        if (resultSet.wasNull()) {
+            return null;
+        }
+        return new Double(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setDouble(column, ((Number) typeCast(value)).doubleValue());
+        statement.setDouble(column, ((Number) typeCast(value)).doubleValue());
     }
 
 }

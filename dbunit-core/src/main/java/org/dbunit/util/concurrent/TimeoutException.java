@@ -38,7 +38,7 @@ public class TimeoutException extends InterruptedException {
      * Constructs a TimeoutException with given duration value.
      **/
     public TimeoutException(long time) {
-	duration = time;
+        duration = time;
     }
 
     /**
@@ -46,7 +46,7 @@ public class TimeoutException extends InterruptedException {
      * message.
      */
     public TimeoutException(long time, String message) {
-	super(message);
-	duration = time;
+        super(message);
+        duration = time;
     }
 }

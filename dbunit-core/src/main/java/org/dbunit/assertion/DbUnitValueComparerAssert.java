@@ -27,9 +27,9 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final IDataSet expectedDataSet, final IDataSet actualDataSet)
-	    throws DatabaseUnitException {
-	final ValueComparer defaultValueComparer = valueComparerDefaults.getDefaultValueComparer();
-	assertWithValueComparer(expectedDataSet, actualDataSet, defaultValueComparer);
+            throws DatabaseUnitException {
+        final ValueComparer defaultValueComparer = valueComparerDefaults.getDefaultValueComparer();
+        assertWithValueComparer(expectedDataSet, actualDataSet, defaultValueComparer);
     }
 
     /**
@@ -48,10 +48,10 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final ValueComparer defaultValueComparer) throws DatabaseUnitException {
-	final Map<String, Map<String, ValueComparer>> tableColumnValueComparers = valueComparerDefaults
-		.getDefaultTableColumnValueComparerMap();
-	assertWithValueComparer(expectedDataSet, actualDataSet, defaultValueComparer, tableColumnValueComparers);
+            final ValueComparer defaultValueComparer) throws DatabaseUnitException {
+        final Map<String, Map<String, ValueComparer>> tableColumnValueComparers = valueComparerDefaults
+                .getDefaultTableColumnValueComparerMap();
+        assertWithValueComparer(expectedDataSet, actualDataSet, defaultValueComparer, tableColumnValueComparers);
     }
 
     /**
@@ -83,11 +83,11 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-	    final ValueComparer defaultValueComparer,
-	    final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
-	final FailureHandler failureHandler = getDefaultFailureHandler();
-	assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, defaultValueComparer,
-		tableColumnValueComparers);
+            final ValueComparer defaultValueComparer,
+            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
+        final FailureHandler failureHandler = getDefaultFailureHandler();
+        assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, defaultValueComparer,
+                tableColumnValueComparers);
     }
 
     /**
@@ -102,10 +102,10 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable)
-	    throws DatabaseUnitException {
-	final ValueComparer defaultValueComparer = valueComparerDefaults.getDefaultValueComparer();
+            throws DatabaseUnitException {
+        final ValueComparer defaultValueComparer = valueComparerDefaults.getDefaultValueComparer();
 
-	assertWithValueComparer(expectedTable, actualTable, defaultValueComparer);
+        assertWithValueComparer(expectedTable, actualTable, defaultValueComparer);
     }
 
     /**
@@ -124,12 +124,12 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
-	    final ValueComparer defaultValueComparer) throws DatabaseUnitException {
-	final String tableName = expectedTable.getTableMetaData().getTableName();
-	final Map<String, ValueComparer> columnValueComparers = valueComparerDefaults
-		.getDefaultColumnValueComparerMapForTable(tableName);
+            final ValueComparer defaultValueComparer) throws DatabaseUnitException {
+        final String tableName = expectedTable.getTableMetaData().getTableName();
+        final Map<String, ValueComparer> columnValueComparers = valueComparerDefaults
+                .getDefaultColumnValueComparerMapForTable(tableName);
 
-	assertWithValueComparer(expectedTable, actualTable, defaultValueComparer, columnValueComparers);
+        assertWithValueComparer(expectedTable, actualTable, defaultValueComparer, columnValueComparers);
     }
 
     /**
@@ -157,10 +157,10 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
-	    final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
-	    throws DatabaseUnitException {
-	final FailureHandler failureHandler = getDefaultFailureHandler();
-	assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
+            throws DatabaseUnitException {
+        final FailureHandler failureHandler = getDefaultFailureHandler();
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
     }
 
     /**
@@ -194,10 +194,10 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
-	    final Column[] additionalColumnInfo, final ValueComparer defaultValueComparer,
-	    final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
-	final FailureHandler failureHandler = getDefaultFailureHandler(additionalColumnInfo);
+            final Column[] additionalColumnInfo, final ValueComparer defaultValueComparer,
+            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
+        final FailureHandler failureHandler = getDefaultFailureHandler(additionalColumnInfo);
 
-	assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
     }
 }

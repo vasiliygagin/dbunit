@@ -31,12 +31,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 public class HibernateImportTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void shouldHaveUpdatedData() throws Exception {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    public void shouldHaveUpdatedData() throws Exception {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
 }

@@ -49,35 +49,35 @@ public class Main {
 //        System.setProperty("dbunit.qualified.table.names", "true");
 
 //        testFlatXmlWriter();
-	testXmlWriter();
+        testXmlWriter();
 
-	/*
-	 * IDatabaseConnection connection =
-	 * DatabaseEnvironment.getInstance().getConnection();
-	 * 
-	 * // IDataSet dataSet = new
-	 * XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml")); InputSource
-	 * source = new
-	 * InputSource(TestUtils.getFile("xml/xmlTableTest.xml").toURL().toString()); //
-	 * InputSource source = new InputSource(new
-	 * File("writerTest.xml").toURL().toString()); FlatXmlProducer flatXmlProducer =
-	 * new FlatXmlProducer(source); XmlProducer xmlProducer = new
-	 * XmlProducer(source); MockDataSetProducer producer = new
-	 * MockDataSetProducer(); producer.setupColumnCount(4);
-	 * producer.setupRowCount(2); producer.setupTableCount(3); IDataSet dataSet =
-	 * new StreamingDataSet(xmlProducer); // IDataSet dataSet = new
-	 * StreamingDataSet(xmlProducer);
-	 * 
-	 * // System.out.println(connection.createDataSet());
-	 * 
-	 * // DatabaseOperation.INSERT.execute(connection, dataSet);
-	 * 
-	 * // IDataSet dataSet = connection.createDataSet(); // OutputStream out = new
-	 * FileOutputStream("c://writerTest.xml"); OutputStream out = System.out; //
-	 * FlatXmlWriter writer = new FlatXmlWriter(new OutputStreamWriter(out,
-	 * "UTF8")); XmlDataSetWriter writer = new XmlDataSetWriter(new
-	 * OutputStreamWriter(out, "UTF8")); writer.write(dataSet);
-	 */
+        /*
+         * IDatabaseConnection connection =
+         * DatabaseEnvironment.getInstance().getConnection();
+         * 
+         * // IDataSet dataSet = new
+         * XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml")); InputSource
+         * source = new
+         * InputSource(TestUtils.getFile("xml/xmlTableTest.xml").toURL().toString()); //
+         * InputSource source = new InputSource(new
+         * File("writerTest.xml").toURL().toString()); FlatXmlProducer flatXmlProducer =
+         * new FlatXmlProducer(source); XmlProducer xmlProducer = new
+         * XmlProducer(source); MockDataSetProducer producer = new
+         * MockDataSetProducer(); producer.setupColumnCount(4);
+         * producer.setupRowCount(2); producer.setupTableCount(3); IDataSet dataSet =
+         * new StreamingDataSet(xmlProducer); // IDataSet dataSet = new
+         * StreamingDataSet(xmlProducer);
+         * 
+         * // System.out.println(connection.createDataSet());
+         * 
+         * // DatabaseOperation.INSERT.execute(connection, dataSet);
+         * 
+         * // IDataSet dataSet = connection.createDataSet(); // OutputStream out = new
+         * FileOutputStream("c://writerTest.xml"); OutputStream out = System.out; //
+         * FlatXmlWriter writer = new FlatXmlWriter(new OutputStreamWriter(out,
+         * "UTF8")); XmlDataSetWriter writer = new XmlDataSetWriter(new
+         * OutputStreamWriter(out, "UTF8")); writer.write(dataSet);
+         */
 
 //        FileWriter writer = new FileWriter("writerTest.xml");
 //        FlatXmlDataSet.write(connection.createDataSet(), writer);
@@ -99,27 +99,27 @@ public class Main {
     }
 
     private static void testFlatXmlWriter() throws Exception {
-	MockDataSetProducer mockProducer = new MockDataSetProducer();
-	mockProducer.setupColumnCount(5);
-	mockProducer.setupRowCount(100000);
-	mockProducer.setupTableCount(10);
-	IDataSet dataSet = new StreamingDataSet(mockProducer);
+        MockDataSetProducer mockProducer = new MockDataSetProducer();
+        mockProducer.setupColumnCount(5);
+        mockProducer.setupRowCount(100000);
+        mockProducer.setupTableCount(10);
+        IDataSet dataSet = new StreamingDataSet(mockProducer);
 
-	OutputStream out = new FileOutputStream("flatXmlWriterTest.xml");
-	FlatXmlWriter writer = new FlatXmlWriter(new OutputStreamWriter(out, "UTF8"));
-	writer.write(dataSet);
+        OutputStream out = new FileOutputStream("flatXmlWriterTest.xml");
+        FlatXmlWriter writer = new FlatXmlWriter(new OutputStreamWriter(out, "UTF8"));
+        writer.write(dataSet);
     }
 
     private static void testXmlWriter() throws Exception {
-	MockDataSetProducer mockProducer = new MockDataSetProducer();
-	mockProducer.setupColumnCount(5);
-	mockProducer.setupRowCount(100000);
-	mockProducer.setupTableCount(10);
-	IDataSet dataSet = new StreamingDataSet(mockProducer);
+        MockDataSetProducer mockProducer = new MockDataSetProducer();
+        mockProducer.setupColumnCount(5);
+        mockProducer.setupRowCount(100000);
+        mockProducer.setupTableCount(10);
+        IDataSet dataSet = new StreamingDataSet(mockProducer);
 
-	OutputStream out = new FileOutputStream("xmlWriterTest.xml");
-	XmlDataSetWriter writer = new XmlDataSetWriter(new OutputStreamWriter(out, "UTF8"));
-	writer.write(dataSet);
+        OutputStream out = new FileOutputStream("xmlWriterTest.xml");
+        XmlDataSetWriter writer = new XmlDataSetWriter(new OutputStreamWriter(out, "UTF8"));
+        writer.write(dataSet);
     }
 
 //    private static void testWrite() throws Exception
@@ -132,22 +132,22 @@ public class Main {
 //    }
 
     public void test() throws Exception {
-	Connection jdbcConnection = null;
-	IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, "");
-	DatabaseConfig config = connection.getConfig();
+        Connection jdbcConnection = null;
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, "");
+        DatabaseConfig config = connection.getConfig();
 
-	// Use the ForwardOnlyResultSetTableFactory to export very large dataset.
-	config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new ForwardOnlyResultSetTableFactory());
+        // Use the ForwardOnlyResultSetTableFactory to export very large dataset.
+        config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new ForwardOnlyResultSetTableFactory());
 
-	// Use the StreamingDataSet to import very large dataset.
-	IDataSetProducer producer = new FlatXmlProducer(new InputSource("dataset.xml"));
-	IDataSet dataSet = new StreamingDataSet(producer);
+        // Use the StreamingDataSet to import very large dataset.
+        IDataSetProducer producer = new FlatXmlProducer(new InputSource("dataset.xml"));
+        IDataSet dataSet = new StreamingDataSet(producer);
     }
 
     private static void oldMain() throws Exception {
 
 //        System.setProperty("dbunit.name.escapePattern", "\"?\"");
-	IDatabaseConnection connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
+        IDatabaseConnection connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
 //        IDataSet dataSet = new XmlDataSet(new FileReader("dataSetTest.xml"));
 //        DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
 
@@ -158,9 +158,9 @@ public class Main {
 //                new FileOutputStream("test.dtd"));
 //
 //
-	Writer out = new FileWriter("test.xml");
+        Writer out = new FileWriter("test.xml");
 //        FlatXmlDataSet.write(connection.createDataSet(), out, "ISO-8859-1");
-	FlatXmlDataSet.write(connection.createDataSet(), out);
+        FlatXmlDataSet.write(connection.createDataSet(), out);
 //        out.flush();
 //        out.close();
 
@@ -185,10 +185,10 @@ public class Main {
     }
 
     private static void writeXls() throws IOException, DataSetException {
-	Reader in = new FileReader("P:/dbunit-cvs/dbunit/src/xml/dataSetTest.xml");
-	FileOutputStream out = new FileOutputStream("P:/dbunit-cvs/dbunit/dataSetTest.xls");
-	XlsDataSet.write(new XmlDataSet(in), out);
-	out.close();
+        Reader in = new FileReader("P:/dbunit-cvs/dbunit/src/xml/dataSetTest.xml");
+        FileOutputStream out = new FileOutputStream("P:/dbunit-cvs/dbunit/dataSetTest.xls");
+        XlsDataSet.write(new XmlDataSet(in), out);
+        out.close();
     }
 
     /*

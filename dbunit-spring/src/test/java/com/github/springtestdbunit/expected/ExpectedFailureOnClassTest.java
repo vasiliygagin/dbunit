@@ -36,12 +36,12 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 @Transactional
 public class ExpectedFailureOnClassTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void test() throws Exception {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    public void test() throws Exception {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
 }

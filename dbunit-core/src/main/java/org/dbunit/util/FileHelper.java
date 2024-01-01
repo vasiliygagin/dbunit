@@ -58,10 +58,10 @@ public class FileHelper {
      *                    not work.
      */
     public static void deleteDirectory(File directory, boolean failOnError) {
-	boolean success = deleteDirectory(directory);
-	if (!success) {
-	    throw new RuntimeException("Failed to delete directory " + directory);
-	}
+        boolean success = deleteDirectory(directory);
+        if (!success) {
+            throw new RuntimeException("Failed to delete directory " + directory);
+        }
     }
 
     /**
@@ -71,38 +71,38 @@ public class FileHelper {
      * @return <code>true</code> if the deletion was successfully.
      */
     public static boolean deleteDirectory(File directory) {
-	if (!directory.isDirectory()) {
-	    logger.warn("The directory '" + directory + "' does not exist. Will return without delete.");
-	    return false;
-	}
+        if (!directory.isDirectory()) {
+            logger.warn("The directory '" + directory + "' does not exist. Will return without delete.");
+            return false;
+        }
 
-	// First we must delete all files in the directory
-	File[] containedFiles = directory.listFiles();
-	for (int i = 0; i < containedFiles.length; i++) {
-	    File currentFile = containedFiles[i];
-	    if (currentFile.isDirectory()) {
-		// First delete children recursively
-		deleteDirectory(currentFile);
-	    } else {
-		// Delete the file itself
-		boolean success = currentFile.delete();
-		if (!success) {
-		    logger.warn("Failed to delete file '" + currentFile + "'");
-		}
-	    }
-	}
-	// Finally delete the directory itself
-	boolean success = directory.delete();
-	if (!success) {
-	    logger.warn("Failed to delete file '" + directory + "'");
-	}
-	return success;
+        // First we must delete all files in the directory
+        File[] containedFiles = directory.listFiles();
+        for (int i = 0; i < containedFiles.length; i++) {
+            File currentFile = containedFiles[i];
+            if (currentFile.isDirectory()) {
+                // First delete children recursively
+                deleteDirectory(currentFile);
+            } else {
+                // Delete the file itself
+                boolean success = currentFile.delete();
+                if (!success) {
+                    logger.warn("Failed to delete file '" + currentFile + "'");
+                }
+            }
+        }
+        // Finally delete the directory itself
+        boolean success = directory.delete();
+        if (!success) {
+            logger.warn("Failed to delete file '" + directory + "'");
+        }
+        return success;
     }
 
     public static InputSource createInputSource(File file) throws MalformedURLException {
-	String uri = file/* .getAbsoluteFile() */.toURI().toURL().toString();
-	InputSource source = new InputSource(uri);
-	return source;
+        String uri = file/* .getAbsoluteFile() */.toURI().toURL().toString();
+        InputSource source = new InputSource(uri);
+        return source;
     }
 
     /**
@@ -113,22 +113,22 @@ public class FileHelper {
      * @throws IOException
      */
     public static void copyFile(File srcFile, File destFile) throws IOException {
-	logger.debug("copyFile(srcFile={}, destFile={}) - start", srcFile, destFile);
+        logger.debug("copyFile(srcFile={}, destFile={}) - start", srcFile, destFile);
 
-	// Create channel on the source
-	FileChannel srcChannel = new FileInputStream(srcFile).getChannel();
+        // Create channel on the source
+        FileChannel srcChannel = new FileInputStream(srcFile).getChannel();
 
-	// Create channel on the destination
-	FileChannel dstChannel = new FileOutputStream(destFile).getChannel();
+        // Create channel on the destination
+        FileChannel dstChannel = new FileOutputStream(destFile).getChannel();
 
-	try {
-	    // Copy file contents from source to destination
-	    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-	} finally {
-	    // Close the channels
-	    srcChannel.close();
-	    dstChannel.close();
-	}
+        try {
+            // Copy file contents from source to destination
+            dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+        } finally {
+            // Close the channels
+            srcChannel.close();
+            dstChannel.close();
+        }
     }
 
     /**
@@ -140,23 +140,23 @@ public class FileHelper {
      * @throws IOException
      */
     public static List readLines(File theFile) throws IOException {
-	logger.debug("readLines(theFile={}) - start", theFile);
+        logger.debug("readLines(theFile={}) - start", theFile);
 
-	InputStream tableListStream = new FileInputStream(theFile);
-	try {
-	    List orderedNames = new ArrayList();
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(tableListStream));
-	    String line = null;
-	    while ((line = reader.readLine()) != null) {
-		String table = line.trim();
-		if (table.length() > 0) {
-		    orderedNames.add(table);
-		}
-	    }
-	    return orderedNames;
-	} finally {
-	    tableListStream.close();
-	}
+        InputStream tableListStream = new FileInputStream(theFile);
+        try {
+            List orderedNames = new ArrayList();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(tableListStream));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String table = line.trim();
+                if (table.length() > 0) {
+                    orderedNames.add(table);
+                }
+            }
+            return orderedNames;
+        } finally {
+            tableListStream.close();
+        }
     }
 
 }

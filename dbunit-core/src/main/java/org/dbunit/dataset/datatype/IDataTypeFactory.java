@@ -53,6 +53,6 @@ public interface IDataTypeFactory {
      * @since 2.3.0
      */
     public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
-	    throws DataTypeException;
+            throws DataTypeException;
 
 }

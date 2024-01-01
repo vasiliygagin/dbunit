@@ -45,30 +45,30 @@ public class BinaryStreamDataType extends BytesDataType {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStreamDataType.class);
 
     public BinaryStreamDataType(String name, int sqlType) {
-	super(name, sqlType);
+        super(name, sqlType);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	InputStream in = resultSet.getBinaryStream(column);
-	if (in == null || resultSet.wasNull()) {
-	    return null;
-	}
+        InputStream in = resultSet.getBinaryStream(column);
+        if (in == null || resultSet.wasNull()) {
+            return null;
+        }
 
-	try {
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    byte[] buffer = new byte[32];
-	    int length = in.read(buffer);
-	    while (length != -1) {
-		out.write(buffer, 0, length);
-		length = in.read(buffer);
-	    }
-	    return out.toByteArray();
-	} catch (IOException e) {
-	    throw new TypeCastException(e);
-	}
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[32];
+            int length = in.read(buffer);
+            while (length != -1) {
+                out.write(buffer, 0, length);
+                length = in.read(buffer);
+            }
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new TypeCastException(e);
+        }
     }
 
     /**
@@ -79,19 +79,19 @@ public class BinaryStreamDataType extends BytesDataType {
      *      int, java.sql.PreparedStatement)
      */
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	byte[] bytes = (byte[]) typeCast(value);
-	if (value == null || bytes == null) {
-	    logger.debug("Setting SQL column value to <null>");
-	    statement.setNull(column, getSqlType());
-	} else {
-	    ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-	    statement.setBinaryStream(column, in, bytes.length);
-	}
+        byte[] bytes = (byte[]) typeCast(value);
+        if (value == null || bytes == null) {
+            logger.debug("Setting SQL column value to <null>");
+            statement.setNull(column, getSqlType());
+        } else {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            statement.setBinaryStream(column, in, bytes.length);
+        }
 
     }
 

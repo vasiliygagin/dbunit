@@ -48,7 +48,7 @@ public class FullXmlDataFileLoader extends AbstractDataFileLoader {
      *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FullXmlDataFileLoader(Map ro) {
-	super(ro);
+        super(ro);
     }
 
     /**
@@ -60,16 +60,16 @@ public class FullXmlDataFileLoader extends AbstractDataFileLoader {
      *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FullXmlDataFileLoader(Map ro, Map rs) {
-	super(ro, rs);
+        super(ro, rs);
     }
 
     /**
      * {@inheritDoc}
      */
     public IDataSet loadDataSet(URL url) throws DataSetException, IOException {
-	InputStream in = url.openStream();
-	IDataSet ds = new XmlDataSet(in);
+        InputStream in = url.openStream();
+        IDataSet ds = new XmlDataSet(in);
 
-	return ds;
+        return ds;
     }
 }

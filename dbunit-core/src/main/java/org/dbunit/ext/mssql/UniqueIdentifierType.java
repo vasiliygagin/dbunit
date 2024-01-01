@@ -40,32 +40,32 @@ public class UniqueIdentifierType extends AbstractDataType {
     static final String UNIQUE_IDENTIFIER_TYPE = "uniqueidentifier";
 
     public UniqueIdentifierType() {
-	super(UNIQUE_IDENTIFIER_TYPE, Types.CHAR, UUID.class, false);
+        super(UNIQUE_IDENTIFIER_TYPE, Types.CHAR, UUID.class, false);
     }
 
     @Override
     public Object typeCast(Object value) throws TypeCastException {
-	return value.toString();
+        return value.toString();
     }
 
     @Override
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	String value = resultSet.getString(column);
+        String value = resultSet.getString(column);
 
-	try {
-	    return value != null && value.length() > 0 ? UUID.fromString(value) : null;
-	} catch (IllegalArgumentException error) {
-	    throw new TypeCastException("Invalid UUID: " + value, error);
-	}
+        try {
+            return value != null && value.length() > 0 ? UUID.fromString(value) : null;
+        } catch (IllegalArgumentException error) {
+            throw new TypeCastException("Invalid UUID: " + value, error);
+        }
     }
 
     @Override
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (value == null) {
-	    statement.setObject(column, null);
-	} else {
-	    statement.setObject(column, value.toString());
-	}
+            throws SQLException, TypeCastException {
+        if (value == null) {
+            statement.setObject(column, null);
+        } else {
+            statement.setObject(column, value.toString());
+        }
     }
 }

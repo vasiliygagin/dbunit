@@ -61,9 +61,9 @@ public class PropertiesBasedJdbcDatabaseTester extends JdbcDatabaseTester {
      * @throws Exception
      */
     public PropertiesBasedJdbcDatabaseTester() throws Exception {
-	super(System.getProperty(DBUNIT_DRIVER_CLASS), System.getProperty(DBUNIT_CONNECTION_URL),
-		System.getProperty(DBUNIT_USERNAME), System.getProperty(DBUNIT_PASSWORD),
-		System.getProperty(DBUNIT_SCHEMA));
+        super(System.getProperty(DBUNIT_DRIVER_CLASS), System.getProperty(DBUNIT_CONNECTION_URL),
+                System.getProperty(DBUNIT_USERNAME), System.getProperty(DBUNIT_PASSWORD),
+                System.getProperty(DBUNIT_SCHEMA));
     }
 
 }

@@ -23,7 +23,7 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "Person.find", query = "SELECT p from Person p where p.firstName like :name "
-	+ "or p.lastName like :name") })
+        + "or p.lastName like :name") })
 public class Person {
 
     @Id
@@ -36,30 +36,30 @@ public class Person {
     private String lastName;
 
     public int getId() {
-	return this.id;
+        return this.id;
     }
 
     public String getTitle() {
-	return this.title;
+        return this.title;
     }
 
     public void setTitle(String title) {
-	this.title = title;
+        this.title = title;
     }
 
     public String getFirstName() {
-	return this.firstName;
+        return this.firstName;
     }
 
     public void setFirstName(String firstName) {
-	this.firstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-	return this.lastName;
+        return this.lastName;
     }
 
     public void setLastName(String lastName) {
-	this.lastName = lastName;
+        this.lastName = lastName;
     }
 }

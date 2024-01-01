@@ -46,80 +46,80 @@ public class FlatDtdDataSetIT extends AbstractDataSetTest {
     private static final String DUPLICATE_MULTIPLE_CASE_FILE = "dtd/flatDtdDataSetDuplicateMultipleCaseTest.dtd";
 
     public FlatDtdDataSetIT(String s) {
-	super(s);
+        super(s);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSetTest class
 
     private File getFile(String fileName) throws Exception {
-	return TestUtils.getFileForDatabaseEnvironment(TestUtils.getFileName(fileName));
+        return TestUtils.getFileForDatabaseEnvironment(TestUtils.getFileName(fileName));
     }
 
     protected IDataSet createDataSet() throws Exception {
-	return new FlatDtdDataSet(TestUtils.getFileReader(DTD_FILE));
+        return new FlatDtdDataSet(TestUtils.getFileReader(DTD_FILE));
     }
 
     protected IDataSet createDuplicateDataSet() throws Exception {
-	return new FlatDtdDataSet(TestUtils.getFileReader(DUPLICATE_FILE));
+        return new FlatDtdDataSet(TestUtils.getFileReader(DUPLICATE_FILE));
     }
 
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
-	return new FlatDtdDataSet(TestUtils.getFileReader(DUPLICATE_MULTIPLE_CASE_FILE));
+        return new FlatDtdDataSet(TestUtils.getFileReader(DUPLICATE_MULTIPLE_CASE_FILE));
     }
 
     protected int[] getExpectedDuplicateRows() {
-	return new int[] { 0, 0, 0 };
+        return new int[] { 0, 0, 0 };
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
     public void testWriteFromDtd() throws Exception {
-	IDataSet dataSet = new FlatDtdDataSet(TestUtils.getFileReader(DTD_FILE));
+        IDataSet dataSet = new FlatDtdDataSet(TestUtils.getFileReader(DTD_FILE));
 
-	File tempFile = File.createTempFile("flatXmlDocType", ".dtd");
+        File tempFile = File.createTempFile("flatXmlDocType", ".dtd");
 
-	try {
-	    Writer out = new FileWriter(tempFile);
+        try {
+            Writer out = new FileWriter(tempFile);
 
-	    try {
-		// write DTD in temp file
-		FlatDtdDataSet.write(dataSet, out);
-	    } finally {
-		out.close();
-	    }
+            try {
+                // write DTD in temp file
+                FlatDtdDataSet.write(dataSet, out);
+            } finally {
+                out.close();
+            }
 
-	    FileAsserts.assertEquals(new BufferedReader(TestUtils.getFileReader(DTD_FILE)),
-		    new BufferedReader(new FileReader(tempFile)));
-	} finally {
-	    tempFile.delete();
-	}
+            FileAsserts.assertEquals(new BufferedReader(TestUtils.getFileReader(DTD_FILE)),
+                    new BufferedReader(new FileReader(tempFile)));
+        } finally {
+            tempFile.delete();
+        }
 
     }
 
     public void testWriteFromDatabase() throws Exception {
-	IDatabaseConnection connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
-	IDataSet dataSet = connection.createDataSet();
+        IDatabaseConnection connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
+        IDataSet dataSet = connection.createDataSet();
 
-	File tempFile = File.createTempFile("flatXmlDocType", ".dtd");
+        File tempFile = File.createTempFile("flatXmlDocType", ".dtd");
 
-	try {
-	    Writer out = new FileWriter(tempFile);
+        try {
+            Writer out = new FileWriter(tempFile);
 
-	    try {
-		// write DTD in temp file
-		String[] tableNames = getExpectedNames();
-		FlatDtdDataSet.write(new FilteredDataSet(tableNames, dataSet), out);
-	    } finally {
-		out.close();
-	    }
+            try {
+                // write DTD in temp file
+                String[] tableNames = getExpectedNames();
+                FlatDtdDataSet.write(new FilteredDataSet(tableNames, dataSet), out);
+            } finally {
+                out.close();
+            }
 
-	    FileAsserts.assertEquals(new BufferedReader(new FileReader(getFile(DTD_FILE))),
-		    new BufferedReader(new FileReader(tempFile)));
-	} finally {
-	    tempFile.delete();
-	}
+            FileAsserts.assertEquals(new BufferedReader(new FileReader(getFile(DTD_FILE))),
+                    new BufferedReader(new FileReader(tempFile)));
+        } finally {
+            tempFile.delete();
+        }
     }
 
 }

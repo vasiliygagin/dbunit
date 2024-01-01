@@ -87,31 +87,31 @@ public class SynchronousChannel implements BoundedChannel {
      **/
     protected static class Queue {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(Queue.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(Queue.class);
 
-	protected LinkedNode head;
-	protected LinkedNode last;
+        protected LinkedNode head;
+        protected LinkedNode last;
 
-	protected void enq(LinkedNode p) {
-	    logger.debug("enq(p={}) - start", p);
+        protected void enq(LinkedNode p) {
+            logger.debug("enq(p={}) - start", p);
 
-	    if (last == null)
-		last = head = p;
-	    else
-		last = last.next = p;
-	}
+            if (last == null)
+                last = head = p;
+            else
+                last = last.next = p;
+        }
 
-	protected LinkedNode deq() {
-	    logger.debug("deq() - start");
+        protected LinkedNode deq() {
+            logger.debug("deq() - start");
 
-	    LinkedNode p = head;
-	    if (p != null && (head = p.next) == null)
-		last = null;
-	    return p;
-	}
+            LinkedNode p = head;
+            if (p != null && (head = p.next) == null)
+                last = null;
+            return p;
+        }
     }
 
     protected final Queue waitingPuts = new Queue();
@@ -121,8 +121,8 @@ public class SynchronousChannel implements BoundedChannel {
      * @return zero -- Synchronous channels have no internal capacity.
      **/
     public int capacity() {
-	logger.debug("capacity() - start");
-	return 0;
+        logger.debug("capacity() - start");
+        return 0;
     }
 
     /**
@@ -130,134 +130,134 @@ public class SynchronousChannel implements BoundedChannel {
      *         taken
      **/
     public Object peek() {
-	logger.debug("peek() - start");
-	return null;
+        logger.debug("peek() - start");
+        return null;
     }
 
     public void put(Object x) throws InterruptedException {
-	logger.debug("put(x={}) - start", x);
+        logger.debug("put(x={}) - start", x);
 
-	if (x == null)
-	    throw new IllegalArgumentException();
+        if (x == null)
+            throw new IllegalArgumentException();
 
-	// This code is conceptually straightforward, but messy
-	// because we need to intertwine handling of put-arrives first
-	// vs take-arrives first cases.
+        // This code is conceptually straightforward, but messy
+        // because we need to intertwine handling of put-arrives first
+        // vs take-arrives first cases.
 
-	// Outer loop is to handle retry due to canceled waiting taker
-	for (;;) {
+        // Outer loop is to handle retry due to canceled waiting taker
+        for (;;) {
 
-	    // Get out now if we are interrupted
-	    if (Thread.interrupted())
-		throw new InterruptedException();
+            // Get out now if we are interrupted
+            if (Thread.interrupted())
+                throw new InterruptedException();
 
-	    // Exactly one of item or slot will be not-null at end of
-	    // synchronized block, depending on whether a put or a take
-	    // arrived first.
-	    LinkedNode slot;
-	    LinkedNode item = null;
+            // Exactly one of item or slot will be not-null at end of
+            // synchronized block, depending on whether a put or a take
+            // arrived first.
+            LinkedNode slot;
+            LinkedNode item = null;
 
-	    synchronized (this) {
-		// Try to match up with a waiting taker; fill and signal it below
-		slot = waitingTakes.deq();
+            synchronized (this) {
+                // Try to match up with a waiting taker; fill and signal it below
+                slot = waitingTakes.deq();
 
-		// If no takers yet, create a node and wait below
-		if (slot == null)
-		    waitingPuts.enq(item = new LinkedNode(x));
-	    }
+                // If no takers yet, create a node and wait below
+                if (slot == null)
+                    waitingPuts.enq(item = new LinkedNode(x));
+            }
 
-	    if (slot != null) { // There is a waiting taker.
-		// Fill in the slot created by the taker and signal taker to
-		// continue.
-		synchronized (slot) {
-		    if (slot.value != CANCELLED) {
-			slot.value = x;
-			slot.notify();
-			return;
-		    }
-		    // else the taker has canceled, so retry outer loop
-		}
-	    }
+            if (slot != null) { // There is a waiting taker.
+                // Fill in the slot created by the taker and signal taker to
+                // continue.
+                synchronized (slot) {
+                    if (slot.value != CANCELLED) {
+                        slot.value = x;
+                        slot.notify();
+                        return;
+                    }
+                    // else the taker has canceled, so retry outer loop
+                }
+            }
 
-	    else {
-		// Wait for a taker to arrive and take the item.
-		synchronized (item) {
-		    try {
-			while (item.value != null)
-			    item.wait();
-			return;
-		    } catch (InterruptedException ie) {
-			// If item was taken, return normally but set interrupt status
-			if (item.value == null) {
-			    Thread.currentThread().interrupt();
-			    return;
-			} else {
-			    item.value = CANCELLED;
-			    throw ie;
-			}
-		    }
-		}
-	    }
-	}
+            else {
+                // Wait for a taker to arrive and take the item.
+                synchronized (item) {
+                    try {
+                        while (item.value != null)
+                            item.wait();
+                        return;
+                    } catch (InterruptedException ie) {
+                        // If item was taken, return normally but set interrupt status
+                        if (item.value == null) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        } else {
+                            item.value = CANCELLED;
+                            throw ie;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public Object take() throws InterruptedException {
-	logger.debug("take() - start");
+        logger.debug("take() - start");
 
-	// Entirely symmetric to put()
+        // Entirely symmetric to put()
 
-	for (;;) {
-	    if (Thread.interrupted())
-		throw new InterruptedException();
+        for (;;) {
+            if (Thread.interrupted())
+                throw new InterruptedException();
 
-	    LinkedNode item;
-	    LinkedNode slot = null;
+            LinkedNode item;
+            LinkedNode slot = null;
 
-	    synchronized (this) {
-		item = waitingPuts.deq();
-		if (item == null)
-		    waitingTakes.enq(slot = new LinkedNode());
-	    }
+            synchronized (this) {
+                item = waitingPuts.deq();
+                if (item == null)
+                    waitingTakes.enq(slot = new LinkedNode());
+            }
 
-	    if (item != null) {
-		synchronized (item) {
-		    Object x = item.value;
-		    if (x != CANCELLED) {
-			item.value = null;
-			item.next = null;
-			item.notify();
-			return x;
-		    }
-		}
-	    }
+            if (item != null) {
+                synchronized (item) {
+                    Object x = item.value;
+                    if (x != CANCELLED) {
+                        item.value = null;
+                        item.next = null;
+                        item.notify();
+                        return x;
+                    }
+                }
+            }
 
-	    else {
-		synchronized (slot) {
-		    try {
-			for (;;) {
-			    Object x = slot.value;
-			    if (x != null) {
-				slot.value = null;
-				slot.next = null;
-				return x;
-			    } else
-				slot.wait();
-			}
-		    } catch (InterruptedException ie) {
-			Object x = slot.value;
-			if (x != null) {
-			    slot.value = null;
-			    slot.next = null;
-			    Thread.currentThread().interrupt();
-			    return x;
-			} else {
-			    slot.value = CANCELLED;
-			    throw ie;
-			}
-		    }
-		}
-	    }
-	}
+            else {
+                synchronized (slot) {
+                    try {
+                        for (;;) {
+                            Object x = slot.value;
+                            if (x != null) {
+                                slot.value = null;
+                                slot.next = null;
+                                return x;
+                            } else
+                                slot.wait();
+                        }
+                    } catch (InterruptedException ie) {
+                        Object x = slot.value;
+                        if (x != null) {
+                            slot.value = null;
+                            slot.next = null;
+                            Thread.currentThread().interrupt();
+                            return x;
+                        } else {
+                            slot.value = CANCELLED;
+                            throw ie;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /*
@@ -265,148 +265,148 @@ public class SynchronousChannel implements BoundedChannel {
      */
 
     public boolean offer(Object x, long msecs) throws InterruptedException {
-	if (logger.isDebugEnabled())
-	    logger.debug("offer(x={}, msecs={}) - start", x, String.valueOf(msecs));
+        if (logger.isDebugEnabled())
+            logger.debug("offer(x={}, msecs={}) - start", x, String.valueOf(msecs));
 
-	if (x == null)
-	    throw new IllegalArgumentException();
-	long waitTime = msecs;
-	long startTime = 0; // lazily initialize below if needed
+        if (x == null)
+            throw new IllegalArgumentException();
+        long waitTime = msecs;
+        long startTime = 0; // lazily initialize below if needed
 
-	for (;;) {
-	    if (Thread.interrupted())
-		throw new InterruptedException();
+        for (;;) {
+            if (Thread.interrupted())
+                throw new InterruptedException();
 
-	    LinkedNode slot;
-	    LinkedNode item = null;
+            LinkedNode slot;
+            LinkedNode item = null;
 
-	    synchronized (this) {
-		slot = waitingTakes.deq();
-		if (slot == null) {
-		    if (waitTime <= 0)
-			return false;
-		    else
-			waitingPuts.enq(item = new LinkedNode(x));
-		}
-	    }
+            synchronized (this) {
+                slot = waitingTakes.deq();
+                if (slot == null) {
+                    if (waitTime <= 0)
+                        return false;
+                    else
+                        waitingPuts.enq(item = new LinkedNode(x));
+                }
+            }
 
-	    if (slot != null) {
-		synchronized (slot) {
-		    if (slot.value != CANCELLED) {
-			slot.value = x;
-			slot.notify();
-			return true;
-		    }
-		}
-	    }
+            if (slot != null) {
+                synchronized (slot) {
+                    if (slot.value != CANCELLED) {
+                        slot.value = x;
+                        slot.notify();
+                        return true;
+                    }
+                }
+            }
 
-	    long now = System.currentTimeMillis();
-	    if (startTime == 0)
-		startTime = now;
-	    else
-		waitTime = msecs - (now - startTime);
+            long now = System.currentTimeMillis();
+            if (startTime == 0)
+                startTime = now;
+            else
+                waitTime = msecs - (now - startTime);
 
-	    if (item != null) {
-		synchronized (item) {
-		    try {
-			for (;;) {
-			    if (item.value == null)
-				return true;
-			    if (waitTime <= 0) {
-				item.value = CANCELLED;
-				return false;
-			    }
-			    item.wait(waitTime);
-			    waitTime = msecs - (System.currentTimeMillis() - startTime);
-			}
-		    } catch (InterruptedException ie) {
-			if (item.value == null) {
-			    Thread.currentThread().interrupt();
-			    return true;
-			} else {
-			    item.value = CANCELLED;
-			    throw ie;
-			}
-		    }
-		}
-	    }
-	}
+            if (item != null) {
+                synchronized (item) {
+                    try {
+                        for (;;) {
+                            if (item.value == null)
+                                return true;
+                            if (waitTime <= 0) {
+                                item.value = CANCELLED;
+                                return false;
+                            }
+                            item.wait(waitTime);
+                            waitTime = msecs - (System.currentTimeMillis() - startTime);
+                        }
+                    } catch (InterruptedException ie) {
+                        if (item.value == null) {
+                            Thread.currentThread().interrupt();
+                            return true;
+                        } else {
+                            item.value = CANCELLED;
+                            throw ie;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public Object poll(long msecs) throws InterruptedException {
-	if (logger.isDebugEnabled())
-	    logger.debug("poll(msecs={}) - start", String.valueOf(msecs));
+        if (logger.isDebugEnabled())
+            logger.debug("poll(msecs={}) - start", String.valueOf(msecs));
 
-	long waitTime = msecs;
-	long startTime = 0;
+        long waitTime = msecs;
+        long startTime = 0;
 
-	for (;;) {
-	    if (Thread.interrupted())
-		throw new InterruptedException();
+        for (;;) {
+            if (Thread.interrupted())
+                throw new InterruptedException();
 
-	    LinkedNode item;
-	    LinkedNode slot = null;
+            LinkedNode item;
+            LinkedNode slot = null;
 
-	    synchronized (this) {
-		item = waitingPuts.deq();
-		if (item == null) {
-		    if (waitTime <= 0)
-			return null;
-		    else
-			waitingTakes.enq(slot = new LinkedNode());
-		}
-	    }
+            synchronized (this) {
+                item = waitingPuts.deq();
+                if (item == null) {
+                    if (waitTime <= 0)
+                        return null;
+                    else
+                        waitingTakes.enq(slot = new LinkedNode());
+                }
+            }
 
-	    if (item != null) {
-		synchronized (item) {
-		    Object x = item.value;
-		    if (x != CANCELLED) {
-			item.value = null;
-			item.next = null;
-			item.notify();
-			return x;
-		    }
-		}
-	    }
+            if (item != null) {
+                synchronized (item) {
+                    Object x = item.value;
+                    if (x != CANCELLED) {
+                        item.value = null;
+                        item.next = null;
+                        item.notify();
+                        return x;
+                    }
+                }
+            }
 
-	    long now = System.currentTimeMillis();
-	    if (startTime == 0)
-		startTime = now;
-	    else
-		waitTime = msecs - (now - startTime);
+            long now = System.currentTimeMillis();
+            if (startTime == 0)
+                startTime = now;
+            else
+                waitTime = msecs - (now - startTime);
 
-	    if (slot != null) {
-		synchronized (slot) {
-		    try {
-			for (;;) {
-			    Object x = slot.value;
-			    if (x != null) {
-				slot.value = null;
-				slot.next = null;
-				return x;
-			    }
-			    if (waitTime <= 0) {
-				slot.value = CANCELLED;
-				return null;
-			    }
-			    slot.wait(waitTime);
-			    waitTime = msecs - (System.currentTimeMillis() - startTime);
-			}
-		    } catch (InterruptedException ie) {
-			Object x = slot.value;
-			if (x != null) {
-			    slot.value = null;
-			    slot.next = null;
-			    Thread.currentThread().interrupt();
-			    return x;
-			} else {
-			    slot.value = CANCELLED;
-			    throw ie;
-			}
-		    }
-		}
-	    }
-	}
+            if (slot != null) {
+                synchronized (slot) {
+                    try {
+                        for (;;) {
+                            Object x = slot.value;
+                            if (x != null) {
+                                slot.value = null;
+                                slot.next = null;
+                                return x;
+                            }
+                            if (waitTime <= 0) {
+                                slot.value = CANCELLED;
+                                return null;
+                            }
+                            slot.wait(waitTime);
+                            waitTime = msecs - (System.currentTimeMillis() - startTime);
+                        }
+                    } catch (InterruptedException ie) {
+                        Object x = slot.value;
+                        if (x != null) {
+                            slot.value = null;
+                            slot.next = null;
+                            Thread.currentThread().interrupt();
+                            return x;
+                        } else {
+                            slot.value = CANCELLED;
+                            throw ie;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

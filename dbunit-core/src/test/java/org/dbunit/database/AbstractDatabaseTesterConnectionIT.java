@@ -28,16 +28,16 @@ import org.dbunit.AbstractDatabaseTesterIT;
  */
 public abstract class AbstractDatabaseTesterConnectionIT extends AbstractDatabaseTesterIT {
     public AbstractDatabaseTesterConnectionIT(String s) {
-	super(s);
+        super(s);
     }
 
     public final void testGetRowCount() throws Exception {
-	assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE", null));
-	assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE"));
+        assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE", null));
+        assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE"));
 
-	assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE", null));
-	assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE"));
+        assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE", null));
+        assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE"));
 
-	assertEquals("PK_TABLE", 1, _connection.getRowCount("PK_TABLE", "where PK0 = 0"));
+        assertEquals("PK_TABLE", 1, _connection.getRowCount("PK_TABLE", "where PK0 = 0"));
     }
 }

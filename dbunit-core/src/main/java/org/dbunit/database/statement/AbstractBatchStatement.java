@@ -43,18 +43,18 @@ public abstract class AbstractBatchStatement implements IBatchStatement {
     protected final Statement _statement;
 
     AbstractBatchStatement(Connection connection) throws SQLException {
-	try {
-	    _statement = connection.createStatement();
-	} catch (SQLException e) {
-	    logger.error("getConnection(): ", e);
-	    throw e;
-	}
+        try {
+            _statement = connection.createStatement();
+        } catch (SQLException e) {
+            logger.error("getConnection(): ", e);
+            throw e;
+        }
     }
 
     public void close() throws SQLException {
-	logger.debug("close() - start");
+        logger.debug("close() - start");
 
-	_statement.close();
+        _statement.close();
     }
 
 }

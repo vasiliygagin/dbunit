@@ -56,9 +56,9 @@ public class DataSetUtils {
      * @deprecated Use Assertion.assertEquals
      */
     public static void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet) throws Exception {
-	logger.debug("assertEquals(expectedDataSet={}, actualDataSet={}) - start", expectedDataSet, actualDataSet);
+        logger.debug("assertEquals(expectedDataSet={}, actualDataSet={}) - start", expectedDataSet, actualDataSet);
 
-	Assertion.assertEquals(expectedDataSet, actualDataSet);
+        Assertion.assertEquals(expectedDataSet, actualDataSet);
     }
 
     /**
@@ -68,9 +68,9 @@ public class DataSetUtils {
      * @deprecated Use Assertion.assertEquals
      */
     public static void assertEquals(ITable expectedTable, ITable actualTable) throws Exception {
-	logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
+        logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
 
-	Assertion.assertEquals(expectedTable, actualTable);
+        Assertion.assertEquals(expectedTable, actualTable);
     }
 
     /**
@@ -95,9 +95,9 @@ public class DataSetUtils {
      *             {@link QualifiedTableName} object
      */
     public static String getQualifiedName(String prefix, String name) {
-	logger.debug("getQualifiedName(prefix={}, name={}) - start", prefix, name);
+        logger.debug("getQualifiedName(prefix={}, name={}) - start", prefix, name);
 
-	return new QualifiedTableName(name, prefix, (String) null).getQualifiedName();
+        return new QualifiedTableName(name, prefix, (String) null).getQualifiedName();
     }
 
     /**
@@ -113,11 +113,11 @@ public class DataSetUtils {
      *             {@link QualifiedTableName} object
      */
     public static String getQualifiedName(String prefix, String name, String escapePattern) {
-	if (logger.isDebugEnabled())
-	    logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
-		    new String[] { prefix, name, escapePattern });
+        if (logger.isDebugEnabled())
+            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
+                    new String[] { prefix, name, escapePattern });
 
-	return new QualifiedTableName(name, prefix, escapePattern).getQualifiedName();
+        return new QualifiedTableName(name, prefix, escapePattern).getQualifiedName();
     }
 
     /**
@@ -129,8 +129,8 @@ public class DataSetUtils {
      *             {@link QualifiedTableName} object
      */
     public static String getEscapedName(String name, String escapePattern) {
-	logger.debug("getEscapedName(name={}, escapePattern={}) - start", name, escapePattern);
-	return new QualifiedTableName(name, null, escapePattern).getQualifiedName();
+        logger.debug("getEscapedName(name={}, escapePattern={}) - start", name, escapePattern);
+        return new QualifiedTableName(name, null, escapePattern).getQualifiedName();
     }
 
     /**
@@ -143,49 +143,49 @@ public class DataSetUtils {
      * @return the SQL string value
      */
     public static String getSqlValueString(Object value, DataType dataType) throws TypeCastException {
-	logger.debug("getSqlValueString(value={}, dataType={}) - start", value, dataType);
+        logger.debug("getSqlValueString(value={}, dataType={}) - start", value, dataType);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return "NULL";
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return "NULL";
+        }
 
-	String stringValue = DataType.asString(value);
-	if (dataType == DataType.DATE) {
-	    return "{d '" + stringValue + "'}";
-	}
+        String stringValue = DataType.asString(value);
+        if (dataType == DataType.DATE) {
+            return "{d '" + stringValue + "'}";
+        }
 
-	if (dataType == DataType.TIME) {
-	    return "{t '" + stringValue + "'}";
-	}
+        if (dataType == DataType.TIME) {
+            return "{t '" + stringValue + "'}";
+        }
 
-	if (dataType == DataType.TIMESTAMP) {
-	    return "{ts '" + stringValue + "'}";
-	}
+        if (dataType == DataType.TIMESTAMP) {
+            return "{ts '" + stringValue + "'}";
+        }
 
-	if (!dataType.isNumber()) {
-	    // no single quotes
-	    if (stringValue.indexOf("'") < 0) {
-		return stringValue = "'" + stringValue + "'";
-	    }
+        if (!dataType.isNumber()) {
+            // no single quotes
+            if (stringValue.indexOf("'") < 0) {
+                return stringValue = "'" + stringValue + "'";
+            }
 
-	    // escaping single quotes
-	    StringBuffer buffer = new StringBuffer(stringValue.length() * 2);
-	    StringTokenizer tokenizer = new StringTokenizer(stringValue, "'", true);
+            // escaping single quotes
+            StringBuffer buffer = new StringBuffer(stringValue.length() * 2);
+            StringTokenizer tokenizer = new StringTokenizer(stringValue, "'", true);
 
-	    buffer.append("'");
-	    while (tokenizer.hasMoreTokens()) {
-		String token = tokenizer.nextToken();
-		buffer.append(token);
-		if (token.equals("'")) {
-		    buffer.append("'");
-		}
-	    }
-	    buffer.append("'");
-	    return buffer.toString();
+            buffer.append("'");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                buffer.append(token);
+                if (token.equals("'")) {
+                    buffer.append("'");
+                }
+            }
+            buffer.append("'");
+            return buffer.toString();
 
-	}
+        }
 
-	return stringValue;
+        return stringValue;
     }
 
     /**
@@ -199,8 +199,8 @@ public class DataSetUtils {
      *             {@link Columns#getColumn(String, Column[])}
      */
     public static Column getColumn(String columnName, Column[] columns) {
-	logger.debug("getColumn(columnName={}, columns={}) - start", columnName, columns);
-	return Columns.getColumn(columnName, columns);
+        logger.debug("getColumn(columnName={}, columns={}) - start", columnName, columns);
+        return Columns.getColumn(columnName, columns);
     }
 
     /**
@@ -211,45 +211,45 @@ public class DataSetUtils {
      * @return the tables or an empty array if no tables are found.
      */
     public static ITable[] getTables(String[] names, IDataSet dataSet) throws DataSetException {
-	logger.debug("getTables(names={}, dataSet={}) - start", names, dataSet);
+        logger.debug("getTables(names={}, dataSet={}) - start", names, dataSet);
 
-	ITable[] tables = new ITable[names.length];
-	for (int i = 0; i < names.length; i++) {
-	    String name = names[i];
-	    tables[i] = dataSet.getTable(name);
-	}
+        ITable[] tables = new ITable[names.length];
+        for (int i = 0; i < names.length; i++) {
+            String name = names[i];
+            tables[i] = dataSet.getTable(name);
+        }
 
-	return tables;
+        return tables;
     }
 
     /**
      * Returns the tables from the specified dataset.
      */
     public static ITable[] getTables(IDataSet dataSet) throws DataSetException {
-	logger.debug("getTables(dataSet={}) - start", dataSet);
+        logger.debug("getTables(dataSet={}) - start", dataSet);
 
-	return getTables(dataSet.iterator());
+        return getTables(dataSet.iterator());
     }
 
     /**
      * Returns the tables from the specified iterator.
      */
     public static ITable[] getTables(ITableIterator iterator) throws DataSetException {
-	logger.debug("getTables(iterator={}) - start", iterator);
+        logger.debug("getTables(iterator={}) - start", iterator);
 
-	List tableList = new ArrayList();
-	while (iterator.next()) {
-	    tableList.add(iterator.getTable());
-	}
-	return (ITable[]) tableList.toArray(new ITable[0]);
+        List tableList = new ArrayList();
+        while (iterator.next()) {
+            tableList.add(iterator.getTable());
+        }
+        return (ITable[]) tableList.toArray(new ITable[0]);
     }
 
     /**
      * Returns the table names from the specified dataset in reverse order.
      */
     public static String[] getReverseTableNames(IDataSet dataSet) throws DataSetException {
-	logger.debug("getReverseTableNames(dataSet={}) - start", dataSet);
-	return reverseStringArray(dataSet.getTableNames());
+        logger.debug("getReverseTableNames(dataSet={}) - start", dataSet);
+        return reverseStringArray(dataSet.getTableNames());
     }
 
     /**
@@ -259,12 +259,12 @@ public class DataSetUtils {
      * @return String[] - reversed array.
      */
     public static String[] reverseStringArray(String[] array) {
-	logger.debug("reverseStringArray(array={}) - start", array);
-	String[] newArray = new String[array.length];
-	for (int i = 0; i < array.length; i++) {
-	    newArray[array.length - 1 - i] = array[i];
-	}
-	return newArray;
+        logger.debug("reverseStringArray(array={}) - start", array);
+        String[] newArray = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            newArray[array.length - 1 - i] = array[i];
+        }
+        return newArray;
     }
 
 }

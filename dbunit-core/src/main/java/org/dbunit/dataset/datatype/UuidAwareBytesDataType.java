@@ -46,42 +46,42 @@ public class UuidAwareBytesDataType extends BytesDataType {
      * The regular expression for a hexadecimal UUID representation.
      */
     private static final Pattern UUID_RE = Pattern
-	    .compile("uuid'([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})'");
+            .compile("uuid'([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})'");
 
     UuidAwareBytesDataType(final String name, final int sqlType) {
-	super(name, sqlType);
+        super(name, sqlType);
     }
 
     @Override
     public Object typeCast(final Object value) throws TypeCastException {
-	return super.typeCast(uuidAwareValueOf(value));
+        return super.typeCast(uuidAwareValueOf(value));
     }
 
     private static Object uuidAwareValueOf(final Object value) {
-	if (value instanceof String) {
-	    final String s = (String) value;
-	    final Matcher m = UUID_RE.matcher(s);
+        if (value instanceof String) {
+            final String s = (String) value;
+            final Matcher m = UUID_RE.matcher(s);
 
-	    if (m.find()) {
-		final UUID uuid = UUID.fromString(m.group(1));
-		return uuidToBytes(uuid);
-	    }
-	}
+            if (m.find()) {
+                final UUID uuid = UUID.fromString(m.group(1));
+                return uuidToBytes(uuid);
+            }
+        }
 
-	return value;
+        return value;
     }
 
     private static byte[] uuidToBytes(final UUID uuid) {
-	final long msb = uuid.getMostSignificantBits();
-	final long lsb = uuid.getLeastSignificantBits();
+        final long msb = uuid.getMostSignificantBits();
+        final long lsb = uuid.getLeastSignificantBits();
 
-	return new byte[] { extractByte(msb, 0), extractByte(msb, 1), extractByte(msb, 2), extractByte(msb, 3),
-		extractByte(msb, 4), extractByte(msb, 5), extractByte(msb, 6), extractByte(msb, 7), extractByte(lsb, 0),
-		extractByte(lsb, 1), extractByte(lsb, 2), extractByte(lsb, 3), extractByte(lsb, 4), extractByte(lsb, 5),
-		extractByte(lsb, 6), extractByte(lsb, 7) };
+        return new byte[] { extractByte(msb, 0), extractByte(msb, 1), extractByte(msb, 2), extractByte(msb, 3),
+                extractByte(msb, 4), extractByte(msb, 5), extractByte(msb, 6), extractByte(msb, 7), extractByte(lsb, 0),
+                extractByte(lsb, 1), extractByte(lsb, 2), extractByte(lsb, 3), extractByte(lsb, 4), extractByte(lsb, 5),
+                extractByte(lsb, 6), extractByte(lsb, 7) };
     }
 
     private static byte extractByte(final long value, final int byteIndex) {
-	return (byte) (value >> (56 - byteIndex * 8) & 0xff);
+        return (byte) (value >> (56 - byteIndex * 8) & 0xff);
     }
 }

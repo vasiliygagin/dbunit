@@ -34,52 +34,52 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
  */
 public class FilteredTableMetaDataTest extends TestCase {
     public FilteredTableMetaDataTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IColumnFilter createColumnFilter() throws Exception {
-	DefaultColumnFilter filter = new DefaultColumnFilter();
-	filter.excludeColumn("excluded*");
-	return filter;
+        DefaultColumnFilter filter = new DefaultColumnFilter();
+        filter.excludeColumn("excluded*");
+        return filter;
     }
 
     public void testGetTableName() throws Exception {
-	String expected = "tableName";
-	ITableMetaData metaData = new DefaultTableMetaData(expected, null, (Column[]) null);
-	metaData = new FilteredTableMetaData(metaData, createColumnFilter());
+        String expected = "tableName";
+        ITableMetaData metaData = new DefaultTableMetaData(expected, null, (Column[]) null);
+        metaData = new FilteredTableMetaData(metaData, createColumnFilter());
 
-	assertEquals("table name", expected, metaData.getTableName());
+        assertEquals("table name", expected, metaData.getTableName());
     }
 
     public void testGetColumns() throws Exception {
-	Column[] columns = new Column[] { new Column("numberColumn", DataType.NUMERIC),
-		new Column("stringColumn", DataType.VARCHAR), new Column("booleanColumn", DataType.BOOLEAN),
-		new Column("excludedColumn", DataType.BOOLEAN), };
+        Column[] columns = new Column[] { new Column("numberColumn", DataType.NUMERIC),
+                new Column("stringColumn", DataType.VARCHAR), new Column("booleanColumn", DataType.BOOLEAN),
+                new Column("excludedColumn", DataType.BOOLEAN), };
 
-	ITableMetaData metaData = new DefaultTableMetaData("toto", columns, (Column[]) null);
-	metaData = new FilteredTableMetaData(metaData, createColumnFilter());
+        ITableMetaData metaData = new DefaultTableMetaData("toto", columns, (Column[]) null);
+        metaData = new FilteredTableMetaData(metaData, createColumnFilter());
 
-	assertEquals("column count", 3, metaData.getColumns().length);
-	for (int i = 0; i < 3; i++) {
-	    Column column = columns[i];
-	    assertEquals("columns" + i, column, metaData.getColumns()[i]);
-	}
-	assertEquals("key count", 0, metaData.getPrimaryKeys().length);
+        assertEquals("column count", 3, metaData.getColumns().length);
+        for (int i = 0; i < 3; i++) {
+            Column column = columns[i];
+            assertEquals("columns" + i, column, metaData.getColumns()[i]);
+        }
+        assertEquals("key count", 0, metaData.getPrimaryKeys().length);
     }
 
     public void testGetPrimaryKeys() throws Exception {
-	Column[] columns = new Column[] { new Column("numberColumn", DataType.NUMERIC),
-		new Column("stringColumn", DataType.VARCHAR), new Column("booleanColumn", DataType.BOOLEAN),
-		new Column("excludedColumn", DataType.BOOLEAN), };
-	String[] keyNames = new String[] { "booleanColumn", "numberColumn", "excludedColumn" };
+        Column[] columns = new Column[] { new Column("numberColumn", DataType.NUMERIC),
+                new Column("stringColumn", DataType.VARCHAR), new Column("booleanColumn", DataType.BOOLEAN),
+                new Column("excludedColumn", DataType.BOOLEAN), };
+        String[] keyNames = new String[] { "booleanColumn", "numberColumn", "excludedColumn" };
 
-	ITableMetaData metaData = new DefaultTableMetaData("toto", columns, keyNames);
-	metaData = new FilteredTableMetaData(metaData, createColumnFilter());
+        ITableMetaData metaData = new DefaultTableMetaData("toto", columns, keyNames);
+        metaData = new FilteredTableMetaData(metaData, createColumnFilter());
 
-	Column[] keys = metaData.getPrimaryKeys();
-	assertEquals("key count", 2, keys.length);
-	for (int i = 0; i < 2; i++) {
-	    assertEquals("key name", keyNames[i], keys[i].getColumnName());
-	}
+        Column[] keys = metaData.getPrimaryKeys();
+        assertEquals("key count", 2, keys.length);
+        for (int i = 0; i < 2; i++) {
+            assertEquals("key name", keyNames[i], keys[i].getColumnName());
+        }
     }
 }

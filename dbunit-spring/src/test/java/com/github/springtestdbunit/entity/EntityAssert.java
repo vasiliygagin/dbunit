@@ -33,35 +33,35 @@ import javax.persistence.criteria.Root;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Bean that can be used to assert the {@link SampleEntity#getValue() values} from {@link SampleEntity entities}
- * contained in the database.
+ * Bean that can be used to assert the {@link SampleEntity#getValue() values}
+ * from {@link SampleEntity entities} contained in the database.
  *
  * @author Phillip Webb
  */
 public class EntityAssert implements InitializingBean {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private CriteriaQuery<SampleEntity> criteriaQuery;
+    private CriteriaQuery<SampleEntity> criteriaQuery;
 
-	public void afterPropertiesSet() throws Exception {
-		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-		this.criteriaQuery = cb.createQuery(SampleEntity.class);
-		Root<SampleEntity> from = this.criteriaQuery.from(SampleEntity.class);
-		this.criteriaQuery.orderBy(cb.asc(from.get("value").as(String.class)));
-	}
+    public void afterPropertiesSet() throws Exception {
+        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+        this.criteriaQuery = cb.createQuery(SampleEntity.class);
+        Root<SampleEntity> from = this.criteriaQuery.from(SampleEntity.class);
+        this.criteriaQuery.orderBy(cb.asc(from.get("value").as(String.class)));
+    }
 
-	public void assertValues(String... values) {
-		SortedSet<String> expected = new TreeSet<String>(Arrays.asList(values));
-		SortedSet<String> actual = new TreeSet<String>();
-		TypedQuery<SampleEntity> query = this.entityManager.createQuery(this.criteriaQuery);
-		List<SampleEntity> results = query.getResultList();
-		for (SampleEntity sampleEntity : results) {
-			actual.add(sampleEntity.getValue());
-			this.entityManager.detach(sampleEntity);
-		}
-		assertEquals(expected, actual);
-	}
+    public void assertValues(String... values) {
+        SortedSet<String> expected = new TreeSet<String>(Arrays.asList(values));
+        SortedSet<String> actual = new TreeSet<String>();
+        TypedQuery<SampleEntity> query = this.entityManager.createQuery(this.criteriaQuery);
+        List<SampleEntity> results = query.getResultList();
+        for (SampleEntity sampleEntity : results) {
+            actual.add(sampleEntity.getValue());
+            this.entityManager.detach(sampleEntity);
+        }
+        assertEquals(expected, actual);
+    }
 
 }

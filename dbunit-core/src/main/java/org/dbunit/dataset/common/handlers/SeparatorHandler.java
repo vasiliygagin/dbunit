@@ -43,49 +43,49 @@ public class SeparatorHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent ACCEPT() {
-	logger.debug("ACCEPT() - start");
+        logger.debug("ACCEPT() - start");
 
-	return createPipelineComponent(new SeparatorHandler(), new ACCEPT());
+        return createPipelineComponent(new SeparatorHandler(), new ACCEPT());
     }
 
     public static final PipelineComponent IGNORE() {
-	logger.debug("IGNORE() - start");
+        logger.debug("IGNORE() - start");
 
-	return createPipelineComponent(new SeparatorHandler(), new IGNORE());
+        return createPipelineComponent(new SeparatorHandler(), new IGNORE());
     }
 
     public static final PipelineComponent ENDPIECE() {
-	logger.debug("ENDPIECE() - start");
+        logger.debug("ENDPIECE() - start");
 
-	return createPipelineComponent(new SeparatorHandler(), new ENDPIECE());
+        return createPipelineComponent(new SeparatorHandler(), new ENDPIECE());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	if (logger.isDebugEnabled())
-	    logger.debug("canHandle(c={}) - start", String.valueOf(c));
+        if (logger.isDebugEnabled())
+            logger.debug("canHandle(c={}) - start", String.valueOf(c));
 
-	PipelineConfig pipelineConfig = this.getPipelineConfig();
-	if (c == pipelineConfig.getSeparatorChar()) {
-	    return true;
-	}
-	return false; // throw new IllegalInputCharacterException("Cannot handle character '" + c +
-		      // "'");
+        PipelineConfig pipelineConfig = this.getPipelineConfig();
+        if (c == pipelineConfig.getSeparatorChar()) {
+            return true;
+        }
+        return false; // throw new IllegalInputCharacterException("Cannot handle character '" + c +
+                      // "'");
     }
 
     static protected class ENDPIECE extends Helper {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(ENDPIECE.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(ENDPIECE.class);
 
-	void helpWith(char c) throws PipelineException {
-	    if (logger.isDebugEnabled())
-		logger.debug("helpWith(c={}) - start", String.valueOf(c));
+        void helpWith(char c) throws PipelineException {
+            if (logger.isDebugEnabled())
+                logger.debug("helpWith(c={}) - start", String.valueOf(c));
 
-	    // we are done with the piece
-	    getHandler().getPipeline().thePieceIsDone();
-	}
+            // we are done with the piece
+            getHandler().getPipeline().thePieceIsDone();
+        }
     }
 
 }

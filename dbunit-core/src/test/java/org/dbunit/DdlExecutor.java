@@ -45,7 +45,7 @@ public final class DdlExecutor {
     private static final Logger LOG = LoggerFactory.getLogger(DdlExecutor.class);
 
     private DdlExecutor() {
-	// no instances
+        // no instances
     }
 
     /**
@@ -59,8 +59,8 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void execute(final String ddlFileName, final Connection connection, final boolean multiLineSupport)
-	    throws Exception {
-	execute(ddlFileName, connection, multiLineSupport, false);
+            throws Exception {
+        execute(ddlFileName, connection, multiLineSupport, false);
     }
 
     /**
@@ -76,9 +76,9 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void execute(final String ddlFileName, final Connection connection, final boolean multiLineSupport,
-	    final boolean ignoreErrors) throws Exception {
-	final File ddlFile = TestUtils.getFile(ddlFileName);
-	executeDdlFile(ddlFile, connection, multiLineSupport, ignoreErrors);
+            final boolean ignoreErrors) throws Exception {
+        final File ddlFile = TestUtils.getFile(ddlFileName);
+        executeDdlFile(ddlFile, connection, multiLineSupport, ignoreErrors);
     }
 
     /**
@@ -90,12 +90,12 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void executeDdlFile(final File ddlFile, final Connection connection) throws Exception {
-	final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance(null).getProfile()
-		.getProfileMultilineSupport();
+        final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance(null).getProfile()
+                .getProfileMultilineSupport();
 
-	LOG.debug("Executing DDL from file={}, multiLineSupport={}", ddlFile, multiLineSupport);
+        LOG.debug("Executing DDL from file={}, multiLineSupport={}", ddlFile, multiLineSupport);
 
-	executeDdlFile(ddlFile, connection, multiLineSupport);
+        executeDdlFile(ddlFile, connection, multiLineSupport);
     }
 
     /**
@@ -110,8 +110,8 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void executeDdlFile(final File ddlFile, final Connection connection, final boolean multiLineSupport)
-	    throws Exception {
-	executeDdlFile(ddlFile, connection, multiLineSupport, false);
+            throws Exception {
+        executeDdlFile(ddlFile, connection, multiLineSupport, false);
     }
 
     /**
@@ -126,21 +126,21 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void executeDdlFile(final File ddlFile, final Connection connection, final boolean multiLineSupport,
-	    final boolean ignoreErrors) throws Exception {
-	final String sql = readSqlFromFile(ddlFile);
+            final boolean ignoreErrors) throws Exception {
+        final String sql = readSqlFromFile(ddlFile);
 
-	if (!multiLineSupport) {
-	    StringTokenizer tokenizer = new StringTokenizer(sql, ";");
-	    while (tokenizer.hasMoreTokens()) {
-		String token = tokenizer.nextToken();
-		token = token.trim();
-		if (token.length() > 0) {
-		    executeSql(connection, token, ignoreErrors);
-		}
-	    }
-	} else {
-	    executeSql(connection, sql, ignoreErrors);
-	}
+        if (!multiLineSupport) {
+            StringTokenizer tokenizer = new StringTokenizer(sql, ";");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                token = token.trim();
+                if (token.length() > 0) {
+                    executeSql(connection, token, ignoreErrors);
+                }
+            }
+        } else {
+            executeSql(connection, sql, ignoreErrors);
+        }
     }
 
     /**
@@ -152,7 +152,7 @@ public final class DdlExecutor {
      * @throws SQLException
      */
     public static void executeSql(final Connection connection, final String sql) throws SQLException {
-	executeSql(connection, sql, false);
+        executeSql(connection, sql, false);
     }
 
     /**
@@ -164,35 +164,35 @@ public final class DdlExecutor {
      * @throws SQLException
      */
     public static void executeSql(final Connection connection, final String sql, final boolean ignoreErrors)
-	    throws SQLException {
-	final Statement statement = connection.createStatement();
-	try {
-	    LOG.debug("Executing SQL={}", sql);
-	    statement.execute(sql);
-	} catch (SQLSyntaxErrorException exception) {
-	    if (!ignoreErrors) {
-		throw exception;
-	    }
-	    LOG.debug("Ignoring error executing DDL={}", exception.getMessage());
-	} finally {
-	    statement.close();
-	}
+            throws SQLException {
+        final Statement statement = connection.createStatement();
+        try {
+            LOG.debug("Executing SQL={}", sql);
+            statement.execute(sql);
+        } catch (SQLSyntaxErrorException exception) {
+            if (!ignoreErrors) {
+                throw exception;
+            }
+            LOG.debug("Ignoring error executing DDL={}", exception.getMessage());
+        } finally {
+            statement.close();
+        }
     }
 
     private static String readSqlFromFile(final File ddlFile) throws IOException {
-	final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
-	final StringBuilder sqlBuffer = new StringBuilder();
-	while (sqlReader.ready()) {
-	    String line = sqlReader.readLine();
-	    if (!line.startsWith("-")) {
-		sqlBuffer.append(line);
-	    }
-	}
+        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
+        final StringBuilder sqlBuffer = new StringBuilder();
+        while (sqlReader.ready()) {
+            String line = sqlReader.readLine();
+            if (!line.startsWith("-")) {
+                sqlBuffer.append(line);
+            }
+        }
 
-	sqlReader.close();
+        sqlReader.close();
 
-	final String sql = sqlBuffer.toString();
-	return sql;
+        final String sql = sqlBuffer.toString();
+        return sql;
     }
 
 }

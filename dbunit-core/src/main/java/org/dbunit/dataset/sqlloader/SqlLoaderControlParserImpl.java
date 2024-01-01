@@ -81,7 +81,7 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      */
     public SqlLoaderControlParserImpl() {
 
-	resetThePipeline();
+        resetThePipeline();
 
     }
 
@@ -89,19 +89,19 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * Reset the pipeline.
      */
     private void resetThePipeline() {
-	logger.debug("resetThePipeline() - start");
+        logger.debug("resetThePipeline() - start");
 
-	this.pipeline = new Pipeline();
-	this.pipeline.getPipelineConfig().setSeparatorChar(SEPARATOR_CHAR);
+        this.pipeline = new Pipeline();
+        this.pipeline.getPipelineConfig().setSeparatorChar(SEPARATOR_CHAR);
 
-	// TODO add this.fieldEnclosure
-	getPipeline().putFront(SeparatorHandler.ENDPIECE());
-	getPipeline().putFront(EscapeHandler.ACCEPT());
-	getPipeline().putFront(IsAlnumHandler.QUOTE());
-	getPipeline().putFront(QuoteHandler.QUOTE());
-	getPipeline().putFront(EscapeHandler.ESCAPE());
-	getPipeline().putFront(WhitespacesHandler.IGNORE());
-	getPipeline().putFront(TransparentHandler.IGNORE());
+        // TODO add this.fieldEnclosure
+        getPipeline().putFront(SeparatorHandler.ENDPIECE());
+        getPipeline().putFront(EscapeHandler.ACCEPT());
+        getPipeline().putFront(IsAlnumHandler.QUOTE());
+        getPipeline().putFront(QuoteHandler.QUOTE());
+        getPipeline().putFront(EscapeHandler.ESCAPE());
+        getPipeline().putFront(WhitespacesHandler.IGNORE());
+        getPipeline().putFront(TransparentHandler.IGNORE());
 
     }
 
@@ -118,17 +118,17 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @see org.dbunit.dataset.sqlloader.SqlLoaderControlParser#parse(java.lang.String)
      */
     public List parse(String csv) throws PipelineException, IllegalInputCharacterException {
-	logger.debug("parse(csv={}) - start", csv);
+        logger.debug("parse(csv={}) - start", csv);
 
-	getPipeline().resetProducts();
-	CharacterIterator iterator = new StringCharacterIterator(csv);
-	for (char c = iterator.first(); c != CharacterIterator.DONE; c = iterator.next()) {
-	    getPipeline().handle(c);
-	}
-	getPipeline().noMoreInput();
-	getPipeline().thePieceIsDone();
+        getPipeline().resetProducts();
+        CharacterIterator iterator = new StringCharacterIterator(csv);
+        for (char c = iterator.first(); c != CharacterIterator.DONE; c = iterator.next()) {
+            getPipeline().handle(c);
+        }
+        getPipeline().noMoreInput();
+        getPipeline().thePieceIsDone();
 
-	return getPipeline().getProducts();
+        return getPipeline().getProducts();
     }
 
     /**
@@ -144,8 +144,8 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @see org.dbunit.dataset.sqlloader.SqlLoaderControlParser#parse(java.net.URL)
      */
     public List parse(URL url) throws IOException, SqlLoaderControlParserException {
-	logger.debug("parse(url={}) - start", url);
-	return parse(new File(url.toString()));
+        logger.debug("parse(url={}) - start", url);
+        return parse(new File(url.toString()));
     }
 
     /**
@@ -160,92 +160,92 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @see org.dbunit.dataset.sqlloader.SqlLoaderControlParser#parse(java.io.File)
      */
     public List parse(File controlFile) throws IOException, SqlLoaderControlParserException {
-	logger.debug("parse(controlFile={}) - start", controlFile);
+        logger.debug("parse(controlFile={}) - start", controlFile);
 
-	FileInputStream fis = new FileInputStream(controlFile);
+        FileInputStream fis = new FileInputStream(controlFile);
 
-	FileChannel fc = fis.getChannel();
+        FileChannel fc = fis.getChannel();
 
-	MappedByteBuffer mbf = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-	byte[] barray = new byte[(int) (fc.size())];
-	mbf.get(barray);
+        MappedByteBuffer mbf = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+        byte[] barray = new byte[(int) (fc.size())];
+        mbf.get(barray);
 
-	String lines = new String(barray); // one big string
+        String lines = new String(barray); // one big string
 
-	lines = lines.replaceAll("\r", ""); // unify to UNIX style to have easier regexp transformations.
+        lines = lines.replaceAll("\r", ""); // unify to UNIX style to have easier regexp transformations.
 
-	if (parseForRegexp(lines, "(LOAD\\sDATA).*") != null) {
+        if (parseForRegexp(lines, "(LOAD\\sDATA).*") != null) {
 
-	    String fileName = parseForRegexp(lines, ".*INFILE\\s'(.*?)'.*");
-	    File dataFile = resolveFile(controlFile.getParentFile(), fileName);
+            String fileName = parseForRegexp(lines, ".*INFILE\\s'(.*?)'.*");
+            File dataFile = resolveFile(controlFile.getParentFile(), fileName);
 
-	    this.tableName = parseForRegexp(lines, ".*INTO\\sTABLE\\s(.*?)\\s.*");
+            this.tableName = parseForRegexp(lines, ".*INTO\\sTABLE\\s(.*?)\\s.*");
 
 //            this.fieldTerminator = parseForRegexp(lines, ".*TERMINATED BY [\"|'](.*?)[\"|'].*");
 //
 //            this.fieldEnclosure = parseForRegexp(lines, ".*OPTIONALLY ENCLOSED BY '(.*?)'.*");
 
-	    if (parseForRegexp(lines, ".*(TRAILING NULLCOLS).*") != "") {
-		this.hasTrailingNullCols = true;
-	    } else {
-		this.hasTrailingNullCols = false;
-	    }
+            if (parseForRegexp(lines, ".*(TRAILING NULLCOLS).*") != "") {
+                this.hasTrailingNullCols = true;
+            } else {
+                this.hasTrailingNullCols = false;
+            }
 
-	    List rows = new ArrayList();
-	    List columnList = parseColumns(lines, rows);
+            List rows = new ArrayList();
+            List columnList = parseColumns(lines, rows);
 
-	    LineNumberReader lineNumberReader = new LineNumberReader(
-		    new InputStreamReader(new FileInputStream(dataFile)));
-	    try {
-		parseTheData(columnList, lineNumberReader, rows);
-	    } finally {
-		lineNumberReader.close();
-	    }
+            LineNumberReader lineNumberReader = new LineNumberReader(
+                    new InputStreamReader(new FileInputStream(dataFile)));
+            try {
+                parseTheData(columnList, lineNumberReader, rows);
+            } finally {
+                lineNumberReader.close();
+            }
 
-	    return rows;
-	} else {
-	    throw new SqlLoaderControlParserException(
-		    "Control file " + controlFile + " not starting using 'LOAD DATA'");
-	}
+            return rows;
+        } else {
+            throw new SqlLoaderControlParserException(
+                    "Control file " + controlFile + " not starting using 'LOAD DATA'");
+        }
     }
 
     private File resolveFile(File parentDir, String fileName) {
-	// Initially assume that we have an absolute fileName
-	File dataFile = new File(fileName);
+        // Initially assume that we have an absolute fileName
+        File dataFile = new File(fileName);
 
-	// If fileName was not absolute build it using the given parent
-	if (!dataFile.isAbsolute()) {
-	    fileName = fileName.replaceAll("\\\\", "/");
-	    // remove "./" characters from name at the beginning if needed
-	    if (fileName.startsWith("./")) {
-		fileName = fileName.substring(2);
-	    }
-	    // remove "." character from name at the beginning if needed
-	    if (fileName.startsWith(".")) {
-		fileName = fileName.substring(1);
-	    }
-	    dataFile = new File(parentDir, fileName);
-	}
-	return dataFile;
+        // If fileName was not absolute build it using the given parent
+        if (!dataFile.isAbsolute()) {
+            fileName = fileName.replaceAll("\\\\", "/");
+            // remove "./" characters from name at the beginning if needed
+            if (fileName.startsWith("./")) {
+                fileName = fileName.substring(2);
+            }
+            // remove "." character from name at the beginning if needed
+            if (fileName.startsWith(".")) {
+                fileName = fileName.substring(1);
+            }
+            dataFile = new File(parentDir, fileName);
+        }
+        return dataFile;
     }
 
     protected String parseForRegexp(String controlFileContent, String regexp) throws IOException {
-	logger.debug("parseForRegexp(controlFileContent={}, regexp={}) - start", controlFileContent, regexp);
+        logger.debug("parseForRegexp(controlFileContent={}, regexp={}) - start", controlFileContent, regexp);
 
-	if (controlFileContent == null) {
-	    throw new NullPointerException("control file has no content");
-	}
+        if (controlFileContent == null) {
+            throw new NullPointerException("control file has no content");
+        }
 
-	final Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-	final Matcher matches = pattern.matcher(controlFileContent);
+        final Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        final Matcher matches = pattern.matcher(controlFileContent);
 
-	if (matches.find()) {
-	    String inFileLine = matches.group(1);
+        if (matches.find()) {
+            String inFileLine = matches.group(1);
 
-	    return inFileLine;
-	} else {
-	    return null;
-	}
+            return inFileLine;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -261,42 +261,42 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @throws SqlLoaderControlParserException the oracle control parser exception
      */
     private List parseColumns(String controlFileContent, List rows)
-	    throws IOException, SqlLoaderControlParserException {
-	logger.debug("parseColumns(controlFileContent={}, rows={}) - start", controlFileContent, rows);
+            throws IOException, SqlLoaderControlParserException {
+        logger.debug("parseColumns(controlFileContent={}, rows={}) - start", controlFileContent, rows);
 
-	List columnList;
+        List columnList;
 
-	final Pattern pattern = Pattern.compile(".*FIELDS\\s.*\\(\\n(.*?)\\n\\)",
-		Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	final Matcher matches = pattern.matcher(controlFileContent);
+        final Pattern pattern = Pattern.compile(".*FIELDS\\s.*\\(\\n(.*?)\\n\\)",
+                Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        final Matcher matches = pattern.matcher(controlFileContent);
 
-	if (matches.find()) {
-	    String columnFragment = matches.group(1);
-	    // firstLine = firstLine.replaceAll("(\n|\r)", "");
+        if (matches.find()) {
+            String columnFragment = matches.group(1);
+            // firstLine = firstLine.replaceAll("(\n|\r)", "");
 
-	    columnList = new ArrayList();
+            columnList = new ArrayList();
 
-	    columnFragment = columnFragment.replaceAll("\".*?\"", "");
-	    columnFragment = columnFragment.replaceAll("\n", "");
+            columnFragment = columnFragment.replaceAll("\".*?\"", "");
+            columnFragment = columnFragment.replaceAll("\n", "");
 
-	    StringTokenizer tok = new StringTokenizer(columnFragment, ",");
+            StringTokenizer tok = new StringTokenizer(columnFragment, ",");
 
-	    while (tok.hasMoreElements()) {
+            while (tok.hasMoreElements()) {
 
-		String col = (String) tok.nextElement();
-		col = parseForRegexp(col, ".*^([a-zA-Z0-9_]*)\\s").trim(); // column is the first part.
-		columnList.add(col);
-	    }
+                String col = (String) tok.nextElement();
+                col = parseForRegexp(col, ".*^([a-zA-Z0-9_]*)\\s").trim(); // column is the first part.
+                columnList.add(col);
+            }
 
-	    // columnsInFirstLine = parse(firstLine);
-	    rows.add(columnList);
-	}
+            // columnsInFirstLine = parse(firstLine);
+            rows.add(columnList);
+        }
 
-	else {
-	    columnList = null;
-	}
+        else {
+            columnList = null;
+        }
 
-	return columnList;
+        return columnList;
     }
 
     /**
@@ -310,16 +310,16 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @throws SqlLoaderControlParserException the oracle control parser exception
      */
     private void parseTheData(final List columnList, LineNumberReader lineNumberReader, List rows)
-	    throws IOException, SqlLoaderControlParserException {
-	if (logger.isDebugEnabled())
-	    logger.debug("parseTheData(columnList={}, lineNumberReader={}, rows={}) - start",
-		    new Object[] { columnList, lineNumberReader, rows });
+            throws IOException, SqlLoaderControlParserException {
+        if (logger.isDebugEnabled())
+            logger.debug("parseTheData(columnList={}, lineNumberReader={}, rows={}) - start",
+                    new Object[] { columnList, lineNumberReader, rows });
 
-	int nColumns = columnList.size();
-	List columns;
-	while ((columns = collectExpectedNumberOfColumns(nColumns, lineNumberReader)) != null) {
-	    rows.add(columns);
-	}
+        int nColumns = columnList.size();
+        List columns;
+        while ((columns = collectExpectedNumberOfColumns(nColumns, lineNumberReader)) != null) {
+            rows.add(columns);
+        }
     }
 
     /**
@@ -334,51 +334,51 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @throws SqlLoaderControlParserException the oracle control parser exception
      */
     private List collectExpectedNumberOfColumns(int expectedNumberOfColumns, LineNumberReader lineNumberReader)
-	    throws IOException, SqlLoaderControlParserException {
-	if (logger.isDebugEnabled())
-	    logger.debug("collectExpectedNumberOfColumns(expectedNumberOfColumns={}, lineNumberReader={}) - start",
-		    String.valueOf(expectedNumberOfColumns), lineNumberReader);
+            throws IOException, SqlLoaderControlParserException {
+        if (logger.isDebugEnabled())
+            logger.debug("collectExpectedNumberOfColumns(expectedNumberOfColumns={}, lineNumberReader={}) - start",
+                    String.valueOf(expectedNumberOfColumns), lineNumberReader);
 
-	String anotherLine = lineNumberReader.readLine();
-	if (anotherLine == null) {
-	    return null;
-	}
+        String anotherLine = lineNumberReader.readLine();
+        if (anotherLine == null) {
+            return null;
+        }
 
-	List columns = null;
-	int columnsCollectedSoFar = 0;
-	StringBuffer buffer = new StringBuffer();
-	boolean shouldProceed = false;
-	while (columnsCollectedSoFar < expectedNumberOfColumns) {
-	    try {
-		buffer.append(anotherLine);
-		columns = parse(buffer.toString());
-		columnsCollectedSoFar = columns.size();
-	    } catch (IllegalStateException e) {
-		resetThePipeline();
-		anotherLine = lineNumberReader.readLine();
-		if (anotherLine == null) {
-		    break;
-		}
-		buffer.append("\n");
-		shouldProceed = true;
-	    }
-	    if (!shouldProceed) {
-		break;
-	    }
-	}
+        List columns = null;
+        int columnsCollectedSoFar = 0;
+        StringBuffer buffer = new StringBuffer();
+        boolean shouldProceed = false;
+        while (columnsCollectedSoFar < expectedNumberOfColumns) {
+            try {
+                buffer.append(anotherLine);
+                columns = parse(buffer.toString());
+                columnsCollectedSoFar = columns.size();
+            } catch (IllegalStateException e) {
+                resetThePipeline();
+                anotherLine = lineNumberReader.readLine();
+                if (anotherLine == null) {
+                    break;
+                }
+                buffer.append("\n");
+                shouldProceed = true;
+            }
+            if (!shouldProceed) {
+                break;
+            }
+        }
 
-	if (columnsCollectedSoFar != expectedNumberOfColumns) {
-	    if (this.hasTrailingNullCols) {
-		columns.add(SqlLoaderControlProducer.NULL);
-	    } else {
+        if (columnsCollectedSoFar != expectedNumberOfColumns) {
+            if (this.hasTrailingNullCols) {
+                columns.add(SqlLoaderControlProducer.NULL);
+            } else {
 
-		String message = new StringBuffer("Expected ").append(expectedNumberOfColumns)
-			.append(" columns on line ").append(lineNumberReader.getLineNumber()).append(", got ")
-			.append(columnsCollectedSoFar).append(". Offending line: ").append(buffer).toString();
-		throw new SqlLoaderControlParserException(message);
-	    }
-	}
-	return columns;
+                String message = new StringBuffer("Expected ").append(expectedNumberOfColumns)
+                        .append(" columns on line ").append(lineNumberReader.getLineNumber()).append(", got ")
+                        .append(columnsCollectedSoFar).append(". Offending line: ").append(buffer).toString();
+                throw new SqlLoaderControlParserException(message);
+            }
+        }
+        return columns;
     }
 
     /**
@@ -387,7 +387,7 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @return the pipeline
      */
     Pipeline getPipeline() {
-	return this.pipeline;
+        return this.pipeline;
     }
 
     /**
@@ -396,10 +396,10 @@ public class SqlLoaderControlParserImpl implements SqlLoaderControlParser {
      * @param pipeline the pipeline
      */
     void setPipeline(Pipeline pipeline) {
-	this.pipeline = pipeline;
+        this.pipeline = pipeline;
     }
 
     public String getTableName() {
-	return this.tableName;
+        return this.tableName;
     }
 }

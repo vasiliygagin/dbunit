@@ -62,7 +62,7 @@ public class SequenceTableFilter implements ITableFilter {
      *                                     names
      */
     public SequenceTableFilter(String[] tableNames) throws AmbiguousTableNameException {
-	this(tableNames, false);
+        this(tableNames, false);
     }
 
     /**
@@ -75,59 +75,59 @@ public class SequenceTableFilter implements ITableFilter {
      * @since 2.4.2
      */
     public SequenceTableFilter(String[] tableNames, boolean caseSensitiveTableNames)
-	    throws AmbiguousTableNameException {
-	// Gather all tables in the OrderedTableNameMap which also makes the duplicate
-	// check
-	_tableNameMap = new OrderedTableNameMap(caseSensitiveTableNames);
-	for (int i = 0; i < tableNames.length; i++) {
-	    _tableNameMap.add(tableNames[i], null);
-	}
+            throws AmbiguousTableNameException {
+        // Gather all tables in the OrderedTableNameMap which also makes the duplicate
+        // check
+        _tableNameMap = new OrderedTableNameMap(caseSensitiveTableNames);
+        for (int i = 0; i < tableNames.length; i++) {
+            _tableNameMap.add(tableNames[i], null);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
     public boolean accept(String tableName) throws DataSetException {
-	logger.debug("accept(tableName={}) - start", tableName);
+        logger.debug("accept(tableName={}) - start", tableName);
 
-	return _tableNameMap.containsTable(tableName);
+        return _tableNameMap.containsTable(tableName);
     }
 
     public String[] getTableNames(IDataSet dataSet) throws DataSetException {
-	logger.debug("getTableNames(dataSet={}) - start", dataSet);
+        logger.debug("getTableNames(dataSet={}) - start", dataSet);
 
-	List nameList = new ArrayList();
-	String[] tableNames = _tableNameMap.getTableNames();
-	for (int i = 0; i < tableNames.length; i++) {
-	    try {
-		// Use the table name from the filtered dataset. This ensure
-		// that table names are having the same case (lower/upper) from
-		// getTableNames() and getTables() methods.
-		ITableMetaData metaData = dataSet.getTableMetaData(tableNames[i]);
-		nameList.add(metaData.getTableName());
-	    } catch (NoSuchTableException e) {
-		logger.debug("Table '{}' not found in filtered dataset {}", tableNames[i], dataSet);
-		// Skip this table name because the filtered dataset does not
-		// contains it.
-	    }
-	}
+        List nameList = new ArrayList();
+        String[] tableNames = _tableNameMap.getTableNames();
+        for (int i = 0; i < tableNames.length; i++) {
+            try {
+                // Use the table name from the filtered dataset. This ensure
+                // that table names are having the same case (lower/upper) from
+                // getTableNames() and getTables() methods.
+                ITableMetaData metaData = dataSet.getTableMetaData(tableNames[i]);
+                nameList.add(metaData.getTableName());
+            } catch (NoSuchTableException e) {
+                logger.debug("Table '{}' not found in filtered dataset {}", tableNames[i], dataSet);
+                // Skip this table name because the filtered dataset does not
+                // contains it.
+            }
+        }
 
-	return (String[]) nameList.toArray(new String[0]);
+        return (String[]) nameList.toArray(new String[0]);
     }
 
     public ITableIterator iterator(IDataSet dataSet, boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("iterator(dataSet={}, reversed={}) - start", dataSet, String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("iterator(dataSet={}, reversed={}) - start", dataSet, String.valueOf(reversed));
 
-	String[] tableNames = getTableNames(dataSet);
-	return new SequenceTableIterator(reversed ? DataSetUtils.reverseStringArray(tableNames) : tableNames, dataSet);
+        String[] tableNames = getTableNames(dataSet);
+        return new SequenceTableIterator(reversed ? DataSetUtils.reverseStringArray(tableNames) : tableNames, dataSet);
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_tableNameMap=").append(_tableNameMap);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_tableNameMap=").append(_tableNameMap);
+        sb.append("]");
+        return sb.toString();
     }
 }

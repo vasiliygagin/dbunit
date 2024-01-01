@@ -41,76 +41,76 @@ import org.dbunit.dataset.ITableMetaData;
  */
 public class XlsTableWriteTest extends XlsTableTest {
     public XlsTableWriteTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDataSet createDataSet() throws Exception {
-	File tempFile = File.createTempFile("tableWriteTest", ".xls");
+        File tempFile = File.createTempFile("tableWriteTest", ".xls");
 //        System.out.println(tempFile.getAbsoluteFile());
-	OutputStream out = new FileOutputStream(tempFile);
-	try {
-	    // write source dataset in temp file
-	    try {
-		XlsDataSet.write(super.createDataSet(), out);
-	    } finally {
-		out.close();
-	    }
+        OutputStream out = new FileOutputStream(tempFile);
+        try {
+            // write source dataset in temp file
+            try {
+                XlsDataSet.write(super.createDataSet(), out);
+            } finally {
+                out.close();
+            }
 
-	    // load new dataset from temp file
-	    InputStream in = new FileInputStream(tempFile);
-	    try {
-		return new XlsDataSet(in);
-	    } finally {
-		in.close();
-	    }
-	} finally {
-	    tempFile.delete();
-	}
+            // load new dataset from temp file
+            InputStream in = new FileInputStream(tempFile);
+            try {
+                return new XlsDataSet(in);
+            } finally {
+                in.close();
+            }
+        } finally {
+            tempFile.delete();
+        }
     }
 
     public void testGetValue() throws Exception {
-	super.testGetValue();
+        super.testGetValue();
     }
 
     public void testWriteMultipleTable() throws Exception {
-	int tableCount = 5;
-	ITable sourceTable = super.createTable();
+        int tableCount = 5;
+        ITable sourceTable = super.createTable();
 
-	ITable[] tables = new ITable[tableCount];
-	for (int i = 0; i < tables.length; i++) {
-	    ITableMetaData metaData = new DefaultTableMetaData("table" + i,
-		    sourceTable.getTableMetaData().getColumns());
-	    tables[i] = new CompositeTable(metaData, sourceTable);
-	}
+        ITable[] tables = new ITable[tableCount];
+        for (int i = 0; i < tables.length; i++) {
+            ITableMetaData metaData = new DefaultTableMetaData("table" + i,
+                    sourceTable.getTableMetaData().getColumns());
+            tables[i] = new CompositeTable(metaData, sourceTable);
+        }
 
-	IDataSet dataSet = new DefaultDataSet(tables);
-	File tempFile = File.createTempFile("tableWriteTest", ".xls");
-	OutputStream out = new FileOutputStream(tempFile);
-	try {
-	    // write DefaultTable in temp file
-	    try {
-		XlsDataSet.write(dataSet, out);
-	    } finally {
-		out.close();
-	    }
+        IDataSet dataSet = new DefaultDataSet(tables);
+        File tempFile = File.createTempFile("tableWriteTest", ".xls");
+        OutputStream out = new FileOutputStream(tempFile);
+        try {
+            // write DefaultTable in temp file
+            try {
+                XlsDataSet.write(dataSet, out);
+            } finally {
+                out.close();
+            }
 
-	    // load new dataset from temp file
-	    FileInputStream in = new FileInputStream(tempFile);
-	    try {
-		XlsDataSet dataSet2 = new XlsDataSet(in);
+            // load new dataset from temp file
+            FileInputStream in = new FileInputStream(tempFile);
+            try {
+                XlsDataSet dataSet2 = new XlsDataSet(in);
 
-		// verify each table
-		for (int i = 0; i < tables.length; i++) {
-		    ITable table = tables[i];
-		    Assertion.assertEquals(table, dataSet2.getTable(dataSet2.getTableNames()[i]));
-		}
-	    } finally {
-		in.close();
-	    }
+                // verify each table
+                for (int i = 0; i < tables.length; i++) {
+                    ITable table = tables[i];
+                    Assertion.assertEquals(table, dataSet2.getTable(dataSet2.getTableNames()[i]));
+                }
+            } finally {
+                in.close();
+            }
 
-	} finally {
-	    tempFile.delete();
-	}
+        } finally {
+            tempFile.delete();
+        }
     }
 
 }

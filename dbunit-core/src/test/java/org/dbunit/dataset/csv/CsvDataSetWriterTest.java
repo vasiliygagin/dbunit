@@ -19,34 +19,34 @@ public class CsvDataSetWriterTest extends TestCase {
     private static final String SOURCE = TestUtils.getFileName("csv/orders");
 
     public void testProduceAndWriteBackToDisk() throws Exception {
-	produceToFolder(SOURCE, DEST);
-	IDataSet expected = produceToMemory(SOURCE);
-	IDataSet actual = produceToMemory(DEST);
-	Assertion.assertEquals(expected, actual);
+        produceToFolder(SOURCE, DEST);
+        IDataSet expected = produceToMemory(SOURCE);
+        IDataSet actual = produceToMemory(DEST);
+        Assertion.assertEquals(expected, actual);
     }
 
     private IDataSet produceToMemory(String source) throws DataSetException {
-	CsvProducer producer = new CsvProducer(source);
-	CachedDataSet cached = new CachedDataSet();
-	producer.setConsumer(cached);
-	producer.produce();
-	return cached;
+        CsvProducer producer = new CsvProducer(source);
+        CachedDataSet cached = new CachedDataSet();
+        producer.setConsumer(cached);
+        producer.produce();
+        return cached;
     }
 
     private void produceToFolder(String source, String dest) throws DataSetException {
-	CsvProducer producer = new CsvProducer(source);
-	new File(dest).delete();
-	CsvDataSetWriter writer = new CsvDataSetWriter(dest);
-	producer.setConsumer(writer);
-	producer.produce();
+        CsvProducer producer = new CsvProducer(source);
+        new File(dest).delete();
+        CsvDataSetWriter writer = new CsvDataSetWriter(dest);
+        producer.setConsumer(writer);
+        producer.produce();
     }
 
     public void testEscapeQuote() {
-	assertEquals("\\\"foo\\\"", CsvDataSetWriter.escape("\"foo\""));
+        assertEquals("\\\"foo\\\"", CsvDataSetWriter.escape("\"foo\""));
     }
 
     public void testEscapeEscape() {
-	assertEquals("\\\\foo\\\\", CsvDataSetWriter.escape("\\foo\\"));
+        assertEquals("\\\\foo\\\\", CsvDataSetWriter.escape("\\foo\\"));
     }
 
 }

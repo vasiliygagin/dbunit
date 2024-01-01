@@ -30,16 +30,16 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
  */
 public class MicrosoftSqlDatabaseOperationLookupTest {
 
-	@Test
-	public void shouldLookup() throws Exception {
-		DefaultDatabaseOperationLookup lookup = new MicrosoftSqlDatabaseOperationLookup();
-		assertSame(org.dbunit.operation.DatabaseOperation.UPDATE, lookup.get(DatabaseOperation.UPDATE));
-		assertSame(InsertIdentityOperation.INSERT, lookup.get(DatabaseOperation.INSERT));
-		assertSame(InsertIdentityOperation.REFRESH, lookup.get(DatabaseOperation.REFRESH));
-		assertSame(org.dbunit.operation.DatabaseOperation.DELETE, lookup.get(DatabaseOperation.DELETE));
-		assertSame(org.dbunit.operation.DatabaseOperation.DELETE_ALL, lookup.get(DatabaseOperation.DELETE_ALL));
-		assertSame(org.dbunit.operation.DatabaseOperation.TRUNCATE_TABLE, lookup.get(DatabaseOperation.TRUNCATE_TABLE));
-		assertSame(InsertIdentityOperation.CLEAN_INSERT, lookup.get(DatabaseOperation.CLEAN_INSERT));
-	}
+    @Test
+    public void shouldLookup() throws Exception {
+        DefaultDatabaseOperationLookup lookup = new MicrosoftSqlDatabaseOperationLookup();
+        assertSame(org.dbunit.operation.DatabaseOperation.UPDATE, lookup.get(DatabaseOperation.UPDATE));
+        assertSame(InsertIdentityOperation.INSERT, lookup.get(DatabaseOperation.INSERT));
+        assertSame(InsertIdentityOperation.REFRESH, lookup.get(DatabaseOperation.REFRESH));
+        assertSame(org.dbunit.operation.DatabaseOperation.DELETE, lookup.get(DatabaseOperation.DELETE));
+        assertSame(org.dbunit.operation.DatabaseOperation.DELETE_ALL, lookup.get(DatabaseOperation.DELETE_ALL));
+        assertSame(org.dbunit.operation.DatabaseOperation.TRUNCATE_TABLE, lookup.get(DatabaseOperation.TRUNCATE_TABLE));
+        assertSame(InsertIdentityOperation.CLEAN_INSERT, lookup.get(DatabaseOperation.CLEAN_INSERT));
+    }
 
 }

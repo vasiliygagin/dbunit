@@ -34,10 +34,10 @@ import java.sql.SQLException;
  */
 public interface IResultSetTableFactory {
     public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
-	    throws SQLException, DataSetException;
+            throws SQLException, DataSetException;
 
     public IResultSetTable createTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws SQLException, DataSetException;
+            throws SQLException, DataSetException;
 
     /**
      * Creates a table from a preparedStatement
@@ -49,6 +49,6 @@ public interface IResultSetTableFactory {
      * @since 2.4.4
      */
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
-	    IDatabaseConnection connection) throws SQLException, DataSetException;
+            IDatabaseConnection connection) throws SQLException, DataSetException;
 
 }

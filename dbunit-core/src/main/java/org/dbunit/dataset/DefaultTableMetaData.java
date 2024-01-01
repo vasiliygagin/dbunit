@@ -37,40 +37,40 @@ public class DefaultTableMetaData extends AbstractTableMetaData {
     public DefaultTableMetaData(String tableName, Column[] columns)
     // throws DataSetException
     {
-	this(tableName, columns, new String[0]);
+        this(tableName, columns, new String[0]);
     }
 
     public DefaultTableMetaData(String tableName, Column[] columns, String[] primaryKeys) // throws DataSetException
     {
-	_tableName = tableName;
-	_columns = columns;
-	_primaryKeys = Columns.getColumns(primaryKeys, columns);
+        _tableName = tableName;
+        _columns = columns;
+        _primaryKeys = Columns.getColumns(primaryKeys, columns);
     }
 
     public DefaultTableMetaData(String tableName, Column[] columns, Column[] primaryKeys) // throws DataSetException
     {
-	_tableName = tableName;
-	_columns = columns;
-	_primaryKeys = primaryKeys;
+        _tableName = tableName;
+        _columns = columns;
+        _primaryKeys = primaryKeys;
     }
 
     public String toString() {
-	return "tableName=" + _tableName + ", columns=" + Arrays.asList(_columns) + ", keys="
-		+ Arrays.asList(_primaryKeys) + "";
+        return "tableName=" + _tableName + ", columns=" + Arrays.asList(_columns) + ", keys="
+                + Arrays.asList(_primaryKeys) + "";
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
     public String getTableName() {
-	return _tableName;
+        return _tableName;
     }
 
     public Column[] getColumns() {
-	return _columns;
+        return _columns;
     }
 
     public Column[] getPrimaryKeys() {
-	return _primaryKeys;
+        return _primaryKeys;
     }
 }

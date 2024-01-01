@@ -38,28 +38,28 @@ import java.io.Reader;
  */
 public class XmlTableTest extends AbstractTableTest {
     public XmlTableTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected ITable createTable() throws Exception {
-	return createDataSet().getTable("TEST_TABLE");
+        return createDataSet().getTable("TEST_TABLE");
     }
 
     protected IDataSet createDataSet() throws Exception {
-	Reader in = new FileReader(TestUtils.getFile("xml/xmlTableTest.xml"));
-	return new XmlDataSet(in);
+        Reader in = new FileReader(TestUtils.getFile("xml/xmlTableTest.xml"));
+        return new XmlDataSet(in);
     }
 
     public void testGetMissingValue() throws Exception {
-	Object[] expected = { null, ITable.NO_VALUE, "value", "", "   ", ITable.NO_VALUE };
+        Object[] expected = { null, ITable.NO_VALUE, "value", "", "   ", ITable.NO_VALUE };
 
-	ITable table = createDataSet().getTable("MISSING_AND_NULL_VALUES");
+        ITable table = createDataSet().getTable("MISSING_AND_NULL_VALUES");
 
-	Column[] columns = table.getTableMetaData().getColumns();
-	assertEquals("column count", expected.length, columns.length);
-	for (int i = 0; i < columns.length; i++) {
-	    assertEquals("value " + i, expected[i], table.getValue(0, columns[i].getColumnName()));
-	}
+        Column[] columns = table.getTableMetaData().getColumns();
+        assertEquals("column count", expected.length, columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            assertEquals("value " + i, expected[i], table.getValue(0, columns[i].getColumnName()));
+        }
     }
 
 }

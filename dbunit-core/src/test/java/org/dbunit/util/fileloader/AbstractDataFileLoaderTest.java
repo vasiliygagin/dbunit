@@ -40,11 +40,11 @@ public class AbstractDataFileLoaderTest extends TestCase {
      * {@inheritDoc}
      */
     protected void setUp() throws Exception {
-	loader = new FlatXmlDataFileLoader();
+        loader = new FlatXmlDataFileLoader();
     }
 
     public void testLoadDefaultDataSetEmpty() throws DataSetException {
-	IDataSet ds = loader.load(null);
-	assertEquals("Default dataset had tables in it.", ds.getTableNames().length, 0);
+        IDataSet ds = loader.load(null);
+        assertEquals("Default dataset had tables in it.", ds.getTableNames().length, 0);
     }
 }

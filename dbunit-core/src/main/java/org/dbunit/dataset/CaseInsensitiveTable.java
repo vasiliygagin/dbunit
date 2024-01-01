@@ -41,39 +41,39 @@ public class CaseInsensitiveTable implements ITable {
     private final ITable _table;
 
     public CaseInsensitiveTable(ITable table) {
-	_table = table;
+        _table = table;
     }
 
     private String getInternalColumnName(String columnName) throws DataSetException {
-	logger.debug("getInternalColumnName(columnName={}) - start", columnName);
+        logger.debug("getInternalColumnName(columnName={}) - start", columnName);
 
-	Column[] columns = _table.getTableMetaData().getColumns();
+        Column[] columns = _table.getTableMetaData().getColumns();
 
-	for (int i = 0; i < columns.length; i++) {
-	    Column column = columns[i];
-	    if (columnName.equalsIgnoreCase(column.getColumnName())) {
-		return column.getColumnName();
-	    }
-	}
+        for (int i = 0; i < columns.length; i++) {
+            Column column = columns[i];
+            if (columnName.equalsIgnoreCase(column.getColumnName())) {
+                return column.getColumnName();
+            }
+        }
 
-	throw new NoSuchColumnException(_table.getTableMetaData().getTableName(), columnName);
+        throw new NoSuchColumnException(_table.getTableMetaData().getTableName(), columnName);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
     public ITableMetaData getTableMetaData() {
-	return _table.getTableMetaData();
+        return _table.getTableMetaData();
     }
 
     public int getRowCount() {
-	return _table.getRowCount();
+        return _table.getRowCount();
     }
 
     public Object getValue(int row, String column) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-	return _table.getValue(row, getInternalColumnName(column));
+        return _table.getValue(row, getInternalColumnName(column));
     }
 }

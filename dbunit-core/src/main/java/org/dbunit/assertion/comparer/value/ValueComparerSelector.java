@@ -21,6 +21,6 @@ public interface ValueComparerSelector {
      * @throws DatabaseUnitException
      */
     ValueComparer select(ITable expectedTable, ITable actualTable, int rowNum, String columnName, DataType dataType,
-	    Object expectedValue, Object actualValue, Map<Object, ValueComparer> valueComparers)
-	    throws DatabaseUnitException;
+            Object expectedValue, Object actualValue, Map<Object, ValueComparer> valueComparers)
+            throws DatabaseUnitException;
 }

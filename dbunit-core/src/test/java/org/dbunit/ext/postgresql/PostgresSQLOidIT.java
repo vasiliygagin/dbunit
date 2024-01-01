@@ -28,58 +28,58 @@ public class PostgresSQLOidIT extends TestCase {
  // @formatter:on
 
     protected void setUp() throws Exception {
-	super.setUp();
-	// Load active postgreSQL profile and connection from Maven pom.xml.
-	_connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
+        super.setUp();
+        // Load active postgreSQL profile and connection from Maven pom.xml.
+        _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
-	if (_connection != null) {
-	    _connection.close();
-	    _connection = null;
-	}
+        super.tearDown();
+        if (_connection != null) {
+            _connection.close();
+            _connection = null;
+        }
     }
 
     public void testOk() {
     }
 
     public void xtestOidDataType() throws Exception {
-	final String testTable = "t2";
-	assertNotNull("didn't get a connection", _connection);
-	DatabaseConfig config = _connection.getConfig();
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
-	Statement stat = _connection.getConnection().createStatement();
-	// DELETE SQL OID tables
-	stat.execute("DROP TABLE IF EXISTS " + testTable + ";");
+        final String testTable = "t2";
+        assertNotNull("didn't get a connection", _connection);
+        DatabaseConfig config = _connection.getConfig();
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+        Statement stat = _connection.getConnection().createStatement();
+        // DELETE SQL OID tables
+        stat.execute("DROP TABLE IF EXISTS " + testTable + ";");
 
-	// Create SQL OID tables
-	stat.execute("CREATE TABLE " + testTable + "(DATA OID);");
-	stat.close();
+        // Create SQL OID tables
+        stat.execute("CREATE TABLE " + testTable + "(DATA OID);");
+        stat.close();
 
-	try {
-	    ReplacementDataSet dataSet = new ReplacementDataSet(
-		    new FlatXmlDataSetBuilder().build(new InputSource(new StringReader(xmlData))));
-	    dataSet.addReplacementObject("[NULL]", null);
-	    dataSet.setStrictReplacement(true);
+        try {
+            ReplacementDataSet dataSet = new ReplacementDataSet(
+                    new FlatXmlDataSetBuilder().build(new InputSource(new StringReader(xmlData))));
+            dataSet.addReplacementObject("[NULL]", null);
+            dataSet.setStrictReplacement(true);
 
-	    IDataSet ids;
-	    ids = _connection.createDataSet();
-	    ITableMetaData itmd = ids.getTableMetaData(testTable);
-	    Column[] cols = itmd.getColumns();
-	    ids = _connection.createDataSet();
-	    for (Column col : cols) {
-		assertEquals(Types.BIGINT, col.getDataType().getSqlType());
-		assertEquals("oid", col.getSqlTypeName());
-	    }
+            IDataSet ids;
+            ids = _connection.createDataSet();
+            ITableMetaData itmd = ids.getTableMetaData(testTable);
+            Column[] cols = itmd.getColumns();
+            ids = _connection.createDataSet();
+            for (Column col : cols) {
+                assertEquals(Types.BIGINT, col.getDataType().getSqlType());
+                assertEquals("oid", col.getSqlTypeName());
+            }
 
-	    DatabaseOperation.CLEAN_INSERT.execute(_connection, dataSet);
-	    ids = _connection.createDataSet();
-	    ITable it = ids.getTable(testTable);
-	    assertNull(it.getValue(0, "DATA"));
-	    assertArrayEquals("\\[text UTF-8](Anything)".getBytes(), (byte[]) it.getValue(1, "DATA"));
-	} catch (Exception e) {
-	    assertEquals("DatabaseOperation.CLEAN_INSERT... no exception", "" + e);
-	}
+            DatabaseOperation.CLEAN_INSERT.execute(_connection, dataSet);
+            ids = _connection.createDataSet();
+            ITable it = ids.getTable(testTable);
+            assertNull(it.getValue(0, "DATA"));
+            assertArrayEquals("\\[text UTF-8](Anything)".getBytes(), (byte[]) it.getValue(1, "DATA"));
+        } catch (Exception e) {
+            assertEquals("DatabaseOperation.CLEAN_INSERT... no exception", "" + e);
+        }
     }
 }

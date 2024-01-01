@@ -43,29 +43,29 @@ public class PreparedStatementFactory extends AbstractStatementFactory {
 
     public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
 
-	logger.debug("createBatchStatement(connection={}) - start", connection);
+        logger.debug("createBatchStatement(connection={}) - start", connection);
 
-	if (supportBatchStatement(connection)) {
-	    return new BatchStatement(connection.getConnection());
-	} else {
-	    return new SimpleStatement(connection.getConnection());
-	}
+        if (supportBatchStatement(connection)) {
+            return new BatchStatement(connection.getConnection());
+        } else {
+            return new SimpleStatement(connection.getConnection());
+        }
     }
 
     public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
-	    throws SQLException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
-	}
+            throws SQLException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
+        }
 
-	Integer batchSize = (Integer) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE);
+        Integer batchSize = (Integer) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE);
 
-	IPreparedBatchStatement statement = null;
-	if (supportBatchStatement(connection)) {
-	    statement = new PreparedBatchStatement(sql, connection.getConnection());
-	} else {
-	    statement = new SimplePreparedStatement(sql, connection.getConnection());
-	}
-	return new AutomaticPreparedBatchStatement(statement, batchSize.intValue());
+        IPreparedBatchStatement statement = null;
+        if (supportBatchStatement(connection)) {
+            statement = new PreparedBatchStatement(sql, connection.getConnection());
+        } else {
+            statement = new SimplePreparedStatement(sql, connection.getConnection());
+        }
+        return new AutomaticPreparedBatchStatement(statement, batchSize.intValue());
     }
 }

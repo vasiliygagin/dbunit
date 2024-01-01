@@ -35,14 +35,14 @@ public class ExclusiveTransactionException extends DatabaseUnitException {
     }
 
     public ExclusiveTransactionException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public ExclusiveTransactionException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 
     public ExclusiveTransactionException(Throwable e) {
-	super(e);
+        super(e);
     }
 }

@@ -49,7 +49,7 @@ public class XlsDataFileLoader extends AbstractDataFileLoader {
      *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public XlsDataFileLoader(Map ro) {
-	super(ro);
+        super(ro);
     }
 
     /**
@@ -61,16 +61,16 @@ public class XlsDataFileLoader extends AbstractDataFileLoader {
      *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public XlsDataFileLoader(Map ro, Map rs) {
-	super(ro, rs);
+        super(ro, rs);
     }
 
     /**
      * {@inheritDoc}
      */
     public IDataSet loadDataSet(URL url) throws DataSetException, IOException {
-	InputStream in = url.openStream();
-	IDataSet ds = new XlsDataSet(in);
+        InputStream in = url.openStream();
+        IDataSet ds = new XlsDataSet(in);
 
-	return ds;
+        return ds;
     }
 }

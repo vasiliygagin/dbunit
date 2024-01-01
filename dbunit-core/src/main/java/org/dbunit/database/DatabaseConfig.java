@@ -76,23 +76,23 @@ public class DatabaseConfig {
      * contain the allowed java type and whether or not a property is nullable.
      */
     public static final ConfigProperty[] ALL_PROPERTIES = new ConfigProperty[] {
-	    new ConfigProperty(PROPERTY_STATEMENT_FACTORY, IStatementFactory.class, false),
-	    new ConfigProperty(PROPERTY_RESULTSET_TABLE_FACTORY, IResultSetTableFactory.class, false),
-	    new ConfigProperty(PROPERTY_DATATYPE_FACTORY, IDataTypeFactory.class, false),
-	    new ConfigProperty(PROPERTY_ESCAPE_PATTERN, String.class, true),
-	    new ConfigProperty(PROPERTY_TABLE_TYPE, String[].class, false),
-	    new ConfigProperty(PROPERTY_PRIMARY_KEY_FILTER, IColumnFilter.class, true),
-	    new ConfigProperty(PROPERTY_BATCH_SIZE, Integer.class, false),
-	    new ConfigProperty(PROPERTY_FETCH_SIZE, Integer.class, false),
-	    new ConfigProperty(PROPERTY_METADATA_HANDLER, IMetadataHandler.class, false),
-	    new ConfigProperty(PROPERTY_IDENTITY_COLUMN_FILTER, IColumnFilter.class, true),
-	    new ConfigProperty(FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.class, false),
-	    new ConfigProperty(FEATURE_QUALIFIED_TABLE_NAMES, Boolean.class, false),
-	    new ConfigProperty(FEATURE_BATCHED_STATEMENTS, Boolean.class, false),
-	    new ConfigProperty(FEATURE_DATATYPE_WARNING, Boolean.class, false),
-	    new ConfigProperty(FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, Boolean.class, false),
-	    new ConfigProperty(FEATURE_ALLOW_EMPTY_FIELDS, Boolean.class, false), new ConfigProperty(
-		    PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.class, false), };
+            new ConfigProperty(PROPERTY_STATEMENT_FACTORY, IStatementFactory.class, false),
+            new ConfigProperty(PROPERTY_RESULTSET_TABLE_FACTORY, IResultSetTableFactory.class, false),
+            new ConfigProperty(PROPERTY_DATATYPE_FACTORY, IDataTypeFactory.class, false),
+            new ConfigProperty(PROPERTY_ESCAPE_PATTERN, String.class, true),
+            new ConfigProperty(PROPERTY_TABLE_TYPE, String[].class, false),
+            new ConfigProperty(PROPERTY_PRIMARY_KEY_FILTER, IColumnFilter.class, true),
+            new ConfigProperty(PROPERTY_BATCH_SIZE, Integer.class, false),
+            new ConfigProperty(PROPERTY_FETCH_SIZE, Integer.class, false),
+            new ConfigProperty(PROPERTY_METADATA_HANDLER, IMetadataHandler.class, false),
+            new ConfigProperty(PROPERTY_IDENTITY_COLUMN_FILTER, IColumnFilter.class, true),
+            new ConfigProperty(FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.class, false),
+            new ConfigProperty(FEATURE_QUALIFIED_TABLE_NAMES, Boolean.class, false),
+            new ConfigProperty(FEATURE_BATCHED_STATEMENTS, Boolean.class, false),
+            new ConfigProperty(FEATURE_DATATYPE_WARNING, Boolean.class, false),
+            new ConfigProperty(FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, Boolean.class, false),
+            new ConfigProperty(FEATURE_ALLOW_EMPTY_FIELDS, Boolean.class, false), new ConfigProperty(
+                    PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.class, false), };
 
     /**
      * A list of all features as strings
@@ -101,8 +101,8 @@ public class DatabaseConfig {
      *             listed now as well
      */
     public static final String[] ALL_FEATURES = new String[] { FEATURE_CASE_SENSITIVE_TABLE_NAMES,
-	    FEATURE_QUALIFIED_TABLE_NAMES, FEATURE_BATCHED_STATEMENTS, FEATURE_DATATYPE_WARNING,
-	    FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, FEATURE_ALLOW_EMPTY_FIELDS };
+            FEATURE_QUALIFIED_TABLE_NAMES, FEATURE_BATCHED_STATEMENTS, FEATURE_DATATYPE_WARNING,
+            FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, FEATURE_ALLOW_EMPTY_FIELDS };
 
     private static final DefaultDataTypeFactory DEFAULT_DATA_TYPE_FACTORY = new DefaultDataTypeFactory();
     private static final PreparedStatementFactory PREPARED_STATEMENT_FACTORY = new PreparedStatementFactory();
@@ -117,30 +117,30 @@ public class DatabaseConfig {
     private final Configurator configurator;
 
     public DatabaseConfig() {
-	setFeature(FEATURE_BATCHED_STATEMENTS, false);
-	setFeature(FEATURE_QUALIFIED_TABLE_NAMES, false);
-	setFeature(FEATURE_CASE_SENSITIVE_TABLE_NAMES, false);
-	setFeature(FEATURE_DATATYPE_WARNING, true);
-	setFeature(FEATURE_ALLOW_EMPTY_FIELDS, false);
+        setFeature(FEATURE_BATCHED_STATEMENTS, false);
+        setFeature(FEATURE_QUALIFIED_TABLE_NAMES, false);
+        setFeature(FEATURE_CASE_SENSITIVE_TABLE_NAMES, false);
+        setFeature(FEATURE_DATATYPE_WARNING, true);
+        setFeature(FEATURE_ALLOW_EMPTY_FIELDS, false);
 
-	setProperty(PROPERTY_STATEMENT_FACTORY, PREPARED_STATEMENT_FACTORY);
-	setProperty(PROPERTY_RESULTSET_TABLE_FACTORY, RESULT_SET_TABLE_FACTORY);
-	setProperty(PROPERTY_DATATYPE_FACTORY, DEFAULT_DATA_TYPE_FACTORY);
-	setProperty(PROPERTY_ESCAPE_PATTERN, DEFAULT_ESCAPE_PATTERN);
-	setProperty(PROPERTY_TABLE_TYPE, DEFAULT_TABLE_TYPE);
-	setProperty(PROPERTY_BATCH_SIZE, DEFAULT_BATCH_SIZE);
-	setProperty(PROPERTY_FETCH_SIZE, DEFAULT_FETCH_SIZE);
-	setProperty(PROPERTY_METADATA_HANDLER, new DefaultMetadataHandler());
-	setProperty(PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.FALSE);
+        setProperty(PROPERTY_STATEMENT_FACTORY, PREPARED_STATEMENT_FACTORY);
+        setProperty(PROPERTY_RESULTSET_TABLE_FACTORY, RESULT_SET_TABLE_FACTORY);
+        setProperty(PROPERTY_DATATYPE_FACTORY, DEFAULT_DATA_TYPE_FACTORY);
+        setProperty(PROPERTY_ESCAPE_PATTERN, DEFAULT_ESCAPE_PATTERN);
+        setProperty(PROPERTY_TABLE_TYPE, DEFAULT_TABLE_TYPE);
+        setProperty(PROPERTY_BATCH_SIZE, DEFAULT_BATCH_SIZE);
+        setProperty(PROPERTY_FETCH_SIZE, DEFAULT_FETCH_SIZE);
+        setProperty(PROPERTY_METADATA_HANDLER, new DefaultMetadataHandler());
+        setProperty(PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.FALSE);
 
-	this.configurator = new Configurator(this);
+        this.configurator = new Configurator(this);
     }
 
     /**
      * @return The configurator of this database config
      */
     protected Configurator getConfigurator() {
-	return configurator;
+        return configurator;
     }
 
     /**
@@ -152,9 +152,9 @@ public class DatabaseConfig {
      *             features
      */
     public void setFeature(String name, boolean value) {
-	logger.trace("setFeature(name={}, value={}) - start", name, String.valueOf(value));
+        logger.trace("setFeature(name={}, value={}) - start", name, String.valueOf(value));
 
-	setProperty(name, Boolean.valueOf(value));
+        setProperty(name, Boolean.valueOf(value));
     }
 
     /**
@@ -166,19 +166,19 @@ public class DatabaseConfig {
      *             are listed now as well
      */
     public boolean getFeature(String name) {
-	logger.trace("getFeature(name={}) - start", name);
+        logger.trace("getFeature(name={}) - start", name);
 
-	Object property = getProperty(name);
-	if (property == null) {
-	    return false;
-	} else if (property instanceof Boolean) {
-	    Boolean feature = (Boolean) property;
-	    return feature.booleanValue();
-	} else {
-	    String propString = String.valueOf(property);
-	    Boolean feature = Boolean.valueOf(propString);
-	    return feature.booleanValue();
-	}
+        Object property = getProperty(name);
+        if (property == null) {
+            return false;
+        } else if (property instanceof Boolean) {
+            Boolean feature = (Boolean) property;
+            return feature.booleanValue();
+        } else {
+            String propString = String.valueOf(property);
+            Boolean feature = Boolean.valueOf(propString);
+            return feature.booleanValue();
+        }
     }
 
     /**
@@ -188,15 +188,15 @@ public class DatabaseConfig {
      * @param value the property value
      */
     public void setProperty(String name, Object value) {
-	logger.trace("setProperty(name={}, value={}) - start", name, value);
+        logger.trace("setProperty(name={}, value={}) - start", name, value);
 
-	value = convertIfNeeded(name, value);
+        value = convertIfNeeded(name, value);
 
-	// Validate if the type of the given object is correct
-	checkObjectAllowed(name, value);
+        // Validate if the type of the given object is correct
+        checkObjectAllowed(name, value);
 
-	// If we get here the type is allowed (no exception was thrown)
-	_propertyMap.put(name, value);
+        // If we get here the type is allowed (no exception was thrown)
+        _propertyMap.put(name, value);
     }
 
     /**
@@ -206,28 +206,28 @@ public class DatabaseConfig {
      * @return the property value
      */
     public Object getProperty(String name) {
-	logger.trace("getProperty(name={}) - start", name);
+        logger.trace("getProperty(name={}) - start", name);
 
-	return _propertyMap.get(name);
+        return _propertyMap.get(name);
     }
 
     private Object convertIfNeeded(String property, Object value) {
-	logger.trace("convertIfNeeded(property={}, value={}) - start", property, value);
+        logger.trace("convertIfNeeded(property={}, value={}) - start", property, value);
 
-	ConfigProperty prop = findByName(property);
-	if (prop == null) {
-	    throw new IllegalArgumentException("Did not find property with name '" + property + "'");
-	}
-	Class allowedPropType = prop.getPropertyType();
+        ConfigProperty prop = findByName(property);
+        if (prop == null) {
+            throw new IllegalArgumentException("Did not find property with name '" + property + "'");
+        }
+        Class allowedPropType = prop.getPropertyType();
 
-	if (allowedPropType == Boolean.class || allowedPropType == boolean.class) {
-	    // String -> Boolean is a special mapping which is allowed
-	    if (value instanceof String) {
-		return Boolean.valueOf((String) value);
-	    }
-	}
+        if (allowedPropType == Boolean.class || allowedPropType == boolean.class) {
+            // String -> Boolean is a special mapping which is allowed
+            if (value instanceof String) {
+                return Boolean.valueOf((String) value);
+            }
+        }
 
-	return value;
+        return value;
     }
 
     /**
@@ -239,30 +239,30 @@ public class DatabaseConfig {
      * @param value    The value to which the property should be set
      */
     protected void checkObjectAllowed(String property, Object value) {
-	logger.trace("checkObjectAllowed(property={}, value={}) - start", property, value);
+        logger.trace("checkObjectAllowed(property={}, value={}) - start", property, value);
 
-	ConfigProperty prop = findByName(property);
+        ConfigProperty prop = findByName(property);
 
-	if (prop != null) {
-	    // First check for null
-	    if (value == null) {
-		if (prop.isNullable()) {
-		    // All right. No class check is needed
-		    return;
-		} else {
-		    throw new IllegalArgumentException("The property '" + property + "' is not nullable.");
-		}
-	    } else {
-		Class allowedPropType = prop.getPropertyType();
-		if (!allowedPropType.isAssignableFrom(value.getClass())) {
-		    throw new IllegalArgumentException("Cannot cast object of type '" + value.getClass()
-			    + "' to allowed type '" + allowedPropType + "'.");
-		}
-	    }
-	} else {
-	    logger.info("Unknown property '" + property + "'. Cannot validate the type of the object to be set."
-		    + " Please notify a developer to update the list of properties.");
-	}
+        if (prop != null) {
+            // First check for null
+            if (value == null) {
+                if (prop.isNullable()) {
+                    // All right. No class check is needed
+                    return;
+                } else {
+                    throw new IllegalArgumentException("The property '" + property + "' is not nullable.");
+                }
+            } else {
+                Class allowedPropType = prop.getPropertyType();
+                if (!allowedPropType.isAssignableFrom(value.getClass())) {
+                    throw new IllegalArgumentException("Cannot cast object of type '" + value.getClass()
+                            + "' to allowed type '" + allowedPropType + "'.");
+                }
+            }
+        } else {
+            logger.info("Unknown property '" + property + "'. Cannot validate the type of the object to be set."
+                    + " Please notify a developer to update the list of properties.");
+        }
     }
 
     /**
@@ -276,68 +276,68 @@ public class DatabaseConfig {
      * @throws DatabaseUnitException
      */
     public void setPropertiesByString(Properties stringProperties) throws DatabaseUnitException {
-	for (Iterator iterator = stringProperties.entrySet().iterator(); iterator.hasNext();) {
-	    Map.Entry entry = (Map.Entry) iterator.next();
+        for (Iterator iterator = stringProperties.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
 
-	    String propKey = (String) entry.getKey();
-	    String propValue = (String) entry.getValue();
+            String propKey = (String) entry.getKey();
+            String propValue = (String) entry.getValue();
 
-	    ConfigProperty dbunitProp = DatabaseConfig.findByName(propKey);
-	    if (dbunitProp == null) {
-		logger.debug("Did not find long name property {} - trying short name...", entry);
-		dbunitProp = DatabaseConfig.findByShortName(propKey);
-	    }
+            ConfigProperty dbunitProp = DatabaseConfig.findByName(propKey);
+            if (dbunitProp == null) {
+                logger.debug("Did not find long name property {} - trying short name...", entry);
+                dbunitProp = DatabaseConfig.findByShortName(propKey);
+            }
 
-	    if (dbunitProp == null) {
-		logger.info("Could not set property '" + entry + "' - not found in the list of known properties.");
-	    } else {
-		String fullPropName = dbunitProp.getProperty();
-		Object obj = createObjectFromString(dbunitProp, propValue);
-		this.setProperty(fullPropName, obj);
-	    }
-	}
+            if (dbunitProp == null) {
+                logger.info("Could not set property '" + entry + "' - not found in the list of known properties.");
+            } else {
+                String fullPropName = dbunitProp.getProperty();
+                Object obj = createObjectFromString(dbunitProp, propValue);
+                this.setProperty(fullPropName, obj);
+            }
+        }
     }
 
     private Object createObjectFromString(ConfigProperty dbunitProp, String propValue) throws DatabaseUnitException {
-	if (dbunitProp == null) {
-	    throw new NullPointerException("The parameter 'dbunitProp' must not be null");
-	}
-	if (propValue == null) {
-	    // Null must not be casted
-	    return null;
-	}
+        if (dbunitProp == null) {
+            throw new NullPointerException("The parameter 'dbunitProp' must not be null");
+        }
+        if (propValue == null) {
+            // Null must not be casted
+            return null;
+        }
 
-	Class targetClass = dbunitProp.getPropertyType();
-	if (targetClass == String.class) {
-	    return propValue;
-	} else if (targetClass == Boolean.class) {
-	    return Boolean.valueOf(propValue);
-	} else if (targetClass == String[].class) {
-	    String[] result = propValue.split(",");
-	    for (int i = 0; i < result.length; i++) {
-		result[i] = result[i].trim();
-	    }
-	    return result;
-	} else if (targetClass == Integer.class) {
-	    return new Integer(propValue);
-	} else {
-	    // Try via reflection
-	    return createInstance(propValue);
-	}
+        Class targetClass = dbunitProp.getPropertyType();
+        if (targetClass == String.class) {
+            return propValue;
+        } else if (targetClass == Boolean.class) {
+            return Boolean.valueOf(propValue);
+        } else if (targetClass == String[].class) {
+            String[] result = propValue.split(",");
+            for (int i = 0; i < result.length; i++) {
+                result[i] = result[i].trim();
+            }
+            return result;
+        } else if (targetClass == Integer.class) {
+            return new Integer(propValue);
+        } else {
+            // Try via reflection
+            return createInstance(propValue);
+        }
     }
 
     private Object createInstance(String className) throws DatabaseUnitException {
-	// Setup data type factory for example.
-	try {
-	    Object o = Class.forName(className).newInstance();
-	    return o;
-	} catch (ClassNotFoundException e) {
-	    throw new DatabaseUnitException("Class Not Found: '" + className + "' could not be loaded", e);
-	} catch (IllegalAccessException e) {
-	    throw new DatabaseUnitException("Illegal Access: '" + className + "' could not be loaded", e);
-	} catch (InstantiationException e) {
-	    throw new DatabaseUnitException("Instantiation Exception: '" + className + "' could not be loaded", e);
-	}
+        // Setup data type factory for example.
+        try {
+            Object o = Class.forName(className).newInstance();
+            return o;
+        } catch (ClassNotFoundException e) {
+            throw new DatabaseUnitException("Class Not Found: '" + className + "' could not be loaded", e);
+        } catch (IllegalAccessException e) {
+            throw new DatabaseUnitException("Illegal Access: '" + className + "' could not be loaded", e);
+        } catch (InstantiationException e) {
+            throw new DatabaseUnitException("Instantiation Exception: '" + className + "' could not be loaded", e);
+        }
     }
 
     /**
@@ -349,13 +349,13 @@ public class DatabaseConfig {
      * @return The property object or <code>null</code> if it was not found.
      */
     public static final ConfigProperty findByName(String property) {
-	for (int i = 0; i < ALL_PROPERTIES.length; i++) {
-	    if (ALL_PROPERTIES[i].getProperty().equals(property)) {
-		return ALL_PROPERTIES[i];
-	    }
-	}
-	// property not found.
-	return null;
+        for (int i = 0; i < ALL_PROPERTIES.length; i++) {
+            if (ALL_PROPERTIES[i].getProperty().equals(property)) {
+                return ALL_PROPERTIES[i];
+            }
+        }
+        // property not found.
+        return null;
     }
 
     /**
@@ -369,24 +369,24 @@ public class DatabaseConfig {
      * @return The property object or <code>null</code> if it was not found.
      */
     public static final ConfigProperty findByShortName(String propShortName) {
-	for (int i = 0; i < DatabaseConfig.ALL_PROPERTIES.length; i++) {
-	    String fullProperty = DatabaseConfig.ALL_PROPERTIES[i].getProperty();
-	    if (fullProperty.endsWith(propShortName)) {
-		return DatabaseConfig.ALL_PROPERTIES[i];
-	    }
-	}
-	// Property not found
-	logger.info("The property ending with '" + propShortName + "' was not found. "
-		+ "Please notify a dbunit developer to add the property to the " + DatabaseConfig.class);
-	return null;
+        for (int i = 0; i < DatabaseConfig.ALL_PROPERTIES.length; i++) {
+            String fullProperty = DatabaseConfig.ALL_PROPERTIES[i].getProperty();
+            if (fullProperty.endsWith(propShortName)) {
+                return DatabaseConfig.ALL_PROPERTIES[i];
+            }
+        }
+        // Property not found
+        logger.info("The property ending with '" + propShortName + "' was not found. "
+                + "Please notify a dbunit developer to add the property to the " + DatabaseConfig.class);
+        return null;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append(", _propertyMap=").append(_propertyMap);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append(", _propertyMap=").append(_propertyMap);
+        sb.append("]");
+        return sb.toString();
     }
 
     /**
@@ -396,69 +396,69 @@ public class DatabaseConfig {
      * @since 2.4.0
      */
     public static class ConfigProperty {
-	private String property;
-	private Class propertyType;
-	private boolean nullable;
+        private String property;
+        private Class propertyType;
+        private boolean nullable;
 
-	public ConfigProperty(String property, Class propertyType, boolean nullable) {
-	    super();
+        public ConfigProperty(String property, Class propertyType, boolean nullable) {
+            super();
 
-	    if (property == null) {
-		throw new NullPointerException("The parameter 'property' must not be null");
-	    }
-	    if (propertyType == null) {
-		throw new NullPointerException("The parameter 'propertyType' must not be null");
-	    }
+            if (property == null) {
+                throw new NullPointerException("The parameter 'property' must not be null");
+            }
+            if (propertyType == null) {
+                throw new NullPointerException("The parameter 'propertyType' must not be null");
+            }
 
-	    this.property = property;
-	    this.propertyType = propertyType;
-	    this.nullable = nullable;
-	}
+            this.property = property;
+            this.propertyType = propertyType;
+            this.nullable = nullable;
+        }
 
-	public String getProperty() {
-	    return property;
-	}
+        public String getProperty() {
+            return property;
+        }
 
-	public Class getPropertyType() {
-	    return propertyType;
-	}
+        public Class getPropertyType() {
+            return propertyType;
+        }
 
-	public boolean isNullable() {
-	    return nullable;
-	}
+        public boolean isNullable() {
+            return nullable;
+        }
 
-	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + ((property == null) ? 0 : property.hashCode());
-	    return result;
-	}
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((property == null) ? 0 : property.hashCode());
+            return result;
+        }
 
-	public boolean equals(Object obj) {
-	    if (this == obj)
-		return true;
-	    if (obj == null)
-		return false;
-	    if (getClass() != obj.getClass())
-		return false;
-	    ConfigProperty other = (ConfigProperty) obj;
-	    if (property == null) {
-		if (other.property != null)
-		    return false;
-	    } else if (!property.equals(other.property))
-		return false;
-	    return true;
-	}
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ConfigProperty other = (ConfigProperty) obj;
+            if (property == null) {
+                if (other.property != null)
+                    return false;
+            } else if (!property.equals(other.property))
+                return false;
+            return true;
+        }
 
-	public String toString() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append(getClass().getName()).append("[");
-	    sb.append("property=").append(property);
-	    sb.append(", propertyType=").append(propertyType);
-	    sb.append(", nullable=").append(nullable);
-	    sb.append("]");
-	    return sb.toString();
-	}
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append(getClass().getName()).append("[");
+            sb.append("property=").append(property);
+            sb.append(", propertyType=").append(propertyType);
+            sb.append(", nullable=").append(nullable);
+            sb.append("]");
+            return sb.toString();
+        }
     }
 
     /**
@@ -472,38 +472,38 @@ public class DatabaseConfig {
      * @since 2.4.4
      */
     protected static class Configurator {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(Configurator.class);
+        /**
+         * Logger for this class
+         */
+        private static final Logger logger = LoggerFactory.getLogger(Configurator.class);
 
-	private DatabaseConfig config;
+        private DatabaseConfig config;
 
-	/**
-	 * @param config The configuration to be used by this configurator
-	 * @since 2.4.4
-	 */
-	public Configurator(DatabaseConfig config) {
-	    if (config == null) {
-		throw new NullPointerException("The parameter 'config' must not be null");
-	    }
-	    this.config = config;
-	}
+        /**
+         * @param config The configuration to be used by this configurator
+         * @since 2.4.4
+         */
+        public Configurator(DatabaseConfig config) {
+            if (config == null) {
+                throw new NullPointerException("The parameter 'config' must not be null");
+            }
+            this.config = config;
+        }
 
-	/**
-	 * Configures the given statement so that it has the properties that are
-	 * configured in this {@link DatabaseConfig}.
-	 * 
-	 * @param stmt The statement to be configured.
-	 * @throws SQLException
-	 * @since 2.4.4
-	 */
-	void configureStatement(Statement stmt) throws SQLException {
-	    logger.trace("configureStatement(stmt={}) - start", stmt);
-	    Integer fetchSize = (Integer) config.getProperty(DatabaseConfig.PROPERTY_FETCH_SIZE);
-	    stmt.setFetchSize(fetchSize.intValue());
-	    logger.debug("Statement fetch size set to {}", fetchSize);
-	}
+        /**
+         * Configures the given statement so that it has the properties that are
+         * configured in this {@link DatabaseConfig}.
+         * 
+         * @param stmt The statement to be configured.
+         * @throws SQLException
+         * @since 2.4.4
+         */
+        void configureStatement(Statement stmt) throws SQLException {
+            logger.trace("configureStatement(stmt={}) - start", stmt);
+            Integer fetchSize = (Integer) config.getProperty(DatabaseConfig.PROPERTY_FETCH_SIZE);
+            stmt.setFetchSize(fetchSize.intValue());
+            logger.debug("Statement fetch size set to {}", fetchSize);
+        }
 
     }
 

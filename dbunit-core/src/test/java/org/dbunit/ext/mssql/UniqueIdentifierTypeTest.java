@@ -41,16 +41,16 @@ public class UniqueIdentifierTypeTest extends TestCase {
     private MockSingleRowResultSet resultSet;
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
 
-	uuidType = new UniqueIdentifierType();
+        uuidType = new UniqueIdentifierType();
 
-	resultSet = new MockSingleRowResultSet();
-	existingUuid = UUID.randomUUID();
+        resultSet = new MockSingleRowResultSet();
+        existingUuid = UUID.randomUUID();
     }
 
     protected void tearDown() throws Exception {
-	resultSet.verify();
+        resultSet.verify();
     }
 
     /**
@@ -59,15 +59,15 @@ public class UniqueIdentifierTypeTest extends TestCase {
      * @throws SQLException
      */
     public void testGetSqlValueWithBadValue() throws SQLException {
-	resultSet.addExpectedIndexedValues(new String[] { existingUuid.toString() + "Z" });
+        resultSet.addExpectedIndexedValues(new String[] { existingUuid.toString() + "Z" });
 
-	try {
-	    uuidType.getSqlValue(1, resultSet);
+        try {
+            uuidType.getSqlValue(1, resultSet);
 
-	    fail("Method should have throw an exception");
-	} catch (TypeCastException e) {
-	    assertTrue(true);
-	}
+            fail("Method should have throw an exception");
+        } catch (TypeCastException e) {
+            assertTrue(true);
+        }
     }
 
     /**
@@ -77,12 +77,12 @@ public class UniqueIdentifierTypeTest extends TestCase {
      * @throws TypeCastException
      */
     public void testGetValue() throws TypeCastException, SQLException {
-	resultSet.addExpectedIndexedValues(new String[] { existingUuid.toString() });
+        resultSet.addExpectedIndexedValues(new String[] { existingUuid.toString() });
 
-	UUID result = (UUID) uuidType.getSqlValue(1, resultSet);
+        UUID result = (UUID) uuidType.getSqlValue(1, resultSet);
 
-	assertEquals(existingUuid, result);
+        assertEquals(existingUuid, result);
 
-	resultSet.verify();
+        resultSet.verify();
     }
 }

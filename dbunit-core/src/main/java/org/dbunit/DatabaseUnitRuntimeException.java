@@ -38,7 +38,7 @@ public class DatabaseUnitRuntimeException extends RuntimeException {
      * detail message and no encapsulated exception.
      */
     public DatabaseUnitRuntimeException() {
-	super();
+        super();
     }
 
     /**
@@ -48,7 +48,7 @@ public class DatabaseUnitRuntimeException extends RuntimeException {
      * @param msg Exception message
      */
     public DatabaseUnitRuntimeException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     /**
@@ -59,7 +59,7 @@ public class DatabaseUnitRuntimeException extends RuntimeException {
      * @param cause The cause of this exception
      */
     public DatabaseUnitRuntimeException(String msg, Throwable cause) {
-	super(msg, cause);
+        super(msg, cause);
     }
 
     /**
@@ -69,7 +69,7 @@ public class DatabaseUnitRuntimeException extends RuntimeException {
      * @param cause The cause of this exception
      */
     public DatabaseUnitRuntimeException(Throwable cause) {
-	super(cause.toString(), cause);
+        super(cause.toString(), cause);
     }
 
     /**
@@ -78,7 +78,7 @@ public class DatabaseUnitRuntimeException extends RuntimeException {
      * @deprecated Use {@link Exception#getCause()} instead
      */
     public Throwable getException() {
-	return super.getCause();
+        return super.getCause();
     }
 
 }

@@ -39,7 +39,7 @@ import java.sql.Connection;
 public class MckoiConnection extends DatabaseConnection {
 
     public MckoiConnection(Connection connection, String schema) throws DatabaseUnitException {
-	super(connection, schema);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MckoiDataTypeFactory());
+        super(connection, schema);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MckoiDataTypeFactory());
     }
 }

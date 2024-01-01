@@ -19,29 +19,29 @@ public class DbUnitValueComparerAssertIT {
     private final DbUnitValueComparerAssert sut = new DbUnitValueComparerAssert();
 
     private IDataSet getDataSet() throws DataSetException, FileNotFoundException {
-	return new FlatXmlDataSetBuilder().build(TestUtils.getFileReader(FILE_PATH));
+        return new FlatXmlDataSetBuilder().build(TestUtils.getFileReader(FILE_PATH));
     }
 
     @Test
     public void testAssertWithValueComparerITableITableValueComparer_AllRowsEqual_NoFail() throws Exception {
-	final IDataSet dataSet = getDataSet();
+        final IDataSet dataSet = getDataSet();
 
-	final ITable expectedTable = dataSet.getTable("TEST_TABLE");
-	final ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_SAME_VALUE");
-	final ValueComparer defaultValueComparer = ValueComparers.isActualEqualToExpected;
-	sut.assertWithValueComparer(expectedTable, actualTable, defaultValueComparer);
+        final ITable expectedTable = dataSet.getTable("TEST_TABLE");
+        final ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_SAME_VALUE");
+        final ValueComparer defaultValueComparer = ValueComparers.isActualEqualToExpected;
+        sut.assertWithValueComparer(expectedTable, actualTable, defaultValueComparer);
     }
 
     @Test
     public void testAssertWithValueComparerITableITableValueComparerMap_OneColumnNotEqual_NoFail() throws Exception {
-	final IDataSet dataSet = getDataSet();
+        final IDataSet dataSet = getDataSet();
 
-	final ITable expectedTable = dataSet.getTable("TEST_TABLE");
-	final ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE_ALL_ROWS");
-	final ValueComparer defaultValueComparer = ValueComparers.isActualEqualToExpected;
-	final ValueComparer valueComparer = ValueComparers.isActualNotEqualToExpected;
-	final Map<String, ValueComparer> columnValueComparers = new ColumnValueComparerMapBuilder()
-		.add("COLUMN2", valueComparer).build();
-	sut.assertWithValueComparer(expectedTable, actualTable, defaultValueComparer, columnValueComparers);
+        final ITable expectedTable = dataSet.getTable("TEST_TABLE");
+        final ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE_ALL_ROWS");
+        final ValueComparer defaultValueComparer = ValueComparers.isActualEqualToExpected;
+        final ValueComparer valueComparer = ValueComparers.isActualNotEqualToExpected;
+        final Map<String, ValueComparer> columnValueComparers = new ColumnValueComparerMapBuilder()
+                .add("COLUMN2", valueComparer).build();
+        sut.assertWithValueComparer(expectedTable, actualTable, defaultValueComparer, columnValueComparers);
     }
 }

@@ -33,25 +33,25 @@ package org.dbunit.dataset;
  */
 public abstract class AbstractDataSetDecoratorTest extends AbstractDataSetTest {
     public AbstractDataSetDecoratorTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected final IDataSet createDuplicateDataSet() throws Exception {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     protected final IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public final void testCreateDuplicateDataSet() throws Exception {
-	// No op. This dataSet is only a wrapper for another dataSet which is why
-	// duplicates cannot occur.
+        // No op. This dataSet is only a wrapper for another dataSet which is why
+        // duplicates cannot occur.
     }
 
     public final void testCreateMultipleCaseDuplicateDataSet() throws Exception {
-	// No op. This dataSet is only a wrapper for another dataSet which is why
-	// duplicates cannot occur.
+        // No op. This dataSet is only a wrapper for another dataSet which is why
+        // duplicates cannot occur.
     }
 
 }

@@ -36,19 +36,19 @@ public class PipelineConfig {
     }
 
     public char getSeparatorChar() {
-	return separatorChar;
+        return separatorChar;
     }
 
     public void setSeparatorChar(char separatorChar) {
-	this.separatorChar = separatorChar;
+        this.separatorChar = separatorChar;
     }
 
     public char getEscapeChar() {
-	return escapeChar;
+        return escapeChar;
     }
 
     public void setEscapeChar(char escapeChar) {
-	this.escapeChar = escapeChar;
+        this.escapeChar = escapeChar;
     }
 
 }

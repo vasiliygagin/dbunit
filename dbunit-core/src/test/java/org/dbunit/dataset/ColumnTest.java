@@ -33,36 +33,36 @@ import java.sql.DatabaseMetaData;
  */
 public class ColumnTest extends TestCase {
     public ColumnTest(String s) {
-	super(s);
+        super(s);
     }
 
     public void testGetColumnName() throws Exception {
-	String expected = "columnName";
-	Column column = new Column(expected, DataType.REAL);
+        String expected = "columnName";
+        Column column = new Column(expected, DataType.REAL);
 
-	assertEquals("column name", expected, column.getColumnName());
+        assertEquals("column name", expected, column.getColumnName());
     }
 
     public void testGetDataType() throws Exception {
-	DataType expected = DataType.DATE;
-	Column column = new Column(expected.toString(), expected);
+        DataType expected = DataType.DATE;
+        Column column = new Column(expected.toString(), expected);
 
-	assertEquals("data type", expected, column.getDataType());
+        assertEquals("data type", expected, column.getDataType());
     }
 
     public void testNullableValue() throws Exception {
-	assertEquals("nullable", Column.NULLABLE, Column.nullableValue(DatabaseMetaData.columnNullable));
+        assertEquals("nullable", Column.NULLABLE, Column.nullableValue(DatabaseMetaData.columnNullable));
 
-	assertEquals("not nullable", Column.NO_NULLS, Column.nullableValue(DatabaseMetaData.columnNoNulls));
+        assertEquals("not nullable", Column.NO_NULLS, Column.nullableValue(DatabaseMetaData.columnNoNulls));
 
-	assertEquals("nullable unknown", Column.NULLABLE_UNKNOWN,
-		Column.nullableValue(DatabaseMetaData.columnNullableUnknown));
+        assertEquals("nullable unknown", Column.NULLABLE_UNKNOWN,
+                Column.nullableValue(DatabaseMetaData.columnNullableUnknown));
 
-	try {
-	    Column.nullableValue(12345);
-	    fail("Should throw an IllegalArgumentException");
-	} catch (IllegalArgumentException e) {
-	}
+        try {
+            Column.nullableValue(12345);
+            fail("Should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
 
     }
 

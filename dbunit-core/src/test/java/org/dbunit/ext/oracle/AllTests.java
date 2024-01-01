@@ -30,9 +30,9 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new TestSuite(OracleDataTypeFactoryTest.class));
-	suite.addTest(new TestSuite(Oracle10DataTypeFactoryTest.class));
-	return suite;
+        TestSuite suite = new TestSuite();
+        suite.addTest(new TestSuite(OracleDataTypeFactoryTest.class));
+        suite.addTest(new TestSuite(Oracle10DataTypeFactoryTest.class));
+        return suite;
     }
 }

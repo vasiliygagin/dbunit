@@ -34,21 +34,21 @@ public class MockPreparedStatement extends com.mockobjects.sql.MockPreparedState
     private int lastSetObjectTargetSqlType;
 
     public void setObject(int parameterIndex, Object value, int targetSqlType) throws SQLException {
-	this.lastSetObjectParamIndex = parameterIndex;
-	this.lastSetObjectParamValue = value;
-	this.lastSetObjectTargetSqlType = targetSqlType;
+        this.lastSetObjectParamIndex = parameterIndex;
+        this.lastSetObjectParamValue = value;
+        this.lastSetObjectTargetSqlType = targetSqlType;
     }
 
     public int getLastSetObjectParamIndex() {
-	return lastSetObjectParamIndex;
+        return lastSetObjectParamIndex;
     }
 
     public Object getLastSetObjectParamValue() {
-	return lastSetObjectParamValue;
+        return lastSetObjectParamValue;
     }
 
     public int getLastSetObjectTargetSqlType() {
-	return lastSetObjectTargetSqlType;
+        return lastSetObjectTargetSqlType;
     }
 
 }

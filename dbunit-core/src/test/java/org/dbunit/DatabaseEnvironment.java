@@ -46,67 +46,67 @@ public class DatabaseEnvironment {
     private IDatabaseTester _databaseTester = null;
 
     protected DatabaseEnvironment(final DatabaseProfile profile) throws Exception {
-	_profile = profile;
-	final File file = TestUtils.getFile("xml/dataSetTest.xml");
-	_dataSet = new XmlDataSet(new FileReader(file));
-	_databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
-		_profile.getUser(), _profile.getPassword(), _profile.getSchema());
+        _profile = profile;
+        final File file = TestUtils.getFile("xml/dataSetTest.xml");
+        _dataSet = new XmlDataSet(new FileReader(file));
+        _databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
+                _profile.getUser(), _profile.getPassword(), _profile.getSchema());
 
-	DdlExecutor.execute("sql/" + _profile.getProfileDdl(), getConnection().getConnection(),
-		profile.getProfileMultilineSupport(), true);
+        DdlExecutor.execute("sql/" + _profile.getProfileDdl(), getConnection().getConnection(),
+                profile.getProfileMultilineSupport(), true);
     }
 
     public IDatabaseConnection getConnection() throws Exception {
-	// First check if the current connection is still valid and open
-	// The connection may have been closed by a consumer
-	if (_connection != null && _connection.getConnection().isClosed()) {
-	    // Reset the member so that a new connection will be created
-	    _connection = null;
-	}
+        // First check if the current connection is still valid and open
+        // The connection may have been closed by a consumer
+        if (_connection != null && _connection.getConnection().isClosed()) {
+            // Reset the member so that a new connection will be created
+            _connection = null;
+        }
 
-	if (_connection == null) {
-	    final String name = _profile.getDriverClass();
-	    Class.forName(name);
-	    final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
-		    _profile.getPassword());
-	    _connection = new DatabaseConnection(connection, _profile.getSchema());
-	}
-	return _connection;
+        if (_connection == null) {
+            final String name = _profile.getDriverClass();
+            Class.forName(name);
+            final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
+                    _profile.getPassword());
+            _connection = new DatabaseConnection(connection, _profile.getSchema());
+        }
+        return _connection;
     }
 
     protected void setupDatabaseConfig(final DatabaseConfig config) {
-	// Override in subclasses as necessary.
+        // Override in subclasses as necessary.
     }
 
     public IDatabaseTester getDatabaseTester() {
-	return _databaseTester;
+        return _databaseTester;
     }
 
     public void closeConnection() throws Exception {
-	if (_connection != null) {
-	    _connection.close();
-	    _connection = null;
-	}
+        if (_connection != null) {
+            _connection.close();
+            _connection = null;
+        }
     }
 
     public IDataSet getInitDataSet() throws Exception {
-	return _dataSet;
+        return _dataSet;
     }
 
     public DatabaseProfile getProfile() throws Exception {
-	return _profile;
+        return _profile;
     }
 
     public boolean support(final TestFeature feature) {
-	final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
-	for (int i = 0; i < unsupportedFeatures.length; i++) {
-	    final String unsupportedFeature = unsupportedFeatures[i];
-	    if (feature.toString().equals(unsupportedFeature)) {
-		return false;
-	    }
-	}
+        final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
+        for (int i = 0; i < unsupportedFeatures.length; i++) {
+            final String unsupportedFeature = unsupportedFeatures[i];
+            if (feature.toString().equals(unsupportedFeature)) {
+                return false;
+            }
+        }
 
-	return true;
+        return true;
     }
 
     /**
@@ -119,18 +119,18 @@ public class DatabaseEnvironment {
      * @return The identifier converted according to database rules.
      */
     public String convertString(final String str) {
-	return str == null ? null : str.toUpperCase();
+        return str == null ? null : str.toUpperCase();
     }
 
     @Override
     public String toString() {
-	final StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_profile=").append(_profile);
-	sb.append(", _connection=").append(_connection);
-	sb.append(", _dataSet=").append(_dataSet);
-	sb.append(", _databaseTester=").append(_databaseTester);
-	sb.append("]");
-	return sb.toString();
+        final StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_profile=").append(_profile);
+        sb.append(", _connection=").append(_connection);
+        sb.append(", _dataSet=").append(_dataSet);
+        sb.append(", _databaseTester=").append(_databaseTester);
+        sb.append("]");
+        return sb.toString();
     }
 }

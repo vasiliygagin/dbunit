@@ -5,6 +5,6 @@ package org.dbunit.dataset.common.handlers;
  */
 public class MockHandlerAccept extends MockHandler {
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	return true;
+        return true;
     }
 }

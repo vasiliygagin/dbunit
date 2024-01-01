@@ -34,9 +34,9 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 @Transactional
 public class ExpectedQueryNonStrictFailureOnMethodTest {
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_query_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, query = "select * from SampleEntity where id=1", table = "SampleEntity")
-	public void test() throws Exception {
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_query_nonstrict.xml", assertionMode = DatabaseAssertionMode.NON_STRICT, query = "select * from SampleEntity where id=1", table = "SampleEntity")
+    public void test() throws Exception {
+    }
 
 }

@@ -31,10 +31,10 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new TestSuite(EnforceHandlerTest.class));
-	suite.addTest(new TestSuite(HandlersTest.class));
-	suite.addTest(new TestSuite(PipelineTest.class));
-	return suite;
+        TestSuite suite = new TestSuite();
+        suite.addTest(new TestSuite(EnforceHandlerTest.class));
+        suite.addTest(new TestSuite(HandlersTest.class));
+        suite.addTest(new TestSuite(PipelineTest.class));
+        return suite;
     }
 }

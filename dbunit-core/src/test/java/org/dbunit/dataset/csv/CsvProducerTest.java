@@ -58,131 +58,131 @@ public class CsvProducerTest extends TestCase {
     private static final String THE_DIRECTORY = TestUtils.getFileName("csv/orders");
 
     public void testProduceFromFolder() throws DataSetException {
-	CsvProducer producer = new CsvProducer(THE_DIRECTORY);
-	CachedDataSet consumer = new CachedDataSet();
-	// producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
+        CsvProducer producer = new CsvProducer(THE_DIRECTORY);
+        CachedDataSet consumer = new CachedDataSet();
+        // producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
 
-	producer.setConsumer(consumer);
-	producer.produce();
-	final ITable[] tables = consumer.getTables();
-	assertEquals("expected 2 tables", 2, tables.length);
+        producer.setConsumer(consumer);
+        producer.produce();
+        final ITable[] tables = consumer.getTables();
+        assertEquals("expected 2 tables", 2, tables.length);
 
-	final ITable orders = consumer.getTable("orders");
-	assertNotNull("orders table not found", orders);
-	assertEquals("wrong number of rows", ORDERS_ROWS_NUMBER, orders.getRowCount());
-	assertEquals("wrong number of columns", 2, orders.getTableMetaData().getColumns().length);
+        final ITable orders = consumer.getTable("orders");
+        assertNotNull("orders table not found", orders);
+        assertEquals("wrong number of rows", ORDERS_ROWS_NUMBER, orders.getRowCount());
+        assertEquals("wrong number of columns", 2, orders.getTableMetaData().getColumns().length);
 
-	final ITable ordersRow = consumer.getTable("orders_row");
-	assertNotNull("orders_row table not found", ordersRow);
-	assertEquals("wrong number of rows", ORDERS_ROW_ROWS_NUMBER, ordersRow.getRowCount());
-	assertEquals("wrong number of columns", ORDERS_ROW_ROWS_NUMBER,
-		ordersRow.getTableMetaData().getColumns().length);
+        final ITable ordersRow = consumer.getTable("orders_row");
+        assertNotNull("orders_row table not found", ordersRow);
+        assertEquals("wrong number of rows", ORDERS_ROW_ROWS_NUMBER, ordersRow.getRowCount());
+        assertEquals("wrong number of columns", ORDERS_ROW_ROWS_NUMBER,
+                ordersRow.getTableMetaData().getColumns().length);
     }
 
     public void testProduceAndInsertFromFolder() throws DatabaseUnitException, ClassNotFoundException, SQLException {
-	produceAndInsertToDatabase();
-	Statement statement = connection.getConnection().createStatement();
-	ResultSet resultSet = statement.executeQuery("select count(*) from orders");
-	resultSet.next();
-	int count = resultSet.getInt(1);
-	assertEquals(ORDERS_ROWS_NUMBER, count);
-	resultSet.close();
-	statement.close();
+        produceAndInsertToDatabase();
+        Statement statement = connection.getConnection().createStatement();
+        ResultSet resultSet = statement.executeQuery("select count(*) from orders");
+        resultSet.next();
+        int count = resultSet.getInt(1);
+        assertEquals(ORDERS_ROWS_NUMBER, count);
+        resultSet.close();
+        statement.close();
     }
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
-	CsvProducer producer = new CsvProducer(THE_DIRECTORY);
-	CachedDataSet consumer = new CachedDataSet();
-	producer.setConsumer(consumer);
-	producer.produce();
-	DatabaseOperation operation = DatabaseOperation.INSERT;
-	operation.execute(connection, consumer);
+        CsvProducer producer = new CsvProducer(THE_DIRECTORY);
+        CachedDataSet consumer = new CachedDataSet();
+        producer.setConsumer(consumer);
+        producer.produce();
+        DatabaseOperation operation = DatabaseOperation.INSERT;
+        operation.execute(connection, consumer);
     }
 
     public void testInsertOperationWithCsvFormat() throws SQLException, DatabaseUnitException {
-	Operation operation = new Operation();
-	operation.setFormat(AbstractStep.FORMAT_CSV);
-	operation.setSrc(new File(THE_DIRECTORY));
-	operation.setType("INSERT");
-	operation.execute(connection);
-	Statement statement = connection.getConnection().createStatement();
-	ResultSet resultSet = statement.executeQuery("select count(*) from orders");
-	resultSet.next();
-	final int count = resultSet.getInt(1);
-	assertEquals("wrong number of row in orders table", ORDERS_ROWS_NUMBER, count);
-	resultSet.close();
-	statement.close();
+        Operation operation = new Operation();
+        operation.setFormat(AbstractStep.FORMAT_CSV);
+        operation.setSrc(new File(THE_DIRECTORY));
+        operation.setType("INSERT");
+        operation.execute(connection);
+        Statement statement = connection.getConnection().createStatement();
+        ResultSet resultSet = statement.executeQuery("select count(*) from orders");
+        resultSet.next();
+        final int count = resultSet.getInt(1);
+        assertEquals("wrong number of row in orders table", ORDERS_ROWS_NUMBER, count);
+        resultSet.close();
+        statement.close();
     }
 
     public void testExportTaskWithCsvFormat() throws DatabaseUnitException, SQLException {
-	produceAndInsertToDatabase();
+        produceAndInsertToDatabase();
 
-	final String fromAnt = "target/csv/from-ant";
-	final File dir = new File(fromAnt);
-	FileHelper.deleteDirectory(dir);
+        final String fromAnt = "target/csv/from-ant";
+        final File dir = new File(fromAnt);
+        FileHelper.deleteDirectory(dir);
 
-	try {
-	    Export export = new Export();
-	    export.setFormat(AbstractStep.FORMAT_CSV);
-	    export.setDest(dir);
+        try {
+            Export export = new Export();
+            export.setFormat(AbstractStep.FORMAT_CSV);
+            export.setDest(dir);
 
-	    Query query = new Query();
-	    query.setName("orders");
-	    query.setSql("select * from orders");
-	    export.addQuery(query);
+            Query query = new Query();
+            query.setName("orders");
+            query.setSql("select * from orders");
+            export.addQuery(query);
 
-	    Query query2 = new Query();
-	    query2.setName("orders_row");
-	    query2.setSql("select * from orders_row");
-	    export.addQuery(query2);
+            Query query2 = new Query();
+            query2.setName("orders_row");
+            query2.setSql("select * from orders_row");
+            export.addQuery(query2);
 
-	    export.execute(getConnection());
+            export.execute(getConnection());
 
-	    final File ordersFile = new File(fromAnt + "/orders.csv");
-	    assertTrue("file '" + ordersFile.getAbsolutePath() + "' does not exists", ordersFile.exists());
-	    final File ordersRowFile = new File(fromAnt + "/orders_row.csv");
-	    assertTrue("file " + ordersRowFile + " does not exists", ordersRowFile.exists());
-	} finally {
-	    FileHelper.deleteDirectory(dir);
-	}
+            final File ordersFile = new File(fromAnt + "/orders.csv");
+            assertTrue("file '" + ordersFile.getAbsolutePath() + "' does not exists", ordersFile.exists());
+            final File ordersRowFile = new File(fromAnt + "/orders_row.csv");
+            assertTrue("file " + ordersRowFile + " does not exists", ordersRowFile.exists());
+        } finally {
+            FileHelper.deleteDirectory(dir);
+        }
     }
 
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
-	DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password));
-	DatabaseConfig config = connection.getConfig();
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-	return connection;
+        DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password));
+        DatabaseConfig config = connection.getConfig();
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        return connection;
     }
 
     protected void setUp() throws Exception {
-	Properties properties = new Properties();
-	final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
-	properties.load(inStream);
-	inStream.close();
-	driverClass = properties.getProperty("cvs-tests.driver.class");
-	url = properties.getProperty("cvs-tests.url");
-	user = properties.getProperty("cvs-tests.user");
-	password = properties.getProperty("cvs-tests.password");
-	assertFalse("".equals(driverClass));
-	assertFalse("".equals(url));
-	assertFalse("".equals(user));
-	Class.forName(driverClass);
-	connection = getConnection();
-	Statement statement = connection.getConnection().createStatement();
-	try {
-	    statement.execute("DROP TABLE ORDERS");
-	    statement.execute("DROP TABLE ORDERS_ROW");
-	} catch (Exception ignored) {
-	}
-	statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR)");
-	statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR, QUANTITY INTEGER)");
-	// statement.execute("delete from orders");
-	// statement.execute("delete from orders_row");
-	statement.close();
+        Properties properties = new Properties();
+        final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
+        properties.load(inStream);
+        inStream.close();
+        driverClass = properties.getProperty("cvs-tests.driver.class");
+        url = properties.getProperty("cvs-tests.url");
+        user = properties.getProperty("cvs-tests.user");
+        password = properties.getProperty("cvs-tests.password");
+        assertFalse("".equals(driverClass));
+        assertFalse("".equals(url));
+        assertFalse("".equals(user));
+        Class.forName(driverClass);
+        connection = getConnection();
+        Statement statement = connection.getConnection().createStatement();
+        try {
+            statement.execute("DROP TABLE ORDERS");
+            statement.execute("DROP TABLE ORDERS_ROW");
+        } catch (Exception ignored) {
+        }
+        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR)");
+        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR, QUANTITY INTEGER)");
+        // statement.execute("delete from orders");
+        // statement.execute("delete from orders_row");
+        statement.close();
     }
 
     protected void tearDown() throws Exception {
-	HypersonicEnvironment.shutdown(connection.getConnection());
-	connection.close();
+        HypersonicEnvironment.shutdown(connection.getConnection());
+        connection.close();
     }
 }

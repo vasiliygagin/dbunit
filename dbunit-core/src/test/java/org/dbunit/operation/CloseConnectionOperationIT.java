@@ -34,18 +34,18 @@ import org.dbunit.dataset.IDataSet;
 public class CloseConnectionOperationIT extends AbstractDatabaseIT {
 
     public CloseConnectionOperationIT(String s) {
-	super(s);
+        super(s);
     }
 
     public void testMockExecute() throws Exception {
 
-	DatabaseOperation operation = mock(DatabaseOperation.class);
-	IDatabaseConnection connection = mock(IDatabaseConnection.class);
-	IDataSet dataSet = mock(IDataSet.class);
+        DatabaseOperation operation = mock(DatabaseOperation.class);
+        IDatabaseConnection connection = mock(IDatabaseConnection.class);
+        IDataSet dataSet = mock(IDataSet.class);
 
-	new CloseConnectionOperation(operation).execute(connection, dataSet);
+        new CloseConnectionOperation(operation).execute(connection, dataSet);
 
-	verify(operation).execute(connection, dataSet);
-	verify(connection).close();
+        verify(operation).execute(connection, dataSet);
+        verify(connection).close();
     }
 }

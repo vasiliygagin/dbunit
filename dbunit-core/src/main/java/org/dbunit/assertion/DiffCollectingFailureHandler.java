@@ -49,23 +49,23 @@ public class DiffCollectingFailureHandler extends DefaultFailureHandler {
     private final List diffList = new ArrayList();
 
     public void handle(Difference diff) {
-	// Simply collect the difference without throwing an exception
-	this.diffList.add(diff);
+        // Simply collect the difference without throwing an exception
+        this.diffList.add(diff);
     }
 
     /**
      * @return The list of collected {@link Difference}s
      */
     public List getDiffList() {
-	return diffList;
+        return diffList;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(super.toString());
-	sb.append(DiffCollectingFailureHandler.class.getName()).append("[");
-	sb.append("diffList=").append(diffList);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(super.toString());
+        sb.append(DiffCollectingFailureHandler.class.getName()).append("[");
+        sb.append("diffList=").append(diffList);
+        sb.append("]");
+        return sb.toString();
     }
 }

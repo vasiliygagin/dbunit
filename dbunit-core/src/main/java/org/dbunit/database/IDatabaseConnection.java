@@ -93,7 +93,7 @@ public interface IDatabaseConnection {
      * @since 2.4.4
      */
     public ITable createTable(String tableName, PreparedStatement preparedStatement)
-	    throws DataSetException, SQLException;
+            throws DataSetException, SQLException;
 
     /**
      * Creates a table with the result of a

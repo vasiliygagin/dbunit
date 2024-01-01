@@ -24,16 +24,17 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * A {@link TestExecutionListener} that triggers a <code>afterTest()</code> method once a test has executed.
+ * A {@link TestExecutionListener} that triggers a <code>afterTest()</code>
+ * method once a test has executed.
  *
  * @author Phillip Webb
  */
 public class CallAfterTestMethodExecutionListener extends AbstractTestExecutionListener {
 
-	@Override
-	public void afterTestMethod(TestContext testContext) throws Exception {
-		Method method = testContext.getTestClass().getMethod("afterTest");
-		ReflectionUtils.invokeMethod(method, testContext.getTestInstance());
-	}
+    @Override
+    public void afterTestMethod(TestContext testContext) throws Exception {
+        Method method = testContext.getTestClass().getMethod("afterTest");
+        ReflectionUtils.invokeMethod(method, testContext.getTestInstance());
+    }
 
 }

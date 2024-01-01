@@ -93,7 +93,7 @@ public class FlatDtdProducer implements IDataSetProducer, EntityResolver, DeclHa
     private static final IDataSetConsumer EMPTY_CONSUMER = new DefaultConsumer();
 
     private static final String XML_CONTENT = "<?xml version=\"1.0\"?>" + "<!DOCTYPE dataset SYSTEM \"urn:/dummy.dtd\">"
-	    + "<dataset/>";
+            + "<dataset/>";
     private static final String DECL_HANDLER_PROPERTY_NAME = "http://xml.org/sax/properties/declaration-handler";
     private static final String LEXICAL_HANDLER_PROPERTY_NAME = "http://xml.org/sax/properties/lexical-handler";
 
@@ -108,203 +108,203 @@ public class FlatDtdProducer implements IDataSetProducer, EntityResolver, DeclHa
     }
 
     public FlatDtdProducer(InputSource inputSource) {
-	_inputSource = inputSource;
+        _inputSource = inputSource;
     }
 
     public static void setDeclHandler(XMLReader xmlReader, DeclHandler handler)
-	    throws SAXNotRecognizedException, SAXNotSupportedException {
-	logger.debug("setDeclHandler(xmlReader={}, handler={}) - start", xmlReader, handler);
-	xmlReader.setProperty(DECL_HANDLER_PROPERTY_NAME, handler);
+            throws SAXNotRecognizedException, SAXNotSupportedException {
+        logger.debug("setDeclHandler(xmlReader={}, handler={}) - start", xmlReader, handler);
+        xmlReader.setProperty(DECL_HANDLER_PROPERTY_NAME, handler);
     }
 
     public static void setLexicalHandler(XMLReader xmlReader, LexicalHandler handler)
-	    throws SAXNotRecognizedException, SAXNotSupportedException {
-	logger.debug("setLexicalHandler(xmlReader={}, handler={}) - start", xmlReader, handler);
-	xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY_NAME, handler);
+            throws SAXNotRecognizedException, SAXNotSupportedException {
+        logger.debug("setLexicalHandler(xmlReader={}, handler={}) - start", xmlReader, handler);
+        xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY_NAME, handler);
     }
 
     private List createColumnList() {
-	return new LinkedList();
+        return new LinkedList();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetProducer interface
 
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-	_consumer = consumer;
+        _consumer = consumer;
     }
 
     public void produce() throws DataSetException {
-	logger.debug("produce() - start");
+        logger.debug("produce() - start");
 
-	try {
-	    SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-	    XMLReader xmlReader = saxParser.getXMLReader();
+        try {
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            XMLReader xmlReader = saxParser.getXMLReader();
 
-	    setDeclHandler(xmlReader, this);
-	    setLexicalHandler(xmlReader, this);
-	    xmlReader.setEntityResolver(this);
-	    xmlReader.parse(new InputSource(new StringReader(XML_CONTENT)));
-	} catch (ParserConfigurationException e) {
-	    throw new DataSetException(e);
-	} catch (SAXException e) {
-	    Exception exception = e.getException() == null ? e : e.getException();
-	    if (exception instanceof DataSetException) {
-		throw (DataSetException) exception;
-	    } else {
-		throw new DataSetException(exception);
-	    }
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+            setDeclHandler(xmlReader, this);
+            setLexicalHandler(xmlReader, this);
+            xmlReader.setEntityResolver(this);
+            xmlReader.parse(new InputSource(new StringReader(XML_CONTENT)));
+        } catch (ParserConfigurationException e) {
+            throw new DataSetException(e);
+        } catch (SAXException e) {
+            Exception exception = e.getException() == null ? e : e.getException();
+            if (exception instanceof DataSetException) {
+                throw (DataSetException) exception;
+            } else {
+                throw new DataSetException(exception);
+            }
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // EntityResolver interface
 
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-	return _inputSource;
+        return _inputSource;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DeclHandler interface
 
     public void elementDecl(String name, String model) throws SAXException {
-	logger.debug("elementDecl(name={}, model={}) - start", name, model);
+        logger.debug("elementDecl(name={}, model={}) - start", name, model);
 
-	// Root element
-	if (name.equals(_rootName)) {
-	    // The root model defines the table sequence. Keep it for later used!
-	    _rootModel = model;
-	} else if (!_columnListMap.containsKey(name)) {
-	    _columnListMap.put(name, createColumnList());
-	}
+        // Root element
+        if (name.equals(_rootName)) {
+            // The root model defines the table sequence. Keep it for later used!
+            _rootModel = model;
+        } else if (!_columnListMap.containsKey(name)) {
+            _columnListMap.put(name, createColumnList());
+        }
     }
 
     public void attributeDecl(String elementName, String attributeName, String type, String mode, String value)
-	    throws SAXException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("attributeDecl(elementName={}, attributeName={}, type={}, mode={}, value={}) - start",
-		    new Object[] { elementName, attributeName, type, mode, value });
-	}
+            throws SAXException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("attributeDecl(elementName={}, attributeName={}, type={}, mode={}, value={}) - start",
+                    new Object[] { elementName, attributeName, type, mode, value });
+        }
 
-	// Each element attribute represent a table column
-	Column.Nullable nullable = (REQUIRED.equals(mode)) ? Column.NO_NULLS : Column.NULLABLE;
-	Column column = new Column(attributeName, DataType.UNKNOWN, nullable);
+        // Each element attribute represent a table column
+        Column.Nullable nullable = (REQUIRED.equals(mode)) ? Column.NO_NULLS : Column.NULLABLE;
+        Column column = new Column(attributeName, DataType.UNKNOWN, nullable);
 
-	if (!_columnListMap.containsKey(elementName)) {
-	    _columnListMap.put(elementName, createColumnList());
-	}
-	List columnList = (List) _columnListMap.get(elementName);
-	columnList.add(column);
+        if (!_columnListMap.containsKey(elementName)) {
+            _columnListMap.put(elementName, createColumnList());
+        }
+        List columnList = (List) _columnListMap.get(elementName);
+        columnList.add(column);
     }
 
     public void internalEntityDecl(String name, String value) throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     public void externalEntityDecl(String name, String publicId, String systemId) throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // LexicalHandler interface
 
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("startDTD(name={}, publicId={}, systemId={}) - start",
-		    new Object[] { name, publicId, systemId });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("startDTD(name={}, publicId={}, systemId={}) - start",
+                    new Object[] { name, publicId, systemId });
+        }
 
-	try {
-	    _rootName = name;
-	    _consumer.startDataSet();
-	} catch (DataSetException e) {
-	    throw new SAXException(e);
-	}
+        try {
+            _rootName = name;
+            _consumer.startDataSet();
+        } catch (DataSetException e) {
+            throw new SAXException(e);
+        }
     }
 
     public void endDTD() throws SAXException {
-	logger.debug("endDTD() - start");
+        logger.debug("endDTD() - start");
 
-	try {
-	    if (_rootModel == null) {
-		logger.info("The rootModel is null. Cannot add tables.");
-	    } else {
-		if (ANY.equalsIgnoreCase(_rootModel)) {
-		    Iterator i = _columnListMap.keySet().iterator();
-		    while (i.hasNext()) {
-			String tableName = (String) i.next();
-			addTable(tableName);
-		    }
-		} else {
-		    // Remove enclosing model parenthesis
-		    String rootModel = _rootModel.substring(1, _rootModel.length() - 1);
+        try {
+            if (_rootModel == null) {
+                logger.info("The rootModel is null. Cannot add tables.");
+            } else {
+                if (ANY.equalsIgnoreCase(_rootModel)) {
+                    Iterator i = _columnListMap.keySet().iterator();
+                    while (i.hasNext()) {
+                        String tableName = (String) i.next();
+                        addTable(tableName);
+                    }
+                } else {
+                    // Remove enclosing model parenthesis
+                    String rootModel = _rootModel.substring(1, _rootModel.length() - 1);
 
-		    // Parse the root element model to determine the table sequence.
-		    // Support all sequence or choices model but not the mix of both.
-		    String delim = (rootModel.indexOf(",") != -1) ? "," : "|";
-		    StringTokenizer tokenizer = new StringTokenizer(rootModel, delim);
-		    while (tokenizer.hasMoreTokens()) {
-			String tableName = tokenizer.nextToken();
-			tableName = cleanupTableName(tableName);
-			addTable(tableName);
-		    }
-		}
-	    }
+                    // Parse the root element model to determine the table sequence.
+                    // Support all sequence or choices model but not the mix of both.
+                    String delim = (rootModel.indexOf(",") != -1) ? "," : "|";
+                    StringTokenizer tokenizer = new StringTokenizer(rootModel, delim);
+                    while (tokenizer.hasMoreTokens()) {
+                        String tableName = tokenizer.nextToken();
+                        tableName = cleanupTableName(tableName);
+                        addTable(tableName);
+                    }
+                }
+            }
 
-	    _consumer.endDataSet();
-	} catch (DataSetException e) {
-	    throw new SAXException(e);
-	}
+            _consumer.endDataSet();
+        } catch (DataSetException e) {
+            throw new SAXException(e);
+        }
     }
 
     private void addTable(String tableName) throws DataSetException {
-	Column[] columns = getColumns(tableName);
-	_consumer.startTable(new DefaultTableMetaData(tableName, columns));
-	_consumer.endTable();
+        Column[] columns = getColumns(tableName);
+        _consumer.startTable(new DefaultTableMetaData(tableName, columns));
+        _consumer.endTable();
     }
 
     private Column[] getColumns(String tableName) throws DataSetException {
-	List columnList = (List) _columnListMap.get(tableName);
-	if (columnList == null) {
-	    throw new DataSetException("ELEMENT/ATTRIBUTE declaration for '" + tableName + "' is missing. "
-		    + "Every table must have an element describing the table.");
-	}
-	Column[] columns = (Column[]) columnList.toArray(new Column[0]);
-	return columns;
+        List columnList = (List) _columnListMap.get(tableName);
+        if (columnList == null) {
+            throw new DataSetException("ELEMENT/ATTRIBUTE declaration for '" + tableName + "' is missing. "
+                    + "Every table must have an element describing the table.");
+        }
+        Column[] columns = (Column[]) columnList.toArray(new Column[0]);
+        return columns;
     }
 
     protected String cleanupTableName(String tableName) {
-	String cleaned = tableName;
-	// Remove beginning parenthesis.
-	while (cleaned.startsWith("(")) {
-	    cleaned = cleaned.substring(1);
-	}
-	// Remove ending parenthesis and occurrence operators
-	while (cleaned.endsWith(")") || cleaned.endsWith("*") || cleaned.endsWith("?") || cleaned.endsWith("+")) {
-	    cleaned = cleaned.substring(0, cleaned.length() - 1);
-	}
-	return cleaned;
+        String cleaned = tableName;
+        // Remove beginning parenthesis.
+        while (cleaned.startsWith("(")) {
+            cleaned = cleaned.substring(1);
+        }
+        // Remove ending parenthesis and occurrence operators
+        while (cleaned.endsWith(")") || cleaned.endsWith("*") || cleaned.endsWith("?") || cleaned.endsWith("+")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 1);
+        }
+        return cleaned;
     }
 
     public void startEntity(String name) throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     public void endEntity(String name) throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     public void startCDATA() throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     public void endCDATA() throws SAXException {
-	// Not used!
+        // Not used!
     }
 
     public void comment(char ch[], int start, int length) throws SAXException {
-	// Not used!
+        // Not used!
     }
 }

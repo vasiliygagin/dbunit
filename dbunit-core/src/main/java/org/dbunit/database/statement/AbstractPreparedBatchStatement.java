@@ -43,12 +43,12 @@ public abstract class AbstractPreparedBatchStatement implements IPreparedBatchSt
     protected final PreparedStatement _statement;
 
     AbstractPreparedBatchStatement(String sql, Connection connection) throws SQLException {
-	_statement = connection.prepareStatement(sql);
+        _statement = connection.prepareStatement(sql);
     }
 
     public void close() throws SQLException {
-	logger.debug("close() - start");
+        logger.debug("close() - start");
 
-	_statement.close();
+        _statement.close();
     }
 }

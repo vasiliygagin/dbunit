@@ -30,15 +30,15 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() throws Exception {
-	TestSuite suite = new TestSuite();
-	suite.addTest(org.dbunit.ext.db2.AllTests.suite());
-	suite.addTest(org.dbunit.ext.mckoi.AllTests.suite());
-	suite.addTest(org.dbunit.ext.mssql.AllTests.suite());
-	suite.addTest(org.dbunit.ext.mysql.AllTests.suite());
-	suite.addTest(org.dbunit.ext.oracle.AllTests.suite());
-	suite.addTest(org.dbunit.ext.hsqldb.AllTests.suite());
-	suite.addTest(org.dbunit.ext.h2.AllTests.suite());
-	suite.addTest(org.dbunit.ext.postgresql.AllTests.suite());
-	return suite;
+        TestSuite suite = new TestSuite();
+        suite.addTest(org.dbunit.ext.db2.AllTests.suite());
+        suite.addTest(org.dbunit.ext.mckoi.AllTests.suite());
+        suite.addTest(org.dbunit.ext.mssql.AllTests.suite());
+        suite.addTest(org.dbunit.ext.mysql.AllTests.suite());
+        suite.addTest(org.dbunit.ext.oracle.AllTests.suite());
+        suite.addTest(org.dbunit.ext.hsqldb.AllTests.suite());
+        suite.addTest(org.dbunit.ext.h2.AllTests.suite());
+        suite.addTest(org.dbunit.ext.postgresql.AllTests.suite());
+        return suite;
     }
 }

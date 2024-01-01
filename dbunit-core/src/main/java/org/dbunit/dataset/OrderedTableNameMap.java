@@ -81,7 +81,7 @@ public class OrderedTableNameMap {
      *                                sensitive
      */
     public OrderedTableNameMap(boolean caseSensitiveTableNames) {
-	_caseSensitiveTableNames = caseSensitiveTableNames;
+        _caseSensitiveTableNames = caseSensitiveTableNames;
     }
 
     /**
@@ -91,8 +91,8 @@ public class OrderedTableNameMap {
      * @return The object that has been associated with the given table name
      */
     public Object get(String tableName) {
-	String correctedCaseTableName = this.getTableName(tableName);
-	return this._tableMap.get(correctedCaseTableName);
+        String correctedCaseTableName = this.getTableName(tableName);
+        return this._tableMap.get(correctedCaseTableName);
     }
 
     /**
@@ -103,7 +103,7 @@ public class OrderedTableNameMap {
      *         added to this map
      */
     public String[] getTableNames() {
-	return (String[]) this._tableNames.toArray(new String[0]);
+        return (String[]) this._tableNames.toArray(new String[0]);
     }
 
     /**
@@ -114,8 +114,8 @@ public class OrderedTableNameMap {
      *         table name
      */
     public boolean containsTable(String tableName) {
-	String correctedCaseTableName = this.getTableName(tableName);
-	return _tableMap.containsKey(correctedCaseTableName);
+        String correctedCaseTableName = this.getTableName(tableName);
+        return _tableMap.containsKey(correctedCaseTableName);
     }
 
     /**
@@ -124,17 +124,17 @@ public class OrderedTableNameMap {
      *         has been added to this map.
      */
     public boolean isLastTable(String tableName) {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("isLastTable(tableName={}) - start", tableName);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("isLastTable(tableName={}) - start", tableName);
 
-	if (this._tableNames.size() == 0) {
-	    return false;
-	} else {
-	    String lastTable = getLastTableName();
-	    String lastTableCorrectCase = this.getTableName(lastTable);
-	    String inputTableCorrectCase = this.getTableName(tableName);
-	    return lastTableCorrectCase.equals(inputTableCorrectCase);
-	}
+        if (this._tableNames.size() == 0) {
+            return false;
+        } else {
+            String lastTable = getLastTableName();
+            String lastTableCorrectCase = this.getTableName(lastTable);
+            String inputTableCorrectCase = this.getTableName(tableName);
+            return lastTableCorrectCase.equals(inputTableCorrectCase);
+        }
     }
 
     /**
@@ -142,30 +142,30 @@ public class OrderedTableNameMap {
      *         <code>null</code> if no table has been added yet.
      */
     public String getLastTableName() {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("getLastTableName() - start");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("getLastTableName() - start");
 
-	if (_lastTableNameOverride != null) {
-	    return _lastTableNameOverride;
-	}
+        if (_lastTableNameOverride != null) {
+            return _lastTableNameOverride;
+        }
 
-	if (_tableNames.size() > 0) {
-	    String lastTable = (String) _tableNames.get(this._tableNames.size() - 1);
-	    return lastTable;
-	} else {
-	    return null;
-	}
+        if (_tableNames.size() > 0) {
+            String lastTable = (String) _tableNames.get(this._tableNames.size() - 1);
+            return lastTable;
+        } else {
+            return null;
+        }
     }
 
     public void setLastTable(String tableName) throws NoSuchTableException {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("setLastTable(name{}) - start", tableName);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("setLastTable(name{}) - start", tableName);
 
-	if (!this.containsTable(tableName)) {
-	    throw new NoSuchTableException(tableName);
-	}
+        if (!this.containsTable(tableName)) {
+            throw new NoSuchTableException(tableName);
+        }
 
-	this._lastTableNameOverride = tableName;
+        this._lastTableNameOverride = tableName;
     }
 
     /**
@@ -178,36 +178,36 @@ public class OrderedTableNameMap {
      * @throws AmbiguousTableNameException If the given table name already exists
      */
     public void add(String tableName, Object object) throws AmbiguousTableNameException {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("add(tableName={}, object={}) - start", tableName, object);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("add(tableName={}, object={}) - start", tableName, object);
 
-	// Get the table name in the correct case
-	String tableNameCorrectedCase = this.getTableName(tableName);
-	// prevent table name conflict
-	if (this.containsTable(tableNameCorrectedCase)) {
-	    throw new AmbiguousTableNameException(tableNameCorrectedCase);
-	} else {
-	    this._tableMap.put(tableNameCorrectedCase, object);
-	    this._tableNames.add(tableName);
-	    // Reset the override of the lastTableName
-	    this._lastTableNameOverride = null;
-	}
+        // Get the table name in the correct case
+        String tableNameCorrectedCase = this.getTableName(tableName);
+        // prevent table name conflict
+        if (this.containsTable(tableNameCorrectedCase)) {
+            throw new AmbiguousTableNameException(tableNameCorrectedCase);
+        } else {
+            this._tableMap.put(tableNameCorrectedCase, object);
+            this._tableNames.add(tableName);
+            // Reset the override of the lastTableName
+            this._lastTableNameOverride = null;
+        }
     }
 
     /**
      * @return The values of this map ordered in the sequence they have been added
      */
     public Collection orderedValues() {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("orderedValues() - start");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("orderedValues() - start");
 
-	List orderedValues = new ArrayList(this._tableNames.size());
-	for (Iterator iterator = _tableNames.iterator(); iterator.hasNext();) {
-	    String tableName = (String) iterator.next();
-	    Object object = this.get(tableName);
-	    orderedValues.add(object);
-	}
-	return orderedValues;
+        List orderedValues = new ArrayList(this._tableNames.size());
+        for (Iterator iterator = _tableNames.iterator(); iterator.hasNext();) {
+            String tableName = (String) iterator.next();
+            Object object = this.get(tableName);
+            orderedValues.add(object);
+        }
+        return orderedValues;
     }
 
     /**
@@ -218,15 +218,15 @@ public class OrderedTableNameMap {
      * @param object    The new object to be associated with the given table name
      */
     public void update(String tableName, Object object) {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("update(tableName={}, object={}) - start", tableName, object);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("update(tableName={}, object={}) - start", tableName, object);
 
-	// prevent table name conflict
-	if (!this.containsTable(tableName)) {
-	    throw new IllegalArgumentException("The table name '" + tableName + "' does not exist in the map");
-	}
-	tableName = this.getTableName(tableName);
-	this._tableMap.put(tableName, object);
+        // prevent table name conflict
+        if (!this.containsTable(tableName)) {
+            throw new IllegalArgumentException("The table name '" + tableName + "' does not exist in the map");
+        }
+        tableName = this.getTableName(tableName);
+        this._tableMap.put(tableName, object);
     }
 
     /**
@@ -236,30 +236,30 @@ public class OrderedTableNameMap {
      * @return The table name for the given string in the correct case.
      */
     public String getTableName(String tableName) {
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("getTableName(tableName={}) - start", tableName);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("getTableName(tableName={}) - start", tableName);
 
-	String result = tableName;
-	if (!_caseSensitiveTableNames) {
-	    // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
-	    // locale like turkish. (for release 2.4.3)
-	    result = tableName.toUpperCase(Locale.ENGLISH);
-	}
+        String result = tableName;
+        if (!_caseSensitiveTableNames) {
+            // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
+            // locale like turkish. (for release 2.4.3)
+            result = tableName.toUpperCase(Locale.ENGLISH);
+        }
 
-	if (LOGGER.isDebugEnabled())
-	    LOGGER.debug("getTableName(tableName={}) - end - result={}", tableName, result);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("getTableName(tableName={}) - end - result={}", tableName, result);
 
-	return result;
+        return result;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_tableNames=").append(_tableNames);
-	sb.append(", _tableMap=").append(_tableMap);
-	sb.append(", _caseSensitiveTableNames=").append(_caseSensitiveTableNames);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_tableNames=").append(_tableNames);
+        sb.append(", _tableMap=").append(_tableMap);
+        sb.append(", _caseSensitiveTableNames=").append(_caseSensitiveTableNames);
+        sb.append("]");
+        return sb.toString();
     }
 
 }

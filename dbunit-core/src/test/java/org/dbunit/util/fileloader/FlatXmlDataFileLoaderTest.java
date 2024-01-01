@@ -39,16 +39,16 @@ public class FlatXmlDataFileLoaderTest extends TestCase {
      * {@inheritDoc}
      */
     protected void setUp() throws Exception {
-	loader = new FlatXmlDataFileLoader();
+        loader = new FlatXmlDataFileLoader();
     }
 
     /**
      * Test can load the specified file.
      */
     public void testLoad() throws DataSetException {
-	String filename = "/xml/flatXmlDataSetTest.xml";
-	IDataSet ds = loader.load(filename);
-	assertTrue("No tables found in dataset.", ds.getTableNames().length > 0);
-	// DataSet loading tests verify data accuracy
+        String filename = "/xml/flatXmlDataSetTest.xml";
+        IDataSet ds = loader.load(filename);
+        assertTrue("No tables found in dataset.", ds.getTableNames().length > 0);
+        // DataSet loading tests verify data accuracy
     }
 }

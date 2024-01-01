@@ -52,17 +52,17 @@ public class HsqldbDataTypeFactory extends DefaultDataTypeFactory {
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	if (sqlTypeName.equals("BOOLEAN")) {
-	    return DataType.BOOLEAN;
-	}
+        if (sqlTypeName.equals("BOOLEAN")) {
+            return DataType.BOOLEAN;
+        }
 
-	return super.createDataType(sqlType, sqlTypeName);
+        return super.createDataType(sqlType, sqlTypeName);
     }
 }

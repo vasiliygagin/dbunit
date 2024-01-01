@@ -44,47 +44,47 @@ public class LongDataType extends AbstractDataType {
     private static final Logger logger = LoggerFactory.getLogger(LongDataType.class);
 
     LongDataType() {
-	super("BIGINT", Types.BIGINT, Long.class, true);
+        super("BIGINT", Types.BIGINT, Long.class, true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // DataType class
 
     public Object typeCast(Object value) throws TypeCastException {
-	logger.debug("typeCast(value={}) - start", value);
+        logger.debug("typeCast(value={}) - start", value);
 
-	if (value == null || value == ITable.NO_VALUE) {
-	    return null;
-	}
+        if (value == null || value == ITable.NO_VALUE) {
+            return null;
+        }
 
-	if (value instanceof Number) {
-	    return new Long(((Number) value).longValue());
-	}
+        if (value instanceof Number) {
+            return new Long(((Number) value).longValue());
+        }
 
-	try {
-	    return typeCast(new BigDecimal(value.toString()));
-	} catch (java.lang.NumberFormatException e) {
-	    throw new TypeCastException(value, this, e);
-	}
+        try {
+            return typeCast(new BigDecimal(value.toString()));
+        } catch (java.lang.NumberFormatException e) {
+            throw new TypeCastException(value, this, e);
+        }
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	long value = resultSet.getLong(column);
-	if (resultSet.wasNull()) {
-	    return null;
-	}
-	return new Long(value);
+        long value = resultSet.getLong(column);
+        if (resultSet.wasNull()) {
+            return null;
+        }
+        return new Long(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setLong(column, ((Number) typeCast(value)).longValue());
+        statement.setLong(column, ((Number) typeCast(value)).longValue());
     }
 }

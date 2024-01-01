@@ -48,94 +48,94 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparer extends Val
      * @param highToleranceValueInMillis The maximum time difference allowed.
      */
     public IsActualWithinToleranceOfExpectedTimestampValueComparer(final long lowToleranceValueInMillis,
-	    final long highToleranceValueInMillis) {
-	this.lowToleranceValueInMillis = lowToleranceValueInMillis;
-	this.highToleranceValueInMillis = highToleranceValueInMillis;
+            final long highToleranceValueInMillis) {
+        this.lowToleranceValueInMillis = lowToleranceValueInMillis;
+        this.highToleranceValueInMillis = highToleranceValueInMillis;
     }
 
     @Override
     protected boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException {
-	final boolean isExpected;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException {
+        final boolean isExpected;
 
-	// handle nulls: prevent NPE and isExpected=true when both null
-	if (expectedValue == null || actualValue == null) {
-	    isExpected = isExpectedWithNull(expectedValue, actualValue);
-	} else {
-	    isExpected = isExpectedWithoutNull(expectedValue, actualValue, dataType);
-	}
+        // handle nulls: prevent NPE and isExpected=true when both null
+        if (expectedValue == null || actualValue == null) {
+            isExpected = isExpectedWithNull(expectedValue, actualValue);
+        } else {
+            isExpected = isExpectedWithoutNull(expectedValue, actualValue, dataType);
+        }
 
-	return isExpected;
+        return isExpected;
     }
 
     /** Since one is a known null, isExpected=true when they equal. */
     protected boolean isExpectedWithNull(final Object expectedValue, final Object actualValue) {
-	final boolean isExpected = expectedValue == actualValue;
+        final boolean isExpected = expectedValue == actualValue;
 
-	log.debug("isExpectedWithNull: {}, actualValue={}, expectedValue={}", isExpected, actualValue, expectedValue);
+        log.debug("isExpectedWithNull: {}, actualValue={}, expectedValue={}", isExpected, actualValue, expectedValue);
 
-	return isExpected;
+        return isExpected;
     }
 
     /** Neither is null so compare values with tolerance. */
     protected boolean isExpectedWithoutNull(final Object expectedValue, final Object actualValue,
-	    final DataType dataType) throws TypeCastException {
-	assertNotNull("expectedValue is null.", expectedValue);
-	assertNotNull("actualValue is null.", actualValue);
+            final DataType dataType) throws TypeCastException {
+        assertNotNull("expectedValue is null.", expectedValue);
+        assertNotNull("actualValue is null.", actualValue);
 
-	final Object actualTimestamp = getCastedValue(actualValue, dataType);
-	final long actualTime = convertValueToTimeInMillis(actualTimestamp);
+        final Object actualTimestamp = getCastedValue(actualValue, dataType);
+        final long actualTime = convertValueToTimeInMillis(actualTimestamp);
 
-	final Object expectedTimestamp = getCastedValue(expectedValue, dataType);
-	final long expectedTime = convertValueToTimeInMillis(expectedTimestamp);
+        final Object expectedTimestamp = getCastedValue(expectedValue, dataType);
+        final long expectedTime = convertValueToTimeInMillis(expectedTimestamp);
 
-	final long diffTime = calcTimeDifference(actualTime, expectedTime);
-	return isTolerant(diffTime);
+        final long diffTime = calcTimeDifference(actualTime, expectedTime);
+        return isTolerant(diffTime);
     }
 
     protected Object getCastedValue(final Object value, final DataType type) throws TypeCastException {
-	final Object castedValue;
+        final Object castedValue;
 
-	if (type == null || type == DataType.UNKNOWN) {
-	    castedValue = value;
-	} else {
-	    castedValue = type.typeCast(value);
-	}
+        if (type == null || type == DataType.UNKNOWN) {
+            castedValue = value;
+        } else {
+            castedValue = type.typeCast(value);
+        }
 
-	return castedValue;
+        return castedValue;
     }
 
     protected boolean isTolerant(final long diffTime) {
-	final boolean isLowTolerant = diffTime >= lowToleranceValueInMillis;
-	final boolean isHighTolerant = diffTime <= highToleranceValueInMillis;
-	final boolean isTolerant = isLowTolerant && isHighTolerant;
+        final boolean isLowTolerant = diffTime >= lowToleranceValueInMillis;
+        final boolean isHighTolerant = diffTime <= highToleranceValueInMillis;
+        final boolean isTolerant = isLowTolerant && isHighTolerant;
 
-	log.debug("isTolerant: {}," + " diffTime={}, lowToleranceValueInMillis={}," + " highToleranceValueInMillis={}",
-		isTolerant, diffTime, lowToleranceValueInMillis, highToleranceValueInMillis);
+        log.debug("isTolerant: {}," + " diffTime={}, lowToleranceValueInMillis={}," + " highToleranceValueInMillis={}",
+                isTolerant, diffTime, lowToleranceValueInMillis, highToleranceValueInMillis);
 
-	return isTolerant;
+        return isTolerant;
     }
 
     protected long convertValueToTimeInMillis(final Object timestampValue) {
-	final Timestamp timestamp = (Timestamp) timestampValue;
-	return timestamp.getTime();
+        final Timestamp timestamp = (Timestamp) timestampValue;
+        return timestamp.getTime();
     }
 
     protected long calcTimeDifference(final long actualTimeInMillis, final long expectedTimeInMillis) {
-	final long diffTime = actualTimeInMillis - expectedTimeInMillis;
-	final long diffTimeAbs = Math.abs(diffTime);
-	log.debug(
-		"calcTimeDifference: " + "actualTimeInMillis={}, expectedTimeInMillis={},"
-			+ " diffInMillisTime={}, diffTimeInMillisAbs={}",
-		actualTimeInMillis, expectedTimeInMillis, diffTime, diffTimeAbs);
+        final long diffTime = actualTimeInMillis - expectedTimeInMillis;
+        final long diffTimeAbs = Math.abs(diffTime);
+        log.debug(
+                "calcTimeDifference: " + "actualTimeInMillis={}, expectedTimeInMillis={},"
+                        + " diffInMillisTime={}, diffTimeInMillisAbs={}",
+                actualTimeInMillis, expectedTimeInMillis, diffTime, diffTimeAbs);
 
-	return diffTimeAbs;
+        return diffTimeAbs;
     }
 
     @Override
     protected String getFailPhrase() {
-	return "not within tolerance range of " + lowToleranceValueInMillis + " - " + highToleranceValueInMillis
-		+ " milliseconds of";
+        return "not within tolerance range of " + lowToleranceValueInMillis + " - " + highToleranceValueInMillis
+                + " milliseconds of";
     }
 }

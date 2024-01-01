@@ -28,11 +28,11 @@ package org.dbunit.dataset;
  */
 public class CachedTable extends DefaultTable {
     public CachedTable(ITable table) throws DataSetException {
-	super(table.getTableMetaData());
-	addTableRows(table);
+        super(table.getTableMetaData());
+        addTableRows(table);
     }
 
     protected CachedTable(ITableMetaData metaData) {
-	super(metaData);
+        super(metaData);
     }
 }

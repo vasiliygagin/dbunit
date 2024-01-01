@@ -34,20 +34,20 @@ import java.sql.Types;
  */
 public class H2DataTypeFactoryTest extends AbstractDataTypeFactoryTest {
     public H2DataTypeFactoryTest(String s) {
-	super(s);
+        super(s);
     }
 
     public IDataTypeFactory createFactory() throws Exception {
-	return new H2DataTypeFactory();
+        return new H2DataTypeFactory();
     }
 
     public void testCreateBooleanDataType() throws Exception {
-	int sqlType = Types.BIT;
-	String sqlTypeName = "BOOLEAN";
+        int sqlType = Types.BIT;
+        String sqlTypeName = "BOOLEAN";
 
-	DataType expected = DataType.BOOLEAN;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = DataType.BOOLEAN;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 
 }

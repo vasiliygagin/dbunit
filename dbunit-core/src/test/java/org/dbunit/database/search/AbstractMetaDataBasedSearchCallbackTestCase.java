@@ -50,24 +50,24 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
     private IDatabaseConnection connection;
 
     public AbstractMetaDataBasedSearchCallbackTestCase(String testName, String sqlFile) {
-	super(testName);
-	this.sqlFile = sqlFile;
+        super(testName);
+        this.sqlFile = sqlFile;
     }
 
     protected void setUp() throws Exception {
-	this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + this.sqlFile), this.jdbcConnection);
-	this.connection = new DatabaseConnection(jdbcConnection);
+        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + this.sqlFile), this.jdbcConnection);
+        this.connection = new DatabaseConnection(jdbcConnection);
     }
 
     protected void tearDown() throws Exception {
-	HypersonicEnvironment.shutdown(this.jdbcConnection);
-	this.jdbcConnection.close();
+        HypersonicEnvironment.shutdown(this.jdbcConnection);
+        this.jdbcConnection.close();
 //     HypersonicEnvironment.deleteFiles( "tempdb" );
     }
 
     protected IDatabaseConnection getConnection() {
-	return this.connection;
+        return this.connection;
     }
 
     protected abstract String[][] getInput();
@@ -77,19 +77,19 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
     protected abstract AbstractMetaDataBasedSearchCallback getCallback(IDatabaseConnection connection2);
 
     public void testAllInput() throws Exception {
-	IDatabaseConnection connection = getConnection();
+        IDatabaseConnection connection = getConnection();
 
-	String[][] allInput = getInput();
-	String[][] allExpectedOutput = getExpectedOutput();
-	ISearchCallback callback = getCallback(connection);
-	for (int i = 0; i < allInput.length; i++) {
-	    String[] input = allInput[i];
-	    String[] expectedOutput = allExpectedOutput[i];
-	    DepthFirstSearch search = new DepthFirstSearch();
-	    Set result = search.search(input, callback);
-	    String[] actualOutput = CollectionsHelper.setToStrings(result);
-	    ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
-	}
+        String[][] allInput = getInput();
+        String[][] allExpectedOutput = getExpectedOutput();
+        ISearchCallback callback = getCallback(connection);
+        for (int i = 0; i < allInput.length; i++) {
+            String[] input = allInput[i];
+            String[] expectedOutput = allExpectedOutput[i];
+            DepthFirstSearch search = new DepthFirstSearch();
+            Set result = search.search(input, callback);
+            String[] actualOutput = CollectionsHelper.setToStrings(result);
+            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+        }
     }
 
 }

@@ -33,17 +33,17 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = { "/META-INF/db/insert.xml", "/META-INF/db/insert2.xml" })
 @Transactional
 public class MultipleInsertSetupOnClassTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void test() throws Exception {
-		this.entityAssert.assertValues("fromDbUnit", "fromDbUnit2");
-	}
+    @Test
+    public void test() throws Exception {
+        this.entityAssert.assertValues("fromDbUnit", "fromDbUnit2");
+    }
 
 }

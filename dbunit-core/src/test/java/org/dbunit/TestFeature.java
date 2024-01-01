@@ -39,10 +39,10 @@ public class TestFeature {
     private final String _name;
 
     private TestFeature(String name) {
-	_name = name;
+        _name = name;
     }
 
     public String toString() {
-	return _name;
+        return _name;
     }
 }

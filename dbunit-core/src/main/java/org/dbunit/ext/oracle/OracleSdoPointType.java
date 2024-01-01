@@ -50,112 +50,112 @@ public class OracleSdoPointType implements ORAData, ORADataFactory {
     protected static final OracleSdoPointType _OracleSdoPointTypeFactory = new OracleSdoPointType();
 
     public static ORADataFactory getORADataFactory() {
-	return _OracleSdoPointTypeFactory;
+        return _OracleSdoPointTypeFactory;
     }
 
     /* constructors */
     protected void _init_struct(boolean init) {
-	if (init)
-	    _struct = new MutableStruct(new Object[3], _sqlType, _factory);
+        if (init)
+            _struct = new MutableStruct(new Object[3], _sqlType, _factory);
     }
 
     public OracleSdoPointType() {
-	_init_struct(true);
+        _init_struct(true);
     }
 
     public OracleSdoPointType(java.math.BigDecimal x, java.math.BigDecimal y, java.math.BigDecimal z)
-	    throws SQLException {
-	_init_struct(true);
-	setX(x);
-	setY(y);
-	setZ(z);
+            throws SQLException {
+        _init_struct(true);
+        setX(x);
+        setY(y);
+        setZ(z);
     }
 
     /* ORAData interface */
     public Datum toDatum(Connection c) throws SQLException {
-	return _struct.toDatum(c, _SQL_NAME);
+        return _struct.toDatum(c, _SQL_NAME);
     }
 
     /* ORADataFactory interface */
     public ORAData create(Datum d, int sqlType) throws SQLException {
-	return create(null, d, sqlType);
+        return create(null, d, sqlType);
     }
 
     protected ORAData create(OracleSdoPointType o, Datum d, int sqlType) throws SQLException {
-	if (d == null)
-	    return null;
-	if (o == null)
-	    o = new OracleSdoPointType();
-	o._struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
-	return o;
+        if (d == null)
+            return null;
+        if (o == null)
+            o = new OracleSdoPointType();
+        o._struct = new MutableStruct((STRUCT) d, _sqlType, _factory);
+        return o;
     }
 
     /* accessor methods */
     public java.math.BigDecimal getX() throws SQLException {
-	return (java.math.BigDecimal) _struct.getAttribute(0);
+        return (java.math.BigDecimal) _struct.getAttribute(0);
     }
 
     public void setX(java.math.BigDecimal x) throws SQLException {
-	_struct.setAttribute(0, x);
+        _struct.setAttribute(0, x);
     }
 
     public java.math.BigDecimal getY() throws SQLException {
-	return (java.math.BigDecimal) _struct.getAttribute(1);
+        return (java.math.BigDecimal) _struct.getAttribute(1);
     }
 
     public void setY(java.math.BigDecimal y) throws SQLException {
-	_struct.setAttribute(1, y);
+        _struct.setAttribute(1, y);
     }
 
     public java.math.BigDecimal getZ() throws SQLException {
-	return (java.math.BigDecimal) _struct.getAttribute(2);
+        return (java.math.BigDecimal) _struct.getAttribute(2);
     }
 
     public void setZ(java.math.BigDecimal z) throws SQLException {
-	_struct.setAttribute(2, z);
+        _struct.setAttribute(2, z);
     }
 
     public String toString() {
-	try {
-	    return "MDSYS.SDO_POINT_TYPE" + "(" + getX() + "," + getY() + "," + getZ() + ")";
-	} catch (Exception e) {
-	    return e.toString();
-	}
+        try {
+            return "MDSYS.SDO_POINT_TYPE" + "(" + getX() + "," + getY() + "," + getZ() + ")";
+        } catch (Exception e) {
+            return e.toString();
+        }
     }
 
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
+        if (this == obj) {
+            return true;
+        }
 
-	if ((obj == null) || (!obj.getClass().equals(this.getClass()))) {
-	    return false;
-	}
+        if ((obj == null) || (!obj.getClass().equals(this.getClass()))) {
+            return false;
+        }
 
-	OracleSdoPointType otherObject = (OracleSdoPointType) obj;
+        OracleSdoPointType otherObject = (OracleSdoPointType) obj;
 
-	try {
-	    return OracleSdoHelper.objectsEqual(getX(), otherObject.getX())
-		    && OracleSdoHelper.objectsEqual(getY(), otherObject.getY())
-		    && OracleSdoHelper.objectsEqual(getZ(), otherObject.getZ());
-	} catch (SQLException ex) {
-	    return false;
-	}
+        try {
+            return OracleSdoHelper.objectsEqual(getX(), otherObject.getX())
+                    && OracleSdoHelper.objectsEqual(getY(), otherObject.getY())
+                    && OracleSdoHelper.objectsEqual(getZ(), otherObject.getZ());
+        } catch (SQLException ex) {
+            return false;
+        }
     }
 
     public int hashCode() {
-	try {
-	    int hash = 7;
-	    Object o;
-	    o = getX();
-	    hash = 31 * hash + (null == o ? 0 : o.hashCode());
-	    o = getY();
-	    hash = 31 * hash + (null == o ? 0 : o.hashCode());
-	    o = getZ();
-	    hash = 31 * hash + (null == o ? 0 : o.hashCode());
-	    return hash;
-	} catch (SQLException ex) {
-	    return 0;
-	}
+        try {
+            int hash = 7;
+            Object o;
+            o = getX();
+            hash = 31 * hash + (null == o ? 0 : o.hashCode());
+            o = getY();
+            hash = 31 * hash + (null == o ? 0 : o.hashCode());
+            o = getZ();
+            hash = 31 * hash + (null == o ? 0 : o.hashCode());
+            return hash;
+        } catch (SQLException ex) {
+            return 0;
+        }
     }
 }

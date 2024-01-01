@@ -55,7 +55,7 @@ public abstract class DatabaseTestCase extends TestCase {
     }
 
     public DatabaseTestCase(String name) {
-	super(name);
+        super(name);
     }
 
     /**
@@ -76,12 +76,12 @@ public abstract class DatabaseTestCase extends TestCase {
      * @throws Exception
      */
     protected IDatabaseTester newDatabaseTester() throws Exception {
-	logger.debug("newDatabaseTester() - start");
+        logger.debug("newDatabaseTester() - start");
 
-	final IDatabaseConnection connection = getConnection();
-	getOperationListener().connectionRetrieved(connection);
-	final IDatabaseTester tester = new DefaultDatabaseTester(connection);
-	return tester;
+        final IDatabaseConnection connection = getConnection();
+        getOperationListener().connectionRetrieved(connection);
+        final IDatabaseTester tester = new DefaultDatabaseTester(connection);
+        return tester;
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class DatabaseTestCase extends TestCase {
      *               configured
      */
     protected void setUpDatabaseConfig(DatabaseConfig config) {
-	// Designed to be overridden.
+        // Designed to be overridden.
     }
 
     /**
@@ -103,10 +103,10 @@ public abstract class DatabaseTestCase extends TestCase {
      * @throws Exception
      */
     protected IDatabaseTester getDatabaseTester() throws Exception {
-	if (this.tester == null) {
-	    this.tester = newDatabaseTester();
-	}
-	return this.tester;
+        if (this.tester == null) {
+            this.tester = newDatabaseTester();
+        }
+        return this.tester;
     }
 
     /**
@@ -117,55 +117,55 @@ public abstract class DatabaseTestCase extends TestCase {
      *             in advance
      */
     protected void closeConnection(IDatabaseConnection connection) throws Exception {
-	logger.debug("closeConnection(connection={}) - start", connection);
+        logger.debug("closeConnection(connection={}) - start", connection);
 
-	assertNotNull("DatabaseTester is not set", getDatabaseTester());
-	getDatabaseTester().closeConnection(connection);
+        assertNotNull("DatabaseTester is not set", getDatabaseTester());
+        getDatabaseTester().closeConnection(connection);
     }
 
     /**
      * Returns the database operation executed in test setup.
      */
     protected DatabaseOperation getSetUpOperation() throws Exception {
-	return DatabaseOperation.CLEAN_INSERT;
+        return DatabaseOperation.CLEAN_INSERT;
     }
 
     /**
      * Returns the database operation executed in test cleanup.
      */
     protected DatabaseOperation getTearDownOperation() throws Exception {
-	return DatabaseOperation.NONE;
+        return DatabaseOperation.NONE;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
     protected void setUp() throws Exception {
-	logger.debug("setUp() - start");
+        logger.debug("setUp() - start");
 
-	super.setUp();
-	final IDatabaseTester databaseTester = getDatabaseTester();
-	assertNotNull("DatabaseTester is not set", databaseTester);
-	databaseTester.setSetUpOperation(getSetUpOperation());
-	databaseTester.setDataSet(getDataSet());
-	databaseTester.setOperationListener(getOperationListener());
-	databaseTester.onSetup();
+        super.setUp();
+        final IDatabaseTester databaseTester = getDatabaseTester();
+        assertNotNull("DatabaseTester is not set", databaseTester);
+        databaseTester.setSetUpOperation(getSetUpOperation());
+        databaseTester.setDataSet(getDataSet());
+        databaseTester.setOperationListener(getOperationListener());
+        databaseTester.onSetup();
     }
 
     protected void tearDown() throws Exception {
-	logger.debug("tearDown() - start");
+        logger.debug("tearDown() - start");
 
-	try {
-	    final IDatabaseTester databaseTester = getDatabaseTester();
-	    assertNotNull("DatabaseTester is not set", databaseTester);
-	    databaseTester.setTearDownOperation(getTearDownOperation());
-	    databaseTester.setDataSet(getDataSet());
-	    databaseTester.setOperationListener(getOperationListener());
-	    databaseTester.onTearDown();
-	} finally {
-	    tester = null;
-	    super.tearDown();
-	}
+        try {
+            final IDatabaseTester databaseTester = getDatabaseTester();
+            assertNotNull("DatabaseTester is not set", databaseTester);
+            databaseTester.setTearDownOperation(getTearDownOperation());
+            databaseTester.setDataSet(getDataSet());
+            databaseTester.setOperationListener(getOperationListener());
+            databaseTester.onTearDown();
+        } finally {
+            tester = null;
+            super.tearDown();
+        }
     }
 
     /**
@@ -174,17 +174,17 @@ public abstract class DatabaseTestCase extends TestCase {
      * @since 2.4.4
      */
     protected IOperationListener getOperationListener() {
-	logger.debug("getOperationListener() - start");
-	if (this.operationListener == null) {
-	    this.operationListener = new DefaultOperationListener() {
-		public void connectionRetrieved(IDatabaseConnection connection) {
-		    super.connectionRetrieved(connection);
-		    // When a new connection has been created then invoke the setUp method
-		    // so that user defined DatabaseConfig parameters can be set.
-		    setUpDatabaseConfig(connection.getConfig());
-		}
-	    };
-	}
-	return this.operationListener;
+        logger.debug("getOperationListener() - start");
+        if (this.operationListener == null) {
+            this.operationListener = new DefaultOperationListener() {
+                public void connectionRetrieved(IDatabaseConnection connection) {
+                    super.connectionRetrieved(connection);
+                    // When a new connection has been created then invoke the setUp method
+                    // so that user defined DatabaseConfig parameters can be set.
+                    setUpDatabaseConfig(connection.getConfig());
+                }
+            };
+        }
+        return this.operationListener;
     }
 }

@@ -32,34 +32,34 @@ import com.github.springtestdbunit.testutils.ExtendedTestContextManager;
  */
 public class FlatXmlDataSetLoaderTest {
 
-	private TestContext testContext;
+    private TestContext testContext;
 
-	private FlatXmlDataSetLoader loader;
+    private FlatXmlDataSetLoader loader;
 
-	@Before
-	public void setup() throws Exception {
-		this.loader = new FlatXmlDataSetLoader();
-		ExtendedTestContextManager manager = new ExtendedTestContextManager(getClass());
-		this.testContext = manager.accessTestContext();
-	}
+    @Before
+    public void setup() throws Exception {
+        this.loader = new FlatXmlDataSetLoader();
+        ExtendedTestContextManager manager = new ExtendedTestContextManager(getClass());
+        this.testContext = manager.accessTestContext();
+    }
 
-	@Test
-	public void shouldSenseColumns() throws Exception {
-		IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test-column-sensing.xml");
-		assertEquals(null, dataset.getTable("Sample").getValue(0, "name"));
-		assertEquals("test", dataset.getTable("Sample").getValue(1, "name"));
-	}
+    @Test
+    public void shouldSenseColumns() throws Exception {
+        IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test-column-sensing.xml");
+        assertEquals(null, dataset.getTable("Sample").getValue(0, "name"));
+        assertEquals("test", dataset.getTable("Sample").getValue(1, "name"));
+    }
 
-	@Test
-	public void shouldLoadFromRelativeFile() throws Exception {
-		IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test.xml");
-		assertEquals("Sample", dataset.getTableNames()[0]);
-	}
+    @Test
+    public void shouldLoadFromRelativeFile() throws Exception {
+        IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "test.xml");
+        assertEquals("Sample", dataset.getTableNames()[0]);
+    }
 
-	@Test
-	public void shouldReturnNullOnMissingFile() throws Exception {
-		IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "doesnotexist.xml");
-		assertNull(dataset);
-	}
+    @Test
+    public void shouldReturnNullOnMissingFile() throws Exception {
+        IDataSet dataset = this.loader.loadDataSet(this.testContext.getTestClass(), "doesnotexist.xml");
+        assertNull(dataset);
+    }
 
 }

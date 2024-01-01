@@ -35,7 +35,7 @@ import java.sql.Connection;
  */
 public class H2Connection extends DatabaseConnection {
     public H2Connection(Connection connection, String schema) throws DatabaseUnitException {
-	super(connection, schema);
-	getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+        super(connection, schema);
+        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
     }
 }

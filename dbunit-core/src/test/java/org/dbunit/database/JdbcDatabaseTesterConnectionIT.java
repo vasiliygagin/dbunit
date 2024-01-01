@@ -35,15 +35,15 @@ public class JdbcDatabaseTesterConnectionIT extends AbstractDatabaseTesterConnec
     private JdbcDatabaseTester databaseTester;
 
     public JdbcDatabaseTesterConnectionIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected IDatabaseTester getDatabaseTester() throws Exception {
-	if (databaseTester == null) {
-	    DatabaseProfile profile = getEnvironment().getProfile();
-	    databaseTester = new JdbcDatabaseTester(profile.getDriverClass(), profile.getConnectionUrl(),
-		    profile.getUser(), profile.getPassword(), profile.getSchema());
-	}
-	return databaseTester;
+        if (databaseTester == null) {
+            DatabaseProfile profile = getEnvironment().getProfile();
+            databaseTester = new JdbcDatabaseTester(profile.getDriverClass(), profile.getConnectionUrl(),
+                    profile.getUser(), profile.getPassword(), profile.getSchema());
+        }
+        return databaseTester;
     }
 }

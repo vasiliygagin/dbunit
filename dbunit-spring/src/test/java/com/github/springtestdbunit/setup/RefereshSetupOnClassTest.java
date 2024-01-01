@@ -33,17 +33,17 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @DatabaseSetup(type = DatabaseOperation.REFRESH, value = "/META-INF/db/refresh.xml")
 @Transactional
 public class RefereshSetupOnClassTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void test() throws Exception {
-		this.entityAssert.assertValues("existing2", "addedFromDbUnit", "replacedFromDbUnit");
-	}
+    @Test
+    public void test() throws Exception {
+        this.entityAssert.assertValues("existing2", "addedFromDbUnit", "replacedFromDbUnit");
+    }
 
 }

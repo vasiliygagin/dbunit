@@ -30,13 +30,13 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() throws Exception {
-	TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite();
 
-	suite.addTest(new TestSuite(InsertIdentityOperationIT.class));
-	suite.addTest(new TestSuite(MsSqlDataTypeFactoryTest.class));
-	suite.addTest(new TestSuite(UniqueIdentifierTypeTest.class));
+        suite.addTest(new TestSuite(InsertIdentityOperationIT.class));
+        suite.addTest(new TestSuite(MsSqlDataTypeFactoryTest.class));
+        suite.addTest(new TestSuite(UniqueIdentifierTypeTest.class));
 
-	return suite;
+        return suite;
     }
 
 }

@@ -83,7 +83,7 @@ public class SqlLoaderControlProducer implements IDataSetProducer {
      * @throws DataSetException
      */
     public SqlLoaderControlProducer(String controlFilesDir, String tableOrderFile) throws DataSetException {
-	this(new File(controlFilesDir), new File(tableOrderFile));
+        this(new File(controlFilesDir), new File(tableOrderFile));
     }
 
     /**
@@ -94,13 +94,13 @@ public class SqlLoaderControlProducer implements IDataSetProducer {
      * @throws DataSetException
      */
     public SqlLoaderControlProducer(File controlFilesDir, File tableOrderFile) throws DataSetException {
-	this.controlFilesDir = controlFilesDir;
+        this.controlFilesDir = controlFilesDir;
 
-	try {
-	    this.orderedTableNames = SqlLoaderControlProducer.getTables(controlFilesDir, tableOrderFile);
-	} catch (IOException e) {
-	    throw new DataSetException("error getting list of tables from file '" + tableOrderFile + "'", e);
-	}
+        try {
+            this.orderedTableNames = SqlLoaderControlProducer.getTables(controlFilesDir, tableOrderFile);
+        } catch (IOException e) {
+            throw new DataSetException("error getting list of tables from file '" + tableOrderFile + "'", e);
+        }
     }
 
     /**
@@ -111,44 +111,44 @@ public class SqlLoaderControlProducer implements IDataSetProducer {
      *                          names
      */
     public SqlLoaderControlProducer(File controlFilesDir, List orderedTableNames) {
-	this.controlFilesDir = controlFilesDir;
-	this.orderedTableNames = orderedTableNames;
+        this.controlFilesDir = controlFilesDir;
+        this.orderedTableNames = orderedTableNames;
     }
 
     /**
      * @see org.dbunit.dataset.stream.IDataSetProducer#setConsumer(org.dbunit.dataset.stream.IDataSetConsumer)
      */
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-	this.consumer = consumer;
+        this.consumer = consumer;
     }
 
     /**
      * @see org.dbunit.dataset.stream.IDataSetProducer#produce()
      */
     public void produce() throws DataSetException {
-	logger.debug("produce() - start");
+        logger.debug("produce() - start");
 
-	File dir = this.controlFilesDir;
+        File dir = this.controlFilesDir;
 
-	if (!this.controlFilesDir.isDirectory()) {
-	    throw new DataSetException("'" + this.controlFilesDir + "' should be a directory of the control files");
-	}
+        if (!this.controlFilesDir.isDirectory()) {
+            throw new DataSetException("'" + this.controlFilesDir + "' should be a directory of the control files");
+        }
 
-	this.consumer.startDataSet();
+        this.consumer.startDataSet();
 
-	for (Iterator tableIter = this.orderedTableNames.iterator(); tableIter.hasNext();) {
-	    String table = (String) tableIter.next();
-	    try {
-		File ctlFile = new File(dir, table + ".ctl");
-		produceFromControlFile(ctlFile);
-	    } catch (SqlLoaderControlParserException e) {
-		throw new DataSetException("error producing dataset for table '" + table + "'", e);
-	    } catch (DataSetException e) {
-		throw new DataSetException("error producing dataset for table '" + table + "'", e);
-	    }
+        for (Iterator tableIter = this.orderedTableNames.iterator(); tableIter.hasNext();) {
+            String table = (String) tableIter.next();
+            try {
+                File ctlFile = new File(dir, table + ".ctl");
+                produceFromControlFile(ctlFile);
+            } catch (SqlLoaderControlParserException e) {
+                throw new DataSetException("error producing dataset for table '" + table + "'", e);
+            } catch (DataSetException e) {
+                throw new DataSetException("error producing dataset for table '" + table + "'", e);
+            }
 
-	}
-	this.consumer.endDataSet();
+        }
+        this.consumer.endDataSet();
     }
 
     /**
@@ -160,37 +160,37 @@ public class SqlLoaderControlProducer implements IDataSetProducer {
      * @throws SqlLoaderControlParserException the oracle control parser exception
      */
     private void produceFromControlFile(File controlFile) throws DataSetException, SqlLoaderControlParserException {
-	logger.debug("produceFromControlFile(controlFile={}) - start", controlFile);
+        logger.debug("produceFromControlFile(controlFile={}) - start", controlFile);
 
-	try {
-	    SqlLoaderControlParser parser = new SqlLoaderControlParserImpl();
-	    List readData = parser.parse(controlFile);
-	    List readColumns = ((List) readData.get(0));
-	    Column[] columns = new Column[readColumns.size()];
+        try {
+            SqlLoaderControlParser parser = new SqlLoaderControlParserImpl();
+            List readData = parser.parse(controlFile);
+            List readColumns = ((List) readData.get(0));
+            Column[] columns = new Column[readColumns.size()];
 
-	    for (int i = 0; i < readColumns.size(); i++) {
-		columns[i] = new Column((String) readColumns.get(i), DataType.UNKNOWN);
-	    }
+            for (int i = 0; i < readColumns.size(); i++) {
+                columns[i] = new Column((String) readColumns.get(i), DataType.UNKNOWN);
+            }
 
-	    String tableName = parser.getTableName();
-	    ITableMetaData metaData = new DefaultTableMetaData(tableName, columns);
-	    this.consumer.startTable(metaData);
-	    for (int i = 1; i < readData.size(); i++) {
-		List rowList = (List) readData.get(i);
-		Object[] row = rowList.toArray();
-		for (int col = 0; col < row.length; col++) {
-		    row[col] = row[col].equals(NULL) ? null : row[col];
-		}
-		this.consumer.row(row);
-	    }
-	    this.consumer.endTable();
-	} catch (PipelineException e) {
-	    throw new DataSetException(e);
-	} catch (IllegalInputCharacterException e) {
-	    throw new DataSetException(e);
-	} catch (IOException e) {
-	    throw new DataSetException(e);
-	}
+            String tableName = parser.getTableName();
+            ITableMetaData metaData = new DefaultTableMetaData(tableName, columns);
+            this.consumer.startTable(metaData);
+            for (int i = 1; i < readData.size(); i++) {
+                List rowList = (List) readData.get(i);
+                Object[] row = rowList.toArray();
+                for (int col = 0; col < row.length; col++) {
+                    row[col] = row[col].equals(NULL) ? null : row[col];
+                }
+                this.consumer.row(row);
+            }
+            this.consumer.endTable();
+        } catch (PipelineException e) {
+            throw new DataSetException(e);
+        } catch (IllegalInputCharacterException e) {
+            throw new DataSetException(e);
+        } catch (IOException e) {
+            throw new DataSetException(e);
+        }
     }
 
     /**
@@ -205,22 +205,22 @@ public class SqlLoaderControlProducer implements IDataSetProducer {
      * @throws IOException when IO on the base URL has issues.
      */
     public static List getTables(File controlFilesDir, File tableList) throws IOException {
-	logger.debug("getTables(controlFilesDir={}, tableList={}) - start", controlFilesDir, tableList);
+        logger.debug("getTables(controlFilesDir={}, tableList={}) - start", controlFilesDir, tableList);
 
-	// Copy file into the control directory
-	File tmpTableList = new File(controlFilesDir, TMP_TABLE_LIST_FILENAME);
-	FileHelper.copyFile(tableList, tmpTableList);
+        // Copy file into the control directory
+        File tmpTableList = new File(controlFilesDir, TMP_TABLE_LIST_FILENAME);
+        FileHelper.copyFile(tableList, tmpTableList);
 
-	List orderedNames;
-	try {
-	    orderedNames = FileHelper.readLines(tmpTableList);
-	} finally {
-	    boolean success = tmpTableList.delete();
-	    if (!success) {
-		throw new IOException("Deletion of temorary file failed: " + tmpTableList);
-	    }
-	}
-	return orderedNames;
+        List orderedNames;
+        try {
+            orderedNames = FileHelper.readLines(tmpTableList);
+        } finally {
+            boolean success = tmpTableList.delete();
+            if (!success) {
+                throw new IOException("Deletion of temorary file failed: " + tmpTableList);
+            }
+        }
+        return orderedNames;
     }
 
 }

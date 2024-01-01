@@ -50,53 +50,53 @@ public class CompositeDataSetIterationTest extends TestCase {
     private IDatabaseConnection connection;
 
     protected void setUp() throws Exception {
-	super.setUp();
-	this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-	DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
-	this.connection = new DatabaseConnection(jdbcConnection);
-	DatabaseConfig config = connection.getConfig();
-	config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        super.setUp();
+        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
+        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
+        this.connection = new DatabaseConnection(jdbcConnection);
+        DatabaseConfig config = connection.getConfig();
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
 
-	HypersonicEnvironment.shutdown(this.jdbcConnection);
-	this.jdbcConnection.close();
+        HypersonicEnvironment.shutdown(this.jdbcConnection);
+        this.jdbcConnection.close();
     }
 
     public void testMe() throws Exception {
 
-	// 1. QueryDataSet
-	QueryDataSet queryDataSet = new QueryDataSet(connection);
-	queryDataSet.addTable("B", "select * from B");
-	queryDataSet.addTable("C", "select * from C");
+        // 1. QueryDataSet
+        QueryDataSet queryDataSet = new QueryDataSet(connection);
+        queryDataSet.addTable("B", "select * from B");
+        queryDataSet.addTable("C", "select * from C");
 
-	// 2. Hard-coded data set
-	DefaultDataSet plainDataSet = new DefaultDataSet();
+        // 2. Hard-coded data set
+        DefaultDataSet plainDataSet = new DefaultDataSet();
 
-	Column id = new Column("id", DataType.DOUBLE);
-	Column name = new Column("name", DataType.VARCHAR);
+        Column id = new Column("id", DataType.DOUBLE);
+        Column name = new Column("name", DataType.VARCHAR);
 
-	Column[] cols = { id, name };
+        Column[] cols = { id, name };
 
-	DefaultTable aTable = new DefaultTable("D", cols);
-	Object[] row1 = { new Long(1), "D1" };
-	Object[] row2 = { new Long(2), "D2" };
+        DefaultTable aTable = new DefaultTable("D", cols);
+        Object[] row1 = { new Long(1), "D1" };
+        Object[] row2 = { new Long(2), "D2" };
 
-	aTable.addRow(row1);
-	aTable.addRow(row2);
+        aTable.addRow(row1);
+        aTable.addRow(row2);
 
-	plainDataSet.addTable(aTable);
+        plainDataSet.addTable(aTable);
 
-	// 3. Composite
-	CompositeDataSet compositeDataSet = new CompositeDataSet(queryDataSet, plainDataSet);
+        // 3. Composite
+        CompositeDataSet compositeDataSet = new CompositeDataSet(queryDataSet, plainDataSet);
 
-	// 4. Write
-	try {
-	    FlatXmlDataSet.write(compositeDataSet, new FileOutputStream("target/full.xml"));
-	} catch (Exception e) {
-	    fail(e.getMessage());
-	}
+        // 4. Write
+        try {
+            FlatXmlDataSet.write(compositeDataSet, new FileOutputStream("target/full.xml"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 }

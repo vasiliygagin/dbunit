@@ -45,12 +45,12 @@ public abstract class AbstractStatementFactory implements IStatementFactory {
      * Returns <code>true</code> if target database supports batch statement.
      */
     protected boolean supportBatchStatement(IDatabaseConnection connection) throws SQLException {
-	logger.debug("supportBatchStatement(connection={}) - start", connection);
+        logger.debug("supportBatchStatement(connection={}) - start", connection);
 
-	if (connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS)) {
-	    return connection.getConnection().getMetaData().supportsBatchUpdates();
-	}
+        if (connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS)) {
+            return connection.getConnection().getMetaData().supportsBatchUpdates();
+        }
 
-	return false;
+        return false;
     }
 }

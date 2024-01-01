@@ -33,10 +33,10 @@ public class NoHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent IGNORE() {
-	return createPipelineComponent(new NoHandler(), new ACCEPT());
+        return createPipelineComponent(new NoHandler(), new ACCEPT());
     }
 
     public boolean canHandle(char c) throws IllegalInputCharacterException {
-	throw new IllegalInputCharacterException("No character can be handled. Seen: '" + c + "'");
+        throw new IllegalInputCharacterException("No character can be handled. Seen: '" + c + "'");
     }
 }

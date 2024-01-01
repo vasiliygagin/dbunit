@@ -42,31 +42,31 @@ public class BlobDataType extends BytesDataType {
     private static final Logger logger = LoggerFactory.getLogger(BlobDataType.class);
 
     public BlobDataType() {
-	super("BLOB", Types.BLOB);
+        super("BLOB", Types.BLOB);
     }
 
     public BlobDataType(String name, int sqlType) {
-	super(name, sqlType);
+        super(name, sqlType);
     }
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", String.valueOf(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", String.valueOf(column), resultSet);
 
-	Blob value = resultSet.getBlob(column);
-	if (value == null || resultSet.wasNull()) {
-	    return null;
-	}
-	return typeCast(value);
+        Blob value = resultSet.getBlob(column);
+        if (value == null || resultSet.wasNull()) {
+            return null;
+        }
+        return typeCast(value);
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, String.valueOf(column), statement });
-	}
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, String.valueOf(column), statement });
+        }
 
-	statement.setObject(column, typeCast(value), super.getSqlType());
+        statement.setObject(column, typeCast(value), super.getSqlType());
     }
 }

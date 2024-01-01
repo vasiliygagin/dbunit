@@ -37,27 +37,27 @@ import com.github.springtestdbunit.expected.ExpectedQueryWithModifierOnMethodTes
 @ExpectedDatabase(modifiers = OuterModifier.class)
 public class ExpectedQueryWithModifierOnMethodTest {
 
-	@Test
-	@ExpectedDatabase(value = "/META-INF/db/expected_query_modified.xml", query = "select * from SampleEntity where id in (1,2)", table = "SampleEntity", modifiers = InnerModifier.class)
-	public void test() throws Exception {
-	}
+    @Test
+    @ExpectedDatabase(value = "/META-INF/db/expected_query_modified.xml", query = "select * from SampleEntity where id in (1,2)", table = "SampleEntity", modifiers = InnerModifier.class)
+    public void test() throws Exception {
+    }
 
-	private class InnerModifier extends ReplacementDataSetModifier {
+    private class InnerModifier extends ReplacementDataSetModifier {
 
-		@Override
-		protected void addReplacements(ReplacementDataSet dataSet) {
-			dataSet.addReplacementSubstring("#", "");
-		}
+        @Override
+        protected void addReplacements(ReplacementDataSet dataSet) {
+            dataSet.addReplacementSubstring("#", "");
+        }
 
-	}
+    }
 
-	static class OuterModifier extends ReplacementDataSetModifier {
+    static class OuterModifier extends ReplacementDataSetModifier {
 
-		@Override
-		protected void addReplacements(ReplacementDataSet dataSet) {
-			dataSet.addReplacementSubstring("!", "");
-		}
+        @Override
+        protected void addReplacements(ReplacementDataSet dataSet) {
+            dataSet.addReplacementSubstring("!", "");
+        }
 
-	}
+    }
 
 }

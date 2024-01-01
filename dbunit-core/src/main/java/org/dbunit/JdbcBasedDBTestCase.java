@@ -41,11 +41,11 @@ public abstract class JdbcBasedDBTestCase extends DBTestCase {
     private static final Logger logger = LoggerFactory.getLogger(JdbcBasedDBTestCase.class);
 
     public JdbcBasedDBTestCase() {
-	super();
+        super();
     }
 
     public JdbcBasedDBTestCase(String name) {
-	super(name);
+        super(name);
     }
 
     /**
@@ -57,11 +57,11 @@ public abstract class JdbcBasedDBTestCase extends DBTestCase {
      * @throws ClassNotFoundException when the driverClass was not found
      */
     protected IDatabaseTester newDatabaseTester() throws ClassNotFoundException {
-	logger.debug("newDatabaseTester() - start");
+        logger.debug("newDatabaseTester() - start");
 
-	JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(getDriverClass(), getConnectionUrl(), getUsername(),
-		getPassword());
-	return databaseTester;
+        JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(getDriverClass(), getConnectionUrl(), getUsername(),
+                getPassword());
+        return databaseTester;
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class JdbcBasedDBTestCase extends DBTestCase {
      * Default implementations returns null.
      */
     protected String getPassword() {
-	return null;
+        return null;
     }
 
     /**
@@ -89,6 +89,6 @@ public abstract class JdbcBasedDBTestCase extends DBTestCase {
      * Default implementations returns null.
      */
     protected String getUsername() {
-	return null;
+        return null;
     }
 }

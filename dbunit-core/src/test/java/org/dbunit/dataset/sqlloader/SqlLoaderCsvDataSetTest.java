@@ -46,10 +46,10 @@ public class SqlLoaderCsvDataSetTest extends TestCase {
      */
     protected IDataSet getDataSet() throws DataSetException {
 
-	SqlLoaderControlDataSet loadedDataSet = new SqlLoaderControlDataSet(TestUtils.getFile("sqlloader"),
-		TestUtils.getFile("sqlloader/tables.lst"));
+        SqlLoaderControlDataSet loadedDataSet = new SqlLoaderControlDataSet(TestUtils.getFile("sqlloader"),
+                TestUtils.getFile("sqlloader/tables.lst"));
 
-	return loadedDataSet;
+        return loadedDataSet;
     }
 
     /**
@@ -59,13 +59,13 @@ public class SqlLoaderCsvDataSetTest extends TestCase {
      */
     public void testCountryTable() throws DataSetException {
 
-	ITable table = getDataSet().getTable("COUNTRY");
+        ITable table = getDataSet().getTable("COUNTRY");
 
-	assertEquals(249, table.getRowCount());
+        assertEquals(249, table.getRowCount());
 
-	// One sample test value
-	Object val = table.getValue(3, "NAME");
-	assertEquals("AMERICAN_SAMOA", val);
+        // One sample test value
+        Object val = table.getValue(3, "NAME");
+        assertEquals("AMERICAN_SAMOA", val);
     }
 
 }

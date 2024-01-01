@@ -33,21 +33,21 @@ import com.github.springtestdbunit.testutils.AfterTearDownDbUnitTestExecutionLis
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		AfterTearDownDbUnitTestExecutionListener.class })
+        AfterTearDownDbUnitTestExecutionListener.class })
 @DatabaseTearDown(type = DatabaseOperation.INSERT, value = "/META-INF/db/insert.xml")
 @Transactional
 public class InsertTearDownOnClass {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	public void test() throws Exception {
-		this.entityAssert.assertValues("existing1", "existing2");
-	}
+    @Test
+    public void test() throws Exception {
+        this.entityAssert.assertValues("existing1", "existing2");
+    }
 
-	public void afterTest() throws Exception {
-		this.entityAssert.assertValues("existing1", "existing2", "fromDbUnit");
-	}
+    public void afterTest() throws Exception {
+        this.entityAssert.assertValues("existing1", "existing2", "fromDbUnit");
+    }
 
 }

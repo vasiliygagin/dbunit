@@ -46,7 +46,7 @@ public class ImportedAndExportedKeysSearchCallbackFilteredByPKs extends Imported
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory
-	    .getLogger(ImportedAndExportedKeysSearchCallbackFilteredByPKs.class);
+            .getLogger(ImportedAndExportedKeysSearchCallbackFilteredByPKs.class);
 
     // primary key filter associated with the call back
     private final PrimaryKeyFilter pksFilter;
@@ -60,8 +60,8 @@ public class ImportedAndExportedKeysSearchCallbackFilteredByPKs extends Imported
      *                   for that table)
      */
     public ImportedAndExportedKeysSearchCallbackFilteredByPKs(IDatabaseConnection connection, PkTableMap allowedPKs) {
-	super(connection);
-	this.pksFilter = new PrimaryKeyFilter(connection, allowedPKs, true);
+        super(connection);
+        this.pksFilter = new PrimaryKeyFilter(connection, allowedPKs, true);
     }
 
     /**
@@ -70,24 +70,24 @@ public class ImportedAndExportedKeysSearchCallbackFilteredByPKs extends Imported
      * @return primary key filter associated with the call back
      */
     public ITableFilter getFilter() {
-	return this.pksFilter;
+        return this.pksFilter;
     }
 
     public void nodeAdded(Object node) throws SearchException {
-	logger.debug("nodeAdded(node={}) - start", node);
-	this.pksFilter.nodeAdded(node);
+        logger.debug("nodeAdded(node={}) - start", node);
+        this.pksFilter.nodeAdded(node);
     }
 
     protected IEdge newEdge(ResultSet rs, int type, String from, String to, String fkColumn, String pkColumn)
-	    throws SearchException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-		    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
-	}
+            throws SearchException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
+                    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
+        }
 
-	ForeignKeyRelationshipEdge edge = createFKEdge(rs, type, from, to, fkColumn, pkColumn);
-	this.pksFilter.edgeAdded(edge);
-	return edge;
+        ForeignKeyRelationshipEdge edge = createFKEdge(rs, type, from, to, fkColumn, pkColumn);
+        this.pksFilter.edgeAdded(edge);
+        return edge;
     }
 
 }

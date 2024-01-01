@@ -36,8 +36,8 @@ import junit.framework.TestCase;
 public class DatabaseTestCaseIT extends TestCase {
 
     public void testTearDownExceptionDoesNotObscureTestException() {
-	// TODO implement #1087040 tearDownOperation Exception obscures underlying
-	// problem
+        // TODO implement #1087040 tearDownOperation Exception obscures underlying
+        // problem
     }
 
     /**
@@ -48,42 +48,42 @@ public class DatabaseTestCaseIT extends TestCase {
      * @throws Exception
      */
     public void testConfigureConnection() throws Exception {
-	DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
-	final IDatabaseConnection conn = dbEnv.getConnection();
+        DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
+        final IDatabaseConnection conn = dbEnv.getConnection();
 
-	DatabaseTestCase testSubject = new DatabaseTestCase() {
+        DatabaseTestCase testSubject = new DatabaseTestCase() {
 
-	    /**
-	     * method under test
-	     */
-	    protected void setUpDatabaseConfig(DatabaseConfig config) {
-		config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, new Integer(97));
-	    }
+            /**
+             * method under test
+             */
+            protected void setUpDatabaseConfig(DatabaseConfig config) {
+                config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, new Integer(97));
+            }
 
-	    protected IDatabaseConnection getConnection() throws Exception {
-		return conn;
-	    }
+            protected IDatabaseConnection getConnection() throws Exception {
+                return conn;
+            }
 
-	    protected IDataSet getDataSet() throws Exception {
-		return null;
-	    }
+            protected IDataSet getDataSet() throws Exception {
+                return null;
+            }
 
-	    protected DatabaseOperation getSetUpOperation() throws Exception {
-		return DatabaseOperation.NONE;
-	    }
+            protected DatabaseOperation getSetUpOperation() throws Exception {
+                return DatabaseOperation.NONE;
+            }
 
-	    protected DatabaseOperation getTearDownOperation() throws Exception {
-		return DatabaseOperation.NONE;
-	    }
-	};
+            protected DatabaseOperation getTearDownOperation() throws Exception {
+                return DatabaseOperation.NONE;
+            }
+        };
 
-	// Simulate JUnit which first of all calls the "setUp" method
-	testSubject.setUp();
+        // Simulate JUnit which first of all calls the "setUp" method
+        testSubject.setUp();
 
-	IDatabaseConnection actualConn = testSubject.getConnection();
-	assertEquals(new Integer(97), actualConn.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        IDatabaseConnection actualConn = testSubject.getConnection();
+        assertEquals(new Integer(97), actualConn.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
 
-	IDatabaseConnection actualConn2 = testSubject.getDatabaseTester().getConnection();
-	assertEquals(new Integer(97), actualConn2.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        IDatabaseConnection actualConn2 = testSubject.getDatabaseTester().getConnection();
+        assertEquals(new Integer(97), actualConn2.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
     }
 }

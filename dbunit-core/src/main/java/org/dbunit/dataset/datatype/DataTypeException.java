@@ -31,18 +31,18 @@ import org.dbunit.dataset.DataSetException;
 public class DataTypeException extends DataSetException {
 
     public DataTypeException() {
-	super();
+        super();
     }
 
     public DataTypeException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public DataTypeException(Throwable e) {
-	super(e);
+        super(e);
     }
 
     public DataTypeException(String msg, Throwable e) {
-	super(msg, e);
+        super(msg, e);
     }
 }

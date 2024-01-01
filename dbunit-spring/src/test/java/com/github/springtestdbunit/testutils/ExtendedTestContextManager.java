@@ -23,32 +23,33 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;
 
 /**
- * Extended version of the {@link TestContextManager} that can be used when writing tests.
+ * Extended version of the {@link TestContextManager} that can be used when
+ * writing tests.
  *
  * @author Phillip Webb
  */
 public class ExtendedTestContextManager extends TestContextManager {
 
-	private Object testInstance;
+    private Object testInstance;
 
-	public ExtendedTestContextManager(Class<?> testClass) throws Exception {
-		super(testClass);
-		getTestContext().markApplicationContextDirty(HierarchyMode.CURRENT_LEVEL);
-		Constructor<?> constructor = testClass.getDeclaredConstructor();
-		constructor.setAccessible(true);
-		this.testInstance = constructor.newInstance();
-	}
+    public ExtendedTestContextManager(Class<?> testClass) throws Exception {
+        super(testClass);
+        getTestContext().markApplicationContextDirty(HierarchyMode.CURRENT_LEVEL);
+        Constructor<?> constructor = testClass.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        this.testInstance = constructor.newInstance();
+    }
 
-	public void prepareTestInstance() throws Exception {
-		prepareTestInstance(this.testInstance);
-	}
+    public void prepareTestInstance() throws Exception {
+        prepareTestInstance(this.testInstance);
+    }
 
-	public Object getTestContextAttribute(String name) {
-		return getTestContext().getAttribute(name);
-	}
+    public Object getTestContextAttribute(String name) {
+        return getTestContext().getAttribute(name);
+    }
 
-	public TestContext accessTestContext() {
-		return getTestContext();
-	}
+    public TestContext accessTestContext() {
+        return getTestContext();
+    }
 
 }

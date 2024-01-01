@@ -43,69 +43,69 @@ public class CsvDataSetTest extends TestCase {
     protected static final File DATASET_DIR = TestUtils.getFile("csv/orders");
 
     public CsvDataSetTest(String s) {
-	super(s);
+        super(s);
     }
 
     public void testNullColumns() throws DataSetException {
-	File csvDir = DATASET_DIR;
+        File csvDir = DATASET_DIR;
 
-	CsvDataSet dataSet = new CsvDataSet(csvDir);
+        CsvDataSet dataSet = new CsvDataSet(csvDir);
 
-	ITable table = dataSet.getTable("orders");
+        ITable table = dataSet.getTable("orders");
 
-	assertNull(table.getValue(4, "description"));
+        assertNull(table.getValue(4, "description"));
 
     }
 
     public void testWrite() throws Exception {
 
-	IDataSet expectedDataSet = new CsvDataSet(DATASET_DIR);
+        IDataSet expectedDataSet = new CsvDataSet(DATASET_DIR);
 
-	File tempDir = createTmpDir();
-	try {
-	    // modified this test from FlatXmlDataSetTest
-	    CsvDataSetWriter.write(expectedDataSet, tempDir);
+        File tempDir = createTmpDir();
+        try {
+            // modified this test from FlatXmlDataSetTest
+            CsvDataSetWriter.write(expectedDataSet, tempDir);
 
-	    File tableOrderingFile = new File(tempDir, CsvDataSet.TABLE_ORDERING_FILE);
-	    assertTrue(tableOrderingFile.exists());
+            File tableOrderingFile = new File(tempDir, CsvDataSet.TABLE_ORDERING_FILE);
+            assertTrue(tableOrderingFile.exists());
 
-	    IDataSet actualDataSet = new CsvDataSet(tempDir);
+            IDataSet actualDataSet = new CsvDataSet(tempDir);
 
-	    // verify table count
-	    assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
+            // verify table count
+            assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
 
-	    // verify each table
-	    ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-	    ITable[] actual = DataSetUtils.getTables(actualDataSet);
-	    assertEquals("table count", expected.length, actual.length);
-	    for (int i = 0; i < expected.length; i++) {
-		String expectedName = expected[i].getTableMetaData().getTableName();
-		String actualName = actual[i].getTableMetaData().getTableName();
-		assertEquals("table name", expectedName, actualName);
+            // verify each table
+            ITable[] expected = DataSetUtils.getTables(expectedDataSet);
+            ITable[] actual = DataSetUtils.getTables(actualDataSet);
+            assertEquals("table count", expected.length, actual.length);
+            for (int i = 0; i < expected.length; i++) {
+                String expectedName = expected[i].getTableMetaData().getTableName();
+                String actualName = actual[i].getTableMetaData().getTableName();
+                assertEquals("table name", expectedName, actualName);
 
-		assertTrue("not same instance", expected[i] != actual[i]);
-		Assertion.assertEquals(expected[i], actual[i]);
-	    }
+                assertTrue("not same instance", expected[i] != actual[i]);
+                Assertion.assertEquals(expected[i], actual[i]);
+            }
 
-	} finally {
-	    FileHelper.deleteDirectory(tempDir, true);
+        } finally {
+            FileHelper.deleteDirectory(tempDir, true);
 
-	}
+        }
 
-	// assertFalse("temporary directory was not deleted", tempDir.exists());
+        // assertFalse("temporary directory was not deleted", tempDir.exists());
     }
 
     private File createTmpDir() throws IOException {
-	File tmpFile = File.createTempFile("CsvDataSetTest", "-csv");
-	String fullPath = tmpFile.getAbsolutePath();
-	tmpFile.delete();
+        File tmpFile = File.createTempFile("CsvDataSetTest", "-csv");
+        String fullPath = tmpFile.getAbsolutePath();
+        tmpFile.delete();
 
-	File tmpDir = new File(fullPath);
-	if (!tmpDir.mkdir()) {
-	    throw new IOException("Failed to create tmpDir: " + fullPath);
-	}
+        File tmpDir = new File(fullPath);
+        if (!tmpDir.mkdir()) {
+            throw new IOException("Failed to create tmpDir: " + fullPath);
+        }
 
-	return tmpDir;
+        return tmpDir;
     }
 
 }

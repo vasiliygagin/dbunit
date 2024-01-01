@@ -52,10 +52,10 @@ public class IncludeTableFilter extends AbstractTableFilter implements ITableFil
      * Create a new IncludeTableFilter which allow access to specified tables.
      */
     public IncludeTableFilter(String[] tableNames) {
-	for (int i = 0; i < tableNames.length; i++) {
-	    String tableName = tableNames[i];
-	    includeTable(tableName);
-	}
+        for (int i = 0; i < tableNames.length; i++) {
+            String tableName = tableNames[i];
+            includeTable(tableName);
+        }
     }
 
     /**
@@ -63,23 +63,23 @@ public class IncludeTableFilter extends AbstractTableFilter implements ITableFil
      * supported: '*' matches zero or more characters, '?' matches one character.
      */
     public void includeTable(String patternName) {
-	logger.debug("includeTable(patternName={} - start", patternName);
+        logger.debug("includeTable(patternName={} - start", patternName);
 
-	_patternMatcher.addPattern(patternName);
+        _patternMatcher.addPattern(patternName);
     }
 
     public boolean isEmpty() {
-	logger.debug("isEmpty() - start");
+        logger.debug("isEmpty() - start");
 
-	return _patternMatcher.isEmpty();
+        return _patternMatcher.isEmpty();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
     public boolean isValidName(String tableName) {
-	logger.debug("isValidName(tableName={}) - start", tableName);
+        logger.debug("isValidName(tableName={}) - start", tableName);
 
-	return _patternMatcher.accept(tableName);
+        return _patternMatcher.accept(tableName);
     }
 }

@@ -73,19 +73,19 @@ public interface IOperationListener {
      * @since 2.4.5
      */
     public static final IOperationListener NO_OP_OPERATION_LISTENER = new IOperationListener() {
-	private final Logger logger = LoggerFactory.getLogger(IDatabaseTester.class);
+        private final Logger logger = LoggerFactory.getLogger(IDatabaseTester.class);
 
-	public void connectionRetrieved(IDatabaseConnection connection) {
-	    logger.trace("connectionCreated(connection={}) - start", connection);
-	}
+        public void connectionRetrieved(IDatabaseConnection connection) {
+            logger.trace("connectionCreated(connection={}) - start", connection);
+        }
 
-	public void operationSetUpFinished(IDatabaseConnection connection) {
-	    logger.trace("operationSetUpDone(connection={}) - start", connection);
-	}
+        public void operationSetUpFinished(IDatabaseConnection connection) {
+            logger.trace("operationSetUpDone(connection={}) - start", connection);
+        }
 
-	public void operationTearDownFinished(IDatabaseConnection connection) {
-	    logger.trace("operationTearDownDone(connection={}) - start", connection);
-	}
+        public void operationTearDownFinished(IDatabaseConnection connection) {
+            logger.trace("operationTearDownDone(connection={}) - start", connection);
+        }
     };
 
 }

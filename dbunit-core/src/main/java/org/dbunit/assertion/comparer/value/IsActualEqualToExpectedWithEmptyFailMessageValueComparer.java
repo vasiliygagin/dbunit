@@ -18,18 +18,18 @@ import org.dbunit.dataset.datatype.DataType;
 public class IsActualEqualToExpectedWithEmptyFailMessageValueComparer extends ValueComparerTemplateBase {
     @Override
     protected boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException {
-	return dataType.compare(actualValue, expectedValue) == 0;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException {
+        return dataType.compare(actualValue, expectedValue) == 0;
     }
 
     @Override
     protected String makeFailMessage(final Object expectedValue, final Object actualValue) {
-	return "";
+        return "";
     }
 
     @Override
     protected String getFailPhrase() {
-	return null;
+        return null;
     }
 }

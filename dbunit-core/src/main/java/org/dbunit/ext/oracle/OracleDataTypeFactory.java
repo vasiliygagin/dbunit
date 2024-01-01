@@ -64,85 +64,85 @@ public class OracleDataTypeFactory extends DefaultDataTypeFactory {
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     public Collection getValidDbProducts() {
-	return DATABASE_PRODUCTS;
+        return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	// Map Oracle DATE to TIMESTAMP
-	if (sqlType == Types.DATE) {
-	    return DataType.TIMESTAMP;
-	}
+        // Map Oracle DATE to TIMESTAMP
+        if (sqlType == Types.DATE) {
+            return DataType.TIMESTAMP;
+        }
 
-	// TIMESTAMP
-	if (sqlTypeName.startsWith("TIMESTAMP")) {
-	    return DataType.TIMESTAMP;
-	}
+        // TIMESTAMP
+        if (sqlTypeName.startsWith("TIMESTAMP")) {
+            return DataType.TIMESTAMP;
+        }
 
-	// XMLTYPE
-	if ("XMLTYPE".equals(sqlTypeName) || "SYS.XMLTYPE".equals(sqlTypeName)) {
-	    return ORACLE_XMLTYPE;
-	}
+        // XMLTYPE
+        if ("XMLTYPE".equals(sqlTypeName) || "SYS.XMLTYPE".equals(sqlTypeName)) {
+            return ORACLE_XMLTYPE;
+        }
 
-	// BLOB
-	if ("BLOB".equals(sqlTypeName)) {
-	    return ORACLE_BLOB;
-	}
+        // BLOB
+        if ("BLOB".equals(sqlTypeName)) {
+            return ORACLE_BLOB;
+        }
 
-	// CLOB
-	if ("CLOB".equals(sqlTypeName)) {
-	    return ORACLE_CLOB;
-	}
+        // CLOB
+        if ("CLOB".equals(sqlTypeName)) {
+            return ORACLE_CLOB;
+        }
 
-	// NCLOB
-	if ("NCLOB".equals(sqlTypeName)) {
-	    return ORACLE_NCLOB;
-	}
+        // NCLOB
+        if ("NCLOB".equals(sqlTypeName)) {
+            return ORACLE_NCLOB;
+        }
 
-	// NVARCHAR2
-	if ("NVARCHAR2".equals(sqlTypeName)) {
-	    return DataType.VARCHAR;
-	}
+        // NVARCHAR2
+        if ("NVARCHAR2".equals(sqlTypeName)) {
+            return DataType.VARCHAR;
+        }
 
-	// NCHAR
-	if (sqlTypeName.startsWith("NCHAR")) {
-	    return DataType.CHAR;
-	}
+        // NCHAR
+        if (sqlTypeName.startsWith("NCHAR")) {
+            return DataType.CHAR;
+        }
 
-	// FLOAT
-	if ("FLOAT".equals(sqlTypeName)) {
-	    return DataType.FLOAT;
-	}
+        // FLOAT
+        if ("FLOAT".equals(sqlTypeName)) {
+            return DataType.FLOAT;
+        }
 
-	// LONG RAW
-	if (LONG_RAW.toString().equals(sqlTypeName)) {
-	    return LONG_RAW;
-	}
+        // LONG RAW
+        if (LONG_RAW.toString().equals(sqlTypeName)) {
+            return LONG_RAW;
+        }
 
-	// BINARY_DOUBLE/BINARY_FLOAT
-	// Note that you have to configure your driver appropriate:
-	// Oracle-specific property to support IEEE floating-point is enabled setting
-	// the following property
-	// <value>SetFloatAndDoubleUseBinary=true</value>
-	if ("BINARY_DOUBLE".equals(sqlTypeName)) {
-	    return DataType.DOUBLE;
-	}
-	if ("BINARY_FLOAT".equals(sqlTypeName)) {
-	    return DataType.FLOAT;
-	}
+        // BINARY_DOUBLE/BINARY_FLOAT
+        // Note that you have to configure your driver appropriate:
+        // Oracle-specific property to support IEEE floating-point is enabled setting
+        // the following property
+        // <value>SetFloatAndDoubleUseBinary=true</value>
+        if ("BINARY_DOUBLE".equals(sqlTypeName)) {
+            return DataType.DOUBLE;
+        }
+        if ("BINARY_FLOAT".equals(sqlTypeName)) {
+            return DataType.FLOAT;
+        }
 
-	// ROWID
-	if ("ROWID".equals(sqlTypeName)) {
-	    return ROWID_TYPE;
-	}
+        // ROWID
+        if ("ROWID".equals(sqlTypeName)) {
+            return ROWID_TYPE;
+        }
 
-	// SDO_GEOMETRY
-	if ("SDO_GEOMETRY".equals(sqlTypeName) || "MDSYS.SDO_GEOMETRY".equals(sqlTypeName)) {
-	    return ORACLE_SDO_GEOMETRY_TYPE;
-	}
+        // SDO_GEOMETRY
+        if ("SDO_GEOMETRY".equals(sqlTypeName) || "MDSYS.SDO_GEOMETRY".equals(sqlTypeName)) {
+            return ORACLE_SDO_GEOMETRY_TYPE;
+        }
 
-	return super.createDataType(sqlType, sqlTypeName);
+        return super.createDataType(sqlType, sqlTypeName);
     }
 }

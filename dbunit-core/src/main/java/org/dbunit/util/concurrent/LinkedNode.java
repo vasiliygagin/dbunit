@@ -31,11 +31,11 @@ public class LinkedNode {
     }
 
     public LinkedNode(Object x) {
-	value = x;
+        value = x;
     }
 
     public LinkedNode(Object x, LinkedNode n) {
-	value = x;
-	next = n;
+        value = x;
+        next = n;
     }
 }

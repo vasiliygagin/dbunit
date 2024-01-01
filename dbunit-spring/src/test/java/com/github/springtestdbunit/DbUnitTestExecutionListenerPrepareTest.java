@@ -82,7 +82,8 @@ public class DbUnitTestExecutionListenerPrepareTest {
                 .willReturn(singletonMap("dbUnitDatabaseConnection", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(NoDbUnitConfiguration.class);
         testContextManager.prepareTestInstance();
-        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager.getTestExecutionListeners().get(0);
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
         DatabaseConnections databaseConnections = listener.databaseConnections;
         assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
         assertEquals(FlatXmlDataSetLoader.class, listener.dataSetLoader.getClass());
@@ -100,12 +101,14 @@ public class DbUnitTestExecutionListenerPrepareTest {
     }
 
     private void testCommonBeanNames(Class<?> testClass) throws Exception {
-        given(this.applicationContext.getBeansOfType(DataSource.class)).willReturn(singletonMap("dataSource", this.dataSource));
+        given(this.applicationContext.getBeansOfType(DataSource.class))
+                .willReturn(singletonMap("dataSource", this.dataSource));
         given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
                 .willReturn(singletonMap("dbUnitDatabaseConnection", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(testClass);
         testContextManager.prepareTestInstance();
-        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager.getTestExecutionListeners().get(0);
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
         DatabaseConnections databaseConnections = listener.databaseConnections;
         assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
         verify(this.applicationContext).getBeansOfType(DataSource.class);
@@ -116,10 +119,12 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @Test
     public void shouldConvertDatasetDatabaseConnection() throws Exception {
-        given(this.applicationContext.getBeansOfType(DataSource.class)).willReturn(singletonMap("dataSource", this.dataSource));
+        given(this.applicationContext.getBeansOfType(DataSource.class))
+                .willReturn(singletonMap("dataSource", this.dataSource));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(NoDbUnitConfiguration.class);
         testContextManager.prepareTestInstance();
-        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager.getTestExecutionListeners().get(0);
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
         DatabaseConnections databaseConnections = listener.databaseConnections;
         Object connection = databaseConnections.get("dataSource");
         assertEquals(DatabaseDataSourceConnection.class, connection.getClass());
@@ -138,11 +143,13 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @Test
     public void shouldSupportAllDbUnitConfigurationAttributes() throws Exception {
-        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class)).willReturn(singletonMap("customBean", this.databaseConnection));
+        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
+                .willReturn(singletonMap("customBean", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(CustomConfiguration.class);
         testContextManager.prepareTestInstance();
 
-        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager.getTestExecutionListeners().get(0);
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
         DatabaseConnections databaseConnections = listener.databaseConnections;
         assertSame(this.databaseConnection, databaseConnections.get("customBean"));
         assertEquals(CustomDataSetLoader.class, listener.dataSetLoader.getClass());
@@ -158,17 +165,20 @@ public class DbUnitTestExecutionListenerPrepareTest {
             testContextManager.prepareTestInstance();
         } catch (IllegalArgumentException ex) {
             assertEquals("Unable to create data set loader instance for class "
-                    + "com.github.springtestdbunit.DbUnitTestExecutionListenerPrepareTest$" + "AbstractCustomDataSetLoader", ex.getMessage());
+                    + "com.github.springtestdbunit.DbUnitTestExecutionListenerPrepareTest$"
+                    + "AbstractCustomDataSetLoader", ex.getMessage());
         }
     }
 
     @Test
     public void shouldSupportCustomLoaderBean() throws Exception {
-        given(this.applicationContext.getBeansOfType(DataSource.class)).willReturn(singletonMap("dataSource", this.dataSource));
+        given(this.applicationContext.getBeansOfType(DataSource.class))
+                .willReturn(singletonMap("dataSource", this.dataSource));
         addBean("dbUnitDataSetLoader", new CustomDataSetLoader());
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(EmptyDbUnitConfiguration.class);
         testContextManager.prepareTestInstance();
-        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager.getTestExecutionListeners().get(0);
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
         assertEquals(CustomDataSetLoader.class, listener.dataSetLoader.getClass());
     }
 

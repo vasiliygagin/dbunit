@@ -49,45 +49,45 @@ public class TableFormatter {
      * @throws DataSetException
      */
     public String format(ITable table) throws DataSetException {
-	StringBuffer sb = new StringBuffer();
-	ITableMetaData tableMetaData = table.getTableMetaData();
-	// Title line
-	sb.append("******");
-	sb.append(" table: ").append(tableMetaData.getTableName()).append(" ");
-	sb.append("**");
-	sb.append(" row count: ").append(table.getRowCount()).append(" ");
-	sb.append("******");
-	sb.append("\n");
+        StringBuffer sb = new StringBuffer();
+        ITableMetaData tableMetaData = table.getTableMetaData();
+        // Title line
+        sb.append("******");
+        sb.append(" table: ").append(tableMetaData.getTableName()).append(" ");
+        sb.append("**");
+        sb.append(" row count: ").append(table.getRowCount()).append(" ");
+        sb.append("******");
+        sb.append("\n");
 
-	// Column headers
-	int width = 20;
-	Column[] cols = tableMetaData.getColumns();
-	for (int i = 0; i < cols.length; i++) {
-	    sb.append(padRight(cols[i].getColumnName(), width, ' '));
-	    sb.append("|");
-	}
-	sb.append("\n");
+        // Column headers
+        int width = 20;
+        Column[] cols = tableMetaData.getColumns();
+        for (int i = 0; i < cols.length; i++) {
+            sb.append(padRight(cols[i].getColumnName(), width, ' '));
+            sb.append("|");
+        }
+        sb.append("\n");
 
-	// Separator
-	for (int i = 0; i < cols.length; i++) {
-	    sb.append(padRight("", width, '='));
-	    sb.append("|");
-	}
-	sb.append("\n");
+        // Separator
+        for (int i = 0; i < cols.length; i++) {
+            sb.append(padRight("", width, '='));
+            sb.append("|");
+        }
+        sb.append("\n");
 
-	// Values
-	for (int i = 0; i < table.getRowCount(); i++) {
-	    for (int j = 0; j < cols.length; j++) {
-		Object value = table.getValue(i, cols[j].getColumnName());
-		String stringValue = String.valueOf(value);
-		sb.append(padRight(stringValue, 20, ' '));
-		sb.append("|");
-	    }
-	    // New row
-	    sb.append("\n");
-	}
+        // Values
+        for (int i = 0; i < table.getRowCount(); i++) {
+            for (int j = 0; j < cols.length; j++) {
+                Object value = table.getValue(i, cols[j].getColumnName());
+                String stringValue = String.valueOf(value);
+                sb.append(padRight(stringValue, 20, ' '));
+                sb.append("|");
+            }
+            // New row
+            sb.append("\n");
+        }
 
-	return sb.toString();
+        return sb.toString();
     }
 
     /**
@@ -100,13 +100,13 @@ public class TableFormatter {
      * @return The padded string
      */
     public static final String padLeft(String s, int length, char padChar) {
-	String result = s;
+        String result = s;
 
-	char[] padCharArray = getPadCharArray(s, length, padChar);
-	if (padCharArray != null)
-	    result = pad(s, padCharArray, true);
+        char[] padCharArray = getPadCharArray(s, length, padChar);
+        if (padCharArray != null)
+            result = pad(s, padCharArray, true);
 
-	return result;
+        return result;
     }
 
     /**
@@ -119,36 +119,36 @@ public class TableFormatter {
      * @return The padded string
      */
     public static final String padRight(String s, int length, char padChar) {
-	String result = s;
+        String result = s;
 
-	char[] padCharArray = getPadCharArray(s, length, padChar);
-	if (padCharArray != null)
-	    result = pad(s, padCharArray, false);
+        char[] padCharArray = getPadCharArray(s, length, padChar);
+        if (padCharArray != null)
+            result = pad(s, padCharArray, false);
 
-	return result;
+        return result;
     }
 
     private static final char[] getPadCharArray(String s, int length, char padChar) {
-	if (length > 0 && length > s.length()) {
-	    int padCount = length - s.length();
-	    char[] padArray = new char[padCount];
-	    for (int i = 0; i < padArray.length; i++) {
-		padArray[i] = padChar;
-	    }
-	    return padArray;
-	} else {
-	    return null;
-	}
+        if (length > 0 && length > s.length()) {
+            int padCount = length - s.length();
+            char[] padArray = new char[padCount];
+            for (int i = 0; i < padArray.length; i++) {
+                padArray[i] = padChar;
+            }
+            return padArray;
+        } else {
+            return null;
+        }
     }
 
     private static final String pad(String s, char[] padArray, boolean padLeft) {
-	StringBuffer sb = new StringBuffer(s);
-	if (padLeft) {
-	    sb.insert(0, padArray);
-	} else {
-	    sb.append(padArray);
-	}
-	return sb.toString();
+        StringBuffer sb = new StringBuffer(s);
+        if (padLeft) {
+            sb.insert(0, padArray);
+        } else {
+            sb.append(padArray);
+        }
+        return sb.toString();
     }
 
 }

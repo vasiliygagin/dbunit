@@ -32,26 +32,26 @@ import java.util.SortedSet;
 public class BiDirectionalEdgesDepthFirstSearchTest extends DepthFirstSearchTest {
 
     protected ISearchCallback getCallback() {
-	return new ISearchCallback() {
-	    public SortedSet getEdges(Object fromNode) {
-		SortedSet fromSet = getEdgesFromNode(fromNode);
-		SortedSet toSet = getEdgesToNode(fromNode);
-		if (fromSet == null) {
-		    return toSet;
-		}
-		if (toSet != null) {
-		    fromSet.addAll(toSet);
-		}
-		return fromSet;
-	    };
+        return new ISearchCallback() {
+            public SortedSet getEdges(Object fromNode) {
+                SortedSet fromSet = getEdgesFromNode(fromNode);
+                SortedSet toSet = getEdgesToNode(fromNode);
+                if (fromSet == null) {
+                    return toSet;
+                }
+                if (toSet != null) {
+                    fromSet.addAll(toSet);
+                }
+                return fromSet;
+            };
 
-	    public void nodeAdded(Object fromNode) {
-	    }
+            public void nodeAdded(Object fromNode) {
+            }
 
-	    public boolean searchNode(Object node) {
-		return true;
-	    }
-	};
+            public boolean searchNode(Object node) {
+                return true;
+            }
+        };
     };
 
     // more tests, now adding nodes or graphs that would not directly reachable
@@ -59,43 +59,43 @@ public class BiDirectionalEdgesDepthFirstSearchTest extends DepthFirstSearchTest
     // For, instance, on the graph C->A->B, C would never be reached from A or B
 
     public void testSingleReverseEdge() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { B, A, C });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { B, A, C });
+        doIt();
     }
 
     public void testSingleReverseEdgeInputB() throws Exception {
-	setInput(new String[] { B });
-	addEdges(A, new String[] { B });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { B, A, C });
-	doIt();
+        setInput(new String[] { B });
+        addEdges(A, new String[] { B });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { B, A, C });
+        doIt();
     }
 
     public void testSingleReverseEdgeMultipleInput() throws Exception {
-	setInput(new String[] { B, A });
-	addEdges(A, new String[] { B });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { B, A, C });
-	doIt();
+        setInput(new String[] { B, A });
+        addEdges(A, new String[] { B });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { B, A, C });
+        doIt();
     }
 
     public void testSingleReverseEdgeMultipleInputIncludingC() throws Exception {
-	setInput(new String[] { C, B, A });
-	addEdges(A, new String[] { B });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { B, A, C });
-	doIt();
+        setInput(new String[] { C, B, A });
+        addEdges(A, new String[] { B });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { B, A, C });
+        doIt();
     }
 
     public void testOneInputTwoEdges() throws Exception {
-	setInput(new String[] { B });
-	addEdges(A, new String[] { C });
-	addEdges(B, new String[] { C });
-	setOutput(new String[] { C, B, A });
-	doIt();
+        setInput(new String[] { B });
+        addEdges(A, new String[] { C });
+        addEdges(B, new String[] { C });
+        setOutput(new String[] { C, B, A });
+        doIt();
     }
 
     // TODO: continue adding more tests uncommenting and adapting tests below...
@@ -122,30 +122,30 @@ public class BiDirectionalEdgesDepthFirstSearchTest extends DepthFirstSearchTest
      * new String[] { D, C }); setOutput(new String[] { C, D, B, A }); doIt(); }
      */
     public void testMultipleEdgesCycleFromA() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { A, C, B });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { A, C, B });
+        doIt();
     }
 
     public void testMultipleEdgesCycleFromB() throws Exception {
-	setInput(new String[] { B });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { B, A, C });
-	doIt();
+        setInput(new String[] { B });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { B, A, C });
+        doIt();
     }
 
     public void testMultipleEdgesCycleFromBA() throws Exception {
-	setInput(new String[] { B, A });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { A, C, B });
-	doIt();
+        setInput(new String[] { B, A });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { A, C, B });
+        doIt();
     }
 
     /*
@@ -154,46 +154,46 @@ public class BiDirectionalEdgesDepthFirstSearchTest extends DepthFirstSearchTest
      * 
      */
     public void testCyclicAndSelfCyclic() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { A, B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A });
-	setOutput(new String[] { A, C, B });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { A, B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A });
+        setOutput(new String[] { A, C, B });
+        doIt();
     }
 
     public void testDisconnectedCycles() throws Exception {
-	setInput(new String[] { A, D });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A });
-	addEdges(D, new String[] { E });
-	addEdges(E, new String[] { F });
-	addEdges(F, new String[] { D });
-	setOutput(new String[] { D, F, E, A, C, B });
-	doIt();
+        setInput(new String[] { A, D });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A });
+        addEdges(D, new String[] { E });
+        addEdges(E, new String[] { F });
+        addEdges(F, new String[] { D });
+        setOutput(new String[] { D, F, E, A, C, B });
+        doIt();
     }
 
     public void testConnectedCycle() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A, D });
-	addEdges(D, new String[] { E });
-	addEdges(E, new String[] { C });
-	setOutput(new String[] { A, E, D, C, B });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A, D });
+        addEdges(D, new String[] { E });
+        addEdges(E, new String[] { C });
+        setOutput(new String[] { A, E, D, C, B });
+        doIt();
     }
 
     public void testBigConnectedCycle() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	addEdges(B, new String[] { C });
-	addEdges(C, new String[] { A, D });
-	addEdges(D, new String[] { E, B });
-	addEdges(E, new String[] { C });
-	setOutput(new String[] { A, C, B, E, D });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        addEdges(B, new String[] { C });
+        addEdges(C, new String[] { A, D });
+        addEdges(D, new String[] { E, B });
+        addEdges(E, new String[] { C });
+        setOutput(new String[] { A, C, B, E, D });
+        doIt();
     }
 
 }

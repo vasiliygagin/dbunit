@@ -34,70 +34,70 @@ public class ExcludeNodesSearchCallbackTest extends AbstractSearchTestCase {
     private ISearchCallback callback;
 
     protected ISearchCallback getCallback() {
-	return this.callback;
+        return this.callback;
     }
 
     protected void setDenied(Object[] deniedNodes) {
-	this.callback = new AbstractExcludeNodesSearchCallback(deniedNodes) {
+        this.callback = new AbstractExcludeNodesSearchCallback(deniedNodes) {
 
-	    public SortedSet getEdges(Object fromNode) throws SearchException {
-		return getEdgesFromNode(fromNode);
-	    }
-	};
+            public SortedSet getEdges(Object fromNode) throws SearchException {
+                return getEdgesFromNode(fromNode);
+            }
+        };
 
     }
 
     public void testSingleNode() throws Exception {
-	setInput(new String[] { A });
-	setDenied(new String[] { A });
-	doIt();
+        setInput(new String[] { A });
+        setDenied(new String[] { A });
+        doIt();
     }
 
     public void testSingleEdgeDeniedA() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { A });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { A });
+        doIt();
     }
 
     public void testSingleEdgeDeniedB() throws Exception {
-	setInput(new String[] { A });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { B });
-	setOutput(new String[] { A });
-	doIt();
+        setInput(new String[] { A });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { B });
+        setOutput(new String[] { A });
+        doIt();
     }
 
     public void testSingleEdgeMultipleInputDeniedB() throws Exception {
-	setInput(new String[] { A, B });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { B });
-	setOutput(new String[] { A });
-	doIt();
+        setInput(new String[] { A, B });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { B });
+        setOutput(new String[] { A });
+        doIt();
     }
 
     public void testSingleEdgeMultipleInputDeniedA() throws Exception {
-	setInput(new String[] { A, B });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { A });
-	setOutput(new String[] { B });
-	doIt();
+        setInput(new String[] { A, B });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { A });
+        setOutput(new String[] { B });
+        doIt();
     }
 
     public void testDisconnected() throws Exception {
-	setInput(new String[] { A, C });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { B, A });
-	setOutput(new String[] { C });
-	doIt();
+        setInput(new String[] { A, C });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { B, A });
+        setOutput(new String[] { C });
+        doIt();
     }
 
     public void testDisconnectedAllowedC() throws Exception {
-	setInput(new String[] { A, C });
-	addEdges(A, new String[] { B });
-	setDenied(new String[] { C });
-	setOutput(new String[] { B, A });
-	doIt();
+        setInput(new String[] { A, C });
+        addEdges(A, new String[] { B });
+        setDenied(new String[] { C });
+        setOutput(new String[] { B, A });
+        doIt();
     }
 
 }

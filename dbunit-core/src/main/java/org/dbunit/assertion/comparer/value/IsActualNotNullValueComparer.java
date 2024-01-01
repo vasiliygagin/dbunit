@@ -16,18 +16,18 @@ public class IsActualNotNullValueComparer extends ValueComparerTemplateBase {
 
     @Override
     protected boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-	    final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-	    throws DatabaseUnitException {
-	return actualValue != null;
+            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException {
+        return actualValue != null;
     }
 
     protected String makeFailMessage() {
-	return ACTUAL_VALUE_IS_NULL;
+        return ACTUAL_VALUE_IS_NULL;
     }
 
     @Override
     protected String getFailPhrase() {
-	// ignored
-	return null;
+        // ignored
+        return null;
     }
 }

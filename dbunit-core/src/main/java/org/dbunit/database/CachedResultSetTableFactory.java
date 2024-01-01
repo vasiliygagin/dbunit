@@ -42,31 +42,31 @@ public class CachedResultSetTableFactory implements IResultSetTableFactory {
     private static final Logger logger = LoggerFactory.getLogger(CachedResultSetTableFactory.class);
 
     public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
-	    throws SQLException, DataSetException {
-	if (logger.isTraceEnabled())
-	    logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
-		    new Object[] { tableName, selectStatement, connection });
+            throws SQLException, DataSetException {
+        if (logger.isTraceEnabled())
+            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
+                    new Object[] { tableName, selectStatement, connection });
 
-	return new CachedResultSetTable(new ForwardOnlyResultSetTable(tableName, selectStatement, connection));
+        return new CachedResultSetTable(new ForwardOnlyResultSetTable(tableName, selectStatement, connection));
     }
 
     public IResultSetTable createTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws SQLException, DataSetException {
-	logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
-	ForwardOnlyResultSetTable resultSetTable = new ForwardOnlyResultSetTable(metaData, connection);
-	return new CachedResultSetTable(resultSetTable);
+            throws SQLException, DataSetException {
+        logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
+        ForwardOnlyResultSetTable resultSetTable = new ForwardOnlyResultSetTable(metaData, connection);
+        return new CachedResultSetTable(resultSetTable);
     }
 
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
-	    IDatabaseConnection connection) throws SQLException, DataSetException {
-	if (logger.isTraceEnabled())
-	    logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
-		    new Object[] { tableName, preparedStatement, connection });
+            IDatabaseConnection connection) throws SQLException, DataSetException {
+        if (logger.isTraceEnabled())
+            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
+                    new Object[] { tableName, preparedStatement, connection });
 
-	// Reuse method from ForwardOnly factory
-	ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTableFactory()
-		.createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
-	return new CachedResultSetTable(table);
+        // Reuse method from ForwardOnly factory
+        ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTableFactory()
+                .createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
+        return new CachedResultSetTable(table);
     }
 
 }

@@ -28,5 +28,5 @@ public interface ValueComparer {
      * @throws DatabaseUnitException
      */
     String compare(ITable expectedTable, ITable actualTable, int rowNum, String columnName, DataType dataType,
-	    Object expectedValue, Object actualValue) throws DatabaseUnitException;
+            Object expectedValue, Object actualValue) throws DatabaseUnitException;
 }

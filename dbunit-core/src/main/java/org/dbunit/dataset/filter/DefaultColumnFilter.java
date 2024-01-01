@@ -53,20 +53,20 @@ public class DefaultColumnFilter implements IColumnFilter {
      * @param columnPattern The column pattern to be supported
      */
     public void includeColumn(String columnPattern) {
-	logger.debug("includeColumn(columnPattern={}) - start", columnPattern);
+        logger.debug("includeColumn(columnPattern={}) - start", columnPattern);
 
-	_includeMatcher.addPattern(columnPattern);
+        _includeMatcher.addPattern(columnPattern);
     }
 
     /**
      * Add specified columns to accepted column name list.
      */
     public void includeColumns(Column[] columns) {
-	logger.debug("includeColumns(columns={}) - start", columns);
+        logger.debug("includeColumns(columns={}) - start", columns);
 
-	for (int i = 0; i < columns.length; i++) {
-	    _includeMatcher.addPattern(columns[i].getColumnName());
-	}
+        for (int i = 0; i < columns.length; i++) {
+            _includeMatcher.addPattern(columns[i].getColumnName());
+        }
     }
 
     /**
@@ -75,20 +75,20 @@ public class DefaultColumnFilter implements IColumnFilter {
      * one character.
      */
     public void excludeColumn(String columnPattern) {
-	logger.debug("excludeColumn(columnPattern={}) - start", columnPattern);
+        logger.debug("excludeColumn(columnPattern={}) - start", columnPattern);
 
-	_excludeMatcher.addPattern(columnPattern);
+        _excludeMatcher.addPattern(columnPattern);
     }
 
     /**
      * Add specified columns to excluded column name list.
      */
     public void excludeColumns(Column[] columns) {
-	logger.debug("excludeColumns(columns={} - start", columns);
+        logger.debug("excludeColumns(columns={} - start", columns);
 
-	for (int i = 0; i < columns.length; i++) {
-	    _excludeMatcher.addPattern(columns[i].getColumnName());
-	}
+        for (int i = 0; i < columns.length; i++) {
+            _excludeMatcher.addPattern(columns[i].getColumnName());
+        }
     }
 
     /**
@@ -96,15 +96,15 @@ public class DefaultColumnFilter implements IColumnFilter {
      * columns.
      */
     public static ITable includedColumnsTable(ITable table, String[] columnNames) throws DataSetException {
-	logger.debug("includedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
+        logger.debug("includedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
 
-	DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-	for (int i = 0; i < columnNames.length; i++) {
-	    String columnName = columnNames[i];
-	    columnFilter.includeColumn(columnName);
-	}
+        DefaultColumnFilter columnFilter = new DefaultColumnFilter();
+        for (int i = 0; i < columnNames.length; i++) {
+            String columnName = columnNames[i];
+            columnFilter.includeColumn(columnName);
+        }
 
-	return new ColumnFilterTable(table, columnFilter);
+        return new ColumnFilterTable(table, columnFilter);
     }
 
     /**
@@ -112,12 +112,12 @@ public class DefaultColumnFilter implements IColumnFilter {
      * columns.
      */
     public static ITable includedColumnsTable(ITable table, Column[] columns) throws DataSetException {
-	logger.debug("includedColumnsTable(table={}, columns={}) - start", table, columns);
+        logger.debug("includedColumnsTable(table={}, columns={}) - start", table, columns);
 
-	DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-	columnFilter.includeColumns(columns);
+        DefaultColumnFilter columnFilter = new DefaultColumnFilter();
+        columnFilter.includeColumns(columns);
 
-	return new ColumnFilterTable(table, columnFilter);
+        return new ColumnFilterTable(table, columnFilter);
     }
 
     /**
@@ -125,15 +125,15 @@ public class DefaultColumnFilter implements IColumnFilter {
      * excluded.
      */
     public static ITable excludedColumnsTable(ITable table, String[] columnNames) throws DataSetException {
-	logger.debug("excludedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
+        logger.debug("excludedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
 
-	DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-	for (int i = 0; i < columnNames.length; i++) {
-	    String columnName = columnNames[i];
-	    columnFilter.excludeColumn(columnName);
-	}
+        DefaultColumnFilter columnFilter = new DefaultColumnFilter();
+        for (int i = 0; i < columnNames.length; i++) {
+            String columnName = columnNames[i];
+            columnFilter.excludeColumn(columnName);
+        }
 
-	return new ColumnFilterTable(table, columnFilter);
+        return new ColumnFilterTable(table, columnFilter);
     }
 
     /**
@@ -141,32 +141,32 @@ public class DefaultColumnFilter implements IColumnFilter {
      * excluded.
      */
     public static ITable excludedColumnsTable(ITable table, Column[] columns) throws DataSetException {
-	logger.debug("excludedColumnsTable(table={}, columns={}) - start", table, columns);
+        logger.debug("excludedColumnsTable(table={}, columns={}) - start", table, columns);
 
-	DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-	columnFilter.excludeColumns(columns);
+        DefaultColumnFilter columnFilter = new DefaultColumnFilter();
+        columnFilter.excludeColumns(columns);
 
-	return new ColumnFilterTable(table, columnFilter);
+        return new ColumnFilterTable(table, columnFilter);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IColumnFilter interface
 
     public boolean accept(String tableName, Column column) {
-	logger.debug("accept(tableName={}, column={}) - start", tableName, column);
+        logger.debug("accept(tableName={}, column={}) - start", tableName, column);
 
-	if (_includeMatcher.isEmpty() || _includeMatcher.accept(column.getColumnName())) {
-	    return !_excludeMatcher.accept(column.getColumnName());
-	}
-	return false;
+        if (_includeMatcher.isEmpty() || _includeMatcher.accept(column.getColumnName())) {
+            return !_excludeMatcher.accept(column.getColumnName());
+        }
+        return false;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_includeMatcher=").append(_includeMatcher);
-	sb.append(", _excludeMatcher=").append(_excludeMatcher);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_includeMatcher=").append(_includeMatcher);
+        sb.append(", _excludeMatcher=").append(_excludeMatcher);
+        sb.append("]");
+        return sb.toString();
     }
 }

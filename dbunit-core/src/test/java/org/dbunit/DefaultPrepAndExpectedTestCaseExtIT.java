@@ -24,89 +24,89 @@ public class DefaultPrepAndExpectedTestCaseExtIT extends DefaultPrepAndExpectedT
     private static final VerifyTableDefinition PK_TABLE = makeVerifyTableDefinition("PK_TABLE");
     private static final VerifyTableDefinition ONLY_PK_TABLE = makeVerifyTableDefinition("ONLY_PK_TABLE");
     private static final VerifyTableDefinition EMPTY_MULTITYPE_TABLE = makeVerifyTableDefinition(
-	    "EMPTY_MULTITYPE_TABLE");
+            "EMPTY_MULTITYPE_TABLE");
 
     private final DataFileLoader dataFileLoader = new FlatXmlDataFileLoader();
 
     private static VerifyTableDefinition makeVerifyTableDefinition(final String tableName) {
-	return new VerifyTableDefinition(tableName, new String[] {});
+        return new VerifyTableDefinition(tableName, new String[] {});
     }
 
     @Override
     protected void setUp() throws Exception {
-	setDataFileLoader(dataFileLoader);
+        setDataFileLoader(dataFileLoader);
 
-	// don't call super.setUp() here as prep data is not loaded yet
-	// (getDataSet() is null)
-	// super.setUp();
+        // don't call super.setUp() here as prep data is not loaded yet
+        // (getDataSet() is null)
+        // super.setUp();
     }
 
     public void testSuccessRun() throws Exception {
-	final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
-	final String[] expectedDataFiles = { PREP_DATA_FILE_NAME };
-	final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
-		EMPTY_MULTITYPE_TABLE };
+        final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
+        final String[] expectedDataFiles = { PREP_DATA_FILE_NAME };
+        final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
+                EMPTY_MULTITYPE_TABLE };
 
-	final IDatabaseTester databaseTester = makeDatabaseTester();
-	setDatabaseTester(databaseTester);
+        final IDatabaseTester databaseTester = makeDatabaseTester();
+        setDatabaseTester(databaseTester);
 
-	configureTest(tables, prepDataFiles, expectedDataFiles);
+        configureTest(tables, prepDataFiles, expectedDataFiles);
 
-	// reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-	// closes after it obtains feature setting
-	// maybe we need a KeepConnectionOpenOperationListener class?!
-	final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
-	setDatabaseTester(databaseTesterNew1);
+        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
+        // closes after it obtains feature setting
+        // maybe we need a KeepConnectionOpenOperationListener class?!
+        final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
+        setDatabaseTester(databaseTesterNew1);
 
-	preTest();
+        preTest();
 
-	// skip modifying data and just verify the insert
+        // skip modifying data and just verify the insert
 
-	// reopen connection as DefaultOperationListener closes it after inserts
-	// maybe we need a KeepConnectionOpenOperationListener class?!
-	final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
-	setDatabaseTester(databaseTesterNew2);
+        // reopen connection as DefaultOperationListener closes it after inserts
+        // maybe we need a KeepConnectionOpenOperationListener class?!
+        final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
+        setDatabaseTester(databaseTesterNew2);
 
-	postTest();
+        postTest();
     }
 
     public void testFailRun() throws Exception {
-	final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
-	final String[] expectedDataFiles = { EXP_DATA_FILE_NAME };
-	final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
-		EMPTY_MULTITYPE_TABLE };
+        final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
+        final String[] expectedDataFiles = { EXP_DATA_FILE_NAME };
+        final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
+                EMPTY_MULTITYPE_TABLE };
 
-	final IDatabaseTester databaseTester = makeDatabaseTester();
-	setDatabaseTester(databaseTester);
+        final IDatabaseTester databaseTester = makeDatabaseTester();
+        setDatabaseTester(databaseTester);
 
-	configureTest(tables, prepDataFiles, expectedDataFiles);
+        configureTest(tables, prepDataFiles, expectedDataFiles);
 
-	// reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-	// closes after it obtains feature setting
-	// maybe we need a KeepConnectionOpenOperationListener class?!
-	final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
-	setDatabaseTester(databaseTesterNew1);
+        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
+        // closes after it obtains feature setting
+        // maybe we need a KeepConnectionOpenOperationListener class?!
+        final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
+        setDatabaseTester(databaseTesterNew1);
 
-	preTest();
+        preTest();
 
-	// skip modifying data and just verify the insert
+        // skip modifying data and just verify the insert
 
-	// reopen connection as DefaultOperationListener closes it after inserts
-	// maybe we need a KeepConnectionOpenOperationListener class?!
-	final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
-	setDatabaseTester(databaseTesterNew2);
+        // reopen connection as DefaultOperationListener closes it after inserts
+        // maybe we need a KeepConnectionOpenOperationListener class?!
+        final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
+        setDatabaseTester(databaseTesterNew2);
 
-	try {
-	    postTest();
-	    fail("Did not catch expected exception:" + " junit.framework.ComparisonFailure");
-	} catch (final ComparisonFailure e) {
-	    // test passes
-	}
+        try {
+            postTest();
+            fail("Did not catch expected exception:" + " junit.framework.ComparisonFailure");
+        } catch (final ComparisonFailure e) {
+            // test passes
+        }
     }
 
     protected IDatabaseTester makeDatabaseTester() throws Exception {
-	final DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
-	final IDatabaseConnection connection = dbEnv.getConnection();
-	return new DefaultDatabaseTester(connection);
+        final DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
+        final IDatabaseConnection connection = dbEnv.getConnection();
+        return new DefaultDatabaseTester(connection);
     }
 }

@@ -48,7 +48,7 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      *                           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FlatXmlDataFileLoader(Map ro) {
-	super(ro);
+        super(ro);
     }
 
     /**
@@ -60,7 +60,7 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      *           {@link org.dbunit.dataset.ReplacementDataSet}.
      */
     public FlatXmlDataFileLoader(Map ro, Map rs) {
-	super(ro, rs);
+        super(ro, rs);
     }
 
     /**
@@ -75,8 +75,8 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      *                use.
      */
     public FlatXmlDataFileLoader(Map ro, Map rs, FlatXmlDataSetBuilder builder) {
-	super(ro, rs);
-	this.builder = builder;
+        super(ro, rs);
+        this.builder = builder;
     }
 
     /**
@@ -87,16 +87,16 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      *                use.
      */
     public FlatXmlDataFileLoader(FlatXmlDataSetBuilder builder) {
-	this.builder = builder;
+        this.builder = builder;
     }
 
     /**
      * {@inheritDoc}
      */
     public IDataSet loadDataSet(URL url) throws DataSetException, IOException {
-	IDataSet ds = builder.build(url);
+        IDataSet ds = builder.build(url);
 
-	return ds;
+        return ds;
     }
 
     /**
@@ -107,7 +107,7 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      * @return The builder.
      */
     public FlatXmlDataSetBuilder getBuilder() {
-	return builder;
+        return builder;
     }
 
     /**
@@ -118,6 +118,6 @@ public class FlatXmlDataFileLoader extends AbstractDataFileLoader {
      * @param builder The builder to set.
      */
     public void setBuilder(FlatXmlDataSetBuilder builder) {
-	this.builder = builder;
+        this.builder = builder;
     }
 }

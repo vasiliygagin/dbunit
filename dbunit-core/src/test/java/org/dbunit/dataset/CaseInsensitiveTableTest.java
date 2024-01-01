@@ -36,27 +36,27 @@ import java.io.Reader;
  */
 public class CaseInsensitiveTableTest extends XmlTableTest {
     public CaseInsensitiveTableTest(String s) {
-	super(s);
+        super(s);
     }
 
     protected ITable createTable() throws Exception {
-	return new CaseInsensitiveTable(createDataSet().getTable("TEST_TABLE"));
+        return new CaseInsensitiveTable(createDataSet().getTable("TEST_TABLE"));
     }
 
     protected IDataSet createDataSet() throws Exception {
-	Reader in = new FileReader(TestUtils.getFile("xml/caseInsensitiveTableTest.xml"));
-	return new XmlDataSet(in);
+        Reader in = new FileReader(TestUtils.getFile("xml/caseInsensitiveTableTest.xml"));
+        return new XmlDataSet(in);
     }
 
     public void testTableMetaData() throws Exception {
-	Column[] columns = createTable().getTableMetaData().getColumns();
-	assertEquals("column count", COLUMN_COUNT, columns.length);
-	for (int i = 0; i < columns.length; i++) {
-	    String expected = "COLUMN" + i;
-	    String actual = columns[i].getColumnName();
-	    if (!actual.equalsIgnoreCase(expected)) {
-		assertEquals("column name", expected, actual);
-	    }
-	}
+        Column[] columns = createTable().getTableMetaData().getColumns();
+        assertEquals("column count", COLUMN_COUNT, columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            String expected = "COLUMN" + i;
+            String actual = columns[i].getColumnName();
+            if (!actual.equalsIgnoreCase(expected)) {
+                assertEquals("column name", expected, actual);
+            }
+        }
     }
 }

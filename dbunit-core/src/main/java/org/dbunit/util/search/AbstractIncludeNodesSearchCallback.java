@@ -31,13 +31,13 @@ import java.util.Set;
 public abstract class AbstractIncludeNodesSearchCallback extends AbstractNodesFilterSearchCallback {
 
     public AbstractIncludeNodesSearchCallback(Set allowedNodes) {
-	super();
-	setAllowedNodes(allowedNodes);
+        super();
+        setAllowedNodes(allowedNodes);
     }
 
     public AbstractIncludeNodesSearchCallback(Object[] allowedNodes) {
-	super();
-	setAllowedNodes(allowedNodes);
+        super();
+        setAllowedNodes(allowedNodes);
     }
 
 }

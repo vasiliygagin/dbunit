@@ -30,10 +30,10 @@ import junit.framework.TestSuite;
  */
 public class AllTests extends TestSuite {
     public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new TestSuite(BufferedConsumerTest.class));
-	suite.addTest(new TestSuite(StreamingDataSetTest.class));
-	suite.addTest(new TestSuite(StreamingTableTest.class));
-	return suite;
+        TestSuite suite = new TestSuite();
+        suite.addTest(new TestSuite(BufferedConsumerTest.class));
+        suite.addTest(new TestSuite(StreamingDataSetTest.class));
+        suite.addTest(new TestSuite(StreamingTableTest.class));
+        return suite;
     }
 }

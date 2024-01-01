@@ -43,29 +43,29 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
      * Default constructor.
      */
     public CachedDataSet() throws DataSetException {
-	super();
-	initialize();
+        super();
+        initialize();
     }
 
     /**
      * Creates a copy of the specified dataset.
      */
     public CachedDataSet(IDataSet dataSet) throws DataSetException {
-	super(dataSet.isCaseSensitiveTableNames());
-	initialize();
+        super(dataSet.isCaseSensitiveTableNames());
+        initialize();
 
-	final ITableIterator iterator = dataSet.iterator();
-	while (iterator.next()) {
-	    final ITable table = iterator.getTable();
-	    _orderedTableNameMap.add(table.getTableMetaData().getTableName(), new CachedTable(table));
-	}
+        final ITableIterator iterator = dataSet.iterator();
+        while (iterator.next()) {
+            final ITable table = iterator.getTable();
+            _orderedTableNameMap.add(table.getTableMetaData().getTableName(), new CachedTable(table));
+        }
     }
 
     /**
      * Creates a CachedDataSet that synchronously consume the specified producer.
      */
     public CachedDataSet(IDataSetProducer producer) throws DataSetException {
-	this(producer, false);
+        this(producer, false);
     }
 
     /**
@@ -77,58 +77,58 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
      * @throws DataSetException
      */
     public CachedDataSet(IDataSetProducer producer, boolean caseSensitiveTableNames) throws DataSetException {
-	super(caseSensitiveTableNames);
-	initialize();
+        super(caseSensitiveTableNames);
+        initialize();
 
-	producer.setConsumer(this);
-	producer.produce();
+        producer.setConsumer(this);
+        producer.produce();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-	ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
-	return new DefaultTableIterator(tables, reversed);
+        ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+        return new DefaultTableIterator(tables, reversed);
     }
 
     ////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
     public void startDataSet() throws DataSetException {
-	logger.debug("startDataSet() - start");
-	_orderedTableNameMap = super.createTableNameMap();
+        logger.debug("startDataSet() - start");
+        _orderedTableNameMap = super.createTableNameMap();
     }
 
     public void endDataSet() throws DataSetException {
-	logger.debug("endDataSet() - start");
-	logger.debug("endDataSet() - the final tableMap is: " + _orderedTableNameMap);
+        logger.debug("endDataSet() - start");
+        logger.debug("endDataSet() - the final tableMap is: " + _orderedTableNameMap);
     }
 
     public void startTable(ITableMetaData metaData) throws DataSetException {
-	logger.debug("startTable(metaData={}) - start", metaData);
-	_activeTable = new DefaultTable(metaData);
+        logger.debug("startTable(metaData={}) - start", metaData);
+        _activeTable = new DefaultTable(metaData);
     }
 
     public void endTable() throws DataSetException {
-	logger.debug("endTable() - start");
-	String tableName = _activeTable.getTableMetaData().getTableName();
-	// Check whether the table appeared once before
-	if (_orderedTableNameMap.containsTable(tableName)) {
-	    DefaultTable existingTable = (DefaultTable) _orderedTableNameMap.get(tableName);
-	    // Add all newly collected rows to the existing table
-	    existingTable.addTableRows(_activeTable);
-	} else {
-	    _orderedTableNameMap.add(tableName, _activeTable);
-	}
-	_activeTable = null;
+        logger.debug("endTable() - start");
+        String tableName = _activeTable.getTableMetaData().getTableName();
+        // Check whether the table appeared once before
+        if (_orderedTableNameMap.containsTable(tableName)) {
+            DefaultTable existingTable = (DefaultTable) _orderedTableNameMap.get(tableName);
+            // Add all newly collected rows to the existing table
+            existingTable.addTableRows(_activeTable);
+        } else {
+            _orderedTableNameMap.add(tableName, _activeTable);
+        }
+        _activeTable = null;
     }
 
     public void row(Object[] values) throws DataSetException {
-	logger.debug("row(values={}) - start", values);
-	_activeTable.addRow(values);
+        logger.debug("row(values={}) - start", values);
+        _activeTable.addRow(values);
     }
 }

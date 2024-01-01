@@ -35,30 +35,30 @@ public class MockDataSet extends AbstractDataSet implements Verifiable {
     private final List _tableList = new ArrayList();
 
     public void addTable(ITable table) {
-	_tableList.add(table);
+        _tableList.add(table);
     }
 
     public void addEmptyTable(String tableName) {
-	_tableList.add(new DefaultTable(tableName));
+        _tableList.add(new DefaultTable(tableName));
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	ITable[] tables = (ITable[]) _tableList.toArray(new ITable[0]);
-	return new DefaultTableIterator(tables, reversed);
+        ITable[] tables = (ITable[]) _tableList.toArray(new ITable[0]);
+        return new DefaultTableIterator(tables, reversed);
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
     public void verify() {
-	for (Iterator it = _tableList.iterator(); it.hasNext();) {
-	    ITable table = (ITable) it.next();
-	    if (table instanceof Verifiable) {
-		((Verifiable) table).verify();
-	    }
-	}
+        for (Iterator it = _tableList.iterator(); it.hasNext();) {
+            ITable table = (ITable) it.next();
+            if (table instanceof Verifiable) {
+                ((Verifiable) table).verify();
+            }
+        }
     }
 }

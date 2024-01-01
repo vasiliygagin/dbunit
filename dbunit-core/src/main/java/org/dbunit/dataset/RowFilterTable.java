@@ -74,66 +74,66 @@ public class RowFilterTable implements ITable, IRowValueProvider {
      * @throws DataSetException
      */
     public RowFilterTable(ITable table, IRowFilter rowFilter) throws DataSetException {
-	if (table == null || rowFilter == null) {
-	    throw new IllegalArgumentException("Constructor cannot receive null arguments");
-	}
-	this.originalTable = table;
-	// sets the rows for the new table
-	// NOTE: this conversion might be an issue for long tables, as it iterates for
-	// all values of the original table and that might take time and memory leaks.
-	// So, this mapping mechanism is a candidate for improvement: another
-	// alternative
-	// would be to calculate the mapping on the fly, as getValue() is called (and in
-	// this case, getRowCount() would be simply the size of allowedPKs)
-	this.filteredRowIndexes = setRows(rowFilter);
+        if (table == null || rowFilter == null) {
+            throw new IllegalArgumentException("Constructor cannot receive null arguments");
+        }
+        this.originalTable = table;
+        // sets the rows for the new table
+        // NOTE: this conversion might be an issue for long tables, as it iterates for
+        // all values of the original table and that might take time and memory leaks.
+        // So, this mapping mechanism is a candidate for improvement: another
+        // alternative
+        // would be to calculate the mapping on the fly, as getValue() is called (and in
+        // this case, getRowCount() would be simply the size of allowedPKs)
+        this.filteredRowIndexes = setRows(rowFilter);
     }
 
     private List setRows(IRowFilter rowFilter) throws DataSetException {
 
-	ITableMetaData tableMetadata = this.originalTable.getTableMetaData();
-	this.logger.debug("Setting rows for table {}", tableMetadata.getTableName());
+        ITableMetaData tableMetadata = this.originalTable.getTableMetaData();
+        this.logger.debug("Setting rows for table {}", tableMetadata.getTableName());
 
-	int fullSize = this.originalTable.getRowCount();
-	List filteredRowIndexes = new ArrayList();
+        int fullSize = this.originalTable.getRowCount();
+        List filteredRowIndexes = new ArrayList();
 
-	for (int row = 0; row < fullSize; row++) {
-	    this.currentRowIdx = row;
-	    if (rowFilter.accept(this)) {
-		this.logger.debug("Adding row {}", new Integer(row));
-		filteredRowIndexes.add(new Integer(row));
-	    } else {
-		this.logger.debug("Discarding row {}", new Integer(row));
-	    }
-	}
-	return filteredRowIndexes;
+        for (int row = 0; row < fullSize; row++) {
+            this.currentRowIdx = row;
+            if (rowFilter.accept(this)) {
+                this.logger.debug("Adding row {}", new Integer(row));
+                filteredRowIndexes.add(new Integer(row));
+            } else {
+                this.logger.debug("Discarding row {}", new Integer(row));
+            }
+        }
+        return filteredRowIndexes;
     }
 
     // ITable methods
 
     public ITableMetaData getTableMetaData() {
-	logger.debug("getTableMetaData() - start");
+        logger.debug("getTableMetaData() - start");
 
-	return this.originalTable.getTableMetaData();
+        return this.originalTable.getTableMetaData();
     }
 
     public int getRowCount() {
-	logger.debug("getRowCount() - start");
+        logger.debug("getRowCount() - start");
 
-	return this.filteredRowIndexes.size();
+        return this.filteredRowIndexes.size();
     }
 
     public Object getValue(int row, String column) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-	int max = this.filteredRowIndexes.size();
-	if (row < max) {
-	    int realRow = ((Integer) this.filteredRowIndexes.get(row)).intValue();
-	    Object value = this.originalTable.getValue(realRow, column);
-	    return value;
-	} else {
-	    throw new RowOutOfBoundsException("tried to access row " + row + " but rowCount is " + max);
-	}
+        int max = this.filteredRowIndexes.size();
+        if (row < max) {
+            int realRow = ((Integer) this.filteredRowIndexes.get(row)).intValue();
+            Object value = this.originalTable.getValue(realRow, column);
+            return value;
+        } else {
+            throw new RowOutOfBoundsException("tried to access row " + row + " but rowCount is " + max);
+        }
     }
 
     /**
@@ -144,8 +144,8 @@ public class RowFilterTable implements ITable, IRowValueProvider {
      * @see org.dbunit.dataset.IRowValueProvider#getColumnValue(java.lang.String)
      */
     public Object getColumnValue(String columnName) throws DataSetException {
-	Object valueOfCol = this.originalTable.getValue(this.currentRowIdx, columnName);
-	return valueOfCol;
+        Object valueOfCol = this.originalTable.getValue(this.currentRowIdx, columnName);
+        return valueOfCol;
     }
 
 }

@@ -45,65 +45,65 @@ public class Difference {
     private String failMessage;
 
     public Difference(final ITable expectedTable, final ITable actualTable, final int rowIndex, final String columnName,
-	    final Object expectedValue, final Object actualValue) {
-	this(expectedTable, actualTable, rowIndex, columnName, expectedValue, actualValue, "");
+            final Object expectedValue, final Object actualValue) {
+        this(expectedTable, actualTable, rowIndex, columnName, expectedValue, actualValue, "");
     }
 
     public Difference(final ITable expectedTable, final ITable actualTable, final int rowIndex, final String columnName,
-	    final Object expectedValue, final Object actualValue, final String failMessage) {
-	this.expectedTable = expectedTable;
-	this.actualTable = actualTable;
-	this.rowIndex = rowIndex;
-	this.columnName = columnName;
-	this.expectedValue = expectedValue;
-	this.actualValue = actualValue;
-	this.failMessage = failMessage;
+            final Object expectedValue, final Object actualValue, final String failMessage) {
+        this.expectedTable = expectedTable;
+        this.actualTable = actualTable;
+        this.rowIndex = rowIndex;
+        this.columnName = columnName;
+        this.expectedValue = expectedValue;
+        this.actualValue = actualValue;
+        this.failMessage = failMessage;
     }
 
     @Override
     public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append(getClass().getName()).append("[");
-	sb.append("expectedTable=").append(expectedTable);
-	sb.append(", actualTable=").append(actualTable);
-	sb.append(", rowIndex=").append(rowIndex);
-	sb.append(", columnName=").append(columnName);
-	sb.append(", expectedValue=").append(expectedValue);
-	sb.append(", actualValue=").append(actualValue);
-	sb.append(", failMessage=").append(failMessage);
-	sb.append("]");
-	return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getName()).append("[");
+        sb.append("expectedTable=").append(expectedTable);
+        sb.append(", actualTable=").append(actualTable);
+        sb.append(", rowIndex=").append(rowIndex);
+        sb.append(", columnName=").append(columnName);
+        sb.append(", expectedValue=").append(expectedValue);
+        sb.append(", actualValue=").append(actualValue);
+        sb.append(", failMessage=").append(failMessage);
+        sb.append("]");
+        return sb.toString();
     }
 
     public ITable getExpectedTable() {
-	return expectedTable;
+        return expectedTable;
     }
 
     public ITable getActualTable() {
-	return actualTable;
+        return actualTable;
     }
 
     public int getRowIndex() {
-	return rowIndex;
+        return rowIndex;
     }
 
     public String getColumnName() {
-	return columnName;
+        return columnName;
     }
 
     public Object getExpectedValue() {
-	return expectedValue;
+        return expectedValue;
     }
 
     public Object getActualValue() {
-	return actualValue;
+        return actualValue;
     }
 
     public String getFailMessage() {
-	return failMessage;
+        return failMessage;
     }
 
     public void setFailMessage(final String failMessage) {
-	this.failMessage = failMessage;
+        this.failMessage = failMessage;
     }
 }

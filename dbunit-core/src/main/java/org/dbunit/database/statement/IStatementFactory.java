@@ -34,5 +34,5 @@ public interface IStatementFactory {
     IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException;
 
     IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
-	    throws SQLException;
+            throws SQLException;
 }

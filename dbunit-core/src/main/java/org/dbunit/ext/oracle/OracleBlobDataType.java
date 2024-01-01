@@ -49,64 +49,64 @@ public class OracleBlobDataType extends BlobDataType {
     private static final Logger logger = LoggerFactory.getLogger(OracleBlobDataType.class);
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+        if (logger.isDebugEnabled())
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
 
-	return typeCast(resultSet.getBlob(column));
+        return typeCast(resultSet.getBlob(column));
     }
 
     public void setSqlValue(Object value, int column, PreparedStatement statement)
-	    throws SQLException, TypeCastException {
-	if (logger.isDebugEnabled())
-	    logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-		    new Object[] { value, new Integer(column), statement });
+            throws SQLException, TypeCastException {
+        if (logger.isDebugEnabled())
+            logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
+                    new Object[] { value, new Integer(column), statement });
 
-	statement.setObject(column, getBlob(value, statement.getConnection()));
+        statement.setObject(column, getBlob(value, statement.getConnection()));
     }
 
     private Object getBlob(Object value, Connection connection) throws TypeCastException {
-	logger.debug("getBlob(value={}, connection={}) - start", value, connection);
+        logger.debug("getBlob(value={}, connection={}) - start", value, connection);
 
-	oracle.sql.BLOB tempBlob = null;
-	try {
-	    tempBlob = oracle.sql.BLOB.createTemporary(connection, true, oracle.sql.BLOB.DURATION_SESSION);
-	    tempBlob.open(oracle.sql.BLOB.MODE_READWRITE);
-	    OutputStream tempBlobOutputStream = tempBlob.getBinaryOutputStream();
+        oracle.sql.BLOB tempBlob = null;
+        try {
+            tempBlob = oracle.sql.BLOB.createTemporary(connection, true, oracle.sql.BLOB.DURATION_SESSION);
+            tempBlob.open(oracle.sql.BLOB.MODE_READWRITE);
+            OutputStream tempBlobOutputStream = tempBlob.getBinaryOutputStream();
 
-	    // Write the data into the temporary BLOB
-	    tempBlobOutputStream.write((byte[]) typeCast(value));
+            // Write the data into the temporary BLOB
+            tempBlobOutputStream.write((byte[]) typeCast(value));
 
-	    // Flush and close the stream
-	    tempBlobOutputStream.flush();
-	    tempBlobOutputStream.close();
+            // Flush and close the stream
+            tempBlobOutputStream.flush();
+            tempBlobOutputStream.close();
 
-	    // Close the temporary Blob
-	    tempBlob.close();
-	} catch (SQLException e) {
-	    // JH_TODO: shouldn't freeTemporary be called in finally {} ?
-	    // It wasn't done like that in the original reflection-styled DbUnit code.
-	    freeTemporaryBlob(tempBlob);
-	    throw new TypeCastException(value, this, e);
-	} catch (IOException e) {
-	    freeTemporaryBlob(tempBlob);
-	    throw new TypeCastException(value, this, e);
-	}
+            // Close the temporary Blob
+            tempBlob.close();
+        } catch (SQLException e) {
+            // JH_TODO: shouldn't freeTemporary be called in finally {} ?
+            // It wasn't done like that in the original reflection-styled DbUnit code.
+            freeTemporaryBlob(tempBlob);
+            throw new TypeCastException(value, this, e);
+        } catch (IOException e) {
+            freeTemporaryBlob(tempBlob);
+            throw new TypeCastException(value, this, e);
+        }
 
-	return tempBlob;
+        return tempBlob;
     }
 
     private void freeTemporaryBlob(oracle.sql.BLOB tempBlob) throws TypeCastException {
-	logger.debug("freeTemporaryBlob(tempBlob={}) - start", tempBlob);
+        logger.debug("freeTemporaryBlob(tempBlob={}) - start", tempBlob);
 
-	if (tempBlob == null) {
-	    return;
-	}
+        if (tempBlob == null) {
+            return;
+        }
 
-	try {
-	    tempBlob.freeTemporary();
-	} catch (SQLException e) {
-	    throw new TypeCastException("Error freeing Oracle BLOB", e);
-	}
+        try {
+            tempBlob.freeTemporary();
+        } catch (SQLException e) {
+            throw new TypeCastException("Error freeing Oracle BLOB", e);
+        }
     }
 
 }

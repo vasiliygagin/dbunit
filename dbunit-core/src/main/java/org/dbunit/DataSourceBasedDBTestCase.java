@@ -45,7 +45,7 @@ public abstract class DataSourceBasedDBTestCase extends DBTestCase {
     }
 
     public DataSourceBasedDBTestCase(String name) {
-	super(name);
+        super(name);
     }
 
     /**
@@ -54,9 +54,9 @@ public abstract class DataSourceBasedDBTestCase extends DBTestCase {
      * with the value returned from {@link #getDataSource()}.
      */
     protected IDatabaseTester newDatabaseTester() {
-	logger.debug("newDatabaseTester() - start");
+        logger.debug("newDatabaseTester() - start");
 
-	return new DataSourceDatabaseTester(getDataSource());
+        return new DataSourceDatabaseTester(getDataSource());
     }
 
     /**

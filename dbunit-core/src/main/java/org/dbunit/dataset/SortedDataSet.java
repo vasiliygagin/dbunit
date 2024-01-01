@@ -41,60 +41,60 @@ public class SortedDataSet extends AbstractDataSet {
     private final IDataSet _dataSet;
 
     public SortedDataSet(IDataSet dataSet) throws DataSetException {
-	_dataSet = dataSet;
+        _dataSet = dataSet;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
+        if (logger.isDebugEnabled())
+            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-	return new SortedIterator(reversed ? _dataSet.reverseIterator() : _dataSet.iterator());
+        return new SortedIterator(reversed ? _dataSet.reverseIterator() : _dataSet.iterator());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
     public String[] getTableNames() throws DataSetException {
-	return _dataSet.getTableNames();
+        return _dataSet.getTableNames();
     }
 
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
-	logger.debug("getTableMetaData(tableName={}) - start", tableName);
-	return _dataSet.getTableMetaData(tableName);
+        logger.debug("getTableMetaData(tableName={}) - start", tableName);
+        return _dataSet.getTableMetaData(tableName);
     }
 
     public ITable getTable(String tableName) throws DataSetException {
-	logger.debug("getTable(tableName={}) - start", tableName);
-	return new SortedTable(_dataSet.getTable(tableName));
+        logger.debug("getTable(tableName={}) - start", tableName);
+        return new SortedTable(_dataSet.getTable(tableName));
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // SortedIterator class
 
     private class SortedIterator implements ITableIterator {
-	private final ITableIterator _iterator;
+        private final ITableIterator _iterator;
 
-	public SortedIterator(ITableIterator iterator) {
-	    _iterator = iterator;
-	}
+        public SortedIterator(ITableIterator iterator) {
+            _iterator = iterator;
+        }
 
-	////////////////////////////////////////////////////////////////////////
-	// ITableIterator interface
+        ////////////////////////////////////////////////////////////////////////
+        // ITableIterator interface
 
-	public boolean next() throws DataSetException {
-	    return _iterator.next();
-	}
+        public boolean next() throws DataSetException {
+            return _iterator.next();
+        }
 
-	public ITableMetaData getTableMetaData() throws DataSetException {
-	    return _iterator.getTableMetaData();
-	}
+        public ITableMetaData getTableMetaData() throws DataSetException {
+            return _iterator.getTableMetaData();
+        }
 
-	public ITable getTable() throws DataSetException {
-	    return new SortedTable(_iterator.getTable());
-	}
+        public ITable getTable() throws DataSetException {
+            return new SortedTable(_iterator.getTable());
+        }
     }
 
 }

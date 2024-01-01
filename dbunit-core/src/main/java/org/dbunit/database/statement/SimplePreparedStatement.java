@@ -47,54 +47,54 @@ public class SimplePreparedStatement extends AbstractPreparedBatchStatement {
     private int _result;
 
     public SimplePreparedStatement(String sql, Connection connection) throws SQLException {
-	super(sql, connection);
-	_index = 0;
-	_result = 0;
+        super(sql, connection);
+        _index = 0;
+        _result = 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IPreparedBatchStatement interface
 
     public void addValue(Object value, DataType dataType) throws TypeCastException, SQLException {
-	logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
+        logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
 
-	// Special NULL handling
-	if (value == null || value == ITable.NO_VALUE) {
-	    String sqlTypeName = dataType.getSqlTypeName();
-	    if (sqlTypeName == null) {
-		_statement.setNull(++_index, dataType.getSqlType());
-	    } else {
-		_statement.setNull(++_index, dataType.getSqlType(), sqlTypeName);
-	    }
-	    return;
-	}
+        // Special NULL handling
+        if (value == null || value == ITable.NO_VALUE) {
+            String sqlTypeName = dataType.getSqlTypeName();
+            if (sqlTypeName == null) {
+                _statement.setNull(++_index, dataType.getSqlType());
+            } else {
+                _statement.setNull(++_index, dataType.getSqlType(), sqlTypeName);
+            }
+            return;
+        }
 
-	dataType.setSqlValue(value, ++_index, _statement);
+        dataType.setSqlValue(value, ++_index, _statement);
     }
 
     public void addBatch() throws SQLException {
-	logger.debug("addBatch() - start");
+        logger.debug("addBatch() - start");
 
-	boolean result = _statement.execute();
-	if (!result) {
-	    _result += _statement.getUpdateCount();
-	}
-	_index = 0;
+        boolean result = _statement.execute();
+        if (!result) {
+            _result += _statement.getUpdateCount();
+        }
+        _index = 0;
     }
 
     public int executeBatch() throws SQLException {
-	logger.debug("executeBatch() - start");
+        logger.debug("executeBatch() - start");
 
-	int result = _result;
-	clearBatch();
-	return result;
+        int result = _result;
+        clearBatch();
+        return result;
     }
 
     public void clearBatch() throws SQLException {
-	logger.debug("clearBatch() - start");
+        logger.debug("clearBatch() - start");
 
-	_index = 0;
-	_result = 0;
+        _index = 0;
+        _result = 0;
     }
 
 }

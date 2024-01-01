@@ -38,29 +38,29 @@ import java.io.Reader;
  */
 public class CompositeOperationIT extends AbstractDatabaseIT {
     public CompositeOperationIT(String s) {
-	super(s);
+        super(s);
     }
 
     public void testExecute() throws Exception {
-	String tableName = "PK_TABLE";
-	String columnName = "PK0";
-	Reader in = new FileReader(TestUtils.getFile("xml/compositeOperationTest.xml"));
-	IDataSet xmlDataSet = new XmlDataSet(in);
+        String tableName = "PK_TABLE";
+        String columnName = "PK0";
+        Reader in = new FileReader(TestUtils.getFile("xml/compositeOperationTest.xml"));
+        IDataSet xmlDataSet = new XmlDataSet(in);
 
-	// verify table before
-	ITable tableBefore = createOrderedTable(tableName, columnName);
-	assertEquals("row count before", 3, tableBefore.getRowCount());
-	assertEquals("before", "0", tableBefore.getValue(0, columnName).toString());
-	assertEquals("before", "1", tableBefore.getValue(1, columnName).toString());
-	assertEquals("before", "2", tableBefore.getValue(2, columnName).toString());
+        // verify table before
+        ITable tableBefore = createOrderedTable(tableName, columnName);
+        assertEquals("row count before", 3, tableBefore.getRowCount());
+        assertEquals("before", "0", tableBefore.getValue(0, columnName).toString());
+        assertEquals("before", "1", tableBefore.getValue(1, columnName).toString());
+        assertEquals("before", "2", tableBefore.getValue(2, columnName).toString());
 
-	DatabaseOperation operation = new CompositeOperation(DatabaseOperation.DELETE_ALL, DatabaseOperation.INSERT);
-	operation.execute(_connection, xmlDataSet);
+        DatabaseOperation operation = new CompositeOperation(DatabaseOperation.DELETE_ALL, DatabaseOperation.INSERT);
+        operation.execute(_connection, xmlDataSet);
 
-	ITable tableAfter = createOrderedTable(tableName, columnName);
-	assertEquals("row count after", 2, tableAfter.getRowCount());
-	assertEquals("after", "1", tableAfter.getValue(0, columnName).toString());
-	assertEquals("after", "3", tableAfter.getValue(1, columnName).toString());
+        ITable tableAfter = createOrderedTable(tableName, columnName);
+        assertEquals("row count after", 2, tableAfter.getRowCount());
+        assertEquals("after", "1", tableAfter.getValue(0, columnName).toString());
+        assertEquals("after", "3", tableAfter.getValue(1, columnName).toString());
     }
 
 }

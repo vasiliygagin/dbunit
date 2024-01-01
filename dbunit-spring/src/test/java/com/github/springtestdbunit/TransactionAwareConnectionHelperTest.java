@@ -30,16 +30,16 @@ import org.junit.Test;
 
 public class TransactionAwareConnectionHelperTest {
 
-	@Test
-	public void shouldSupportNewConnection() throws Exception {
-		DataSource dataSource = mock(DataSource.class);
-		Connection connection = mock(Connection.class);
-		given(dataSource.getConnection()).willReturn(connection);
+    @Test
+    public void shouldSupportNewConnection() throws Exception {
+        DataSource dataSource = mock(DataSource.class);
+        Connection connection = mock(Connection.class);
+        given(dataSource.getConnection()).willReturn(connection);
 
         DatabaseDataSourceConnection databaseConnection = TransactionAwareConnectionHelper.newConnection(dataSource);
 
-		assertNotNull(databaseConnection);
+        assertNotNull(databaseConnection);
         databaseConnection.getConnection().createStatement();
-		verify(dataSource).getConnection();
-	}
+        verify(dataSource).getConnection();
+    }
 }

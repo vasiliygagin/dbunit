@@ -43,7 +43,7 @@ public class Db2MetadataHandler extends DefaultMetadataHandler {
     private static final Logger logger = LoggerFactory.getLogger(Db2MetadataHandler.class);
 
     public Db2MetadataHandler() {
-	super();
+        super();
     }
 
     /**
@@ -66,49 +66,49 @@ public class Db2MetadataHandler extends DefaultMetadataHandler {
      *      boolean)
      */
     public boolean matches(ResultSet columnsResultSet, String catalog, String schema, String table, String column,
-	    boolean caseSensitive) throws SQLException {
-	if (logger.isTraceEnabled())
-	    logger.trace(
-		    "matches(columnsResultSet={}, catalog={}, schema={},"
-			    + " table={}, column={}, caseSensitive={}) - start",
-		    new Object[] { columnsResultSet, catalog, schema, table, column, Boolean.valueOf(caseSensitive) });
+            boolean caseSensitive) throws SQLException {
+        if (logger.isTraceEnabled())
+            logger.trace(
+                    "matches(columnsResultSet={}, catalog={}, schema={},"
+                            + " table={}, column={}, caseSensitive={}) - start",
+                    new Object[] { columnsResultSet, catalog, schema, table, column, Boolean.valueOf(caseSensitive) });
 
-	String catalogName = columnsResultSet.getString(1);
-	String schemaName = columnsResultSet.getString(2);
-	String tableName = columnsResultSet.getString(3);
-	String columnName = columnsResultSet.getString(4);
+        String catalogName = columnsResultSet.getString(1);
+        String schemaName = columnsResultSet.getString(2);
+        String tableName = columnsResultSet.getString(3);
+        String columnName = columnsResultSet.getString(4);
 
-	if (logger.isDebugEnabled()) {
-	    logger.debug(
-		    "Comparing the following values using caseSensitive={} (searched<=>actual): "
-			    + "catalog: {}<=>{} schema: {}<=>{} table: {}<=>{} column: {}<=>{}",
-		    new Object[] { Boolean.valueOf(caseSensitive), catalog, catalogName, schema, schemaName, table,
-			    tableName, column, columnName });
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug(
+                    "Comparing the following values using caseSensitive={} (searched<=>actual): "
+                            + "catalog: {}<=>{} schema: {}<=>{} table: {}<=>{} column: {}<=>{}",
+                    new Object[] { Boolean.valueOf(caseSensitive), catalog, catalogName, schema, schemaName, table,
+                            tableName, column, columnName });
+        }
 
-	boolean areEqual = areEqualIgnoreBothNull(catalog, catalogName, caseSensitive)
-		&& areEqualIgnoreNull(schema, schemaName, caseSensitive)
-		&& areEqualIgnoreNull(table, tableName, caseSensitive)
-		&& areEqualIgnoreNull(column, columnName, caseSensitive);
-	return areEqual;
+        boolean areEqual = areEqualIgnoreBothNull(catalog, catalogName, caseSensitive)
+                && areEqualIgnoreNull(schema, schemaName, caseSensitive)
+                && areEqualIgnoreNull(table, tableName, caseSensitive)
+                && areEqualIgnoreNull(column, columnName, caseSensitive);
+        return areEqual;
     }
 
     private boolean areEqualIgnoreBothNull(String value1, String value2, boolean caseSensitive) {
-	boolean areEqual = true;
-	if (value1 != null && value2 != null) {
-	    if (value1.equals("") && value2.equals("")) {
-		if (caseSensitive) {
-		    areEqual = value1.equals(value2);
-		} else {
-		    areEqual = value1.equalsIgnoreCase(value2);
-		}
-	    }
-	}
-	return areEqual;
+        boolean areEqual = true;
+        if (value1 != null && value2 != null) {
+            if (value1.equals("") && value2.equals("")) {
+                if (caseSensitive) {
+                    areEqual = value1.equals(value2);
+                } else {
+                    areEqual = value1.equalsIgnoreCase(value2);
+                }
+            }
+        }
+        return areEqual;
     }
 
     private boolean areEqualIgnoreNull(String value1, String value2, boolean caseSensitive) {
-	return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
+        return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
     }
 
 }

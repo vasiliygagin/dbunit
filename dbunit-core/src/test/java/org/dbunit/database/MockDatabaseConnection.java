@@ -45,27 +45,27 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
     private DatabaseConfig _databaseConfig = new DatabaseConfig();
 
     public void setupSchema(String schema) {
-	_schema = schema;
+        _schema = schema;
     }
 
     public void setupConnection(Connection connection) {
-	_connection = connection;
+        _connection = connection;
     }
 
     public void setupDataSet(IDataSet dataSet) {
-	_dataSet = dataSet;
+        _dataSet = dataSet;
     }
 
     public void setupDataSet(ITable table) throws AmbiguousTableNameException {
-	_dataSet = new DefaultDataSet(table);
+        _dataSet = new DefaultDataSet(table);
     }
 
     public void setupDataSet(ITable[] tables) throws AmbiguousTableNameException {
-	_dataSet = new DefaultDataSet(tables);
+        _dataSet = new DefaultDataSet(tables);
     }
 
     public void setupStatementFactory(IStatementFactory statementFactory) {
-	_databaseConfig.setProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY, statementFactory);
+        _databaseConfig.setProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY, statementFactory);
     }
 
 //    public void setupEscapePattern(String escapePattern)
@@ -74,65 +74,65 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
 //    }
 //
     public void setExpectedCloseCalls(int callsCount) {
-	_closeCalls.setExpected(callsCount);
+        _closeCalls.setExpected(callsCount);
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
     public void verify() {
-	_closeCalls.verify();
+        _closeCalls.verify();
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection interface
 
     public Connection getConnection() throws SQLException {
-	return _connection;
+        return _connection;
     }
 
     public String getSchema() {
-	return _schema;
+        return _schema;
     }
 
     public void close() throws SQLException {
-	_closeCalls.inc();
+        _closeCalls.inc();
     }
 
     public IDataSet createDataSet() throws SQLException {
-	return _dataSet;
+        return _dataSet;
     }
 
     public IDataSet createDataSet(String[] tableNames) throws SQLException, AmbiguousTableNameException {
-	return new FilteredDataSet(tableNames, createDataSet());
+        return new FilteredDataSet(tableNames, createDataSet());
     }
 
     public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public ITable createTable(String tableName, PreparedStatement preparedStatement)
-	    throws DataSetException, SQLException {
-	throw new UnsupportedOperationException();
+            throws DataSetException, SQLException {
+        throw new UnsupportedOperationException();
     }
 
     public ITable createTable(String tableName) throws DataSetException, SQLException {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public int getRowCount(String tableName) throws SQLException {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public int getRowCount(String tableName, String whereClause) throws SQLException {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public IStatementFactory getStatementFactory() {
-	return (IStatementFactory) _databaseConfig.getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
+        return (IStatementFactory) _databaseConfig.getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
     }
 
     public DatabaseConfig getConfig() {
-	return _databaseConfig;
+        return _databaseConfig;
     }
 }

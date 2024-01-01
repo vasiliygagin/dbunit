@@ -33,22 +33,22 @@ import org.dbunit.dataset.ITableMetaData;
  */
 public class DefaultConsumer implements IDataSetConsumer {
     public void startDataSet() throws DataSetException {
-	// no op
+        // no op
     }
 
     public void endDataSet() throws DataSetException {
-	// no op
+        // no op
     }
 
     public void startTable(ITableMetaData metaData) throws DataSetException {
-	// no op
+        // no op
     }
 
     public void endTable() throws DataSetException {
-	// no op
+        // no op
     }
 
     public void row(Object[] values) throws DataSetException {
-	// no op
+        // no op
     }
 }

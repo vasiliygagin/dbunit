@@ -56,12 +56,12 @@ public class CollectionsHelper {
      * @return Set with the elements of the array or null if entry is null
      */
     public static Set objectsToSet(Object[] objects) {
-	logger.debug("objectsToSet(objects={}) - start", objects);
+        logger.debug("objectsToSet(objects={}) - start", objects);
 
-	if (objects == null) {
-	    return null;
-	}
-	return new LinkedHashSet(Arrays.asList(objects));
+        if (objects == null) {
+            return null;
+        }
+        return new LinkedHashSet(Arrays.asList(objects));
     }
 
     /**
@@ -71,13 +71,13 @@ public class CollectionsHelper {
      * @return array of Objects with the elements of the Set or null if set is null
      */
     public static Object[] setToObjects(Set set) {
-	logger.debug("setToObjects(set={}) - start", set);
+        logger.debug("setToObjects(set={}) - start", set);
 
-	if (set == null) {
-	    return null;
-	} else {
-	    return set.toArray();
-	}
+        if (set == null) {
+            return null;
+        } else {
+            return set.toArray();
+        }
     }
 
     /**
@@ -87,14 +87,14 @@ public class CollectionsHelper {
      * @return array of Strings with the elements of the Set or null if set is null
      */
     public static String[] setToStrings(Set set) {
-	logger.debug("setToStrings(set={}) - start", set);
+        logger.debug("setToStrings(set={}) - start", set);
 
-	if (set == null) {
-	    return null;
-	} else {
-	    String[] strings = (String[]) set.toArray(new String[0]);
-	    return strings;
-	}
+        if (set == null) {
+            return null;
+        } else {
+            String[] strings = (String[]) set.toArray(new String[0]);
+            return strings;
+        }
     };
 
 }

@@ -73,13 +73,13 @@ public class SQLHelper {
      * @throws SQLException raised while getting the meta data
      */
     public static String getPrimaryKeyColumn(Connection conn, String table) throws SQLException {
-	logger.debug("getPrimaryKeyColumn(conn={}, table={}) - start", conn, table);
+        logger.debug("getPrimaryKeyColumn(conn={}, table={}) - start", conn, table);
 
-	DatabaseMetaData metadata = conn.getMetaData();
-	ResultSet rs = metadata.getPrimaryKeys(null, null, table);
-	rs.next();
-	String pkColumn = rs.getString(4);
-	return pkColumn;
+        DatabaseMetaData metadata = conn.getMetaData();
+        ResultSet rs = metadata.getPrimaryKeys(null, null, table);
+        rs.next();
+        String pkColumn = rs.getString(4);
+        return pkColumn;
     }
 
     /**
@@ -90,13 +90,13 @@ public class SQLHelper {
      * @throws SQLException exception raised in either close() method
      */
     public static void close(ResultSet rs, Statement stmt) throws SQLException {
-	logger.debug("close(rs={}, stmt={}) - start", rs, stmt);
+        logger.debug("close(rs={}, stmt={}) - start", rs, stmt);
 
-	try {
-	    SQLHelper.close(rs);
-	} finally {
-	    SQLHelper.close(stmt);
-	}
+        try {
+            SQLHelper.close(rs);
+        } finally {
+            SQLHelper.close(stmt);
+        }
     }
 
     /**
@@ -106,11 +106,11 @@ public class SQLHelper {
      * @throws SQLException exception raised while closing the statement
      */
     public static void close(Statement stmt) throws SQLException {
-	logger.debug("close(stmt={}) - start", stmt);
+        logger.debug("close(stmt={}) - start", stmt);
 
-	if (stmt != null) {
-	    stmt.close();
-	}
+        if (stmt != null) {
+            stmt.close();
+        }
     }
 
     /**
@@ -120,11 +120,11 @@ public class SQLHelper {
      * @throws SQLException
      */
     public static void close(ResultSet resultSet) throws SQLException {
-	logger.debug("close(resultSet={}) - start", resultSet);
+        logger.debug("close(resultSet={}) - start", resultSet);
 
-	if (resultSet != null) {
-	    resultSet.close();
-	}
+        if (resultSet != null) {
+            resultSet.close();
+        }
     }
 
     /**
@@ -139,32 +139,32 @@ public class SQLHelper {
      * @since 2.3.0
      */
     public static boolean schemaExists(Connection connection, String schema) throws SQLException {
-	logger.trace("schemaExists(connection={}, schema={}) - start", connection, schema);
+        logger.trace("schemaExists(connection={}, schema={}) - start", connection, schema);
 
-	if (schema == null) {
-	    throw new NullPointerException("The parameter 'schema' must not be null");
-	}
+        if (schema == null) {
+            throw new NullPointerException("The parameter 'schema' must not be null");
+        }
 
-	DatabaseMetaData metaData = connection.getMetaData();
-	ResultSet rs = metaData.getSchemas(); // null, schemaPattern);
-	try {
-	    while (rs.next()) {
-		String foundSchema = rs.getString("TABLE_SCHEM");
-		if (foundSchema.equals(schema)) {
-		    return true;
-		}
-	    }
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet rs = metaData.getSchemas(); // null, schemaPattern);
+        try {
+            while (rs.next()) {
+                String foundSchema = rs.getString("TABLE_SCHEM");
+                if (foundSchema.equals(schema)) {
+                    return true;
+                }
+            }
 
-	    // Especially for MySQL check the catalog
-	    if (catalogExists(connection, schema)) {
-		logger.debug("Found catalog with name {}. Returning true because DB is probably on MySQL", schema);
-		return true;
-	    }
+            // Especially for MySQL check the catalog
+            if (catalogExists(connection, schema)) {
+                logger.debug("Found catalog with name {}. Returning true because DB is probably on MySQL", schema);
+                return true;
+            }
 
-	    return false;
-	} finally {
-	    rs.close();
-	}
+            return false;
+        } finally {
+            rs.close();
+        }
     }
 
     /**
@@ -178,25 +178,25 @@ public class SQLHelper {
      * @since 2.4.4
      */
     private static boolean catalogExists(Connection connection, String catalog) throws SQLException {
-	logger.trace("catalogExists(connection={}, catalog={}) - start", connection, catalog);
+        logger.trace("catalogExists(connection={}, catalog={}) - start", connection, catalog);
 
-	if (catalog == null) {
-	    throw new NullPointerException("The parameter 'catalog' must not be null");
-	}
+        if (catalog == null) {
+            throw new NullPointerException("The parameter 'catalog' must not be null");
+        }
 
-	DatabaseMetaData metaData = connection.getMetaData();
-	ResultSet rs = metaData.getCatalogs();
-	try {
-	    while (rs.next()) {
-		String foundCatalog = rs.getString("TABLE_CAT");
-		if (foundCatalog.equals(catalog)) {
-		    return true;
-		}
-	    }
-	    return false;
-	} finally {
-	    rs.close();
-	}
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet rs = metaData.getCatalogs();
+        try {
+            while (rs.next()) {
+                String foundCatalog = rs.getString("TABLE_CAT");
+                if (foundCatalog.equals(catalog)) {
+                    return true;
+                }
+            }
+            return false;
+        } finally {
+            rs.close();
+        }
 
     }
 
@@ -216,12 +216,12 @@ public class SQLHelper {
      *             {@link IMetadataHandler#tableExists(DatabaseMetaData, String, String)}
      */
     public static boolean tableExists(DatabaseMetaData metaData, String schema, String tableName) throws SQLException {
-	ResultSet tableRs = metaData.getTables(null, schema, tableName, null);
-	try {
-	    return tableRs.next();
-	} finally {
-	    SQLHelper.close(tableRs);
-	}
+        ResultSet tableRs = metaData.getTables(null, schema, tableName, null);
+        try {
+            return tableRs.next();
+        } finally {
+            SQLHelper.close(tableRs);
+        }
     }
 
     /**
@@ -233,25 +233,25 @@ public class SQLHelper {
      * @throws SQLException
      */
     public static void printAllTables(DatabaseMetaData metaData, PrintStream outputStream) throws SQLException {
-	ResultSet rs = metaData.getTables(null, null, null, null);
-	try {
-	    while (rs.next()) {
-		String catalog = rs.getString("TABLE_CAT");
-		String schema = rs.getString("TABLE_SCHEM");
-		String table = rs.getString("TABLE_NAME");
-		StringBuffer tableInfo = new StringBuffer();
-		if (catalog != null)
-		    tableInfo.append(catalog).append(".");
-		if (schema != null)
-		    tableInfo.append(schema).append(".");
-		tableInfo.append(table);
-		// Print the info
-		outputStream.println(tableInfo);
-	    }
-	    outputStream.flush();
-	} finally {
-	    SQLHelper.close(rs);
-	}
+        ResultSet rs = metaData.getTables(null, null, null, null);
+        try {
+            while (rs.next()) {
+                String catalog = rs.getString("TABLE_CAT");
+                String schema = rs.getString("TABLE_SCHEM");
+                String table = rs.getString("TABLE_NAME");
+                StringBuffer tableInfo = new StringBuffer();
+                if (catalog != null)
+                    tableInfo.append(catalog).append(".");
+                if (schema != null)
+                    tableInfo.append(schema).append(".");
+                tableInfo.append(table);
+                // Print the info
+                outputStream.println(tableInfo);
+            }
+            outputStream.flush();
+        } finally {
+            SQLHelper.close(rs);
+        }
 
     }
 
@@ -263,68 +263,68 @@ public class SQLHelper {
      * @return The database information as formatted string
      */
     public static String getDatabaseInfo(DatabaseMetaData metaData) {
-	StringBuffer sb = new StringBuffer();
-	sb.append("\n");
+        StringBuffer sb = new StringBuffer();
+        sb.append("\n");
 
-	String dbInfo = null;
+        String dbInfo = null;
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return metaData.getDatabaseProductName();
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tdatabase product name=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return metaData.getDatabaseProductName();
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tdatabase product name=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return metaData.getDatabaseProductVersion();
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tdatabase version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return metaData.getDatabaseProductVersion();
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tdatabase version=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return String.valueOf(metaData.getDatabaseMajorVersion());
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tdatabase major version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return String.valueOf(metaData.getDatabaseMajorVersion());
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tdatabase major version=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return String.valueOf(metaData.getDatabaseMinorVersion());
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tdatabase minor version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return String.valueOf(metaData.getDatabaseMinorVersion());
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tdatabase minor version=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return metaData.getDriverName();
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tjdbc driver name=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return metaData.getDriverName();
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tjdbc driver name=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return metaData.getDriverVersion();
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tjdbc driver version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return metaData.getDriverVersion();
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tjdbc driver version=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return String.valueOf(metaData.getDriverMajorVersion());
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tjdbc driver major version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return String.valueOf(metaData.getDriverMajorVersion());
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tjdbc driver major version=").append(dbInfo).append("\n");
 
-	dbInfo = new ExceptionWrapper() {
-	    public String wrappedCall(DatabaseMetaData metaData) throws Exception {
-		return String.valueOf(metaData.getDriverMinorVersion());
-	    }
-	}.executeWrappedCall(metaData);
-	sb.append("\tjdbc driver minor version=").append(dbInfo).append("\n");
+        dbInfo = new ExceptionWrapper() {
+            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+                return String.valueOf(metaData.getDriverMinorVersion());
+            }
+        }.executeWrappedCall(metaData);
+        sb.append("\tjdbc driver minor version=").append(dbInfo).append("\n");
 
-	return sb.toString();
+        return sb.toString();
     }
 
     /**
@@ -336,12 +336,12 @@ public class SQLHelper {
      * @throws SQLException
      */
     public static void printDatabaseInfo(DatabaseMetaData metaData, PrintStream outputStream) throws SQLException {
-	String dbInfo = getDatabaseInfo(metaData);
-	try {
-	    outputStream.println(dbInfo);
-	} finally {
-	    outputStream.flush();
-	}
+        String dbInfo = getDatabaseInfo(metaData);
+        try {
+            outputStream.println(dbInfo);
+        } finally {
+            outputStream.flush();
+        }
     }
 
     /**
@@ -354,9 +354,9 @@ public class SQLHelper {
      * @throws SQLException
      */
     public static boolean isSybaseDb(DatabaseMetaData metaData) throws SQLException {
-	String dbProductName = metaData.getDatabaseProductName();
-	boolean isSybase = (dbProductName != null && dbProductName.equals(DB_PRODUCT_SYBASE));
-	return isSybase;
+        String dbProductName = metaData.getDatabaseProductName();
+        boolean isSybase = (dbProductName != null && dbProductName.equals(DB_PRODUCT_SYBASE));
+        return isSybase;
     }
 
     /**
@@ -377,46 +377,46 @@ public class SQLHelper {
      * @since 2.4.0
      */
     public static final Column createColumn(ResultSet resultSet, IDataTypeFactory dataTypeFactory,
-	    boolean datatypeWarning) throws SQLException, DataTypeException {
-	String tableName = resultSet.getString(3);
-	String columnName = resultSet.getString(4);
-	int sqlType = resultSet.getInt(5);
-	// If Types.DISTINCT like SQL DOMAIN, then get Source Date Type of SQL-DOMAIN
-	if (sqlType == java.sql.Types.DISTINCT) {
-	    sqlType = resultSet.getInt("SOURCE_DATA_TYPE");
-	}
+            boolean datatypeWarning) throws SQLException, DataTypeException {
+        String tableName = resultSet.getString(3);
+        String columnName = resultSet.getString(4);
+        int sqlType = resultSet.getInt(5);
+        // If Types.DISTINCT like SQL DOMAIN, then get Source Date Type of SQL-DOMAIN
+        if (sqlType == java.sql.Types.DISTINCT) {
+            sqlType = resultSet.getInt("SOURCE_DATA_TYPE");
+        }
 
-	String sqlTypeName = resultSet.getString(6);
-	// int columnSize = resultSet.getInt(7);
-	int nullable = resultSet.getInt(11);
-	String remarks = resultSet.getString(12);
-	String columnDefaultValue = resultSet.getString(13);
-	// This is only available since Java 5 - so we can try it and if it does not
-	// work default it
-	String isAutoIncrement = Column.AutoIncrement.NO.getKey();
-	try {
-	    isAutoIncrement = resultSet.getString(23);
-	} catch (Exception e) {
-	    // Ignore this one here
-	    final String msg = "Could not retrieve the 'isAutoIncrement' property"
-		    + " because not yet running on Java 1.5 -" + " defaulting to NO. Table={}, Column={}";
-	    logger.debug(msg, tableName, columnName, e);
-	}
+        String sqlTypeName = resultSet.getString(6);
+        // int columnSize = resultSet.getInt(7);
+        int nullable = resultSet.getInt(11);
+        String remarks = resultSet.getString(12);
+        String columnDefaultValue = resultSet.getString(13);
+        // This is only available since Java 5 - so we can try it and if it does not
+        // work default it
+        String isAutoIncrement = Column.AutoIncrement.NO.getKey();
+        try {
+            isAutoIncrement = resultSet.getString(23);
+        } catch (Exception e) {
+            // Ignore this one here
+            final String msg = "Could not retrieve the 'isAutoIncrement' property"
+                    + " because not yet running on Java 1.5 -" + " defaulting to NO. Table={}, Column={}";
+            logger.debug(msg, tableName, columnName, e);
+        }
 
-	// Convert SQL type to DataType
-	DataType dataType = dataTypeFactory.createDataType(sqlType, sqlTypeName, tableName, columnName);
-	if (dataType != DataType.UNKNOWN) {
-	    Column column = new Column(columnName, dataType, sqlTypeName, Column.nullableValue(nullable),
-		    columnDefaultValue, remarks, Column.AutoIncrement.autoIncrementValue(isAutoIncrement));
-	    return column;
-	} else {
-	    if (datatypeWarning)
-		logger.warn(tableName + "." + columnName + " data type (" + sqlType + ", '" + sqlTypeName
-			+ "') not recognized and will be ignored. See FAQ for more information.");
+        // Convert SQL type to DataType
+        DataType dataType = dataTypeFactory.createDataType(sqlType, sqlTypeName, tableName, columnName);
+        if (dataType != DataType.UNKNOWN) {
+            Column column = new Column(columnName, dataType, sqlTypeName, Column.nullableValue(nullable),
+                    columnDefaultValue, remarks, Column.AutoIncrement.autoIncrementValue(isAutoIncrement));
+            return column;
+        } else {
+            if (datatypeWarning)
+                logger.warn(tableName + "." + columnName + " data type (" + sqlType + ", '" + sqlTypeName
+                        + "') not recognized and will be ignored. See FAQ for more information.");
 
-	    // datatype unknown - column not created
-	    return null;
-	}
+            // datatype unknown - column not created
+            return null;
+        }
     }
 
     /**
@@ -439,8 +439,8 @@ public class SQLHelper {
      *             {@link IMetadataHandler#matches(ResultSet, String, String, String, String, boolean)}
      */
     public static boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
-	    throws SQLException {
-	return matches(resultSet, null, schema, table, null, caseSensitive);
+            throws SQLException {
+        return matches(resultSet, null, schema, table, null, caseSensitive);
     }
 
     /**
@@ -467,24 +467,24 @@ public class SQLHelper {
      *             {@link IMetadataHandler#matches(ResultSet, String, String, String, String, boolean)}
      */
     public static boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
-	    boolean caseSensitive) throws SQLException {
-	String catalogName = resultSet.getString(1);
-	String schemaName = resultSet.getString(2);
-	String tableName = resultSet.getString(3);
-	String columnName = resultSet.getString(4);
+            boolean caseSensitive) throws SQLException {
+        String catalogName = resultSet.getString(1);
+        String schemaName = resultSet.getString(2);
+        String tableName = resultSet.getString(3);
+        String columnName = resultSet.getString(4);
 
-	// MYSQL provides only a catalog but no schema
-	if (schema != null && schemaName == null && catalog == null && catalogName != null) {
-	    logger.debug("Switching catalog/schema because the are mutually null");
-	    schemaName = catalogName;
-	    catalogName = null;
-	}
+        // MYSQL provides only a catalog but no schema
+        if (schema != null && schemaName == null && catalog == null && catalogName != null) {
+            logger.debug("Switching catalog/schema because the are mutually null");
+            schemaName = catalogName;
+            catalogName = null;
+        }
 
-	boolean areEqual = areEqualIgnoreNull(catalog, catalogName, caseSensitive)
-		&& areEqualIgnoreNull(schema, schemaName, caseSensitive)
-		&& areEqualIgnoreNull(table, tableName, caseSensitive)
-		&& areEqualIgnoreNull(column, columnName, caseSensitive);
-	return areEqual;
+        boolean areEqual = areEqualIgnoreNull(catalog, catalogName, caseSensitive)
+                && areEqualIgnoreNull(schema, schemaName, caseSensitive)
+                && areEqualIgnoreNull(table, tableName, caseSensitive)
+                && areEqualIgnoreNull(column, columnName, caseSensitive);
+        return areEqual;
     }
 
     /**
@@ -500,17 +500,17 @@ public class SQLHelper {
      * @since 2.4.4
      */
     public static final boolean areEqualIgnoreNull(String value1, String value2, boolean caseSensitive) {
-	if (value1 == null || value1.equals("")) {
-	    return true;
-	} else {
-	    if (caseSensitive && value1.equals(value2)) {
-		return true;
-	    } else if (!caseSensitive && value1.equalsIgnoreCase(value2)) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
+        if (value1 == null || value1.equals("")) {
+            return true;
+        } else {
+            if (caseSensitive && value1.equals(value2)) {
+                return true;
+            } else if (!caseSensitive && value1.equalsIgnoreCase(value2)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
@@ -526,13 +526,13 @@ public class SQLHelper {
      * @since 2.4.4
      */
     public static final String correctCase(final String databaseIdentifier, Connection connection) {
-	logger.trace("correctCase(tableName={}, connection={}) - start", databaseIdentifier, connection);
+        logger.trace("correctCase(tableName={}, connection={}) - start", databaseIdentifier, connection);
 
-	try {
-	    return correctCase(databaseIdentifier, connection.getMetaData());
-	} catch (SQLException e) {
-	    throw new DatabaseUnitRuntimeException("Exception while trying to access database metadata", e);
-	}
+        try {
+            return correctCase(databaseIdentifier, connection.getMetaData());
+        } catch (SQLException e) {
+            throw new DatabaseUnitRuntimeException("Exception while trying to access database metadata", e);
+        }
     }
 
     /**
@@ -547,35 +547,35 @@ public class SQLHelper {
      * @since 2.4.4
      */
     public static final String correctCase(final String databaseIdentifier, DatabaseMetaData databaseMetaData) {
-	logger.trace("correctCase(tableName={}, databaseMetaData={}) - start", databaseIdentifier, databaseMetaData);
+        logger.trace("correctCase(tableName={}, databaseMetaData={}) - start", databaseIdentifier, databaseMetaData);
 
-	if (databaseIdentifier == null) {
-	    throw new NullPointerException("The parameter 'databaseIdentifier' must not be null");
-	}
-	if (databaseMetaData == null) {
-	    throw new NullPointerException("The parameter 'databaseMetaData' must not be null");
-	}
+        if (databaseIdentifier == null) {
+            throw new NullPointerException("The parameter 'databaseIdentifier' must not be null");
+        }
+        if (databaseMetaData == null) {
+            throw new NullPointerException("The parameter 'databaseMetaData' must not be null");
+        }
 
-	try {
-	    String resultTableName = databaseIdentifier;
-	    String dbIdentifierQuoteString = databaseMetaData.getIdentifierQuoteString();
-	    if (!isEscaped(databaseIdentifier, dbIdentifierQuoteString)) {
-		if (databaseMetaData.storesLowerCaseIdentifiers()) {
-		    resultTableName = databaseIdentifier.toLowerCase(Locale.ENGLISH);
-		} else if (databaseMetaData.storesUpperCaseIdentifiers()) {
-		    resultTableName = databaseIdentifier.toUpperCase(Locale.ENGLISH);
-		} else {
-		    logger.debug("Database does not store upperCase or lowerCase identifiers. "
-			    + "Will not correct case of the table names.");
-		}
-	    } else {
-		if (logger.isDebugEnabled())
-		    logger.debug("The tableName '{}' is escaped. Will not correct case.", databaseIdentifier);
-	    }
-	    return resultTableName;
-	} catch (SQLException e) {
-	    throw new DatabaseUnitRuntimeException("Exception while trying to access database metadata", e);
-	}
+        try {
+            String resultTableName = databaseIdentifier;
+            String dbIdentifierQuoteString = databaseMetaData.getIdentifierQuoteString();
+            if (!isEscaped(databaseIdentifier, dbIdentifierQuoteString)) {
+                if (databaseMetaData.storesLowerCaseIdentifiers()) {
+                    resultTableName = databaseIdentifier.toLowerCase(Locale.ENGLISH);
+                } else if (databaseMetaData.storesUpperCaseIdentifiers()) {
+                    resultTableName = databaseIdentifier.toUpperCase(Locale.ENGLISH);
+                } else {
+                    logger.debug("Database does not store upperCase or lowerCase identifiers. "
+                            + "Will not correct case of the table names.");
+                }
+            } else {
+                if (logger.isDebugEnabled())
+                    logger.debug("The tableName '{}' is escaped. Will not correct case.", databaseIdentifier);
+            }
+            return resultTableName;
+        } catch (SQLException e) {
+            throw new DatabaseUnitRuntimeException("Exception while trying to access database metadata", e);
+        }
     }
 
     /**
@@ -590,10 +590,10 @@ public class SQLHelper {
      * @since 2.4.4
      */
     public static final void logInfoIfValueChanged(String oldValue, String newValue, String message, Class source) {
-	if (logger.isInfoEnabled()) {
-	    if (oldValue != null && !oldValue.equals(newValue))
-		logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
-	}
+        if (logger.isInfoEnabled()) {
+            if (oldValue != null && !oldValue.equals(newValue))
+                logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
+        }
     }
 
     /**
@@ -608,10 +608,10 @@ public class SQLHelper {
      * @since 2.4.8
      */
     public static final void logDebugIfValueChanged(String oldValue, String newValue, String message, Class source) {
-	if (logger.isDebugEnabled()) {
-	    if (oldValue != null && !oldValue.equals(newValue))
-		logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
-	}
+        if (logger.isDebugEnabled()) {
+            if (oldValue != null && !oldValue.equals(newValue))
+                logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
+        }
     }
 
     /**
@@ -621,16 +621,16 @@ public class SQLHelper {
      * @since 2.4.4
      */
     private static final boolean isEscaped(String tableName, String dbIdentifierQuoteString) {
-	logger.trace("isEscaped(tableName={}, dbIdentifierQuoteString={}) - start", tableName, dbIdentifierQuoteString);
+        logger.trace("isEscaped(tableName={}, dbIdentifierQuoteString={}) - start", tableName, dbIdentifierQuoteString);
 
-	if (dbIdentifierQuoteString == null) {
-	    throw new NullPointerException("The parameter 'dbIdentifierQuoteString' must not be null");
-	}
-	boolean isEscaped = tableName != null && (tableName.startsWith(dbIdentifierQuoteString));
-	if (logger.isDebugEnabled())
-	    logger.debug("isEscaped returns '{}' for tableName={} (dbIdentifierQuoteString={})",
-		    new Object[] { Boolean.valueOf(isEscaped), tableName, dbIdentifierQuoteString });
-	return isEscaped;
+        if (dbIdentifierQuoteString == null) {
+            throw new NullPointerException("The parameter 'dbIdentifierQuoteString' must not be null");
+        }
+        boolean isEscaped = tableName != null && (tableName.startsWith(dbIdentifierQuoteString));
+        if (logger.isDebugEnabled())
+            logger.debug("isEscaped returns '{}' for tableName={} (dbIdentifierQuoteString={})",
+                    new Object[] { Boolean.valueOf(isEscaped), tableName, dbIdentifierQuoteString });
+        return isEscaped;
     }
 
     /**
@@ -645,38 +645,38 @@ public class SQLHelper {
      */
     static abstract class ExceptionWrapper {
 
-	public static final String NOT_AVAILABLE_TEXT = "<not available>";
+        public static final String NOT_AVAILABLE_TEXT = "<not available>";
 
-	/**
-	 * Default constructor
-	 */
-	public ExceptionWrapper() {
-	}
+        /**
+         * Default constructor
+         */
+        public ExceptionWrapper() {
+        }
 
-	/**
-	 * Executes the call and catches all exception that might occur.
-	 * 
-	 * @param metaData
-	 * @return The result of the call
-	 */
-	public final String executeWrappedCall(DatabaseMetaData metaData) {
-	    try {
-		String result = wrappedCall(metaData);
-		return result;
-	    } catch (Exception e) {
-		logger.trace("Problem retrieving DB information via DatabaseMetaData", e);
-		return NOT_AVAILABLE_TEXT;
-	    }
-	}
+        /**
+         * Executes the call and catches all exception that might occur.
+         * 
+         * @param metaData
+         * @return The result of the call
+         */
+        public final String executeWrappedCall(DatabaseMetaData metaData) {
+            try {
+                String result = wrappedCall(metaData);
+                return result;
+            } catch (Exception e) {
+                logger.trace("Problem retrieving DB information via DatabaseMetaData", e);
+                return NOT_AVAILABLE_TEXT;
+            }
+        }
 
-	/**
-	 * Calls the method that might throw an exception to be handled
-	 * 
-	 * @param metaData
-	 * @return The result of the call as human readable string
-	 * @throws Exception Any exception that might occur during the method invocation
-	 */
-	public abstract String wrappedCall(DatabaseMetaData metaData) throws Exception;
+        /**
+         * Calls the method that might throw an exception to be handled
+         * 
+         * @param metaData
+         * @return The result of the call as human readable string
+         * @throws Exception Any exception that might occur during the method invocation
+         */
+        public abstract String wrappedCall(DatabaseMetaData metaData) throws Exception;
     }
 
 }

@@ -52,12 +52,12 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
      * @param dataSource the DataSource to pull connections from
      */
     public DataSourceDatabaseTester(DataSource dataSource) {
-	super();
+        super();
 
-	if (dataSource == null) {
-	    throw new NullPointerException("The parameter 'dataSource' must not be null");
-	}
-	this.dataSource = dataSource;
+        if (dataSource == null) {
+            throw new NullPointerException("The parameter 'dataSource' must not be null");
+        }
+        this.dataSource = dataSource;
     }
 
     /**
@@ -69,18 +69,18 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
      * @since 2.4.5
      */
     public DataSourceDatabaseTester(DataSource dataSource, String schema) {
-	super(schema);
+        super(schema);
 
-	if (dataSource == null) {
-	    throw new NullPointerException("The parameter 'dataSource' must not be null");
-	}
-	this.dataSource = dataSource;
+        if (dataSource == null) {
+            throw new NullPointerException("The parameter 'dataSource' must not be null");
+        }
+        this.dataSource = dataSource;
     }
 
     public IDatabaseConnection getConnection() throws Exception {
-	logger.debug("getConnection() - start");
+        logger.debug("getConnection() - start");
 
-	assertTrue("DataSource is not set", dataSource != null);
-	return new DatabaseConnection(dataSource.getConnection(), getSchema());
+        assertTrue("DataSource is not set", dataSource != null);
+        return new DatabaseConnection(dataSource.getConnection(), getSchema());
     }
 }

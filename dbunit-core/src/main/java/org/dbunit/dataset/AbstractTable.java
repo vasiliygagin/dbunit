@@ -36,41 +36,41 @@ public abstract class AbstractTable implements ITable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractTable.class);
 
     protected void assertValidRowIndex(int row) throws DataSetException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("assertValidRowIndex(row={}) - start", Integer.toString(row));
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("assertValidRowIndex(row={}) - start", Integer.toString(row));
+        }
 
-	assertValidRowIndex(row, getRowCount());
+        assertValidRowIndex(row, getRowCount());
     }
 
     protected void assertValidRowIndex(int row, int rowCount) throws DataSetException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("assertValidRowIndex(row={}, rowCount={}) - start", Integer.toString(row),
-		    Integer.toString(rowCount));
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("assertValidRowIndex(row={}, rowCount={}) - start", Integer.toString(row),
+                    Integer.toString(rowCount));
+        }
 
-	if (row < 0) {
-	    throw new RowOutOfBoundsException(row + " < 0");
-	}
+        if (row < 0) {
+            throw new RowOutOfBoundsException(row + " < 0");
+        }
 
-	if (row >= rowCount) {
-	    throw new RowOutOfBoundsException(row + " >= " + rowCount);
-	}
+        if (row >= rowCount) {
+            throw new RowOutOfBoundsException(row + " >= " + rowCount);
+        }
     }
 
     protected void assertValidColumn(String columnName) throws DataSetException {
-	logger.debug("assertValidColumn(columnName={}) - start", columnName);
+        logger.debug("assertValidColumn(columnName={}) - start", columnName);
 
-	ITableMetaData metaData = getTableMetaData();
-	// Try to find the column in the metadata - if it cannot be found an
-	// exception is thrown
-	Columns.getColumnValidated(columnName, metaData.getColumns(), metaData.getTableName());
+        ITableMetaData metaData = getTableMetaData();
+        // Try to find the column in the metadata - if it cannot be found an
+        // exception is thrown
+        Columns.getColumnValidated(columnName, metaData.getColumns(), metaData.getTableName());
     }
 
     protected int getColumnIndex(String columnName) throws DataSetException {
-	logger.debug("getColumnIndex(columnName={}) - start", columnName);
+        logger.debug("getColumnIndex(columnName={}) - start", columnName);
 
-	ITableMetaData metaData = getTableMetaData();
-	return metaData.getColumnIndex(columnName);
+        ITableMetaData metaData = getTableMetaData();
+        return metaData.getColumnIndex(columnName);
     }
 }

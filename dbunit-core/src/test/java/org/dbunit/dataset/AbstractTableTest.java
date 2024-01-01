@@ -39,7 +39,7 @@ public abstract class AbstractTableTest extends TestCase {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractTableTest(String s) {
-	super(s);
+        super(s);
     }
 
     /**
@@ -59,75 +59,75 @@ public abstract class AbstractTableTest extends TestCase {
      * @return The identifier converted according to database rules.
      */
     protected String convertString(String str) throws Exception {
-	return str;
+        return str;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
     public void testGetRowCount() throws Exception {
-	assertEquals("row count", ROW_COUNT, createTable().getRowCount());
+        assertEquals("row count", ROW_COUNT, createTable().getRowCount());
     }
 
     public void testTableMetaData() throws Exception {
-	Column[] columns = createTable().getTableMetaData().getColumns();
-	assertEquals("column count", COLUMN_COUNT, columns.length);
-	for (int i = 0; i < columns.length; i++) {
-	    String expected = convertString("COLUMN" + i);
-	    String actual = columns[i].getColumnName();
-	    assertEquals("column name", expected, actual);
-	}
+        Column[] columns = createTable().getTableMetaData().getColumns();
+        assertEquals("column count", COLUMN_COUNT, columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            String expected = convertString("COLUMN" + i);
+            String actual = columns[i].getColumnName();
+            assertEquals("column name", expected, actual);
+        }
     }
 
     public void testGetValue() throws Exception {
-	ITable table = createTable();
-	for (int i = 0; i < ROW_COUNT; i++) {
-	    for (int j = 0; j < COLUMN_COUNT; j++) {
-		String columnName = "COLUMN" + j;
-		String expected = "row " + i + " col " + j;
-		Object value = table.getValue(i, columnName);
-		assertEquals("value", expected, value);
-	    }
-	}
+        ITable table = createTable();
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                String columnName = "COLUMN" + j;
+                String expected = "row " + i + " col " + j;
+                Object value = table.getValue(i, columnName);
+                assertEquals("value", expected, value);
+            }
+        }
     }
 
     public void testGetValueCaseInsensitive() throws Exception {
-	ITable table = createTable();
-	for (int i = 0; i < ROW_COUNT; i++) {
-	    for (int j = 0; j < COLUMN_COUNT; j++) {
-		String columnName = "CoLUmN" + j;
-		String expected = "row " + i + " col " + j;
-		Object value = table.getValue(i, columnName);
-		assertEquals("value", expected, value);
-	    }
-	}
+        ITable table = createTable();
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
+                String columnName = "CoLUmN" + j;
+                String expected = "row " + i + " col " + j;
+                Object value = table.getValue(i, columnName);
+                assertEquals("value", expected, value);
+            }
+        }
     }
 
     public abstract void testGetMissingValue() throws Exception;
 
     public void testGetValueRowBounds() throws Exception {
-	int[] rows = new int[] { -2, -1, -ROW_COUNT, ROW_COUNT, ROW_COUNT + 1 };
-	ITable table = createTable();
-	String columnName = table.getTableMetaData().getColumns()[0].getColumnName();
+        int[] rows = new int[] { -2, -1, -ROW_COUNT, ROW_COUNT, ROW_COUNT + 1 };
+        ITable table = createTable();
+        String columnName = table.getTableMetaData().getColumns()[0].getColumnName();
 
-	for (int i = 0; i < rows.length; i++) {
-	    try {
-		table.getValue(rows[i], columnName);
-		fail("Should throw a RowOutOfBoundsException!");
-	    } catch (RowOutOfBoundsException e) {
-	    }
-	}
+        for (int i = 0; i < rows.length; i++) {
+            try {
+                table.getValue(rows[i], columnName);
+                fail("Should throw a RowOutOfBoundsException!");
+            } catch (RowOutOfBoundsException e) {
+            }
+        }
     }
 
     public void testGetValueAndNoSuchColumn() throws Exception {
-	ITable table = createTable();
-	String columnName = "Unknown";
+        ITable table = createTable();
+        String columnName = "Unknown";
 
-	try {
-	    table.getValue(0, columnName);
-	    fail("Should throw a NoSuchColumnException!");
-	} catch (NoSuchColumnException e) {
-	}
+        try {
+            table.getValue(0, columnName);
+            fail("Should throw a NoSuchColumnException!");
+        } catch (NoSuchColumnException e) {
+        }
     }
 
     /**
@@ -138,17 +138,17 @@ public abstract class AbstractTableTest extends TestCase {
      * @return flag indicating if the test should be executed or not
      */
     protected boolean runTest(String testName) {
-	return true;
+        return true;
     }
 
     protected void runTest() throws Throwable {
-	if (runTest(getName())) {
-	    super.runTest();
-	} else {
-	    if (logger.isDebugEnabled()) {
-		logger.debug("Skipping test " + getClass().getName() + "." + getName());
-	    }
-	}
+        if (runTest(getName())) {
+            super.runTest();
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Skipping test " + getClass().getName() + "." + getName());
+            }
+        }
     }
 
 }

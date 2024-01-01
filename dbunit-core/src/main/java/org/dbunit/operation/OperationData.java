@@ -40,25 +40,25 @@ public class OperationData {
      * @param columns
      */
     public OperationData(String sql, Column[] columns) {
-	_sql = sql;
-	_columns = columns;
+        _sql = sql;
+        _columns = columns;
     }
 
     public String getSql() {
-	return _sql;
+        return _sql;
     }
 
     public Column[] getColumns() {
-	return _columns;
+        return _columns;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_sql=").append(_sql);
-	sb.append(", _columns=").append(_columns == null ? "null" : Arrays.asList(_columns).toString());
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_sql=").append(_sql);
+        sb.append(", _columns=").append(_columns == null ? "null" : Arrays.asList(_columns).toString());
+        sb.append("]");
+        return sb.toString();
     }
 
 }

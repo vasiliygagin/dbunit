@@ -31,28 +31,28 @@ import org.dbunit.dataset.datatype.IDataTypeFactory;
  */
 public class Oracle10DataTypeFactoryTest extends OracleDataTypeFactoryTest {
     public Oracle10DataTypeFactoryTest(String s) {
-	super(s);
+        super(s);
     }
 
     public IDataTypeFactory createFactory() throws Exception {
-	return new Oracle10DataTypeFactory();
+        return new Oracle10DataTypeFactory();
     }
 
     public void testCreateBlobDataType() throws Exception {
-	int sqlType = Types.BLOB;
-	String sqlTypeName = "BLOB";
+        int sqlType = Types.BLOB;
+        String sqlTypeName = "BLOB";
 
-	DataType expected = Oracle10DataTypeFactory.BLOB_AS_STREAM;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = Oracle10DataTypeFactory.BLOB_AS_STREAM;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 
     public void testCreateClobDataType() throws Exception {
-	int sqlType = Types.CLOB;
-	String sqlTypeName = "CLOB";
+        int sqlType = Types.CLOB;
+        String sqlTypeName = "CLOB";
 
-	DataType expected = Oracle10DataTypeFactory.CLOB_AS_STRING;
-	DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
-	assertSame("type", expected, actual);
+        DataType expected = Oracle10DataTypeFactory.CLOB_AS_STRING;
+        DataType actual = createFactory().createDataType(sqlType, sqlTypeName);
+        assertSame("type", expected, actual);
     }
 }

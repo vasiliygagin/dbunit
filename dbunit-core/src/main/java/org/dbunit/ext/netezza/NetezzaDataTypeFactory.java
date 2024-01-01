@@ -71,51 +71,51 @@ public class NetezzaDataTypeFactory extends DefaultDataTypeFactory {
     public static final int NTEXT = 27;
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-	if (logger.isDebugEnabled())
-	    logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+        if (logger.isDebugEnabled())
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
 
-	switch (sqlType) {
-	case RECADDR:
-	    return DataType.VARCHAR;
+        switch (sqlType) {
+        case RECADDR:
+            return DataType.VARCHAR;
 
-	case INTEGER:
-	    return DataType.INTEGER;
+        case INTEGER:
+            return DataType.INTEGER;
 
-	case INTERVAL:
-	    return DataType.TIMESTAMP;
-	case TIMETZ:
-	    return DataType.TIMESTAMP;
-	case BOOLEAN:
-	    return DataType.BOOLEAN;
-	case SMALLINT:
-	    return DataType.SMALLINT;
+        case INTERVAL:
+            return DataType.TIMESTAMP;
+        case TIMETZ:
+            return DataType.TIMESTAMP;
+        case BOOLEAN:
+            return DataType.BOOLEAN;
+        case SMALLINT:
+            return DataType.SMALLINT;
 
-	case REAL:
-	    return DataType.FLOAT;
-	case BYTEINT:
-	    return DataType.INTEGER;
-	case INT8:
-	    return DataType.BIGINT;
-	case VARFIXEDCHAR:
-	    return DataType.CHAR;
-	case NUCL:
-	    return DataType.CHAR;
-	case PROT:
-	    return DataType.CHAR;
-	case DATE:
-	    return DataType.DATE;
-	case BLOB:
-	    return DataType.BLOB;
-	case NCHAR:
-	    return DataType.CHAR;
-	case NVARCHAR:
-	    return DataType.VARCHAR;
-	case NTEXT:
-	    return DataType.LONGVARCHAR;
-	case VARCHAR:
-	    return DataType.VARCHAR;
-	default:
-	    return super.createDataType(sqlType, sqlTypeName);
-	}
+        case REAL:
+            return DataType.FLOAT;
+        case BYTEINT:
+            return DataType.INTEGER;
+        case INT8:
+            return DataType.BIGINT;
+        case VARFIXEDCHAR:
+            return DataType.CHAR;
+        case NUCL:
+            return DataType.CHAR;
+        case PROT:
+            return DataType.CHAR;
+        case DATE:
+            return DataType.DATE;
+        case BLOB:
+            return DataType.BLOB;
+        case NCHAR:
+            return DataType.CHAR;
+        case NVARCHAR:
+            return DataType.VARCHAR;
+        case NTEXT:
+            return DataType.LONGVARCHAR;
+        case VARCHAR:
+            return DataType.VARCHAR;
+        default:
+            return super.createDataType(sqlType, sqlTypeName);
+        }
     }
 }

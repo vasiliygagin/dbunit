@@ -49,9 +49,9 @@ public class DefaultTableFilter extends AbstractTableFilter implements ITableFil
      * supported: '*' matches zero or more characters, '?' matches one character.
      */
     public void includeTable(String patternName) {
-	logger.debug("includeTable(patternName=" + patternName + ") - start");
+        logger.debug("includeTable(patternName=" + patternName + ") - start");
 
-	_includeFilter.includeTable(patternName);
+        _includeFilter.includeTable(patternName);
     }
 
     /**
@@ -59,20 +59,20 @@ public class DefaultTableFilter extends AbstractTableFilter implements ITableFil
      * supported: '*' matches zero or more characters, '?' matches one character.
      */
     public void excludeTable(String patternName) {
-	logger.debug("excludeTable(patternName=" + patternName + ") - start");
+        logger.debug("excludeTable(patternName=" + patternName + ") - start");
 
-	_excludeFilter.excludeTable(patternName);
+        _excludeFilter.excludeTable(patternName);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractTableFilter interface
 
     public boolean isValidName(String tableName) throws DataSetException {
-	logger.debug("isValidName(tableName=" + tableName + ") - start");
+        logger.debug("isValidName(tableName=" + tableName + ") - start");
 
-	if (_includeFilter.isEmpty() || _includeFilter.accept(tableName)) {
-	    return _excludeFilter.accept(tableName);
-	}
-	return false;
+        if (_includeFilter.isEmpty() || _includeFilter.accept(tableName)) {
+            return _excludeFilter.accept(tableName);
+        }
+        return false;
     }
 }

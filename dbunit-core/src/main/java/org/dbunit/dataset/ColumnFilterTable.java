@@ -54,40 +54,40 @@ public class ColumnFilterTable implements ITable {
      * @throws DataSetException
      */
     public ColumnFilterTable(ITable table, IColumnFilter columnFilter) throws DataSetException {
-	if (columnFilter == null) {
-	    throw new NullPointerException("The parameter 'columnFilter' must not be null");
-	}
-	if (table == null) {
-	    throw new NullPointerException("The parameter 'table' must not be null");
-	}
+        if (columnFilter == null) {
+            throw new NullPointerException("The parameter 'columnFilter' must not be null");
+        }
+        if (table == null) {
+            throw new NullPointerException("The parameter 'table' must not be null");
+        }
 
-	this.tableMetaData = new FilteredTableMetaData(table.getTableMetaData(), columnFilter);
-	this.originalTable = table;
+        this.tableMetaData = new FilteredTableMetaData(table.getTableMetaData(), columnFilter);
+        this.originalTable = table;
     }
 
     public int getRowCount() {
-	logger.debug("getRowCount() - start");
-	return this.originalTable.getRowCount();
+        logger.debug("getRowCount() - start");
+        return this.originalTable.getRowCount();
     }
 
     public ITableMetaData getTableMetaData() {
-	logger.debug("getTableMetaData() - start");
-	return this.tableMetaData;
+        logger.debug("getTableMetaData() - start");
+        return this.tableMetaData;
     }
 
     public Object getValue(int row, String column) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-	return this.originalTable.getValue(row, column);
+        return this.originalTable.getValue(row, column);
     }
 
     public ITableMetaData getOriginalMetaData() {
-	logger.debug("getOriginalMetaData() - start");
-	return this.originalTable.getTableMetaData();
+        logger.debug("getOriginalMetaData() - start");
+        return this.originalTable.getTableMetaData();
     }
 
     public String toString() {
-	return this.originalTable.toString();
+        return this.originalTable.toString();
     }
 }

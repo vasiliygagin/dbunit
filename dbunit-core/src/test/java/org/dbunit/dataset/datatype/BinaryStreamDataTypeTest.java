@@ -36,16 +36,16 @@ public class BinaryStreamDataTypeTest extends TestCase {
     private BinaryStreamDataType type = new BinaryStreamDataType("BLOB", Types.BLOB);
 
     public void test2Chars() throws Exception {
-	String value = "tu";
-	byte[] result = (byte[]) type.typeCast(value);
-	// Cannot be converted since it is not valid Base64 because it only has 2 chars
-	ArrayAssert.assertEquals(new byte[] {}, result);
+        String value = "tu";
+        byte[] result = (byte[]) type.typeCast(value);
+        // Cannot be converted since it is not valid Base64 because it only has 2 chars
+        ArrayAssert.assertEquals(new byte[] {}, result);
     }
 
     public void test4Chars() throws Exception {
-	String value = "tutu";
-	byte[] result = (byte[]) type.typeCast(value);
-	ArrayAssert.assertEquals(new byte[] { -74, -21, 110 }, result);
+        String value = "tutu";
+        byte[] result = (byte[]) type.typeCast(value);
+        ArrayAssert.assertEquals(new byte[] { -74, -21, 110 }, result);
     }
 
 }

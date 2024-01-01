@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 public abstract class AbstractDataTypeTest extends TestCase {
 
     public AbstractDataTypeTest(String name) {
-	super(name);
+        super(name);
     }
 
     public abstract void testToString() throws Exception;

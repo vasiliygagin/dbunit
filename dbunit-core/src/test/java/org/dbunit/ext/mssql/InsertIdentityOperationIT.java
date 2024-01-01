@@ -48,67 +48,67 @@ import org.dbunit.testutil.TestUtils;
  */
 public class InsertIdentityOperationIT extends AbstractDatabaseIT {
     public InsertIdentityOperationIT(String s) {
-	super(s);
+        super(s);
     }
 
     protected boolean runTest(String testName) {
-	return environmentHasFeature(TestFeature.INSERT_IDENTITY);
+        return environmentHasFeature(TestFeature.INSERT_IDENTITY);
     }
 
     public void testExecuteXML() throws Exception {
-	Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTest.xml");
-	IDataSet dataSet = new XmlDataSet(in);
+        Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTest.xml");
+        IDataSet dataSet = new XmlDataSet(in);
 
-	testExecute(dataSet);
+        testExecute(dataSet);
     }
 
     public void testExecuteFlatXML() throws Exception {
-	Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
-	IDataSet dataSet = new FlatXmlDataSetBuilder().build(in);
+        Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(in);
 
-	testExecute(dataSet);
+        testExecute(dataSet);
     }
 
     public void testExecuteLowerCase() throws Exception {
-	Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
-	IDataSet dataSet = new LowerCaseDataSet(new FlatXmlDataSetBuilder().build(in));
+        Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
+        IDataSet dataSet = new LowerCaseDataSet(new FlatXmlDataSetBuilder().build(in));
 
-	testExecute(dataSet);
+        testExecute(dataSet);
     }
 
     public void testExecuteForwardOnly() throws Exception {
-	Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
-	IDataSet dataSet = new ForwardOnlyDataSet(new FlatXmlDataSetBuilder().build(in));
+        Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
+        IDataSet dataSet = new ForwardOnlyDataSet(new FlatXmlDataSetBuilder().build(in));
 
-	testExecute(dataSet);
+        testExecute(dataSet);
     }
 
     private void testExecute(IDataSet dataSet) throws Exception {
-	ITable[] tablesBefore = DataSetUtils.getTables(_connection.createDataSet());
+        ITable[] tablesBefore = DataSetUtils.getTables(_connection.createDataSet());
 //        InsertIdentityOperation.CLEAN_INSERT.execute(_connection, dataSet);
-	InsertIdentityOperation.INSERT.execute(_connection, dataSet);
-	ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
+        InsertIdentityOperation.INSERT.execute(_connection, dataSet);
+        ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
 
-	assertEquals("table count", tablesBefore.length, tablesAfter.length);
+        assertEquals("table count", tablesBefore.length, tablesAfter.length);
 
-	// Verify tables after
-	for (int i = 0; i < tablesAfter.length; i++) {
-	    ITable tableBefore = tablesBefore[i];
-	    ITable tableAfter = tablesAfter[i];
+        // Verify tables after
+        for (int i = 0; i < tablesAfter.length; i++) {
+            ITable tableBefore = tablesBefore[i];
+            ITable tableAfter = tablesAfter[i];
 
-	    String name = tableAfter.getTableMetaData().getTableName();
-	    if (name.startsWith("IDENTITY")) {
-		assertEquals("row count before: " + name, 0, tableBefore.getRowCount());
-		if (dataSet instanceof ForwardOnlyDataSet) {
-		    assertTrue(name, tableAfter.getRowCount() > 0);
-		} else {
-		    Assertion.assertEquals(dataSet.getTable(name), tableAfter);
-		}
-	    } else {
-		// Other tables should have not been affected
-		Assertion.assertEquals(tableBefore, tableAfter);
-	    }
-	}
+            String name = tableAfter.getTableMetaData().getTableName();
+            if (name.startsWith("IDENTITY")) {
+                assertEquals("row count before: " + name, 0, tableBefore.getRowCount());
+                if (dataSet instanceof ForwardOnlyDataSet) {
+                    assertTrue(name, tableAfter.getRowCount() > 0);
+                } else {
+                    Assertion.assertEquals(dataSet.getTable(name), tableAfter);
+                }
+            } else {
+                // Other tables should have not been affected
+                Assertion.assertEquals(tableBefore, tableAfter);
+            }
+        }
     }
 
     /*
@@ -117,56 +117,56 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
      * IDENTITY_INSERT is needed. Thanks to Gaetano Di Gregorio for finding the bug.
      */
     public void testIdentityInsertNoPK() throws Exception {
-	Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestNoPK.xml");
-	IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
+        Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestNoPK.xml");
+        IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
-	ITable[] tablesBefore = DataSetUtils.getTables(_connection.createDataSet());
-	InsertIdentityOperation.CLEAN_INSERT.execute(_connection, xmlDataSet);
-	ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
+        ITable[] tablesBefore = DataSetUtils.getTables(_connection.createDataSet());
+        InsertIdentityOperation.CLEAN_INSERT.execute(_connection, xmlDataSet);
+        ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
 
-	// Verify tables after
-	for (int i = 0; i < tablesAfter.length; i++) {
-	    ITable tableBefore = tablesBefore[i];
-	    ITable tableAfter = tablesAfter[i];
+        // Verify tables after
+        for (int i = 0; i < tablesAfter.length; i++) {
+            ITable tableBefore = tablesBefore[i];
+            ITable tableAfter = tablesAfter[i];
 
-	    String name = tableAfter.getTableMetaData().getTableName();
-	    if (name.equals("TEST_IDENTITY_NOT_PK")) {
-		assertEquals("row count before: " + name, 0, tableBefore.getRowCount());
-		Assertion.assertEquals(xmlDataSet.getTable(name), tableAfter);
-	    } else {
-		// Other tables should have not been affected
-		Assertion.assertEquals(tableBefore, tableAfter);
-	    }
-	}
+            String name = tableAfter.getTableMetaData().getTableName();
+            if (name.equals("TEST_IDENTITY_NOT_PK")) {
+                assertEquals("row count before: " + name, 0, tableBefore.getRowCount());
+                Assertion.assertEquals(xmlDataSet.getTable(name), tableAfter);
+            } else {
+                // Other tables should have not been affected
+                Assertion.assertEquals(tableBefore, tableAfter);
+            }
+        }
     }
 
     public void testSetCustomIdentityColumnFilter() throws Exception {
-	_connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, IDENTITY_FILTER_INVALID);
-	try {
-	    IDataSet dataSet = _connection.createDataSet();
-	    ITable table = dataSet.getTable("IDENTITY_TABLE");
+        _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, IDENTITY_FILTER_INVALID);
+        try {
+            IDataSet dataSet = _connection.createDataSet();
+            ITable table = dataSet.getTable("IDENTITY_TABLE");
 
-	    InsertIdentityOperation op = new InsertIdentityOperation(DatabaseOperation.INSERT);
-	    boolean hasIdentityColumn = op.hasIdentityColumn(table.getTableMetaData(), _connection);
-	    assertFalse("Identity column recognized", hasIdentityColumn);
+            InsertIdentityOperation op = new InsertIdentityOperation(DatabaseOperation.INSERT);
+            boolean hasIdentityColumn = op.hasIdentityColumn(table.getTableMetaData(), _connection);
+            assertFalse("Identity column recognized", hasIdentityColumn);
 
-	    // Verify that identity column is still correctly recognized with default
-	    // identityColumnFilter
-	    _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
-	    op = new InsertIdentityOperation(DatabaseOperation.INSERT);
-	    hasIdentityColumn = op.hasIdentityColumn(table.getTableMetaData(), _connection);
-	    assertTrue("Identity column not recognized", hasIdentityColumn);
-	} finally {
-	    // Reset property
-	    _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
-	}
+            // Verify that identity column is still correctly recognized with default
+            // identityColumnFilter
+            _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
+            op = new InsertIdentityOperation(DatabaseOperation.INSERT);
+            hasIdentityColumn = op.hasIdentityColumn(table.getTableMetaData(), _connection);
+            assertTrue("Identity column not recognized", hasIdentityColumn);
+        } finally {
+            // Reset property
+            _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
+        }
     }
 
     private static final IColumnFilter IDENTITY_FILTER_INVALID = new IColumnFilter() {
 
-	public boolean accept(String tableName, Column column) {
-	    return column.getSqlTypeName().endsWith("invalid");
-	}
+        public boolean accept(String tableName, Column column) {
+            return column.getSqlTypeName().endsWith("invalid");
+        }
     };
 
 }

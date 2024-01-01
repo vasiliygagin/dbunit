@@ -37,6 +37,6 @@ public class DbAssertionFailedError extends Error {
     }
 
     public DbAssertionFailedError(String message) {
-	super(message);
+        super(message);
     }
 }

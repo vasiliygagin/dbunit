@@ -47,69 +47,69 @@ public class ForwardOnlyResultSetTable extends AbstractResultSetTable {
     private boolean _eot = false; // End of table flag
 
     public ForwardOnlyResultSetTable(ITableMetaData metaData, ResultSet resultSet)
-	    throws SQLException, DataSetException {
-	super(metaData, resultSet);
+            throws SQLException, DataSetException {
+        super(metaData, resultSet);
     }
 
     public ForwardOnlyResultSetTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws DataSetException, SQLException {
-	super(metaData, connection);
+            throws DataSetException, SQLException {
+        super(metaData, connection);
     }
 
     public ForwardOnlyResultSetTable(String tableName, String selectStatement, IDatabaseConnection connection)
-	    throws DataSetException, SQLException {
-	super(tableName, selectStatement, connection);
+            throws DataSetException, SQLException {
+        super(tableName, selectStatement, connection);
     }
 
     // //////////////////////////////////////////////////////////////////////////
     // ITable interface
 
     public int getRowCount() {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public Object getValue(int row, String columnName) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), columnName);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), columnName);
 
-	try {
-	    // Move cursor forward up to specified row
-	    while (!_eot && row > _lastRow) {
-		_eot = !_resultSet.next();
-		_lastRow++;
-	    }
+        try {
+            // Move cursor forward up to specified row
+            while (!_eot && row > _lastRow) {
+                _eot = !_resultSet.next();
+                _lastRow++;
+            }
 
-	    if (row < _lastRow) {
-		throw new UnsupportedOperationException("Cannot go backward!");
-	    }
+            if (row < _lastRow) {
+                throw new UnsupportedOperationException("Cannot go backward!");
+            }
 
-	    if (_eot || row > _lastRow) {
-		// Proactively close the resultset
-		close();
-		throw new RowOutOfBoundsException(row + " > " + _lastRow);
-	    }
+            if (_eot || row > _lastRow) {
+                // Proactively close the resultset
+                close();
+                throw new RowOutOfBoundsException(row + " > " + _lastRow);
+            }
 
-	    int columnIndex = getColumnIndex(columnName);
-	    Column column = _metaData.getColumns()[columnIndex];
-	    return column.getDataType().getSqlValue(columnIndex + 1, _resultSet);
-	} catch (SQLException e) {
-	    throw new DataSetException(e);
-	}
+            int columnIndex = getColumnIndex(columnName);
+            Column column = _metaData.getColumns()[columnIndex];
+            return column.getDataType().getSqlValue(columnIndex + 1, _resultSet);
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public String toString() {
-	StringBuilder sb = new StringBuilder(2000);
+        StringBuilder sb = new StringBuilder(2000);
 
-	sb.append(super.toString());
-	sb.append(", ");
-	sb.append(getClass().getName()).append("[");
-	sb.append("_eot=[").append(_eot).append("], ");
-	sb.append("_lastRow=[").append(_lastRow).append("]");
-	sb.append("]");
+        sb.append(super.toString());
+        sb.append(", ");
+        sb.append(getClass().getName()).append("[");
+        sb.append("_eot=[").append(_eot).append("], ");
+        sb.append("_lastRow=[").append(_lastRow).append("]");
+        sb.append("]");
 
-	return sb.toString();
+        return sb.toString();
     }
 }

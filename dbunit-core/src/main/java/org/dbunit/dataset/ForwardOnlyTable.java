@@ -39,29 +39,29 @@ public class ForwardOnlyTable implements ITable {
     private int _lastRow = -1;
 
     public ForwardOnlyTable(ITable table) {
-	_table = table;
+        _table = table;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
     public ITableMetaData getTableMetaData() {
-	return _table.getTableMetaData();
+        return _table.getTableMetaData();
     }
 
     public int getRowCount() {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public Object getValue(int row, String column) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-	if (row < _lastRow) {
-	    throw new UnsupportedOperationException("Cannot go backward!");
-	}
+        if (row < _lastRow) {
+            throw new UnsupportedOperationException("Cannot go backward!");
+        }
 
-	_lastRow = row;
-	return _table.getValue(row, column);
+        _lastRow = row;
+        return _table.getValue(row, column);
     }
 }

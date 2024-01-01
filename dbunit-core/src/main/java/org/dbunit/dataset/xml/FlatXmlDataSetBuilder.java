@@ -94,7 +94,7 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     public FlatXmlDataSet build(InputSource inputSource) throws DataSetException {
-	return buildInternal(inputSource);
+        return buildInternal(inputSource);
     }
 
     /**
@@ -106,9 +106,9 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     public FlatXmlDataSet build(File xmlInputFile) throws MalformedURLException, DataSetException {
-	URL xmlInputUrl = xmlInputFile.toURL();
-	InputSource inputSource = createInputSourceFromUrl(xmlInputUrl);
-	return buildInternal(inputSource);
+        URL xmlInputUrl = xmlInputFile.toURL();
+        InputSource inputSource = createInputSourceFromUrl(xmlInputUrl);
+        return buildInternal(inputSource);
     }
 
     /**
@@ -120,8 +120,8 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     public FlatXmlDataSet build(URL xmlInputUrl) throws DataSetException {
-	InputSource inputSource = createInputSourceFromUrl(xmlInputUrl);
-	return buildInternal(inputSource);
+        InputSource inputSource = createInputSourceFromUrl(xmlInputUrl);
+        return buildInternal(inputSource);
     }
 
     /**
@@ -133,8 +133,8 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     public FlatXmlDataSet build(Reader xmlReader) throws DataSetException {
-	InputSource inputSource = new InputSource(xmlReader);
-	return buildInternal(inputSource);
+        InputSource inputSource = new InputSource(xmlReader);
+        return buildInternal(inputSource);
     }
 
     /**
@@ -146,8 +146,8 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     public FlatXmlDataSet build(InputStream xmlInputStream) throws DataSetException {
-	InputSource inputSource = new InputSource(xmlInputStream);
-	return buildInternal(inputSource);
+        InputSource inputSource = new InputSource(xmlInputStream);
+        return buildInternal(inputSource);
     }
 
     /**
@@ -157,8 +157,8 @@ public final class FlatXmlDataSetBuilder {
      * @return
      */
     private InputSource createInputSourceFromUrl(URL xmlInputUrl) {
-	String stringUrl = xmlInputUrl.toString();
-	return new InputSource(stringUrl);
+        String stringUrl = xmlInputUrl.toString();
+        return new InputSource(stringUrl);
     }
 
     /**
@@ -169,8 +169,8 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setMetaDataSet(IDataSet metaDataSet) {
-	this.metaDataSet = metaDataSet;
-	return this;
+        this.metaDataSet = metaDataSet;
+        return this;
     }
 
     /**
@@ -183,8 +183,8 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setMetaDataSetFromDtd(Reader dtdReader) throws DataSetException, IOException {
-	this.metaDataSet = new FlatDtdDataSet(dtdReader);
-	return this;
+        this.metaDataSet = new FlatDtdDataSet(dtdReader);
+        return this;
     }
 
     /**
@@ -197,12 +197,12 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setMetaDataSetFromDtd(InputStream dtdStream) throws DataSetException, IOException {
-	this.metaDataSet = new FlatDtdDataSet(dtdStream);
-	return this;
+        this.metaDataSet = new FlatDtdDataSet(dtdStream);
+        return this;
     }
 
     public boolean isDtdMetadata() {
-	return dtdMetadata;
+        return dtdMetadata;
     }
 
     /**
@@ -212,12 +212,12 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setDtdMetadata(boolean dtdMetadata) {
-	this.dtdMetadata = dtdMetadata;
-	return this;
+        this.dtdMetadata = dtdMetadata;
+        return this;
     }
 
     public boolean isColumnSensing() {
-	return columnSensing;
+        return columnSensing;
     }
 
     /**
@@ -229,12 +229,12 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setColumnSensing(boolean columnSensing) {
-	this.columnSensing = columnSensing;
-	return this;
+        this.columnSensing = columnSensing;
+        return this;
     }
 
     public boolean isCaseSensitiveTableNames() {
-	return caseSensitiveTableNames;
+        return caseSensitiveTableNames;
     }
 
     /**
@@ -244,8 +244,8 @@ public final class FlatXmlDataSetBuilder {
      * @return this
      */
     public FlatXmlDataSetBuilder setCaseSensitiveTableNames(boolean caseSensitiveTableNames) {
-	this.caseSensitiveTableNames = caseSensitiveTableNames;
-	return this;
+        this.caseSensitiveTableNames = caseSensitiveTableNames;
+        return this;
     }
 
     /**
@@ -258,17 +258,17 @@ public final class FlatXmlDataSetBuilder {
      * @throws DataSetException
      */
     private FlatXmlDataSet buildInternal(InputSource inputSource) throws DataSetException {
-	logger.trace("build(inputSource={}) - start", inputSource);
+        logger.trace("build(inputSource={}) - start", inputSource);
 
-	// Validate required parameters
-	if (inputSource == null) {
-	    throw new NullPointerException("The parameter 'inputSource' must not be null");
-	}
+        // Validate required parameters
+        if (inputSource == null) {
+            throw new NullPointerException("The parameter 'inputSource' must not be null");
+        }
 
-	// Create the flat XML IDataSet
-	logger.debug("Creating FlatXmlDataSet with builder parameters: {}", this);
-	FlatXmlProducer producer = createProducer(inputSource);
-	return new FlatXmlDataSet(producer);
+        // Create the flat XML IDataSet
+        logger.debug("Creating FlatXmlDataSet with builder parameters: {}", this);
+        FlatXmlProducer producer = createProducer(inputSource);
+        return new FlatXmlDataSet(producer);
     }
 
     /**
@@ -276,28 +276,28 @@ public final class FlatXmlDataSetBuilder {
      * @return The producer which is used to create the {@link FlatXmlDataSet}
      */
     protected FlatXmlProducer createProducer(InputSource inputSource) {
-	logger.trace("createProducer(inputSource={}) - start", inputSource);
+        logger.trace("createProducer(inputSource={}) - start", inputSource);
 
-	FlatXmlProducer producer = null;
-	if (this.metaDataSet != null) {
-	    logger.debug("Creating FlatXmlProducer using the following metaDataSet: {}", this.metaDataSet);
-	    producer = new FlatXmlProducer(inputSource, this.metaDataSet);
-	} else {
-	    logger.debug("Creating FlatXmlProducer using the properties of this builder: {}", this);
-	    producer = new FlatXmlProducer(inputSource, this.dtdMetadata, this.columnSensing,
-		    this.caseSensitiveTableNames);
-	}
-	return producer;
+        FlatXmlProducer producer = null;
+        if (this.metaDataSet != null) {
+            logger.debug("Creating FlatXmlProducer using the following metaDataSet: {}", this.metaDataSet);
+            producer = new FlatXmlProducer(inputSource, this.metaDataSet);
+        } else {
+            logger.debug("Creating FlatXmlProducer using the properties of this builder: {}", this);
+            producer = new FlatXmlProducer(inputSource, this.dtdMetadata, this.columnSensing,
+                    this.caseSensitiveTableNames);
+        }
+        return producer;
     }
 
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("dtdMetadata=").append(dtdMetadata);
-	sb.append(", columnSensing=").append(columnSensing);
-	sb.append(", caseSensitiveTableNames=").append(caseSensitiveTableNames);
-	sb.append(", metaDataSet=").append(metaDataSet);
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("dtdMetadata=").append(dtdMetadata);
+        sb.append(", columnSensing=").append(columnSensing);
+        sb.append(", caseSensitiveTableNames=").append(caseSensitiveTableNames);
+        sb.append(", metaDataSet=").append(metaDataSet);
+        sb.append("]");
+        return sb.toString();
     }
 }

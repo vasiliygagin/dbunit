@@ -63,128 +63,128 @@ class XlsTable extends AbstractTable {
     private final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 
     public XlsTable(String sheetName, Sheet sheet) throws DataSetException {
-	int rowCount = sheet.getLastRowNum();
-	if (rowCount >= 0 && sheet.getRow(0) != null) {
-	    _metaData = createMetaData(sheetName, sheet.getRow(0));
-	} else {
-	    _metaData = new DefaultTableMetaData(sheetName, new Column[0]);
-	}
+        int rowCount = sheet.getLastRowNum();
+        if (rowCount >= 0 && sheet.getRow(0) != null) {
+            _metaData = createMetaData(sheetName, sheet.getRow(0));
+        } else {
+            _metaData = new DefaultTableMetaData(sheetName, new Column[0]);
+        }
 
-	_sheet = sheet;
+        _sheet = sheet;
 
-	// Needed for later "BigDecimal"/"Number" conversion
-	symbols.setDecimalSeparator('.');
+        // Needed for later "BigDecimal"/"Number" conversion
+        symbols.setDecimalSeparator('.');
     }
 
     static ITableMetaData createMetaData(String tableName, Row sampleRow) {
-	logger.debug("createMetaData(tableName={}, sampleRow={}) - start", tableName, sampleRow);
+        logger.debug("createMetaData(tableName={}, sampleRow={}) - start", tableName, sampleRow);
 
-	List columnList = new ArrayList();
-	for (int i = 0;; i++) {
-	    Cell cell = sampleRow.getCell(i);
-	    if (cell == null) {
-		break;
-	    }
+        List columnList = new ArrayList();
+        for (int i = 0;; i++) {
+            Cell cell = sampleRow.getCell(i);
+            if (cell == null) {
+                break;
+            }
 
-	    String columnName = cell.getRichStringCellValue().getString();
-	    if (columnName != null) {
-		columnName = columnName.trim();
-	    }
+            String columnName = cell.getRichStringCellValue().getString();
+            if (columnName != null) {
+                columnName = columnName.trim();
+            }
 
-	    // Bugfix for issue ID 2818981 - if a cell has a formatting but no name also
-	    // ignore it
-	    if (columnName.length() <= 0) {
-		logger.debug(
-			"The column name of column # {} is empty - will skip here assuming the last column was reached",
-			String.valueOf(i));
-		break;
-	    }
+            // Bugfix for issue ID 2818981 - if a cell has a formatting but no name also
+            // ignore it
+            if (columnName.length() <= 0) {
+                logger.debug(
+                        "The column name of column # {} is empty - will skip here assuming the last column was reached",
+                        String.valueOf(i));
+                break;
+            }
 
-	    Column column = new Column(columnName, DataType.UNKNOWN);
-	    columnList.add(column);
-	}
-	Column[] columns = (Column[]) columnList.toArray(new Column[0]);
-	return new DefaultTableMetaData(tableName, columns);
+            Column column = new Column(columnName, DataType.UNKNOWN);
+            columnList.add(column);
+        }
+        Column[] columns = (Column[]) columnList.toArray(new Column[0]);
+        return new DefaultTableMetaData(tableName, columns);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
     public int getRowCount() {
-	logger.debug("getRowCount() - start");
+        logger.debug("getRowCount() - start");
 
-	return _sheet.getLastRowNum();
+        return _sheet.getLastRowNum();
     }
 
     public ITableMetaData getTableMetaData() {
-	logger.debug("getTableMetaData() - start");
+        logger.debug("getTableMetaData() - start");
 
-	return _metaData;
+        return _metaData;
     }
 
     public Object getValue(int row, String column) throws DataSetException {
-	if (logger.isDebugEnabled())
-	    logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
+        if (logger.isDebugEnabled())
+            logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
 
-	assertValidRowIndex(row);
+        assertValidRowIndex(row);
 
-	int columnIndex = getColumnIndex(column);
-	Cell cell = _sheet.getRow(row + 1).getCell(columnIndex);
-	if (cell == null) {
-	    return null;
-	}
+        int columnIndex = getColumnIndex(column);
+        Cell cell = _sheet.getRow(row + 1).getCell(columnIndex);
+        if (cell == null) {
+            return null;
+        }
 
-	CellType type = cell.getCellType();
-	switch (type) {
-	case NUMERIC:
-	    CellStyle style = cell.getCellStyle();
-	    if (DateUtil.isCellDateFormatted(cell)) {
-		return getDateValue(cell);
-	    } else if (XlsDataSetWriter.DATE_FORMAT_AS_NUMBER_DBUNIT.equals(style.getDataFormatString())) {
-		// The special dbunit date format
-		return getDateValueFromJavaNumber(cell);
-	    } else {
-		return getNumericValue(cell);
-	    }
+        CellType type = cell.getCellType();
+        switch (type) {
+        case NUMERIC:
+            CellStyle style = cell.getCellStyle();
+            if (DateUtil.isCellDateFormatted(cell)) {
+                return getDateValue(cell);
+            } else if (XlsDataSetWriter.DATE_FORMAT_AS_NUMBER_DBUNIT.equals(style.getDataFormatString())) {
+                // The special dbunit date format
+                return getDateValueFromJavaNumber(cell);
+            } else {
+                return getNumericValue(cell);
+            }
 
-	case STRING:
-	    return cell.getRichStringCellValue().getString();
+        case STRING:
+            return cell.getRichStringCellValue().getString();
 
-	case FORMULA:
-	    throw new DataTypeException("Formula not supported at row=" + row + ", column=" + column);
+        case FORMULA:
+            throw new DataTypeException("Formula not supported at row=" + row + ", column=" + column);
 
-	case BLANK:
-	    return null;
+        case BLANK:
+            return null;
 
-	case BOOLEAN:
-	    return cell.getBooleanCellValue() ? Boolean.TRUE : Boolean.FALSE;
+        case BOOLEAN:
+            return cell.getBooleanCellValue() ? Boolean.TRUE : Boolean.FALSE;
 
-	case ERROR:
-	    throw new DataTypeException("Error at row=" + row + ", column=" + column);
+        case ERROR:
+            throw new DataTypeException("Error at row=" + row + ", column=" + column);
 
-	default:
-	    throw new DataTypeException("Unsupported type at row=" + row + ", column=" + column);
-	}
+        default:
+            throw new DataTypeException("Unsupported type at row=" + row + ", column=" + column);
+        }
     }
 
     protected Object getDateValueFromJavaNumber(Cell cell) {
-	logger.debug("getDateValueFromJavaNumber(cell={}) - start", cell);
+        logger.debug("getDateValueFromJavaNumber(cell={}) - start", cell);
 
-	double numericValue = cell.getNumericCellValue();
-	BigDecimal numericValueBd = new BigDecimal(String.valueOf(numericValue));
-	numericValueBd = stripTrailingZeros(numericValueBd);
-	return new Long(numericValueBd.longValue());
+        double numericValue = cell.getNumericCellValue();
+        BigDecimal numericValueBd = new BigDecimal(String.valueOf(numericValue));
+        numericValueBd = stripTrailingZeros(numericValueBd);
+        return new Long(numericValueBd.longValue());
 //        return new Long(numericValueBd.unscaledValue().longValue());
     }
 
     protected Object getDateValue(Cell cell) {
-	logger.debug("getDateValue(cell={}) - start", cell);
+        logger.debug("getDateValue(cell={}) - start", cell);
 
-	double numericValue = cell.getNumericCellValue();
-	Date date = DateUtil.getJavaDate(numericValue);
-	return new Long(date.getTime());
+        double numericValue = cell.getNumericCellValue();
+        Date date = DateUtil.getJavaDate(numericValue);
+        return new Long(date.getTime());
 
-	// TODO use a calendar for XLS Date objects when it is supported better by POI
+        // TODO use a calendar for XLS Date objects when it is supported better by POI
 //        HSSFCellStyle style = cell.getCellStyle();
 //        HSSFDataFormatter formatter = new HSSFDataFormatter();
 //        Format f = formatter.createFormat(cell);
@@ -201,61 +201,61 @@ class XlsTable extends AbstractTable {
      * @return The value without trailing zeros
      */
     private BigDecimal stripTrailingZeros(BigDecimal value) {
-	if (value.scale() <= 0) {
-	    return value;
-	}
+        if (value.scale() <= 0) {
+            return value;
+        }
 
-	String valueAsString = String.valueOf(value);
-	int idx = valueAsString.indexOf(".");
-	if (idx == -1) {
-	    return value;
-	}
+        String valueAsString = String.valueOf(value);
+        int idx = valueAsString.indexOf(".");
+        if (idx == -1) {
+            return value;
+        }
 
-	for (int i = valueAsString.length() - 1; i > idx; i--) {
-	    if (valueAsString.charAt(i) == '0') {
-		valueAsString = valueAsString.substring(0, i);
-	    } else if (valueAsString.charAt(i) == '.') {
-		valueAsString = valueAsString.substring(0, i);
-		// Stop when decimal point is reached
-		break;
-	    } else {
-		break;
-	    }
-	}
-	BigDecimal result = new BigDecimal(valueAsString);
-	return result;
+        for (int i = valueAsString.length() - 1; i > idx; i--) {
+            if (valueAsString.charAt(i) == '0') {
+                valueAsString = valueAsString.substring(0, i);
+            } else if (valueAsString.charAt(i) == '.') {
+                valueAsString = valueAsString.substring(0, i);
+                // Stop when decimal point is reached
+                break;
+            } else {
+                break;
+            }
+        }
+        BigDecimal result = new BigDecimal(valueAsString);
+        return result;
     }
 
     protected BigDecimal getNumericValue(Cell cell) {
-	logger.debug("getNumericValue(cell={}) - start", cell);
+        logger.debug("getNumericValue(cell={}) - start", cell);
 
-	String formatString = cell.getCellStyle().getDataFormatString();
-	String resultString = null;
-	double cellValue = cell.getNumericCellValue();
+        String formatString = cell.getCellStyle().getDataFormatString();
+        String resultString = null;
+        double cellValue = cell.getNumericCellValue();
 
-	if ((formatString != null)) {
-	    if (!formatString.equals("General") && !formatString.equals("@")) {
-		logger.debug("formatString={}", formatString);
-		DecimalFormat nf = new DecimalFormat(formatString, symbols);
-		resultString = nf.format(cellValue);
-	    }
-	}
+        if ((formatString != null)) {
+            if (!formatString.equals("General") && !formatString.equals("@")) {
+                logger.debug("formatString={}", formatString);
+                DecimalFormat nf = new DecimalFormat(formatString, symbols);
+                resultString = nf.format(cellValue);
+            }
+        }
 
-	BigDecimal result;
-	if (resultString != null) {
-	    try {
-		result = new BigDecimal(resultString);
-	    } catch (NumberFormatException e) {
-		logger.debug("Exception occurred while trying create a BigDecimal. value={}", resultString);
-		// Probably was not a BigDecimal format retrieved from the excel. Some
-		// date formats are not yet recognized by HSSF as DateFormats so that
-		// we could get here.
-		result = toBigDecimal(cellValue);
-	    }
-	} else {
-	    result = toBigDecimal(cellValue);
-	}
-	return result;
+        BigDecimal result;
+        if (resultString != null) {
+            try {
+                result = new BigDecimal(resultString);
+            } catch (NumberFormatException e) {
+                logger.debug("Exception occurred while trying create a BigDecimal. value={}", resultString);
+                // Probably was not a BigDecimal format retrieved from the excel. Some
+                // date formats are not yet recognized by HSSF as DateFormats so that
+                // we could get here.
+                result = toBigDecimal(cellValue);
+            }
+        } else {
+            result = toBigDecimal(cellValue);
+        }
+        return result;
     }
 
     /**
@@ -264,25 +264,25 @@ class XlsTable extends AbstractTable {
      * @since 2.4.6
      */
     private BigDecimal toBigDecimal(double cellValue) {
-	String resultString = String.valueOf(cellValue);
-	// To ensure that intergral numbers do not have decimal point and trailing zero
-	// (to restore backward compatibility and provide a string representation
-	// consistent with Excel)
-	if (resultString.endsWith(".0")) {
-	    resultString = resultString.substring(0, resultString.length() - 2);
-	}
-	BigDecimal result = new BigDecimal(resultString);
-	return result;
+        String resultString = String.valueOf(cellValue);
+        // To ensure that intergral numbers do not have decimal point and trailing zero
+        // (to restore backward compatibility and provide a string representation
+        // consistent with Excel)
+        if (resultString.endsWith(".0")) {
+            resultString = resultString.substring(0, resultString.length() - 2);
+        }
+        BigDecimal result = new BigDecimal(resultString);
+        return result;
 
     }
 
     public String toString() {
-	StringBuilder sb = new StringBuilder();
-	sb.append(getClass().getName()).append("[");
-	sb.append("_metaData=").append(this._metaData == null ? "null" : this._metaData.toString());
-	sb.append(", _sheet=").append(this._sheet == null ? "null" : "" + this._sheet);
-	sb.append(", symbols=").append(this.symbols == null ? "null" : "" + this.symbols);
-	sb.append("]");
-	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getName()).append("[");
+        sb.append("_metaData=").append(this._metaData == null ? "null" : this._metaData.toString());
+        sb.append(", _sheet=").append(this._sheet == null ? "null" : "" + this._sheet);
+        sb.append(", symbols=").append(this.symbols == null ? "null" : "" + this.symbols);
+        sb.append("]");
+        return sb.toString();
     }
 }

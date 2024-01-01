@@ -54,7 +54,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      * @throws DatabaseUnitException
      */
     public DatabaseConnection(Connection connection) throws DatabaseUnitException {
-	this(connection, null);
+        this(connection, null);
     }
 
     /**
@@ -75,7 +75,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      * @throws DatabaseUnitException
      */
     public DatabaseConnection(Connection connection, String schema) throws DatabaseUnitException {
-	this(connection, schema, false);
+        this(connection, schema, false);
     }
 
     /**
@@ -107,20 +107,20 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *                               metaData.getSchemas() method properly.
      */
     public DatabaseConnection(Connection connection, String schema, boolean validate) throws DatabaseUnitException {
-	if (connection == null) {
-	    throw new NullPointerException("The parameter 'connection' must not be null");
-	}
-	_connection = connection;
+        if (connection == null) {
+            throw new NullPointerException("The parameter 'connection' must not be null");
+        }
+        _connection = connection;
 
-	if (schema != null) {
-	    _schema = SQLHelper.correctCase(schema, connection);
-	    SQLHelper.logInfoIfValueChanged(schema, _schema, "Corrected schema name:", DatabaseConnection.class);
-	} else {
-	    _schema = null;
-	}
+        if (schema != null) {
+            _schema = SQLHelper.correctCase(schema, connection);
+            SQLHelper.logInfoIfValueChanged(schema, _schema, "Corrected schema name:", DatabaseConnection.class);
+        } else {
+            _schema = null;
+        }
 
-	printConnectionInfo();
-	validateSchema(validate);
+        printConnectionInfo();
+        validateSchema(validate);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -128,31 +128,31 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
 
     @Override
     public Connection getConnection() throws SQLException {
-	return _connection;
+        return _connection;
     }
 
     @Override
     public String getSchema() {
-	return _schema;
+        return _schema;
     }
 
     @Override
     public void close() throws SQLException {
-	logger.debug("close() - start");
-	_connection.close();
+        logger.debug("close() - start");
+        _connection.close();
     }
 
     /**
      * Prints debugging information about the current JDBC connection
      */
     private void printConnectionInfo() {
-	if (logger.isDebugEnabled()) {
-	    try {
-		logger.debug("Database connection info: " + SQLHelper.getDatabaseInfo(_connection.getMetaData()));
-	    } catch (SQLException e) {
-		logger.warn("Exception while trying to retrieve database info from connection", e);
-	    }
-	}
+        if (logger.isDebugEnabled()) {
+            try {
+                logger.debug("Database connection info: " + SQLHelper.getDatabaseInfo(_connection.getMetaData()));
+            } catch (SQLException e) {
+                logger.warn("Exception while trying to retrieve database info from connection", e);
+            }
+        }
     }
 
     /**
@@ -165,42 +165,42 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      * @throws DatabaseUnitException
      */
     private void validateSchema(boolean validateStrict) throws DatabaseUnitException {
-	if (logger.isDebugEnabled()) {
-	    logger.debug("validateSchema(validateStrict={}) - start", String.valueOf(validateStrict));
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("validateSchema(validateStrict={}) - start", String.valueOf(validateStrict));
+        }
 
-	if (this._schema == null) {
-	    logger.debug("Schema is null. Nothing to validate.");
-	    return;
-	}
+        if (this._schema == null) {
+            logger.debug("Schema is null. Nothing to validate.");
+            return;
+        }
 
-	try {
-	    boolean schemaExists = SQLHelper.schemaExists(this._connection, this._schema);
-	    if (!schemaExists) {
-		// Under certain circumstances the cause might be that the JDBC driver
-		// implementation of 'DatabaseMetaData.getSchemas()' is not correct
-		// (known issue of MySQL driver).
-		String msg = "The given schema '" + this._schema + "' does not exist.";
-		// If strict validation is wished throw an exception
-		if (validateStrict) {
-		    throw new DatabaseUnitException(msg);
-		} else {
-		    logger.warn(msg);
-		}
-	    }
-	} catch (SQLException e) {
-	    throw new DatabaseUnitException("Exception while checking the schema for validity", e);
-	}
+        try {
+            boolean schemaExists = SQLHelper.schemaExists(this._connection, this._schema);
+            if (!schemaExists) {
+                // Under certain circumstances the cause might be that the JDBC driver
+                // implementation of 'DatabaseMetaData.getSchemas()' is not correct
+                // (known issue of MySQL driver).
+                String msg = "The given schema '" + this._schema + "' does not exist.";
+                // If strict validation is wished throw an exception
+                if (validateStrict) {
+                    throw new DatabaseUnitException(msg);
+                } else {
+                    logger.warn(msg);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseUnitException("Exception while checking the schema for validity", e);
+        }
     }
 
     @Override
     public String toString() {
-	StringBuffer sb = new StringBuffer();
-	sb.append(getClass().getName()).append("[");
-	sb.append("schema=").append(_schema);
-	sb.append(", connection=").append(_connection);
-	sb.append(", super=").append(super.toString());
-	sb.append("]");
-	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName()).append("[");
+        sb.append("schema=").append(_schema);
+        sb.append(", connection=").append(_connection);
+        sb.append(", super=").append(super.toString());
+        sb.append("]");
+        return sb.toString();
     }
 }

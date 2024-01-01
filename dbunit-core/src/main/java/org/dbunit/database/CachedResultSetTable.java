@@ -45,7 +45,7 @@ public class CachedResultSetTable extends CachedTable implements IResultSetTable
      *             {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)}
      */
     public CachedResultSetTable(ITableMetaData metaData, ResultSet resultSet) throws SQLException, DataSetException {
-	this(new ForwardOnlyResultSetTable(metaData, resultSet));
+        this(new ForwardOnlyResultSetTable(metaData, resultSet));
     }
 
     /**
@@ -59,23 +59,23 @@ public class CachedResultSetTable extends CachedTable implements IResultSetTable
      *             {@link CachedResultSetTable#CachedResultSetTable(IResultSetTable)}
      */
     public CachedResultSetTable(ITableMetaData metaData, IDatabaseConnection connection)
-	    throws SQLException, DataSetException {
-	this(new ForwardOnlyResultSetTable(metaData, connection));
+            throws SQLException, DataSetException {
+        this(new ForwardOnlyResultSetTable(metaData, connection));
     }
 
     public CachedResultSetTable(IResultSetTable table) throws DataSetException, SQLException {
-	super(table.getTableMetaData());
-	try {
-	    addTableRows(table);
-	} finally {
-	    table.close();
-	}
+        super(table.getTableMetaData());
+        try {
+            addTableRows(table);
+        } finally {
+            table.close();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IResultSetTable interface
 
     public void close() throws DataSetException {
-	// nothing to do, resultset already been closed
+        // nothing to do, resultset already been closed
     }
 }

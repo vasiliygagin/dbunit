@@ -33,24 +33,24 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		TransactionDbUnitTestExecutionListener.class })
+        TransactionDbUnitTestExecutionListener.class })
 @DatabaseSetup("/META-INF/db/insert.xml")
 @Transactional
 public class MixedSetupOnClassAndMethodTest {
 
-	@Autowired
-	private EntityAssert entityAssert;
+    @Autowired
+    private EntityAssert entityAssert;
 
-	@Test
-	@DatabaseSetup(value = "/META-INF/db/insert2.xml", type = DatabaseOperation.INSERT)
-	public void testInsert() throws Exception {
-		this.entityAssert.assertValues("fromDbUnit", "fromDbUnit2");
-	}
+    @Test
+    @DatabaseSetup(value = "/META-INF/db/insert2.xml", type = DatabaseOperation.INSERT)
+    public void testInsert() throws Exception {
+        this.entityAssert.assertValues("fromDbUnit", "fromDbUnit2");
+    }
 
-	@Test
-	@DatabaseSetup(type = DatabaseOperation.REFRESH, value = "/META-INF/db/refresh.xml")
-	public void testRefresh() throws Exception {
-		this.entityAssert.assertValues("addedFromDbUnit", "replacedFromDbUnit");
-	}
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.REFRESH, value = "/META-INF/db/refresh.xml")
+    public void testRefresh() throws Exception {
+        this.entityAssert.assertValues("addedFromDbUnit", "replacedFromDbUnit");
+    }
 
 }

@@ -40,21 +40,21 @@ public class FKRelationshipEdge extends Edge {
     private String pkColumn;
 
     public FKRelationshipEdge(String tableFrom, String tableTo, String fkColumn, String pkColumn) {
-	super(tableFrom, tableTo);
-	this.fkColumn = fkColumn;
-	this.pkColumn = pkColumn;
+        super(tableFrom, tableTo);
+        this.fkColumn = fkColumn;
+        this.pkColumn = pkColumn;
     }
 
     public String getFKColumn() {
-	return fkColumn;
+        return fkColumn;
     }
 
     public String getPKColumn() {
-	return pkColumn;
+        return pkColumn;
     }
 
     public String toString() {
-	return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
+        return getFrom() + "(" + getFKColumn() + ")->" + getTo() + "(" + getPKColumn() + ")";
     }
 
     // TODO: hashcode and equals

@@ -115,97 +115,97 @@ public class QuerySet extends ProjectComponent {
     private static String ERR_MSG = "Cannot specify 'id' and 'refid' attributes together in queryset.";
 
     public QuerySet() {
-	super();
+        super();
     }
 
     public void addQuery(Query query) {
-	logger.debug("addQuery(query={}) - start", query);
+        logger.debug("addQuery(query={}) - start", query);
 
-	queries.add(query);
+        queries.add(query);
     }
 
     public void addFilterSet(FilterSet filterSet) {
-	logger.debug("addFilterSet(filterSet={}) - start", filterSet);
+        logger.debug("addFilterSet(filterSet={}) - start", filterSet);
 
-	filterSets.add(filterSet);
+        filterSets.add(filterSet);
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public String getRefid() {
-	return refid;
+        return refid;
     }
 
     public void setId(String string) {
-	logger.debug("setId(string={}) - start", string);
+        logger.debug("setId(string={}) - start", string);
 
-	if (refid != null)
-	    throw new BuildException(ERR_MSG);
-	id = string;
+        if (refid != null)
+            throw new BuildException(ERR_MSG);
+        id = string;
     }
 
     public void setRefid(String string) {
-	logger.debug("setRefid(string={}) - start", string);
+        logger.debug("setRefid(string={}) - start", string);
 
-	if (id != null)
-	    throw new BuildException(ERR_MSG);
-	refid = string;
+        if (id != null)
+            throw new BuildException(ERR_MSG);
+        refid = string;
     }
 
     public List getQueries() {
-	logger.debug("getQueries() - start");
+        logger.debug("getQueries() - start");
 
-	Iterator i = queries.iterator();
-	while (i.hasNext()) {
-	    Query query = (Query) i.next();
-	    replaceTokens(query);
-	}
+        Iterator i = queries.iterator();
+        while (i.hasNext()) {
+            Query query = (Query) i.next();
+            replaceTokens(query);
+        }
 
-	return queries;
+        return queries;
 
     }
 
     private void replaceTokens(Query query) {
-	logger.debug("replaceTokens(query={}) - start", query);
+        logger.debug("replaceTokens(query={}) - start", query);
 
-	Iterator i = filterSets.iterator();
-	while (i.hasNext()) {
-	    FilterSet filterSet = (FilterSet) i.next();
-	    query.setSql(filterSet.replaceTokens(query.getSql()));
-	}
+        Iterator i = filterSets.iterator();
+        while (i.hasNext()) {
+            FilterSet filterSet = (FilterSet) i.next();
+            query.setSql(filterSet.replaceTokens(query.getSql()));
+        }
     }
 
     public void copyQueriesFrom(QuerySet referenced) {
-	logger.debug("copyQueriesFrom(referenced={}) - start", referenced);
+        logger.debug("copyQueriesFrom(referenced={}) - start", referenced);
 
-	Iterator i = referenced.queries.iterator();
-	while (i.hasNext()) {
-	    addQuery((Query) i.next());
-	}
+        Iterator i = referenced.queries.iterator();
+        while (i.hasNext()) {
+            addQuery((Query) i.next());
+        }
     }
 
     public QueryDataSet getQueryDataSet(IDatabaseConnection connection)
-	    throws SQLException, AmbiguousTableNameException {
-	logger.debug("getQueryDataSet(connection={}) - start", connection);
+            throws SQLException, AmbiguousTableNameException {
+        logger.debug("getQueryDataSet(connection={}) - start", connection);
 
-	// incorporate queries from referenced query-set
-	String refid = getRefid();
-	if (refid != null) {
-	    QuerySet referenced = (QuerySet) getProject().getReference(refid);
-	    copyQueriesFrom(referenced);
-	}
+        // incorporate queries from referenced query-set
+        String refid = getRefid();
+        if (refid != null) {
+            QuerySet referenced = (QuerySet) getProject().getReference(refid);
+            copyQueriesFrom(referenced);
+        }
 
-	QueryDataSet partialDataSet = new QueryDataSet(connection);
+        QueryDataSet partialDataSet = new QueryDataSet(connection);
 
-	Iterator queriesIter = getQueries().iterator();
-	while (queriesIter.hasNext()) {
-	    Query query = (Query) queriesIter.next();
-	    partialDataSet.addTable(query.getName(), query.getSql());
-	}
+        Iterator queriesIter = getQueries().iterator();
+        while (queriesIter.hasNext()) {
+            Query query = (Query) queriesIter.next();
+            partialDataSet.addTable(query.getName(), query.getSql());
+        }
 
-	return partialDataSet;
+        return partialDataSet;
 
     }
 

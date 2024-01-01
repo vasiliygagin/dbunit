@@ -87,7 +87,7 @@ public interface IMetadataHandler {
      * @since 2.4.4
      */
     boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
-	    boolean caseSensitive) throws SQLException;
+            boolean caseSensitive) throws SQLException;
 
     /**
      * Returns the schema name to which the table of the current result set index
@@ -143,6 +143,6 @@ public interface IMetadataHandler {
      * @since 2.4.5
      */
     public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-	    throws SQLException;
+            throws SQLException;
 
 }
