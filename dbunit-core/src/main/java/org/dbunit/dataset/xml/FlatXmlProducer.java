@@ -364,7 +364,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
                 throw new SAXException("Expected '" + DATASET + "' element");
             }
 
-            ITableMetaData newTableMetaData = _orderedTableNameMap.get(qName);
+            ITableMetaData newTableMetaData = getTableMetaData(qName);
             boolean isNewTable = (lastTableMetadata == null) || (lastTableMetadata != newTableMetaData);
 
             // New table
@@ -406,6 +406,10 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
         } catch (DataSetException e) {
             throw new SAXException(e);
         }
+    }
+
+    ITableMetaData getTableMetaData(String qName) {
+        return _orderedTableNameMap.get(qName);
     }
 
     protected void determineAndSetRowValue(Attributes attributes, ITableMetaData activeMetaData, Object[] rowValues,

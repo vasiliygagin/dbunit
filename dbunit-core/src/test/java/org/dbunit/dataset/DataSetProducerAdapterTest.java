@@ -47,7 +47,6 @@ public class DataSetProducerAdapterTest {
 
         producer.produce();
 
-        // Produce and verify consumer
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
 
