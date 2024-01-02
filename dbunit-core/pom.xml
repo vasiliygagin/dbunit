@@ -270,12 +270,6 @@
             <version>${gsbaseVersion}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>${xmlParserAPIsVersion}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- databases -->
         <!-- compile scope needed for ext package classes -->
