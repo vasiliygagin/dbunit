@@ -20,6 +20,10 @@
  */
 package org.dbunit.dataset.xml;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.StringReader;
+
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.stream.AbstractProducerTest;
@@ -27,12 +31,6 @@ import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.MockDataSetConsumer;
 import org.dbunit.testutil.TestUtils;
 import org.xml.sax.InputSource;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.StringReader;
-
-import junitx.framework.StringAssert;
 
 /**
  * @author Manuel Laflamme
@@ -46,11 +44,13 @@ public class FlatDtdProducerTest extends AbstractProducerTest {
         super(s);
     }
 
+    @Override
     protected IDataSetProducer createProducer() throws Exception {
         InputSource source = new InputSource(new FileInputStream(DTD_FILE));
         return new FlatDtdProducer(source);
     }
 
+    @Override
     protected int[] getExpectedRowCount() throws Exception {
         return new int[] { 0, 0, 0, 0, 0, 0 };
     }
@@ -116,7 +116,7 @@ public class FlatDtdProducerTest extends AbstractProducerTest {
             fail("Should not be able to produce the dataset from an incomplete DTD");
         } catch (DataSetException expected) {
             String expectedStartsWith = "ELEMENT/ATTRIBUTE declaration for '" + "SECOND_TABLE" + "' is missing. ";
-            StringAssert.assertStartsWith(expectedStartsWith, expected.getMessage());
+            assertTrue(expected.getMessage().startsWith(expectedStartsWith));
         }
 //        consumer.verify();
     }

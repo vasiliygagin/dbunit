@@ -20,13 +20,14 @@
  */
 package org.dbunit.dataset.datatype;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.sql.Blob;
 import java.sql.Types;
 
-import junit.framework.TestCase;
-import junitx.framework.ArrayAssert;
-
 import org.dbunit.database.statement.MockPreparedStatement;
+
+import junit.framework.TestCase;
 
 /**
  * @author gommma
@@ -53,7 +54,7 @@ public class BlobDataTypeTest extends TestCase {
         assertEquals(1, statement.getLastSetObjectParamIndex());
         assertEquals(Types.BLOB, statement.getLastSetObjectTargetSqlType());
         assertEquals(byte[].class, statement.getLastSetObjectParamValue().getClass());
-        ArrayAssert.assertEquals(byteArray, (byte[]) statement.getLastSetObjectParamValue());
+        assertArrayEquals(byteArray, (byte[]) statement.getLastSetObjectParamValue());
     }
 
     public void testAsString() throws Exception {

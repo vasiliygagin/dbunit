@@ -25,9 +25,6 @@ import java.sql.Connection;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-import junitx.framework.ArrayAssert;
-
 import org.dbunit.DdlExecutor;
 import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConnection;
@@ -37,6 +34,9 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.search.SearchException;
+import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 /**
  * @author Felipe Leme (dbunit@felipeal.net)
@@ -63,6 +63,7 @@ public class TablesDependencyHelperTest extends TestCase {
         this.connection = new DatabaseConnection(jdbcConnection);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         HypersonicEnvironment.shutdown(this.jdbcConnection);
         this.jdbcConnection.close();
@@ -77,7 +78,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] input = allInput[i];
             String[] expectedOutput = allExpectedOutput[i];
             String[] actualOutput = TablesDependencyHelper.getDependentTables(this.connection, input[0]);
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
         }
     }
 
@@ -103,7 +104,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] input = allInput[i];
             String[] expectedOutput = allExpectedOutput[i];
             String[] actualOutput = TablesDependencyHelper.getDependentTables(this.connection, input);
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
         }
     }
 
@@ -115,7 +116,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] input = allInput[i];
             String[] expectedOutput = allExpectedOutput[i];
             String[] actualOutput = TablesDependencyHelper.getAllDependentTables(this.connection, input[0]);
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
         }
     }
 
@@ -127,7 +128,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] input = allInput[i];
             String[] expectedOutput = allExpectedOutput[i];
             String[] actualOutput = TablesDependencyHelper.getAllDependentTables(this.connection, input);
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
         }
     }
 
@@ -140,7 +141,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] expectedOutput = allExpectedOutput[i];
             IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
             String[] actualOutputTables = actualOutput.getTableNames();
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
         }
     }
 
@@ -155,7 +156,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] expectedOutput = allExpectedOutput[i];
             IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
             String[] actualOutputTables = actualOutput.getTableNames();
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
         }
     }
 
@@ -179,7 +180,7 @@ public class TablesDependencyHelperTest extends TestCase {
             String[] expectedOutput = allExpectedOutput[i];
             IDataSet actualOutput = TablesDependencyHelper.getDataset(this.connection, inputMap);
             String[] actualOutputArray = actualOutput.getTableNames();
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutputArray);
+            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutputArray);
         }
     }
 

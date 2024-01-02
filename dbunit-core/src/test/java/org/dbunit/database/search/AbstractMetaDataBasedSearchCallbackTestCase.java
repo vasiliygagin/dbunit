@@ -20,21 +20,21 @@
  */
 package org.dbunit.database.search;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.sql.Connection;
 import java.util.Set;
 
-import junit.framework.TestCase;
-import junitx.framework.ArrayAssert;
-
 import org.dbunit.DdlExecutor;
+import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-
-import org.dbunit.HypersonicEnvironment;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.CollectionsHelper;
 import org.dbunit.util.search.DepthFirstSearch;
 import org.dbunit.util.search.ISearchCallback;
+
+import junit.framework.TestCase;
 
 /**
  * @author Felipe Leme (dbunit@felipeal.net)
@@ -54,12 +54,14 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
         this.sqlFile = sqlFile;
     }
 
+    @Override
     protected void setUp() throws Exception {
         this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + this.sqlFile), this.jdbcConnection);
         this.connection = new DatabaseConnection(jdbcConnection);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         HypersonicEnvironment.shutdown(this.jdbcConnection);
         this.jdbcConnection.close();
@@ -88,7 +90,7 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
             DepthFirstSearch search = new DepthFirstSearch();
             Set result = search.search(input, callback);
             String[] actualOutput = CollectionsHelper.setToStrings(result);
-            ArrayAssert.assertEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
+            assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
         }
     }
 

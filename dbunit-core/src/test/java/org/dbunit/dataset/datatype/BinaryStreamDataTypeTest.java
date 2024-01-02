@@ -20,10 +20,11 @@
  */
 package org.dbunit.dataset.datatype;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.sql.Types;
 
 import junit.framework.TestCase;
-import junitx.framework.ArrayAssert;
 
 /**
  * @author gommma (gommma AT users.sourceforge.net)
@@ -39,13 +40,13 @@ public class BinaryStreamDataTypeTest extends TestCase {
         String value = "tu";
         byte[] result = (byte[]) type.typeCast(value);
         // Cannot be converted since it is not valid Base64 because it only has 2 chars
-        ArrayAssert.assertEquals(new byte[] {}, result);
+        assertArrayEquals(new byte[] {}, result);
     }
 
     public void test4Chars() throws Exception {
         String value = "tutu";
         byte[] result = (byte[]) type.typeCast(value);
-        ArrayAssert.assertEquals(new byte[] { -74, -21, 110 }, result);
+        assertArrayEquals(new byte[] { -74, -21, 110 }, result);
     }
 
 }
