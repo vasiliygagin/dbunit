@@ -66,8 +66,6 @@ public class OrderedTableNameMap<T> {
      */
     private List<String> _tableNames = new ArrayList<>();
 
-    private String _lastTableNameOverride;
-
     /**
      * Whether or not case sensitive table names should be used. Defaults to false.
      */
@@ -119,53 +117,6 @@ public class OrderedTableNameMap<T> {
     }
 
     /**
-     * @param tableName The table name to check
-     * @return <code>true</code> if the given tableName matches the last table that
-     *         has been added to this map.
-     */
-    public boolean isLastTable(String tableName) {
-        if (this._tableNames.size() == 0) {
-            return false;
-        } else {
-            String lastTable = getLastTableName();
-            String lastTableCorrectCase = this.getTableName(lastTable);
-            String inputTableCorrectCase = this.getTableName(tableName);
-            return lastTableCorrectCase.equals(inputTableCorrectCase);
-        }
-    }
-
-    /**
-     * @return The name of the last table that has been added to this map. Returns
-     *         <code>null</code> if no table has been added yet.
-     */
-    public String getLastTableName() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getLastTableName() - start");
-
-        if (_lastTableNameOverride != null) {
-            return _lastTableNameOverride;
-        }
-
-        if (_tableNames.size() > 0) {
-            String lastTable = _tableNames.get(this._tableNames.size() - 1);
-            return lastTable;
-        } else {
-            return null;
-        }
-    }
-
-    public void setLastTable(String tableName) throws NoSuchTableException {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("setLastTable(name{}) - start", tableName);
-
-        if (!this.containsTable(tableName)) {
-            throw new NoSuchTableException(tableName);
-        }
-
-        this._lastTableNameOverride = tableName;
-    }
-
-    /**
      * Adds the given table name to the map of table names, associating it with the
      * given object.
      * 
@@ -175,20 +126,15 @@ public class OrderedTableNameMap<T> {
      * @throws AmbiguousTableNameException If the given table name already exists
      */
     public void add(String tableName, T object) throws AmbiguousTableNameException {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("add(tableName={}, object={}) - start", tableName, object);
 
         // Get the table name in the correct case
         String tableNameCorrectedCase = this.getTableName(tableName);
         // prevent table name conflict
         if (this.containsTable(tableNameCorrectedCase)) {
             throw new AmbiguousTableNameException(tableNameCorrectedCase);
-        } else {
-            this._tableMap.put(tableNameCorrectedCase, object);
-            this._tableNames.add(tableName);
-            // Reset the override of the lastTableName
-            this._lastTableNameOverride = null;
         }
+        this._tableMap.put(tableNameCorrectedCase, object);
+        this._tableNames.add(tableName);
     }
 
     /**
@@ -232,9 +178,7 @@ public class OrderedTableNameMap<T> {
      * @param tableName The input table name to be resolved
      * @return The table name for the given string in the correct case.
      */
-    public String getTableName(String tableName) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getTableName(tableName={}) - start", tableName);
+    private String getTableName(String tableName) {
 
         String result = tableName;
         if (!_caseSensitiveTableNames) {
@@ -243,29 +187,6 @@ public class OrderedTableNameMap<T> {
             result = tableName.toUpperCase(Locale.ENGLISH);
         }
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getTableName(tableName={}) - end - result={}", tableName, result);
-
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("_tableNames=").append(_tableNames);
-        sb.append(", _tableMap=").append(_tableMap);
-        sb.append(", _caseSensitiveTableNames=").append(_caseSensitiveTableNames);
-        sb.append("]");
-        return sb.toString();
-    }
-
-    public T getLastTable() {
-        String lastTableName = getLastTableName();
-        if (lastTableName != null) {
-            return get(lastTableName);
-        } else {
-            return null;
-        }
     }
 }

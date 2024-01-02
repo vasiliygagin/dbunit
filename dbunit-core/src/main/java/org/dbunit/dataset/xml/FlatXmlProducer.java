@@ -105,7 +105,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
      * {@link ITableMetaData}
      */
     private OrderedTableNameMap<ITableMetaData> _orderedTableNameMap;
-    private ITableMetaData lastTable;
+    private ITableMetaData lastTableMetadata;
 
     public FlatXmlProducer(InputSource xmlSource) {
         this(xmlSource, true);
@@ -226,30 +226,33 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
      * <li>If not, a warning message is displayed.</li>
      * </ul>
      * 
-     * @param attributes Attributed for the current row.
+     * @param tableMetaData
+     * 
+     * @param attributes    Attributed for the current row.
+     * @return
      * @throws DataSetException
      */
-    protected void handleMissingColumns(Attributes attributes) throws DataSetException {
+    protected ITableMetaData handleMissingColumns(ITableMetaData tableMetaData, Attributes attributes)
+            throws DataSetException {
         List<Column> columnsToMerge = new ArrayList<>();
 
-        ITableMetaData activeMetaData = lastTable;
         // Search all columns that do not yet exist and collect them
         int attributeLength = attributes.getLength();
         for (int i = 0; i < attributeLength; i++) {
             try {
-                activeMetaData.getColumnIndex(attributes.getQName(i));
+                tableMetaData.getColumnIndex(attributes.getQName(i));
             } catch (NoSuchColumnException e) {
                 columnsToMerge.add(new Column(attributes.getQName(i), DataType.UNKNOWN));
             }
         }
 
+        ITableMetaData activeMetaData = tableMetaData;
         if (!columnsToMerge.isEmpty()) {
             if (_columnSensing) {
                 logger.debug(
                         "Column sensing enabled. Will create a new metaData with potentially new columns if needed");
                 activeMetaData = mergeTableMetaData(columnsToMerge, activeMetaData);
                 _orderedTableNameMap.update(activeMetaData.getTableName(), activeMetaData);
-                lastTable = activeMetaData;
                 // We also need to recreate the table, copying the data already collected from
                 // the old one to the new one
                 _consumer.startTable(activeMetaData);
@@ -269,6 +272,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
                 logger.warn(msg);
             }
         }
+        return activeMetaData;
     }
 
     public void setColumnSensing(boolean columnSensing) {
@@ -360,29 +364,25 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
                 throw new SAXException("Expected '" + DATASET + "' element");
             }
 
-            ITableMetaData activeMetaData = lastTable;
-            boolean newTable = !_orderedTableNameMap.isLastTable(qName);
+            ITableMetaData newTableMetaData = _orderedTableNameMap.get(qName);
+            boolean isNewTable = (lastTableMetadata == null) || (lastTableMetadata != newTableMetaData);
 
             // New table
-            if (newTable) {
+            if (isNewTable) {
                 // If not first table, notify end of previous table to consumer
-                if (activeMetaData != null) {
+                if (lastTableMetadata != null) {
                     _consumer.endTable();
                 }
 
                 // In FlatXML the table might have appeared before already, so check for this
-                if (_orderedTableNameMap.containsTable(qName)) {
-                    activeMetaData = _orderedTableNameMap.get(qName);
-                    _orderedTableNameMap.setLastTable(qName);
-                    lastTable = activeMetaData;
-                } else {
-                    activeMetaData = createTableMetaData(qName, attributes);
-                    _orderedTableNameMap.add(activeMetaData.getTableName(), activeMetaData);
-                    lastTable = activeMetaData;
+                if (newTableMetaData == null) {
+                    newTableMetaData = createTableMetaData(qName, attributes);
+                    _orderedTableNameMap.add(newTableMetaData.getTableName(), newTableMetaData);
                 }
 
                 // Notify start of new table to consumer
-                _consumer.startTable(activeMetaData);
+                _consumer.startTable(newTableMetaData);
+                lastTableMetadata = newTableMetaData;
                 _lineNumber = 0;
             }
 
@@ -391,17 +391,15 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
             if (attributesLength > 0) {
                 // If we do not have a DTD
                 if (_dtdHandler == null || !_dtdHandler.isDtdPresent()) {
-                    handleMissingColumns(attributes);
-                    // Since a new MetaData object was created assign it to the local variable
-                    activeMetaData = _orderedTableNameMap.getLastTable();
+                    lastTableMetadata = handleMissingColumns(lastTableMetadata, attributes);
                 }
 
                 _lineNumber++;
                 _lineNumberGlobal++;
-                Column[] columns = activeMetaData.getColumns();
+                Column[] columns = lastTableMetadata.getColumns();
                 Object[] rowValues = new Object[columns.length];
                 for (int i = 0; i < attributesLength; i++) {
-                    determineAndSetRowValue(attributes, activeMetaData, rowValues, i);
+                    determineAndSetRowValue(attributes, lastTableMetadata, rowValues, i);
                 }
                 _consumer.row(rowValues);
             }
@@ -436,7 +434,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
         if (qName.equals(DATASET)) {
             try {
                 // Notify end of active table to consumer
-                if (lastTable != null) {
+                if (lastTableMetadata != null) {
                     _consumer.endTable();
                 }
 
