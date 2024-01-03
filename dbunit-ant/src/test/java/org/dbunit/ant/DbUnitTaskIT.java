@@ -28,12 +28,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -47,9 +53,9 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.util.ProcessUtil;
-import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.IDatabaseTester;
+import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
@@ -61,8 +67,10 @@ import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.ext.oracle.OracleDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.FileHelper;
+import org.hsqldb.jdbcDriver;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -93,11 +101,49 @@ public class DbUnitTaskIT {
     private StringBuffer outBuffer;
     private StringBuffer errBuffer;
 
+    static {
+        final Properties properties = System.getProperties(); // Those are mutable system properties
+        properties.put("dbunit.profile", "hsqldb");
+        properties.put("dbunit.profile.driverClass", "org.hsqldb.jdbcDriver");
+        properties.put("dbunit.profile.url", "jdbc:hsqldb:mem:.");
+        properties.put("dbunit.profile.schema", "PUBLIC");
+        properties.put("dbunit.profile.user", "sa");
+        properties.put("dbunit.profile.password", "");
+        properties.put("dbunit.profile.ddl", "hypersonic.sql");
+        properties.put("dbunit.profile.unsupportedFeatures",
+                "BLOB,CLOB,SCROLLABLE_RESULTSET,INSERT_IDENTITY,TRUNCATE_TABLE,SDO_GEOMETRY,XML_TYPE");
+        properties.put("dbunit.profile.multiLineSupport", "true");
+    }
+
+    @BeforeClass
+    public static void initDb() throws Exception {
+        final Connection connection = jdbcDriver.getConnection("jdbc:hsqldb:mem:.", new Properties());
+
+        final File ddlFile = new File("src/test/resources/sql/hypersonic.sql");
+        final String sql = readSqlFromFile(ddlFile);
+
+        try (final Statement statement = connection.createStatement();) {
+            statement.execute(sql);
+        }
+    }
+
+    private static String readSqlFromFile(final File ddlFile) throws IOException {
+        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
+        final StringBuilder sqlBuffer = new StringBuilder();
+        while (sqlReader.ready()) {
+            String line = sqlReader.readLine();
+            if (!line.startsWith("-")) {
+                sqlBuffer.append(line);
+            }
+        }
+
+        sqlReader.close();
+
+        return sqlBuffer.toString();
+    }
+
     @Before
     public void setUp() throws Exception {
-        // This line ensure test database is initialized
-        DatabaseEnvironmentLoader.getInstance();
-
         String fileName = "src/test/resources/xml/antTestBuildFile.xml";
         File file = new File(fileName);
         assertTrue("Buildfile not found", file.isFile());
@@ -530,7 +576,8 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOperation() throws Exception {
         String targetName = "test-replace";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+                "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -541,7 +588,8 @@ public class DbUnitTaskIT {
     @Test
     public void testOrderedOperation() throws Exception {
         String targetName = "test-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+                "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -552,7 +600,8 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOrderedOperation() throws Exception {
         String targetName = "test-replace-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
+        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+                "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
