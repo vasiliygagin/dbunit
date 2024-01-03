@@ -38,10 +38,8 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSetWriter;
-import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
 import org.dbunit.dataset.filter.ITableFilter;
-import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.dataset.xml.XmlDataSetWriter;
@@ -113,7 +111,7 @@ public class Export extends AbstractStep {
 
     /**
      * Encoding for XML-Output
-     * 
+     *
      * @return Returns the encoding.
      */
     public String getEncoding() {
@@ -164,8 +162,7 @@ public class Export extends AbstractStep {
             if (_format.equals(FORMAT_CSV)) {
                 CsvDataSetWriter.write(dataset, _dest);
             } else {
-                OutputStream out = new FileOutputStream(_dest);
-                try {
+                try (OutputStream out = new FileOutputStream(_dest)) {
                     if (_format.equalsIgnoreCase(FORMAT_FLAT)) {
                         FlatXmlWriter writer = new FlatXmlWriter(out, getEncoding());
                         writer.setDocType(_doctype);
@@ -184,23 +181,19 @@ public class Export extends AbstractStep {
                         throw new IllegalArgumentException("The given format '" + _format + "' is not supported.");
                     }
 
-                } finally {
-                    out.close();
                 }
             }
 
             log("Successfully wrote file '" + _dest + "'", Project.MSG_INFO);
 
-        } catch (SQLException e) {
-            throw new DatabaseUnitException(e);
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             throw new DatabaseUnitException(e);
         }
     }
 
     /**
      * Creates the dataset that is finally used for the export
-     * 
+     *
      * @param connection
      * @return The final dataset used for the export
      * @throws DatabaseUnitException

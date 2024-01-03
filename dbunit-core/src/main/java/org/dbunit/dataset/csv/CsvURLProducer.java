@@ -142,7 +142,7 @@ public class CsvURLProducer implements IDataSetProducer {
                 List rowList = (List) readData.get(i);
                 Object[] row = rowList.toArray();
                 for (int col = 0; col < row.length; col++) {
-                    if (CsvDataSetWriter.NULL.equals(row[col])) {
+                    if ("null".equals(row[col])) {
                         row[col] = null;
                     }
                 }
