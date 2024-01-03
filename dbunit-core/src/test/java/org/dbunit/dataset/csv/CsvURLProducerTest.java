@@ -32,8 +32,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.HypersonicEnvironment;
 import org.dbunit.ant.AbstractStep;
@@ -50,6 +48,8 @@ import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
+
+import junit.framework.TestCase;
 
 public class CsvURLProducerTest extends TestCase {
     private String driverClass;
@@ -78,8 +78,7 @@ public class CsvURLProducerTest extends TestCase {
         CachedDataSet consumer = new CachedDataSet();
         // producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
 
-        producer.setConsumer(consumer);
-        producer.produce();
+        producer.produce(consumer);
         final ITable[] tables = consumer.getTables();
         assertEquals("expected 2 tables", 2, tables.length);
 
@@ -112,8 +111,7 @@ public class CsvURLProducerTest extends TestCase {
         CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURL(),
                 CsvDataSet.TABLE_ORDERING_FILE);
         CachedDataSet consumer = new CachedDataSet();
-        producer.setConsumer(consumer);
-        producer.produce();
+        producer.produce(consumer);
         DatabaseOperation operation = DatabaseOperation.INSERT;
         operation.execute(connection, consumer);
     }
@@ -173,6 +171,7 @@ public class CsvURLProducerTest extends TestCase {
         return connection;
     }
 
+    @Override
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
@@ -200,6 +199,7 @@ public class CsvURLProducerTest extends TestCase {
         statement.close();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         HypersonicEnvironment.shutdown(connection.getConnection());
         connection.close();

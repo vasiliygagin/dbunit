@@ -40,8 +40,6 @@ import org.dbunit.dataset.stream.IDataSetProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -56,7 +54,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @version $Revision$ $Date$
  * @since Apr 30, 2003
  */
-public class XmlProducer extends DefaultHandler implements IDataSetProducer, ContentHandler, ErrorHandler {
+public class XmlProducer extends DefaultHandler implements IDataSetProducer {
 
     /**
      * Logger for this class
@@ -82,20 +80,20 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
     private String _activeTableName;
     private ITableMetaData _activeMetaData;
 
-    private List _activeColumnNames;
+    private List<String> _activeColumnNames;
     private StringBuffer _activeCharacters;
-    private List _activeRowValues;
+    private List<Object> _activeRowValues;
 
     public XmlProducer(InputSource inputSource) {
         _inputSource = inputSource;
     }
 
-    private ITableMetaData createMetaData(String tableName, List columnNames) {
+    private ITableMetaData createMetaData(String tableName, List<String> columnNames) {
         logger.debug("createMetaData(tableName={}, _columnNames={}) - start", tableName, columnNames);
 
         Column[] columns = new Column[columnNames.size()];
         for (int i = 0; i < columns.length; i++) {
-            String columnName = (String) columnNames.get(i);
+            String columnName = columnNames.get(i);
             columns[i] = new Column(columnName, DataType.UNKNOWN);
         }
         DefaultTableMetaData metaData = new DefaultTableMetaData(tableName, columns);
@@ -109,14 +107,13 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetProducer interface
 
+    @Override
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
-        logger.debug("setConsumer(consumer={}) - start", consumer);
         _consumer = consumer;
     }
 
+    @Override
     public void produce() throws DataSetException {
-        logger.debug("produce() - start");
-
         try {
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setValidating(_validating);
@@ -166,6 +163,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
     ////////////////////////////////////////////////////////////////////////////
     // EntityResolver interface
 
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
         logger.debug("resolveEntity(publicId={}, systemId={}) - start", publicId, systemId);
 
@@ -176,12 +174,8 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
     ////////////////////////////////////////////////////////////////////////
     // ContentHandler interface
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("startElement(uri={}, localName={}, qName={}, attributes={}) - start",
-                    new Object[] { uri, localName, qName, attributes });
-        }
-
         try {
             // dataset
             if (qName.equals(DATASET)) {
@@ -192,7 +186,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
             // table
             if (qName.equals(TABLE)) {
                 _activeTableName = attributes.getValue(NAME);
-                _activeColumnNames = new LinkedList();
+                _activeColumnNames = new LinkedList<>();
                 return;
             }
 
@@ -212,7 +206,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
 
                 }
 
-                _activeRowValues = new LinkedList();
+                _activeRowValues = new LinkedList<>();
                 return;
             }
 
@@ -238,6 +232,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
         }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (logger.isDebugEnabled()) {
             logger.debug("endElement(uri={}, localName={}, qName={}) - start", new Object[] { uri, localName, qName });
@@ -307,6 +302,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
         }
     }
 
+    @Override
     public void characters(char ch[], int start, int length) throws SAXException {
         if (_activeCharacters != null) {
             _activeCharacters.append(ch, start, length);
@@ -322,6 +318,7 @@ public class XmlProducer extends DefaultHandler implements IDataSetProducer, Con
 //        throw e;
 //    }
 
+    @Override
     public void error(SAXParseException e) throws SAXException {
         throw e;
     }

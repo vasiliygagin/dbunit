@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DefaultTableMetaData;
 import org.dbunit.dataset.ITableMetaData;
 import org.hamcrest.Matchers;
 import org.mockito.MockingDetails;
@@ -41,70 +43,86 @@ public class IDataSetConsumerMockVerifyer {
     private static final Method endTable;
     private static final Method endDataSet;
     static {
-	try {
-	    startDataSet = IDataSetConsumer.class.getMethod("startDataSet");
-	    startTable = IDataSetConsumer.class.getMethod("startTable", ITableMetaData.class);
-	    row = IDataSetConsumer.class.getMethod("row", Object[].class);
-	    endTable = IDataSetConsumer.class.getMethod("endTable");
-	    endDataSet = IDataSetConsumer.class.getMethod("endDataSet");
-	} catch (Exception exc) {
-	    throw new IllegalStateException(exc);
-	}
+        try {
+            startDataSet = IDataSetConsumer.class.getMethod("startDataSet");
+            startTable = IDataSetConsumer.class.getMethod("startTable", ITableMetaData.class);
+            row = IDataSetConsumer.class.getMethod("row", Object[].class);
+            endTable = IDataSetConsumer.class.getMethod("endTable");
+            endDataSet = IDataSetConsumer.class.getMethod("endDataSet");
+        } catch (Exception exc) {
+            throw new IllegalStateException(exc);
+        }
     }
 
     private final Iterator<Invocation> invocationIterator;
 
     public IDataSetConsumerMockVerifyer(IDataSetConsumer mock) {
-	MockingDetails mockingDetails = Mockito.mockingDetails(mock);
-	Collection<Invocation> invocations = mockingDetails.getInvocations();
-	invocationIterator = invocations.iterator();
+        MockingDetails mockingDetails = Mockito.mockingDetails(mock);
+        Collection<Invocation> invocations = mockingDetails.getInvocations();
+        invocationIterator = invocations.iterator();
     }
 
     private Invocation nextInvocation() {
-	if (!invocationIterator.hasNext()) {
-	    throw new AssertionError("No more interaction recorded");
-	}
-	return invocationIterator.next();
+        if (!invocationIterator.hasNext()) {
+            throw new AssertionError("No more interaction recorded");
+        }
+        return invocationIterator.next();
     }
 
     public void verifyStartDataSet() {
-	Invocation invocation = nextInvocation();
-	assertThat(invocation.getMethod(), is(startDataSet));
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(startDataSet));
     }
 
     public void verifyStartTable(ITableMetaData tableMetaData) {
-	Invocation invocation = nextInvocation();
-	assertThat(invocation.getMethod(), is(startTable));
-	assertThat(invocation.getArgument(0), is(tableMetaData));
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(startTable));
+        assertThat(invocation.getArgument(0), is(tableMetaData));
+    }
+
+    public void verifyDtdTable(String tableName, String... columnNames) {
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(startTable));
+
+        DefaultTableMetaData argument = invocation.getArgument(0);
+        assertThat(argument.getTableName(), is(tableName));
+        Column[] columns = argument.getColumns();
+        assertThat(columns.length, is(columnNames.length));
+        for (int i = 0; i < columnNames.length; ++i) {
+            assertThat(columns[i].getColumnName(), is(columnNames[i]));
+        }
+
+        invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(endTable));
     }
 
     public void verifyRow(Object... columns) {
-	Invocation invocation = nextInvocation();
-	assertThat(invocation.getMethod(), is(row));
-	assertThat(invocation.getArgument(0), Matchers.arrayContaining(columns));
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(row));
+        assertThat(invocation.getArgument(0), Matchers.arrayContaining(columns));
     }
 
     public void verifyEndTable() {
-	Invocation invocation = nextInvocation();
-	assertThat(invocation.getMethod(), is(endTable));
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(endTable));
     }
 
     public void verifyEndDataSet() {
-	Invocation invocation = nextInvocation();
-	assertThat(invocation.getMethod(), is(endDataSet));
+        Invocation invocation = nextInvocation();
+        assertThat(invocation.getMethod(), is(endDataSet));
     }
 
     public void verifyNoMoreInvocations() {
-	if (invocationIterator.hasNext()) {
-	    dumpRest();
-	    throw new AssertionError("More interaction recorded");
-	}
+        if (invocationIterator.hasNext()) {
+            dumpRest();
+            throw new AssertionError("More interaction recorded");
+        }
     }
 
     public void dumpRest() {
-	while (invocationIterator.hasNext()) {
-	    Invocation invocation = invocationIterator.next();
-	    System.out.println(invocation.getMethod().getName() + " = " + invocation.getArguments());
-	}
+        while (invocationIterator.hasNext()) {
+            Invocation invocation = invocationIterator.next();
+            System.out.println(invocation.getMethod().getName() + " = " + invocation.getArguments());
+        }
     }
 }

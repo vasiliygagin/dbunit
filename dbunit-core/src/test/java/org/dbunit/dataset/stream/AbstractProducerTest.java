@@ -89,10 +89,9 @@ public abstract class AbstractProducerTest extends TestCase {
 
         // Setup producer
         IDataSetProducer producer = createProducer();
-        producer.setConsumer(consumer);
 
         // Produce and verify consumer
-        producer.produce();
+        producer.produce(consumer);
         consumer.verify();
     }
 

@@ -94,7 +94,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
 
     /**
      * Enable or disable pretty print of the XML.
-     * 
+     *
      * @param enabled <code>true</code> to enable pretty print (which is the
      *                default). <code>false</code> otherwise.
      * @since 2.4
@@ -105,7 +105,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
 
     /**
      * Writes the given {@link IDataSet} using this writer.
-     * 
+     *
      * @param dataSet The {@link IDataSet} to be written
      * @throws DataSetException
      */
@@ -113,13 +113,13 @@ public class FlatXmlWriter implements IDataSetConsumer {
         logger.debug("write(dataSet={}) - start", dataSet);
 
         DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
-        provider.setConsumer(this);
-        provider.produce();
+        provider.produce(this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
+    @Override
     public void startDataSet() throws DataSetException {
         logger.debug("startDataSet() - start");
 
@@ -132,6 +132,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void endDataSet() throws DataSetException {
         logger.debug("endDataSet() - start");
 
@@ -143,6 +144,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void startTable(ITableMetaData metaData) throws DataSetException {
         logger.debug("startTable(metaData={}) - start", metaData);
 
@@ -150,6 +152,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
         _activeRowCount = 0;
     }
 
+    @Override
     public void endTable() throws DataSetException {
         logger.debug("endTable() - start");
 
@@ -165,6 +168,7 @@ public class FlatXmlWriter implements IDataSetConsumer {
         _activeMetaData = null;
     }
 
+    @Override
     public void row(Object[] values) throws DataSetException {
         logger.debug("row(values={}) - start", values);
 

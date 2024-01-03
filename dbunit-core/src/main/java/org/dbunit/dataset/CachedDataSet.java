@@ -43,7 +43,6 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
      * Default constructor.
      */
     public CachedDataSet() throws DataSetException {
-        super();
         initialize();
     }
 
@@ -70,7 +69,7 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
 
     /**
      * Creates a CachedDataSet that synchronously consume the specified producer.
-     * 
+     *
      * @param producer
      * @param caseSensitiveTableNames Whether or not case sensitive table names
      *                                should be used
@@ -80,39 +79,43 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
         super(caseSensitiveTableNames);
         initialize();
 
-        producer.setConsumer(this);
-        producer.produce();
+        producer.produce(this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
         if (logger.isDebugEnabled())
             logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
 
-        ITable[] tables = (ITable[]) _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+        ITable[] tables = _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
         return new DefaultTableIterator(tables, reversed);
     }
 
     ////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
+    @Override
     public void startDataSet() throws DataSetException {
         logger.debug("startDataSet() - start");
         _orderedTableNameMap = super.createTableNameMap();
     }
 
+    @Override
     public void endDataSet() throws DataSetException {
         logger.debug("endDataSet() - start");
         logger.debug("endDataSet() - the final tableMap is: " + _orderedTableNameMap);
     }
 
+    @Override
     public void startTable(ITableMetaData metaData) throws DataSetException {
         logger.debug("startTable(metaData={}) - start", metaData);
         _activeTable = new DefaultTable(metaData);
     }
 
+    @Override
     public void endTable() throws DataSetException {
         logger.debug("endTable() - start");
         String tableName = _activeTable.getTableMetaData().getTableName();
@@ -127,6 +130,7 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
         _activeTable = null;
     }
 
+    @Override
     public void row(Object[] values) throws DataSetException {
         logger.debug("row(values={}) - start", values);
         _activeTable.addRow(values);

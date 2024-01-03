@@ -23,7 +23,6 @@ package org.dbunit.dataset.xml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -193,7 +192,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
 
     /**
      * merges the existing columns with the potentially new ones.
-     * 
+     *
      * @param columnsToMerge List of extra columns found, which need to be merge
      *                       back into the metadata.
      * @return ITableMetaData The merged metadata object containing the new columns
@@ -215,19 +214,19 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
     /**
      * parses the attributes in the current row, and checks whether a new column is
      * found.
-     * 
+     *
      * <p>
      * Depending on the value of the <code>columnSensing</code> flag, the
      * appropriate action is taken:
      * </p>
-     * 
+     *
      * <ul>
      * <li>If it is true, the new column is merged back into the metadata;</li>
      * <li>If not, a warning message is displayed.</li>
      * </ul>
-     * 
+     *
      * @param tableMetaData
-     * 
+     *
      * @param attributes    Attributed for the current row.
      * @return
      * @throws DataSetException
@@ -258,8 +257,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
                 _consumer.startTable(activeMetaData);
             } else {
                 StringBuffer extraColumnNames = new StringBuffer();
-                for (Iterator<Column> i = columnsToMerge.iterator(); i.hasNext();) {
-                    Column col = i.next();
+                for (Column col : columnsToMerge) {
                     extraColumnNames.append(extraColumnNames.length() > 0 ? "," : "").append(col.getColumnName());
                 }
                 String msg = "Extra columns (" + extraColumnNames.toString() + ") on line " + (_lineNumber + 1)
@@ -307,20 +305,18 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
             XMLReader xmlReader = saxParserFactory.newSAXParser().getXMLReader();
 
             if (_dtdHandler != null) {
-                FlatDtdHandler.setLexicalHandler(xmlReader, _dtdHandler);
-                FlatDtdHandler.setDeclHandler(xmlReader, _dtdHandler);
+                xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler", _dtdHandler);
+                xmlReader.setProperty("http://xml.org/sax/properties/declaration-handler", _dtdHandler);
             }
 
             xmlReader.setContentHandler(this);
             xmlReader.setErrorHandler(this);
             xmlReader.setEntityResolver(_resolver);
             xmlReader.parse(_inputSource);
-        } catch (ParserConfigurationException e) {
-            throw new DataSetException(e);
         } catch (SAXException e) {
             DataSetException exceptionToRethrow = XmlProducer.buildException(e);
             throw exceptionToRethrow;
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException e) {
             throw new DataSetException(e);
         }
     }
@@ -358,7 +354,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
             if (_orderedTableNameMap == null) {
                 if (qName.equals(DATASET)) {
                     _consumer.startDataSet();
-                    _orderedTableNameMap = new OrderedTableNameMap<ITableMetaData>(_caseSensitiveTableNames);
+                    _orderedTableNameMap = new OrderedTableNameMap<>(_caseSensitiveTableNames);
                     return;
                 }
                 throw new SAXException("Expected '" + DATASET + "' element");
@@ -432,7 +428,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (logger.isDebugEnabled())
-            logger.debug("endElement(uri={}, localName={}, qName={}) - start", new Object[] { uri, localName, qName });
+            logger.debug("endElement(uri={}, localName={}, qName={}) - start", uri, localName, qName);
 
         // End of dataset
         if (qName.equals(DATASET)) {
@@ -473,8 +469,7 @@ public class FlatXmlProducer extends DefaultHandler implements IDataSetProducer 
         @Override
         public void startDTD(String name, String publicId, String systemId) throws SAXException {
             if (logger.isDebugEnabled())
-                logger.debug("startDTD(name={}, publicId={}, systemId={}) - start",
-                        new Object[] { name, publicId, systemId });
+                logger.debug("startDTD(name={}, publicId={}, systemId={}) - start", name, publicId, systemId);
 
             _dtdPresent = true;
             try {

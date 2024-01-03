@@ -72,7 +72,7 @@ public class XlsDataSetWriter {
      * create one per format and reuse the same style for all cells with the same
      * format.
      */
-    private static final Map<Workbook, Map> cellStyleMap = new HashMap<Workbook, Map>();
+    private static final Map<Workbook, Map<Short, CellStyle>> cellStyleMap = new HashMap<>();
 
     private CellStyle dateCellStyle;
 
@@ -174,7 +174,7 @@ public class XlsDataSetWriter {
 //        cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 
         long timeMillis = value.getTime();
-        cell.setCellValue((double) timeMillis);
+        cell.setCellValue(timeMillis);
         cell.setCellType(CellType.NUMERIC);
         cell.setCellStyle(this.dateCellStyle);
 
@@ -234,15 +234,15 @@ public class XlsDataSetWriter {
             logger.debug("setNumericCell(cell={}, value={}, workbook={}) - start",
                     new Object[] { cell, value, workbook });
 
-        cell.setCellValue(((BigDecimal) value).doubleValue());
+        cell.setCellValue(value.doubleValue());
 
         DataFormat df = workbook.createDataFormat();
-        int scale = ((BigDecimal) value).scale();
+        int scale = value.scale();
         short format;
         if (scale <= 0) {
             format = df.getFormat("####");
         } else {
-            String zeros = createZeros(((BigDecimal) value).scale());
+            String zeros = createZeros(value.scale());
             format = df.getFormat("####." + zeros);
         }
         if (logger.isDebugEnabled())

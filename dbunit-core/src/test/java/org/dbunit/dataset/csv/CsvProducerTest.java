@@ -21,13 +21,20 @@
 
 package org.dbunit.dataset.csv;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.HypersonicEnvironment;
+import org.dbunit.ant.AbstractStep;
 import org.dbunit.ant.Export;
 import org.dbunit.ant.Operation;
 import org.dbunit.ant.Query;
-import org.dbunit.ant.AbstractStep;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -39,13 +46,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+import junit.framework.TestCase;
 
 public class CsvProducerTest extends TestCase {
     private String driverClass;
@@ -62,8 +63,7 @@ public class CsvProducerTest extends TestCase {
         CachedDataSet consumer = new CachedDataSet();
         // producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
 
-        producer.setConsumer(consumer);
-        producer.produce();
+        producer.produce(consumer);
         final ITable[] tables = consumer.getTables();
         assertEquals("expected 2 tables", 2, tables.length);
 
@@ -93,8 +93,7 @@ public class CsvProducerTest extends TestCase {
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
         CsvProducer producer = new CsvProducer(THE_DIRECTORY);
         CachedDataSet consumer = new CachedDataSet();
-        producer.setConsumer(consumer);
-        producer.produce();
+        producer.produce(consumer);
         DatabaseOperation operation = DatabaseOperation.INSERT;
         operation.execute(connection, consumer);
     }
@@ -154,6 +153,7 @@ public class CsvProducerTest extends TestCase {
         return connection;
     }
 
+    @Override
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
@@ -181,6 +181,7 @@ public class CsvProducerTest extends TestCase {
         statement.close();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         HypersonicEnvironment.shutdown(connection.getConnection());
         connection.close();

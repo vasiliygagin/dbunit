@@ -60,7 +60,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
     private static final String NULL = "null";
     private static final String NONE = "none";
 
-    static char[] CDATA_DETECTION_CHARS = new char[] { 0x20, '\n', '\r', '\t', // whitespace
+    static char[] CDATA_DETECTION_CHARS = { 0x20, '\n', '\r', '\t', // whitespace
             '&', '<', // forbidden char
     };
 
@@ -92,7 +92,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
 
     /**
      * Enable or disable pretty print of the XML.
-     * 
+     *
      * @param enabled <code>true</code> to enable pretty print (which is the
      *                default). <code>false</code> otherwise.
      * @since 2.4
@@ -103,7 +103,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
 
     /**
      * Whether or not to write the column name as comment into the XML
-     * 
+     *
      * @param includeColumnComments Whether or not to write the column name as
      *                              comment into the XML
      */
@@ -113,7 +113,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
 
     /**
      * Writes the given {@link IDataSet} using this writer.
-     * 
+     *
      * @param dataSet The {@link IDataSet} to be written
      * @throws DataSetException
      */
@@ -121,8 +121,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
         logger.trace("write(dataSet{}) - start", dataSet);
 
         DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
-        provider.setConsumer(this);
-        provider.produce();
+        provider.produce(this);
     }
 
     boolean needsCData(String text) {
@@ -134,8 +133,8 @@ public class XmlDataSetWriter implements IDataSetConsumer {
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            for (int j = 0; j < CDATA_DETECTION_CHARS.length; j++) {
-                if (CDATA_DETECTION_CHARS[j] == c) {
+            for (char element : CDATA_DETECTION_CHARS) {
+                if (element == c) {
                     return true;
                 }
             }
@@ -146,6 +145,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
     ////////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
+    @Override
     public void startDataSet() throws DataSetException {
         logger.trace("startDataSet() - start");
 
@@ -157,6 +157,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void endDataSet() throws DataSetException {
         logger.trace("endDataSet() - start");
 
@@ -168,6 +169,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void startTable(ITableMetaData metaData) throws DataSetException {
         logger.trace("startTable(metaData={}) - start", metaData);
 
@@ -179,8 +181,8 @@ public class XmlDataSetWriter implements IDataSetConsumer {
             _xmlWriter.writeAttribute(NAME, tableName);
 
             Column[] columns = _activeMetaData.getColumns();
-            for (int i = 0; i < columns.length; i++) {
-                String columnName = columns[i].getColumnName();
+            for (Column column2 : columns) {
+                String columnName = column2.getColumnName();
                 _xmlWriter.writeElementWithText(COLUMN, columnName);
             }
         } catch (IOException e) {
@@ -189,6 +191,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
 
     }
 
+    @Override
     public void endTable() throws DataSetException {
         logger.trace("endTable() - start");
 
@@ -200,6 +203,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void row(Object[] values) throws DataSetException {
         logger.trace("row(values={}) - start", values);
 
@@ -250,7 +254,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * Writes the given String as CDATA using the {@link XmlWriter}. Can be
      * overridden to add custom behavior. This implementation just invokes
      * {@link XmlWriter#writeCData(String)}
-     * 
+     *
      * @param stringValue The value to be written
      * @throws IOException
      * @since 2.4.4
@@ -264,7 +268,7 @@ public class XmlDataSetWriter implements IDataSetConsumer {
      * Writes the given String as normal text using the {@link XmlWriter}. Can be
      * overridden to add custom behavior. This implementation just invokes
      * {@link XmlWriter#writeText(String)}.
-     * 
+     *
      * @param stringValue The value to be written
      * @throws IOException
      * @since 2.4.4

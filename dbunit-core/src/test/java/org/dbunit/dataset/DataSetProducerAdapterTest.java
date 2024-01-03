@@ -43,9 +43,8 @@ public class DataSetProducerAdapterTest {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         FlatXmlDataSet dataSet = createDataSet();
         DataSetProducerAdapter producer = new DataSetProducerAdapter(dataSet);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();

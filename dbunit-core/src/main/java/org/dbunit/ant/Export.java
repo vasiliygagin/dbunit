@@ -38,10 +38,11 @@ import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSetWriter;
 import org.dbunit.dataset.excel.XlsDataSet;
+import org.dbunit.dataset.excel.XlsDataSetWriter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlWriter;
-import org.dbunit.dataset.xml.XmlDataSet;
+import org.dbunit.dataset.xml.XmlDataSetWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,6 +146,7 @@ public class Export extends AbstractStep {
         _doctype = doctype;
     }
 
+    @Override
     public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
         logger.debug("execute(connection={}) - start", connection);
 
@@ -167,12 +169,14 @@ public class Export extends AbstractStep {
                         writer.setDocType(_doctype);
                         writer.write(dataset);
                     } else if (_format.equalsIgnoreCase(FORMAT_XML)) {
-                        XmlDataSet.write(dataset, out, getEncoding());
+                        String encoding = getEncoding();
+                        XmlDataSetWriter datasetWriter = new XmlDataSetWriter(out, encoding);
+                        datasetWriter.write(dataset);
                     } else if (_format.equalsIgnoreCase(FORMAT_DTD)) {
                         // TODO Should DTD also support encoding? It is basically an XML file...
                         FlatDtdDataSet.write(dataset, out);// , getEncoding());
                     } else if (_format.equalsIgnoreCase(FORMAT_XLS)) {
-                        XlsDataSet.write(dataset, out);
+                        new XlsDataSetWriter().write(dataset, out);
                     } else {
                         throw new IllegalArgumentException("The given format '" + _format + "' is not supported.");
                     }
@@ -209,10 +213,12 @@ public class Export extends AbstractStep {
         return dataset;
     }
 
+    @Override
     public String getLogMessage() {
         return "Executing export: " + "\n      in format: " + _format + " to datafile: " + getAbsolutePath(_dest);
     }
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
         result.append("Export: ");

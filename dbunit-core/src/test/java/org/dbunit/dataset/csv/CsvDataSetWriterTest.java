@@ -1,13 +1,14 @@
 package org.dbunit.dataset.csv;
 
-import junit.framework.TestCase;
+import java.io.File;
+
 import org.dbunit.Assertion;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.testutil.TestUtils;
 
-import java.io.File;
+import junit.framework.TestCase;
 
 /**
  * Created By: fede Date: 10-mar-2004 Time: 17.21.34
@@ -28,8 +29,7 @@ public class CsvDataSetWriterTest extends TestCase {
     private IDataSet produceToMemory(String source) throws DataSetException {
         CsvProducer producer = new CsvProducer(source);
         CachedDataSet cached = new CachedDataSet();
-        producer.setConsumer(cached);
-        producer.produce();
+        producer.produce(cached);
         return cached;
     }
 
@@ -37,8 +37,7 @@ public class CsvDataSetWriterTest extends TestCase {
         CsvProducer producer = new CsvProducer(source);
         new File(dest).delete();
         CsvDataSetWriter writer = new CsvDataSetWriter(dest);
-        producer.setConsumer(writer);
-        producer.produce();
+        producer.produce(writer);
     }
 
     public void testEscapeQuote() {
