@@ -101,20 +101,6 @@ public class DbUnitTaskIT {
     private StringBuffer outBuffer;
     private StringBuffer errBuffer;
 
-    static {
-        final Properties properties = System.getProperties(); // Those are mutable system properties
-        properties.put("dbunit.profile", "hsqldb");
-        properties.put("dbunit.profile.driverClass", "org.hsqldb.jdbcDriver");
-        properties.put("dbunit.profile.url", "jdbc:hsqldb:mem:.");
-        properties.put("dbunit.profile.schema", "PUBLIC");
-        properties.put("dbunit.profile.user", "sa");
-        properties.put("dbunit.profile.password", "");
-        properties.put("dbunit.profile.ddl", "hypersonic.sql");
-        properties.put("dbunit.profile.unsupportedFeatures",
-                "BLOB,CLOB,SCROLLABLE_RESULTSET,INSERT_IDENTITY,TRUNCATE_TABLE,SDO_GEOMETRY,XML_TYPE");
-        properties.put("dbunit.profile.multiLineSupport", "true");
-    }
-
     @BeforeClass
     public static void initDb() throws Exception {
         final Connection connection = jdbcDriver.getConnection("jdbc:hsqldb:mem:.", new Properties());
@@ -151,13 +137,23 @@ public class DbUnitTaskIT {
         System.clearProperty(MagicNames.PROJECT_BASEDIR);
 
         project.init();
-        File antFile = new File(System.getProperty(MagicTestNames.TEST_ROOT_DIRECTORY), fileName);
+        File antFile = new File(fileName);
         project.setUserProperty(MagicNames.ANT_FILE, antFile.getAbsolutePath());
         // set two new properties to allow to build unique names when running
         // multithreaded tests
         project.setProperty(MagicTestNames.TEST_PROCESS_ID, ProcessUtil.getProcessId("<Process>"));
         project.setProperty(MagicTestNames.TEST_THREAD_NAME, Thread.currentThread().getName());
         project.addBuildListener(new AntTestListener(Project.MSG_DEBUG));
+        project.setUserProperty("dbunit.profile", "hsqldb");
+        project.setUserProperty("dbunit.profile.driverClass", "org.hsqldb.jdbcDriver");
+        project.setUserProperty("dbunit.profile.url", "jdbc:hsqldb:mem:.");
+        project.setUserProperty("dbunit.profile.schema", "PUBLIC");
+        project.setUserProperty("dbunit.profile.user", "sa");
+        project.setUserProperty("dbunit.profile.password", "");
+        project.setUserProperty("dbunit.profile.ddl", "hypersonic.sql");
+        project.setUserProperty("dbunit.profile.unsupportedFeatures",
+                "BLOB,CLOB,SCROLLABLE_RESULTSET,INSERT_IDENTITY,TRUNCATE_TABLE,SDO_GEOMETRY,XML_TYPE");
+        project.setUserProperty("dbunit.profile.multiLineSupport", "true");
         ProjectHelper.configureProject(project, antFile);
 
         outputDir = new File(getProjectDir(), OUTPUT_DIR);
