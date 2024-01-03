@@ -36,8 +36,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.OrderedTableNameMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This dataset implementation can read and write MS Excel documents. Each sheet
@@ -50,12 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XlsDataSet extends AbstractDataSet {
 
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(XlsDataSet.class);
-
-    private final OrderedTableNameMap _tables;
+    private final OrderedTableNameMap<ITable> _tables;
 
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
@@ -86,21 +79,20 @@ public class XlsDataSet extends AbstractDataSet {
 
     /**
      * Write the specified dataset to the specified Excel document.
+     * 
+     * @deprecated inline
      */
+    @Deprecated
     public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
-
         new XlsDataSetWriter().write(dataSet, out);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-        if (logger.isDebugEnabled())
-            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
-
-        ITable[] tables = (ITable[]) _tables.orderedValues().toArray(new ITable[0]);
+        ITable[] tables = _tables.orderedValues().toArray(new ITable[0]);
         return new DefaultTableIterator(tables, reversed);
     }
 }

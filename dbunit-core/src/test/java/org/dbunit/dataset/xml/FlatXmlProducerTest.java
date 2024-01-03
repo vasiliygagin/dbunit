@@ -9,8 +9,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 
 import org.dbunit.dataset.DataSetException;
@@ -25,21 +23,13 @@ import org.xml.sax.InputSource;
 public class FlatXmlProducerTest {
 
     private FlatXmlProducer buildFlatXmlProducer() throws Exception {
-        InputSource source = buildFileInputsource("src/test/resources/xml/flatXmlProducerTest.xml");
+        InputSource source = XmlUtil.buildInputSourceFromFile("src/test/resources/xml/flatXmlProducerTest.xml");
         return new FlatXmlProducer(source);
     }
 
     private FlatXmlProducer buildFlatXmlProducer(String xmlContent) {
-        InputSource source = buildInputSourceFromContent(xmlContent);
+        InputSource source = XmlUtil.buildInputSourceFromContent(xmlContent);
         return new FlatXmlProducer(source);
-    }
-
-    private InputSource buildFileInputsource(String xmlFile) throws MalformedURLException {
-        return new InputSource(new File(xmlFile).getAbsoluteFile().toURI().toURL().toString());
-    }
-
-    private InputSource buildInputSourceFromContent(String content) {
-        return new InputSource(new StringReader(content));
     }
 
     @Test
@@ -47,9 +37,8 @@ public class FlatXmlProducerTest {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         String content = "<?xml version=\"1.0\"?><dataset/>";
         FlatXmlProducer producer = buildFlatXmlProducer(content);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
@@ -62,10 +51,9 @@ public class FlatXmlProducerTest {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         String content = "<?xml version=\"1.0\"?><nondataset/>";
         FlatXmlProducer producer = buildFlatXmlProducer(content);
-        producer.setConsumer(consumer);
 
         try {
-            producer.produce();
+            producer.produce(consumer);
         } catch (DataSetException exc) {
             assertThat(exc.getMessage(), is("Expected 'dataset' element"));
         }
@@ -76,9 +64,8 @@ public class FlatXmlProducerTest {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         String content = "<?xml version=\"1.0\"?><dataset><EMPTY_TABLE/></dataset>";
         FlatXmlProducer producer = buildFlatXmlProducer(content);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
@@ -96,11 +83,10 @@ public class FlatXmlProducerTest {
                 + "<dataset>" //
                 + "<EMPTY_TABLE/>" //
                 + "</dataset>";
-        InputSource source = buildInputSourceFromContent(content);
+        InputSource source = XmlUtil.buildInputSourceFromContent(content);
         FlatXmlProducer producer = new FlatXmlProducer(source, false);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
@@ -123,11 +109,10 @@ public class FlatXmlProducerTest {
                 + "<dataset>" //
                 + "<EMPTY_TABLE/>" //
                 + "</dataset>";
-        InputSource source = buildInputSourceFromContent(content);
+        InputSource source = XmlUtil.buildInputSourceFromContent(content);
         FlatXmlProducer producer = new FlatXmlProducer(source, metaDataSet);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
@@ -148,7 +133,7 @@ public class FlatXmlProducerTest {
                 + "COLUMN2 CDATA #IMPLIED " //
                 + "COLUMN3 CDATA #IMPLIED>" //
                 + "<!ELEMENT TEST_TABLE EMPTY>";
-        final InputSource dtdSource = buildInputSourceFromContent(dtdContent);
+        final InputSource dtdSource = XmlUtil.buildInputSourceFromContent(dtdContent);
         EntityResolver resolver = mock(EntityResolver.class);
         when(resolver.resolveEntity(null, "urn:/dummy.dtd")).thenReturn(dtdSource);
 
@@ -157,11 +142,10 @@ public class FlatXmlProducerTest {
                 + "<dataset>" //
                 + "<EMPTY_TABLE/>" //
                 + "</dataset>";
-        InputSource xmlSource = buildInputSourceFromContent(xmlContent);
+        InputSource xmlSource = XmlUtil.buildInputSourceFromContent(xmlContent);
         FlatXmlProducer producer = new FlatXmlProducer(xmlSource, resolver);
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();
@@ -176,12 +160,11 @@ public class FlatXmlProducerTest {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         String content = "<?xml version=\"1.0\"?>" //
                 + "<dataset>";
-        InputSource source = buildInputSourceFromContent(content);
+        InputSource source = XmlUtil.buildInputSourceFromContent(content);
         FlatXmlProducer producer = new FlatXmlProducer(source);
-        producer.setConsumer(consumer);
 
         try {
-            producer.produce();
+            producer.produce(consumer);
             fail("Should not be here!");
         } catch (DataSetException e) {
         }
@@ -195,9 +178,8 @@ public class FlatXmlProducerTest {
     public void testProduce() throws Exception {
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
         FlatXmlProducer producer = buildFlatXmlProducer();
-        producer.setConsumer(consumer);
 
-        producer.produce();
+        producer.produce(consumer);
 
         IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
         verifyer.verifyStartDataSet();

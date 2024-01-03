@@ -20,15 +20,11 @@
  */
 package org.dbunit.dataset.csv;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +37,8 @@ import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.TypeCastException;
 import org.dbunit.dataset.stream.DataSetProducerAdapter;
 import org.dbunit.dataset.stream.IDataSetConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author fede
@@ -84,10 +82,10 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         logger.debug("write(dataSet={}) - start", dataSet);
 
         DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
-        provider.setConsumer(this);
-        provider.produce();
+        provider.produce(this);
     }
 
+    @Override
     public void startDataSet() throws DataSetException {
         logger.debug("startDataSet() - start");
 
@@ -99,28 +97,24 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void endDataSet() throws DataSetException {
         logger.debug("endDataSet() - start");
 
         // write out table ordering file
         File orderingFile = new File(getTheDirectory(), CsvDataSet.TABLE_ORDERING_FILE);
 
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new FileWriter(orderingFile));
-            for (Iterator fileNames = tableList.iterator(); fileNames.hasNext();) {
-                String file = (String) fileNames.next();
+        try (PrintWriter pw = new PrintWriter(new FileWriter(orderingFile))) {
+            for (Object element : tableList) {
+                String file = (String) element;
                 pw.println(file);
             }
         } catch (IOException e) {
             throw new DataSetException("problems writing the table ordering file", e);
-        } finally {
-            if (pw != null) {
-                pw.close();
-            }
         }
     }
 
+    @Override
     public void startTable(ITableMetaData metaData) throws DataSetException {
         logger.debug("startTable(metaData={}) - start", metaData);
 
@@ -148,6 +142,7 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void endTable() throws DataSetException {
         logger.debug("endTable() - start");
 
@@ -160,6 +155,7 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         }
     }
 
+    @Override
     public void row(Object[] values) throws DataSetException {
         logger.debug("row(values={}) - start", values);
 
@@ -211,8 +207,7 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         testExport = QUOTE.toCharArray()[0];
         final char escape = ESCAPE.toCharArray()[0];
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < array.length; i++) {
-            char c = array[i];
+        for (char c : array) {
             if (c == testExport || c == escape) {
                 buffer.append('\\');
             }
@@ -252,6 +247,7 @@ public class CsvDataSetWriter implements IDataSetConsumer {
         writer.write(dataset);
     }
 
+    @Override
     protected void finalize() throws Throwable {
         logger.debug("finalize() - start");
 

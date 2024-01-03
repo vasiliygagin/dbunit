@@ -51,7 +51,7 @@ public class XlsTableWriteTest extends XlsTableTest {
         try {
             // write source dataset in temp file
             try {
-                XlsDataSet.write(super.createDataSet(), out);
+                new XlsDataSetWriter().write(super.createDataSet(), out);
             } finally {
                 out.close();
             }
@@ -89,7 +89,7 @@ public class XlsTableWriteTest extends XlsTableTest {
         try {
             // write DefaultTable in temp file
             try {
-                XlsDataSet.write(dataSet, out);
+                new XlsDataSetWriter().write(dataSet, out);
             } finally {
                 out.close();
             }

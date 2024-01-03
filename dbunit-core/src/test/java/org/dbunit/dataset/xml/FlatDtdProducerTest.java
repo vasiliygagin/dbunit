@@ -1,185 +1,169 @@
 /*
- *
- * The DbUnit Database Testing Framework
- * Copyright (C)2002-2004, DbUnit.org
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
 package org.dbunit.dataset.xml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.StringReader;
+import static org.dbunit.dataset.xml.XmlUtil.buildInputSourceFromContent;
+import static org.dbunit.dataset.xml.XmlUtil.buildInputSourceFromFile;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
-import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.stream.AbstractProducerTest;
+import org.dbunit.dataset.stream.IDataSetConsumer;
+import org.dbunit.dataset.stream.IDataSetConsumerMockVerifyer;
 import org.dbunit.dataset.stream.IDataSetProducer;
-import org.dbunit.dataset.stream.MockDataSetConsumer;
-import org.dbunit.testutil.TestUtils;
-import org.xml.sax.InputSource;
+import org.junit.Test;
 
-/**
- * @author Manuel Laflamme
- * @since Apr 29, 2003
- * @version $Revision$
- */
-public class FlatDtdProducerTest extends AbstractProducerTest {
-    private static final File DTD_FILE = TestUtils.getFile("dtd/flatDtdProducerTest.dtd");
+public class FlatDtdProducerTest {
 
-    public FlatDtdProducerTest(String s) {
-        super(s);
-    }
-
-    @Override
-    protected IDataSetProducer createProducer() throws Exception {
-        InputSource source = new InputSource(new FileInputStream(DTD_FILE));
-        return new FlatDtdProducer(source);
-    }
-
-    @Override
-    protected int[] getExpectedRowCount() throws Exception {
-        return new int[] { 0, 0, 0, 0, 0, 0 };
-    }
-
+    @Test
     public void testSequenceModel() throws Exception {
-        // Setup consumer
-        MockDataSetConsumer consumer = new MockDataSetConsumer();
-        consumer.addExpectedStartDataSet();
-        consumer.addExpectedEmptyTableIgnoreColumns("DUPLICATE_TABLE");
-        consumer.addExpectedEmptyTableIgnoreColumns("TEST_TABLE");
-        consumer.addExpectedEmptyTableIgnoreColumns("DUPLICATE_TABLE");
-        consumer.addExpectedEndDataSet();
+        String content = //
+                "<!ELEMENT dataset (DUPLICATE_TABLE*,TEST_TABLE+,DUPLICATE_TABLE?)>" //
+                        + "<!ELEMENT TEST_TABLE EMPTY>" //
+                        + "<!ELEMENT DUPLICATE_TABLE EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String content = "<!ELEMENT dataset (DUPLICATE_TABLE*,TEST_TABLE+,DUPLICATE_TABLE?)>"
-                + "<!ELEMENT TEST_TABLE EMPTY>" + "<!ELEMENT DUPLICATE_TABLE EMPTY>";
-        InputSource source = new InputSource(new StringReader(content));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
+        producer.produce(consumer);
 
-        // Produce and verify consumer
-        producer.produce();
-        consumer.verify();
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("DUPLICATE_TABLE");
+        verifyer.verifyDtdTable("TEST_TABLE");
+        verifyer.verifyDtdTable("DUPLICATE_TABLE");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
     public void testChoicesModel() throws Exception {
-        // Setup consumer
-        MockDataSetConsumer consumer = new MockDataSetConsumer();
-        consumer.addExpectedStartDataSet();
-        consumer.addExpectedEmptyTableIgnoreColumns("TEST_TABLE");
-        consumer.addExpectedEmptyTableIgnoreColumns("SECOND_TABLE");
-        consumer.addExpectedEndDataSet();
+        String content = //
+                "<!ELEMENT dataset (TEST_TABLE|SECOND_TABLE)>" //
+                        + "<!ELEMENT TEST_TABLE EMPTY>" //
+                        + "<!ELEMENT SECOND_TABLE EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String content = "<!ELEMENT dataset (TEST_TABLE|SECOND_TABLE)>" + "<!ELEMENT TEST_TABLE EMPTY>"
-                + "<!ELEMENT SECOND_TABLE EMPTY>";
-        InputSource source = new InputSource(new StringReader(content));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
+        producer.produce(consumer);
 
-        // Produce and verify consumer
-        producer.produce();
-        consumer.verify();
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("TEST_TABLE");
+        verifyer.verifyDtdTable("SECOND_TABLE");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
     public void testChoicesModel_ElementDeclarationForTableMissing() throws Exception {
-        // Setup consumer
-        MockDataSetConsumer consumer = new MockDataSetConsumer();
-//        consumer.addExpectedStartDataSet();
-//        consumer.addExpectedEmptyTableIgnoreColumns("TEST_TABLE");
-//        consumer.addExpectedEmptyTableIgnoreColumns("SECOND_TABLE");
-//        consumer.addExpectedEndDataSet();
+        String content = //
+                "<!ELEMENT dataset ( (TEST_TABLE|SECOND_TABLE)* )>" //
+                        + "<!ELEMENT TEST_TABLE EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String dtdChoice = "<!ELEMENT dataset ( (TEST_TABLE|SECOND_TABLE)* )><!ELEMENT TEST_TABLE EMPTY>";
-        InputSource source = new InputSource(new StringReader(dtdChoice));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
-
-        // Produce and verify consumer
         try {
-            producer.produce();
+            producer.produce(consumer);
             fail("Should not be able to produce the dataset from an incomplete DTD");
         } catch (DataSetException expected) {
             String expectedStartsWith = "ELEMENT/ATTRIBUTE declaration for '" + "SECOND_TABLE" + "' is missing. ";
             assertTrue(expected.getMessage().startsWith(expectedStartsWith));
         }
-//        consumer.verify();
+
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("TEST_TABLE");
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
     public void testAttrListBeforeParentElement() throws Exception {
-        // Setup consumer
-        MockDataSetConsumer consumer = new MockDataSetConsumer();
-        consumer.addExpectedStartDataSet();
-        Column[] expectedColumns = createExpectedColumns(Column.NULLABLE);
-        consumer.addExpectedEmptyTable("TEST_TABLE", expectedColumns);
-        consumer.addExpectedEndDataSet();
+        String content = //
+                "<!ELEMENT dataset (TEST_TABLE)>" //
+                        + "<!ATTLIST TEST_TABLE " //
+                        + "COLUMN0 CDATA #IMPLIED " //
+                        + "COLUMN1 CDATA #IMPLIED " //
+                        + "COLUMN2 CDATA #IMPLIED " //
+                        + "COLUMN3 CDATA #IMPLIED" //
+                        + ">" //
+                        + "<!ELEMENT TEST_TABLE EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String content = "<!ELEMENT dataset (TEST_TABLE)>" + "<!ATTLIST TEST_TABLE " + "COLUMN0 CDATA #IMPLIED "
-                + "COLUMN1 CDATA #IMPLIED " + "COLUMN2 CDATA #IMPLIED " + "COLUMN3 CDATA #IMPLIED>"
-                + "<!ELEMENT TEST_TABLE EMPTY>";
+        producer.produce(consumer);
 
-        InputSource source = new InputSource(new StringReader(content));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
-
-        // Produce and verify consumer
-        producer.produce();
-        consumer.verify();
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("TEST_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
     public void testCleanupTableName() throws Exception {
-        // Setup consumer
-        MockDataSetConsumer consumer = new MockDataSetConsumer();
-        consumer.addExpectedStartDataSet();
-        consumer.addExpectedEmptyTableIgnoreColumns("TABLE_1");
-        consumer.addExpectedEmptyTableIgnoreColumns("TABLE_2");
-        consumer.addExpectedEmptyTableIgnoreColumns("TABLE_3");
-        consumer.addExpectedEndDataSet();
+        String content = //
+                "<!ELEMENT dataset (TABLE_1,(TABLE_2,TABLE_3+)?)+>" //
+                        + "<!ELEMENT TABLE_1 EMPTY>" //
+                        + "<!ELEMENT TABLE_2 EMPTY>" //
+                        + "<!ELEMENT TABLE_3 EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String content = "<!ELEMENT dataset (TABLE_1,(TABLE_2,TABLE_3+)?)+>" + "<!ELEMENT TABLE_1 EMPTY>"
-                + "<!ELEMENT TABLE_2 EMPTY>" + "<!ELEMENT TABLE_3 EMPTY>";
+        producer.produce(consumer);
 
-        InputSource source = new InputSource(new StringReader(content));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
-
-        // Produce and verify consumer
-        producer.produce();
-        consumer.verify();
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("TABLE_1");
+        verifyer.verifyDtdTable("TABLE_2");
+        verifyer.verifyDtdTable("TABLE_3");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
     public void testANYModel() throws Exception {
-        // Setup consumer
-        FlatDtdDataSet consumer = new FlatDtdDataSet();
+        String content = //
+                "<!ELEMENT dataset ANY>" //
+                        + "<!ELEMENT TEST_TABLE EMPTY>" //
+                        + "<!ELEMENT SECOND_TABLE EMPTY>";
+        FlatDtdProducer producer = new FlatDtdProducer(buildInputSourceFromContent(content));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
-        // Setup producer
-        String content = "<!ELEMENT dataset ANY>" + "<!ELEMENT TEST_TABLE EMPTY>" + "<!ELEMENT SECOND_TABLE EMPTY>";
-        InputSource source = new InputSource(new StringReader(content));
-        FlatDtdProducer producer = new FlatDtdProducer(source);
-        producer.setConsumer(consumer);
+        producer.produce(consumer);
 
-        // Produce and verify consumer
-        producer.produce();
-        assertEquals(2, consumer.getTables().length);
-        assertNotNull(consumer.getTable("TEST_TABLE"));
-        assertNotNull(consumer.getTable("SECOND_TABLE"));
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("SECOND_TABLE");
+        verifyer.verifyDtdTable("TEST_TABLE");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
     }
 
+    @Test
+    public void testProduce() throws Exception {
+        IDataSetProducer producer = new FlatDtdProducer(
+                buildInputSourceFromFile("src/test/resources/dtd/flatDtdProducerTest.dtd"));
+        IDataSetConsumer consumer = mock(IDataSetConsumer.class);
+
+        producer.produce(consumer);
+
+        IDataSetConsumerMockVerifyer verifyer = new IDataSetConsumerMockVerifyer(consumer);
+        verifyer.verifyStartDataSet();
+        verifyer.verifyDtdTable("DUPLICATE_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyDtdTable("SECOND_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyDtdTable("TEST_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyDtdTable("NOT_NULL_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyDtdTable("EMPTY_TABLE", "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3");
+        verifyer.verifyEndDataSet();
+        verifyer.verifyNoMoreInvocations();
+    }
+
+    @Test
+    public void testProduceWithoutConsumer() throws Exception {
+        IDataSetProducer producer = new FlatDtdProducer(
+                buildInputSourceFromFile("src/test/resources/dtd/flatDtdProducerTest.dtd"));
+        producer.produce();
+    }
 }

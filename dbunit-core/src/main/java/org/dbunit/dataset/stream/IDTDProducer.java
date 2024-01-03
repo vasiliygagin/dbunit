@@ -29,7 +29,7 @@ import org.dbunit.dataset.DataSetException;
  * @since Apr 17, 2003
  * @version $Revision$
  */
-public interface IDataSetProducer {
+public interface IDTDProducer {
     public void setConsumer(IDataSetConsumer consumer) throws DataSetException;
 
     /**

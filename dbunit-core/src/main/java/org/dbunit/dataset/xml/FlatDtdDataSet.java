@@ -68,10 +68,10 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
 
     public FlatDtdDataSet(IDataSetProducer producer) throws DataSetException {
         initialize();
-        producer.setConsumer(this);
-        producer.produce();
+        producer.produce(this);
     }
 
+    @Override
     protected void initialize() {
         if (_orderedTableNameMap == null) {
             _orderedTableNameMap = super.createTableNameMap();
@@ -80,7 +80,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
 
     /**
      * Write the specified dataset to the specified output stream as DTD.
-     * 
+     *
      * @see FlatDtdWriter
      */
     public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
@@ -90,7 +90,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
 
     /**
      * Write the specified dataset to the specified writer as DTD.
-     * 
+     *
      * @see FlatDtdWriter
      */
     public static void write(IDataSet dataSet, Writer out) throws IOException, DataSetException {
@@ -102,6 +102,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
         if (logger.isDebugEnabled())
             logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
@@ -115,7 +116,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         ITable[] tables = new ITable[names.length];
         for (int i = 0; i < names.length; i++) {
             String tableName = names[i];
-            ITable table = (ITable) _orderedTableNameMap.get(tableName);
+            ITable table = _orderedTableNameMap.get(tableName);
             if (table == null) {
                 throw new NoSuchTableException(tableName);
             }
@@ -129,6 +130,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
+    @Override
     public String[] getTableNames() throws DataSetException {
         logger.debug("getTableNames() - start");
 
@@ -140,6 +142,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         return _orderedTableNameMap.getTableNames();
     }
 
+    @Override
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
@@ -151,6 +154,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         return super.getTableMetaData(tableName);
     }
 
+    @Override
     public ITable getTable(String tableName) throws DataSetException {
         logger.debug("getTable(tableName={}) - start", tableName);
 
@@ -165,18 +169,21 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
     ////////////////////////////////////////////////////////////////////////
     // IDataSetConsumer interface
 
+    @Override
     public void startDataSet() throws DataSetException {
         logger.debug("startDataSet() - start");
 
         _ready = false;
     }
 
+    @Override
     public void endDataSet() throws DataSetException {
         logger.debug("endDataSet() - start");
 
         _ready = true;
     }
 
+    @Override
     public void startTable(ITableMetaData metaData) throws DataSetException {
         logger.debug("startTable(metaData={}) - start", metaData);
 
@@ -184,14 +191,17 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         _orderedTableNameMap.add(tableName, new DefaultTable(metaData));
     }
 
+    @Override
     public void endTable() throws DataSetException {
         // no op
     }
 
+    @Override
     public void row(Object[] values) throws DataSetException {
         // no op
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

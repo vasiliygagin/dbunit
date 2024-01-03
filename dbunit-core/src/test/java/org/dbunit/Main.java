@@ -28,6 +28,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
+import org.dbunit.dataset.excel.XlsDataSetWriter;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.MockDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
@@ -187,7 +188,7 @@ public class Main {
     private static void writeXls() throws IOException, DataSetException {
         Reader in = new FileReader("P:/dbunit-cvs/dbunit/src/xml/dataSetTest.xml");
         FileOutputStream out = new FileOutputStream("P:/dbunit-cvs/dbunit/dataSetTest.xls");
-        XlsDataSet.write(new XmlDataSet(in), out);
+        new XlsDataSetWriter().write(new XmlDataSet(in), out);
         out.close();
     }
 

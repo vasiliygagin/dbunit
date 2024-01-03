@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Asynchronous table iterator that uses a new Thread for asynchronous
  * processing.
- * 
+ *
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -63,7 +63,7 @@ public class StreamingIterator implements ITableIterator {
     /**
      * Iterator that creates a table iterator by reading the input from the given
      * source in an asynchronous way. Therefore a Thread is created.
-     * 
+     *
      * @param source The source of the data
      * @throws DataSetException
      */
@@ -97,6 +97,7 @@ public class StreamingIterator implements ITableIterator {
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
+    @Override
     public boolean next() throws DataSetException {
         logger.debug("next() - start");
 
@@ -127,12 +128,14 @@ public class StreamingIterator implements ITableIterator {
         throw new IllegalStateException("Unexpected object taken from asyncronous handler: " + _taken);
     }
 
+    @Override
     public ITableMetaData getTableMetaData() throws DataSetException {
         logger.debug("getTableMetaData() - start");
 
         return _activeTable.getTableMetaData();
     }
 
+    @Override
     public ITable getTable() throws DataSetException {
         logger.debug("getTable() - start");
 
@@ -189,18 +192,21 @@ public class StreamingIterator implements ITableIterator {
         ////////////////////////////////////////////////////////////////////////
         // ITable interface
 
+        @Override
         public ITableMetaData getTableMetaData() {
             logger.debug("getTableMetaData() - start");
 
             return _metaData;
         }
 
+        @Override
         public int getRowCount() {
             logger.debug("getRowCount() - start");
 
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public Object getValue(int row, String columnName) throws DataSetException {
             if (logger.isDebugEnabled())
                 logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), columnName);
@@ -221,6 +227,7 @@ public class StreamingIterator implements ITableIterator {
             return _rowValues[getColumnIndex(columnName)];
         }
 
+        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(getClass().getName()).append("[");
@@ -258,12 +265,12 @@ public class StreamingIterator implements ITableIterator {
         ////////////////////////////////////////////////////////////////////////
         // Runnable interface
 
+        @Override
         public void run() {
             logger.debug("run() - start");
 
             try {
-                _producer.setConsumer(this);
-                _producer.produce();
+                _producer.produce(this);
             } catch (Exception e) {
                 _exceptionHandler.handleException(e);
                 // Since the invoker thread probably waits tell it that we have finished here
@@ -276,9 +283,11 @@ public class StreamingIterator implements ITableIterator {
         ////////////////////////////////////////////////////////////////////////
         // IDataSetConsumer interface
 
+        @Override
         public void startDataSet() throws DataSetException {
         }
 
+        @Override
         public void endDataSet() throws DataSetException {
             logger.debug("endDataSet() - start");
 
@@ -289,6 +298,7 @@ public class StreamingIterator implements ITableIterator {
             }
         }
 
+        @Override
         public void startTable(ITableMetaData metaData) throws DataSetException {
             logger.debug("startTable(metaData={}) - start", metaData);
 
@@ -299,9 +309,11 @@ public class StreamingIterator implements ITableIterator {
             }
         }
 
+        @Override
         public void endTable() throws DataSetException {
         }
 
+        @Override
         public void row(Object[] values) throws DataSetException {
             logger.debug("row(values={}) - start", values);
 
