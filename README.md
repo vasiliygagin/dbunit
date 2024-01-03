@@ -22,9 +22,18 @@ and
             <version>2.8.0</version>
         </dependency>
 
-Code in those artifacts is largely original. Though there are small changes in implementation details and tests, everything should be compatible.
-Currently I am working on cleaning and upgrading dependencies. Attempts will be made to maintain compatibility in the future.
-More artifacts will be split of original artifacts in the future releases. Like support for ant and junit 2 and junit 4 will probably moved to dbunit-ant, dbunit-junit2 and dbunit-junit4. So I can amputate those easier when time comes.
+Code in those artifacts in version 2.8.0 is largely original. Though there are small changes in implementation details and tests, everything should be compatible.
+
+Starting with version 2.9.0, support for Ant has moved to
+
+        <dependency>
+            <groupId>io.github.vasiliygagin</groupId>
+            <artifactId>dbunit-ant</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+Various Writers are being move to dbunit-ant too. They are user only there. Do not see why would anyone need to write file while unit testing their code.
+
+More artifacts will be split of original artifacts in the future releases. Like support for junit 2 and junit 4 will probably moved to dbunit-ant, dbunit-junit2 and dbunit-junit4. So I can amputate those easier when time comes.
 
 Broken things
 =============
@@ -36,6 +45,7 @@ Changes to original DBUnit
  and "dataSource" then all Spring beans of types IDatabaseCnnection and DataSource are used as connections. In this case, if more then
  one connection found, there will be no default connection, and all database operations will have to explicitly specify connection name.
 - Lookup of connections by common names can be bypassed by specifying DbUnitConfiguration.skipLegacyConnectionLookup = true
+- Some static helper "write" methods in Different DataSets are being removed. Because they are in wrong place. They just create corresponding writer. For example XmlDataSet.write() simply creates XmlDataSetWriter instance and executes write(IDataSet) method on it. IDataset parameter does not even need to be of Xml variety, so does not belong to XmlDataSet.
 
 Old Spring Test DbUnit Introduction
 ===================================

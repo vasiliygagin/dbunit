@@ -21,24 +21,29 @@
 
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
-import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.datatype.DataType;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.dbunit.testutil.TestUtils;
 
-import java.io.FileOutputStream;
-import java.sql.Connection;
+import junit.framework.TestCase;
 
 /**
  * Test Case for issue #1721870
- * 
+ *
  * @author Sebastien Le Callonnec
  * @version $Revision$
  * @since Mar 11, 2008
@@ -46,22 +51,54 @@ import java.sql.Connection;
 public class CompositeDataSetIterationTest extends TestCase {
 
     private Connection jdbcConnection;
-    private final String sqlFile = "hypersonic_simple_dataset.sql";
     private IDatabaseConnection connection;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
-        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
+        Class.forName("org.hsqldb.jdbcDriver");
+        Connection connection1 = DriverManager.getConnection("jdbc:hsqldb:" + "mem:tempdb", "sa", "");
+        this.jdbcConnection = connection1;
+        final File ddlFile = new File("src/test/resources/sql/hypersonic_simple_dataset.sql");
+        final Connection connection2 = jdbcConnection;
+
+        final String sql = readSqlFromFile(ddlFile);
+
+        executeSql(connection2, sql);
+
         this.connection = new DatabaseConnection(jdbcConnection);
         DatabaseConfig config = connection.getConfig();
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
     }
 
+    private String readSqlFromFile(final File ddlFile) throws IOException {
+        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
+        final StringBuilder sqlBuffer = new StringBuilder();
+        while (sqlReader.ready()) {
+            String line = sqlReader.readLine();
+            if (!line.startsWith("-")) {
+                sqlBuffer.append(line);
+            }
+        }
+
+        sqlReader.close();
+
+        return sqlBuffer.toString();
+    }
+
+    private void executeSql(final Connection connection2, final String sql) throws SQLException {
+
+        try (final Statement statement = connection2.createStatement();) {
+            statement.execute(sql);
+        }
+    }
+
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        final Connection connection = this.jdbcConnection;
 
-        HypersonicEnvironment.shutdown(this.jdbcConnection);
+        executeSql(connection, "SHUTDOWN IMMEDIATELY");
         this.jdbcConnection.close();
     }
 
@@ -94,7 +131,9 @@ public class CompositeDataSetIterationTest extends TestCase {
 
         // 4. Write
         try {
-            FlatXmlDataSet.write(compositeDataSet, new FileOutputStream("target/full.xml"));
+            FlatXmlWriter datasetWriter = new FlatXmlWriter(new FileOutputStream("target/full.xml"));
+            datasetWriter.setIncludeEmptyTable(true);
+            datasetWriter.write(compositeDataSet);
         } catch (Exception e) {
             fail(e.getMessage());
         }

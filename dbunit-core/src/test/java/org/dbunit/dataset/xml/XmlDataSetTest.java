@@ -21,18 +21,13 @@
 
 package org.dbunit.dataset.xml;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 
-import org.dbunit.Assertion;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
@@ -66,43 +61,6 @@ public class XmlDataSetTest extends AbstractDataSetTest {
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         InputStream in = new FileInputStream(TestUtils.getFile("xml/xmlDataSetDuplicateMultipleCaseTest.xml"));
         return new XmlDataSet(in);
-    }
-
-    public void testWrite() throws Exception {
-        IDataSet expectedDataSet = createDataSet();
-        File tempFile = File.createTempFile("dataSetTest", ".xml");
-        try {
-            OutputStream out = new FileOutputStream(tempFile);
-
-            try {
-                // write dataset in temp file
-                XmlDataSet.write(expectedDataSet, out);
-
-                // load new dataset from temp file
-                IDataSet actualDataSet = new XmlDataSet(new FileReader(tempFile));
-
-                // verify table count
-                assertEquals("table count", expectedDataSet.getTableNames().length,
-                        actualDataSet.getTableNames().length);
-
-                // verify each table
-                ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-                ITable[] actual = DataSetUtils.getTables(actualDataSet);
-                assertEquals("table count", expected.length, actual.length);
-                for (int i = 0; i < expected.length; i++) {
-                    String expectedName = expected[i].getTableMetaData().getTableName();
-                    String actualName = actual[i].getTableMetaData().getTableName();
-                    assertEquals("table name", expectedName, actualName);
-
-                    assertTrue("not same instance", expected[i] != actual[i]);
-                    Assertion.assertEquals(expected[i], actual[i]);
-                }
-            } finally {
-                out.close();
-            }
-        } finally {
-            tempFile.delete();
-        }
     }
 
     /**

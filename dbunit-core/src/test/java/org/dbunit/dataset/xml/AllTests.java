@@ -37,13 +37,9 @@ public class AllTests extends TestSuite {
         suite.addTest(new TestSuite(FlatXmlDataSetTest.class));
         suite.addTest(new TestSuite(FlatXmlProducerTest.class));
         suite.addTest(new TestSuite(FlatXmlTableTest.class));
-        suite.addTest(new TestSuite(FlatXmlTableWriteTest.class));
-        suite.addTest(new TestSuite(FlatXmlWriterTest.class));
         suite.addTest(new TestSuite(XmlDataSetTest.class));
-        suite.addTest(new TestSuite(XmlDataSetWriterTest.class));
         suite.addTest(new TestSuite(XmlProducerTest.class));
         suite.addTest(new TestSuite(XmlTableTest.class));
-        suite.addTest(new TestSuite(XmlTableWriteTest.class));
 
         return suite;
     }

@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.net.URL;
 
 import org.dbunit.dataset.CachedDataSet;
@@ -388,38 +387,6 @@ public class FlatXmlDataSet extends CachedDataSet {
     @Deprecated
     public FlatXmlDataSet(InputStream xmlStream, IDataSet metaDataSet) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlStream), metaDataSet));
-    }
-
-    /**
-     * Write the specified dataset to the specified output stream as xml.
-     */
-    public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
-
-        FlatXmlWriter datasetWriter = new FlatXmlWriter(out);
-        datasetWriter.setIncludeEmptyTable(true);
-        datasetWriter.write(dataSet);
-    }
-
-    /**
-     * Write the specified dataset to the specified writer as xml.
-     */
-    public static void write(IDataSet dataSet, Writer writer) throws IOException, DataSetException {
-        logger.debug("write(dataSet={}, writer={}) - start", dataSet, writer);
-        write(dataSet, writer, null);
-    }
-
-    /**
-     * Write the specified dataset to the specified writer as xml.
-     */
-    public static void write(IDataSet dataSet, Writer writer, String encoding) throws IOException, DataSetException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("write(dataSet={}, writer={}, encoding={}) - start", dataSet, writer, encoding);
-        }
-
-        FlatXmlWriter datasetWriter = new FlatXmlWriter(writer, encoding);
-        datasetWriter.setIncludeEmptyTable(true);
-        datasetWriter.write(dataSet);
     }
 
     /**
