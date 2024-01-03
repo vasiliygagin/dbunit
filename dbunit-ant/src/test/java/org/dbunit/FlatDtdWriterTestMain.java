@@ -10,7 +10,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 
-public class OldMain {
+public class FlatDtdWriterTestMain {
     public static void main(String[] args) throws Exception {
         FileInputStream xmlStream = new FileInputStream("src/test/resources/xml/flatXmlDataSetTest.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(xmlStream);
