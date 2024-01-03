@@ -21,23 +21,18 @@
 
 package org.dbunit;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * @author Vasiliy Gagin
  */
 public class DatabaseProfile {
 
-    private static final String[] EMPTY_ARRAY = new String[0];
+    private static final String[] EMPTY_ARRAY = {};
 
-    private static final String DATABASE_PROFILE = "dbunit.profile";
-
-    private static final String PROFILE_DRIVER_CLASS = "dbunit.profile.driverClass";
     private static final String PROFILE_URL = "dbunit.profile.url";
     private static final String PROFILE_SCHEMA = "dbunit.profile.schema";
     private static final String PROFILE_USER = "dbunit.profile.user";
@@ -46,18 +41,26 @@ public class DatabaseProfile {
     private static final String PROFILE_DDL = "dbunit.profile.ddl";
     private static final String PROFILE_MULTILINE_SUPPORT = "dbunit.profile.multiLineSupport";
 
-    public final String profileName;
+    public final String profileName = "hsqldb";
     private final Properties _properties;
 
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseProfile.class);
-
-    public DatabaseProfile(String profileName) throws IOException {
-        _properties = getProperties(profileName);
-        this.profileName = _properties.getProperty(DATABASE_PROFILE);
+    public DatabaseProfile() {
+        final Properties properties = System.getProperties();
+        properties.put("dbunit.profile", "hsqldb");
+        properties.put("dbunit.profile.driverClass", "org.hsqldb.jdbcDriver");
+        properties.put("dbunit.profile.url", "jdbc:hsqldb:mem:.");
+        properties.put("dbunit.profile.schema", "PUBLIC");
+        properties.put("dbunit.profile.user", "sa");
+        properties.put("dbunit.profile.password", "");
+        properties.put("dbunit.profile.ddl", "hypersonic.sql");
+        properties.put("dbunit.profile.unsupportedFeatures",
+                "BLOB,CLOB,SCROLLABLE_RESULTSET,INSERT_IDENTITY,TRUNCATE_TABLE,SDO_GEOMETRY,XML_TYPE");
+        properties.put("dbunit.profile.multiLineSupport", "true");
+        _properties = properties;
     }
 
     public String getDriverClass() {
-        return _properties.getProperty(PROFILE_DRIVER_CLASS);
+        return "org.hsqldb.jdbcDriver";
     }
 
     public String getConnectionUrl() {
@@ -92,35 +95,11 @@ public class DatabaseProfile {
             return EMPTY_ARRAY;
         }
 
-        List<String> stringList = new ArrayList<String>();
+        List<String> stringList = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(property, ",");
         while (tokenizer.hasMoreTokens()) {
             stringList.add(tokenizer.nextToken().trim());
         }
         return stringList.toArray(new String[stringList.size()]);
-    }
-
-    private static Properties getProperties(String profileName) throws IOException {
-
-        final Properties properties = System.getProperties();
-        if (profileName == null) {
-            profileName = properties.getProperty(DATABASE_PROFILE);
-        }
-        if (profileName == null) {
-            profileName = "hsqldb";
-        }
-        logger.info("Selected profile '{}'", profileName);
-
-        String fileName = profileName + "-dbunit.properties";
-
-        final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
-        if (inputStream != null) {
-            properties.load(inputStream);
-            logger.info("Loaded properties from file '{}'", fileName);
-            inputStream.close();
-        } else {
-            logger.warn("Properties file '{}' is not found", fileName);
-        }
-        return properties;
     }
 }

@@ -31,7 +31,6 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
-import org.dbunit.testutil.TestUtils;
 
 /**
  * @author Manuel Laflamme
@@ -47,13 +46,13 @@ public class DatabaseEnvironment {
 
     protected DatabaseEnvironment(final DatabaseProfile profile) throws Exception {
         _profile = profile;
-        final File file = TestUtils.getFile("xml/dataSetTest.xml");
+        final File file = new File("src/test/resources/xml/dataSetTest.xml");
         _dataSet = new XmlDataSet(new FileReader(file));
         _databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
                 _profile.getUser(), _profile.getPassword(), _profile.getSchema());
 
         DdlExecutor.execute("sql/" + _profile.getProfileDdl(), getConnection().getConnection(),
-                profile.getProfileMultilineSupport(), true);
+                profile.getProfileMultilineSupport());
     }
 
     public IDatabaseConnection getConnection() throws Exception {
@@ -97,18 +96,6 @@ public class DatabaseEnvironment {
         return _profile;
     }
 
-    public boolean support(final TestFeature feature) {
-        final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
-        for (int i = 0; i < unsupportedFeatures.length; i++) {
-            final String unsupportedFeature = unsupportedFeatures[i];
-            if (feature.toString().equals(unsupportedFeature)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Returns the string converted as an identifier according to the metadata rules
      * of the database environment. Most databases convert all metadata identifiers
@@ -120,17 +107,5 @@ public class DatabaseEnvironment {
      */
     public String convertString(final String str) {
         return str == null ? null : str.toUpperCase();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("_profile=").append(_profile);
-        sb.append(", _connection=").append(_connection);
-        sb.append(", _dataSet=").append(_dataSet);
-        sb.append(", _databaseTester=").append(_databaseTester);
-        sb.append("]");
-        return sb.toString();
     }
 }

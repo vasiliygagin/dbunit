@@ -282,10 +282,12 @@
 <!--            <groupId>com.h2database</groupId>-->
 <!--            <artifactId>h2</artifactId>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>hsqldb</groupId>-->
-<!--            <artifactId>hsqldb</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+                <version>${hsqldbDriverVersion}</version>
+                <scope>test</scope>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.postgresql</groupId>-->
 <!--            <artifactId>postgresql</artifactId>-->
@@ -294,8 +296,8 @@
 
     <build>
 <!--        <defaultGoal>install</defaultGoal>-->
-<!--        <pluginManagement>-->
-<!--            <plugins>-->
+        <pluginManagement>
+            <plugins>
 <!--                <plugin>-->
 <!--                    <groupId>org.apache.maven.plugins</groupId>-->
 <!--                    <artifactId>maven-assembly-plugin</artifactId>-->
@@ -361,23 +363,23 @@
 <!--                        </rules>-->
 <!--                    </configuration>-->
 <!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-failsafe-plugin</artifactId>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
 <!--                    <version>${failsafePluginVersion}</version>-->
 <!--                    <configuration>-->
 <!--                        <redirectTestOutputToFile>true</redirectTestOutputToFile>-->
 <!--                        <encoding>UTF-8</encoding>-->
 <!--                    </configuration>-->
-<!--                    <executions>-->
-<!--                        <execution>-->
-<!--                            <goals>-->
-<!--                                <goal>integration-test</goal>-->
-<!--                                <goal>verify</goal>-->
-<!--                            </goals>-->
-<!--                        </execution>-->
-<!--                    </executions>-->
-<!--                </plugin>-->
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 <!--                <plugin>-->
 <!--                    <groupId>org.jacoco</groupId>-->
 <!--                    <artifactId>jacoco-maven-plugin</artifactId>-->
@@ -535,18 +537,18 @@
 <!--                            file:///${project.basedir}/versions-maven-plugin-rules.xml</rulesUri>-->
 <!--                    </configuration>-->
 <!--                </plugin>-->
-<!--            </plugins>-->
-<!--        </pluginManagement>-->
+            </plugins>
+        </pluginManagement>
 
-<!--        <plugins>-->
+        <plugins>
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->
 <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
 <!--            </plugin>-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-failsafe-plugin</artifactId>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
 <!--            <plugin>-->
 <!--                <groupId>org.jacoco</groupId>-->
 <!--                <artifactId>jacoco-maven-plugin</artifactId>-->
@@ -555,7 +557,7 @@
 <!--                <groupId>org.gaul</groupId>-->
 <!--                <artifactId>modernizer-maven-plugin</artifactId>-->
 <!--            </plugin>-->
-<!--        </plugins>-->
+        </plugins>
     </build>
 
 <!--    <reporting>-->

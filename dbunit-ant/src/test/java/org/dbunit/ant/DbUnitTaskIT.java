@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.BuildEvent;
@@ -75,7 +74,7 @@ import org.junit.Test;
  * @version $Revision$ $Date$
  * @since Jun 10, 2002
  * @see org.dbunit.ant.AntTest
- * 
+ *
  *      Comment from {@link BuildFileTest}: 0deprecated as of 1.9.4. Use
  *      BuildFileRule, Assert, AntAssert and JUnit4 annotations to drive tests
  *      instead
@@ -97,7 +96,7 @@ public class DbUnitTaskIT {
     @Before
     public void setUp() throws Exception {
         // This line ensure test database is initialized
-        DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironmentLoader.getInstance();
 
         String fileName = "src/test/resources/xml/antTestBuildFile.xml";
         File file = new File(fileName);
@@ -132,12 +131,12 @@ public class DbUnitTaskIT {
     }
 
     @Test
-    public void testNoDriver() {
+    public void tNoDriver() {
         expectBuildException("no-driver", "Should have required a driver attribute.");
     }
 
     @Test
-    public void testNoDbUrl() {
+    public void tNoDbUrl() {
         expectBuildException("no-db-url", "Should have required a url attribute.");
     }
 
@@ -253,7 +252,7 @@ public class DbUnitTaskIT {
         Export export = (Export) getFirstStepFromTarget(targetName);
         DbUnitTask task = getFirstTargetTask(targetName);
         IDatabaseConnection connection = task.createConnection();
-        IDataSet dataSetToBeExported = export.getExportDataSet(connection);
+        export.getExportDataSet(connection);
         assertEquals("org.dbunit.database.ForwardOnlyResultSetTableFactory", connection.getConfig()
                 .getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName());
     }
@@ -531,7 +530,7 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOperation() throws Exception {
         String targetName = "test-replace";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -542,7 +541,7 @@ public class DbUnitTaskIT {
     @Test
     public void testOrderedOperation() throws Exception {
         String targetName = "test-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -553,7 +552,7 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOrderedOperation() throws Exception {
         String targetName = "test-replace-ordered";
-        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance(null).getDatabaseTester();
+        final IDatabaseTester dbTest = DatabaseEnvironmentLoader.getInstance().getDatabaseTester();
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
         final ITable table = ds.getTable("PK_TABLE");
@@ -569,8 +568,8 @@ public class DbUnitTaskIT {
 
     private int getQueryCount(List tables) {
         int count = 0;
-        for (Iterator it = tables.iterator(); it.hasNext();) {
-            if (it.next() instanceof Query) {
+        for (Object table : tables) {
+            if (table instanceof Query) {
                 count++;
             }
         }
@@ -580,8 +579,8 @@ public class DbUnitTaskIT {
 
     private int getTableCount(List tables) {
         int count = 0;
-        for (Iterator it = tables.iterator(); it.hasNext();) {
-            if (it.next() instanceof Table) {
+        for (Object table : tables) {
+            if (table instanceof Table) {
                 count++;
             }
         }
@@ -591,8 +590,8 @@ public class DbUnitTaskIT {
 
     private int getQuerySetCount(List tables) {
         int count = 0;
-        for (Iterator it = tables.iterator(); it.hasNext();) {
-            if (it.next() instanceof QuerySet) {
+        for (Object table : tables) {
+            if (table instanceof QuerySet) {
                 count++;
             }
         }
@@ -619,8 +618,8 @@ public class DbUnitTaskIT {
         Target target = targets.get(targetName);
 
         Task[] tasks = target.getTasks();
-        for (int i = 0; i < tasks.length; i++) {
-            Object task = tasks[i];
+        for (Task task2 : tasks) {
+            Object task = task2;
             if (task instanceof UnknownElement) {
                 ((UnknownElement) task).maybeConfigure(); // alternative to this is setting id on dbunit task. then ant
                                                           // will not clean realThing
