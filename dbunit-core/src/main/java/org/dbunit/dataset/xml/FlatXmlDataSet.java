@@ -24,8 +24,6 @@ package org.dbunit.dataset.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.URL;
 
@@ -387,13 +385,5 @@ public class FlatXmlDataSet extends CachedDataSet {
     @Deprecated
     public FlatXmlDataSet(InputStream xmlStream, IDataSet metaDataSet) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlStream), metaDataSet));
-    }
-
-    /**
-     * Write a DTD for the specified dataset to the specified output.
-     */
-    public static void writeDtd(IDataSet dataSet, OutputStream out) throws DataSetException {
-        FlatDtdWriter dtdWriter = new FlatDtdWriter(new OutputStreamWriter(out));
-        dtdWriter.write(dataSet);
     }
 }

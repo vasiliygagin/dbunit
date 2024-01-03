@@ -22,16 +22,12 @@
 package org.dbunit.dataset.xml;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
 
 import org.dbunit.dataset.AbstractDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.DefaultTableIterator;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
@@ -75,24 +71,6 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         if (_orderedTableNameMap == null) {
             _orderedTableNameMap = super.createTableNameMap();
         }
-    }
-
-    /**
-     * @deprecated Wrong place, this method is not specific for {@link FlatDtdDataSet}. inline
-     */
-    @Deprecated
-    public static void write(IDataSet dataSet, OutputStream out) throws DataSetException {
-        FlatDtdWriter datasetWriter = new FlatDtdWriter(new OutputStreamWriter(out));
-        datasetWriter.write(dataSet);
-    }
-
-    /**
-     * @deprecated Wrong place, this method is not specific for {@link FlatDtdDataSet}. inline
-     */
-    @Deprecated
-    public static void write(IDataSet dataSet, Writer out) throws DataSetException {
-        FlatDtdWriter datasetWriter = new FlatDtdWriter(out);
-        datasetWriter.write(dataSet);
     }
 
     ////////////////////////////////////////////////////////////////////////////
