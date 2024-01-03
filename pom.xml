@@ -54,6 +54,7 @@
     <modules>
         <module>dbunit-parent</module>
         <module>dbunit-core</module>
+        <module>dbunit-ant</module>
         <module>dbunit-spring</module>
         <module>dbunit-spring-sample</module>
     </modules>

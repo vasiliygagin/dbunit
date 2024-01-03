@@ -34,16 +34,16 @@ import java.util.Properties;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.HypersonicEnvironment;
-import org.dbunit.ant.AbstractStep;
-import org.dbunit.ant.Export;
-import org.dbunit.ant.Operation;
-import org.dbunit.ant.Query;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.stream.IDataSetProducer;
+import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
@@ -117,11 +117,13 @@ public class CsvURLProducerTest extends TestCase {
     }
 
     public void testInsertOperationWithCsvFormat() throws SQLException, DatabaseUnitException {
-        Operation operation = new Operation();
-        operation.setFormat(AbstractStep.FORMAT_CSV);
-        operation.setSrc(TestUtils.getFile(THE_DIRECTORY));
-        operation.setType("INSERT");
-        operation.execute(connection);
+        try {
+            IDataSetProducer producer = new CsvProducer(TestUtils.getFile(THE_DIRECTORY));
+            IDataSet dataset = new StreamingDataSet(producer);
+            DatabaseOperation.INSERT.execute(connection, dataset);
+        } catch (SQLException e) {
+            throw new DatabaseUnitException(e);
+        }
         Statement statement = connection.getConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
@@ -136,24 +138,15 @@ public class CsvURLProducerTest extends TestCase {
 
         final String fromAnt = "target/csv/from-ant";
         final File dir = new File(fromAnt);
+        FileHelper.deleteDirectory(dir);
+
         try {
-            FileHelper.deleteDirectory(dir);
+            QueryDataSet queryDataSet = new QueryDataSet(getConnection());
+            queryDataSet.addTable("orders", "select * from orders");
+            queryDataSet.addTable("orders_row", "select * from orders_row");
 
-            Export export = new Export();
-            export.setFormat(AbstractStep.FORMAT_CSV);
-            export.setDest(dir);
-
-            Query query = new Query();
-            query.setName("orders");
-            query.setSql("select * from orders");
-            export.addQuery(query);
-
-            Query query2 = new Query();
-            query2.setName("orders_row");
-            query2.setSql("select * from orders_row");
-            export.addQuery(query2);
-
-            export.execute(getConnection());
+            CsvDataSetWriter writer = new CsvDataSetWriter(dir);
+            writer.write(queryDataSet);
 
             final File ordersFile = new File(fromAnt + "/orders.csv");
             assertTrue("file '" + ordersFile.getAbsolutePath() + "' does not exists", ordersFile.exists());

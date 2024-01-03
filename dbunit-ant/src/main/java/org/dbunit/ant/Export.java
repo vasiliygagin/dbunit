@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
+import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.dataset.xml.XmlDataSetWriter;
 import org.slf4j.Logger;
@@ -174,7 +176,8 @@ public class Export extends AbstractStep {
                         datasetWriter.write(dataset);
                     } else if (_format.equalsIgnoreCase(FORMAT_DTD)) {
                         // TODO Should DTD also support encoding? It is basically an XML file...
-                        FlatDtdDataSet.write(dataset, out);// , getEncoding());
+                        FlatDtdWriter datasetWriter = new FlatDtdWriter(new OutputStreamWriter(out));
+                        datasetWriter.write(dataset);// , getEncoding());
                     } else if (_format.equalsIgnoreCase(FORMAT_XLS)) {
                         new XlsDataSetWriter().write(dataset, out);
                     } else {

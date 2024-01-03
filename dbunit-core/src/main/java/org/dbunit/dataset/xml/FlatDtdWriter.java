@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FlatDtdWriter // implements IDataSetConsumer
 {
+    public static final String REQUIRED = "#REQUIRED";
+    public static final String IMPLIED = "#IMPLIED";
 
     /**
      * Logger for this class
@@ -74,9 +76,7 @@ public class FlatDtdWriter // implements IDataSetConsumer
         printOut.print("\n");
 
         // tables
-        for (int i = 0; i < tableNames.length; i++) {
-            // table element
-            String tableName = tableNames[i];
+        for (String tableName : tableNames) {
             printOut.print("<!ELEMENT ");
             printOut.print(tableName);
             printOut.print(" EMPTY>\n");
@@ -87,14 +87,13 @@ public class FlatDtdWriter // implements IDataSetConsumer
             printOut.print("\n");
             // Add the columns
             Column[] columns = dataSet.getTableMetaData(tableName).getColumns();
-            for (int j = 0; j < columns.length; j++) {
-                Column column = columns[j];
+            for (Column column : columns) {
                 printOut.print("    ");
                 printOut.print(column.getColumnName());
                 if (column.getNullable() == Column.NO_NULLS && column.getDefaultValue() == null) {
-                    printOut.print(" CDATA " + FlatDtdProducer.REQUIRED + "\n");
+                    printOut.print(" CDATA " + REQUIRED + "\n");
                 } else {
-                    printOut.print(" CDATA " + FlatDtdProducer.IMPLIED + "\n");
+                    printOut.print(" CDATA " + IMPLIED + "\n");
                 }
             }
             printOut.print(">\n");
@@ -110,13 +109,14 @@ public class FlatDtdWriter // implements IDataSetConsumer
      * @version $Revision$ $Date$
      * @since Jun 13, 2003
      */
-    public static abstract class ContentModel {
+    private static abstract class ContentModel {
         private final String _name;
 
         private ContentModel(String name) {
             _name = name;
         }
 
+        @Override
         public String toString() {
             return _name;
         }
@@ -130,7 +130,7 @@ public class FlatDtdWriter // implements IDataSetConsumer
      * @version $Revision$ $Date$
      * @since Jun 13, 2003
      */
-    public static class SequenceModel extends ContentModel {
+    private static class SequenceModel extends ContentModel {
 
         /**
          * Logger for this class
@@ -141,10 +141,11 @@ public class FlatDtdWriter // implements IDataSetConsumer
             super("sequence");
         }
 
+        @Override
         public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount) {
             if (logger.isDebugEnabled()) {
-                logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
-                        new Object[] { writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount) });
+                logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start", writer, tableName,
+                        String.valueOf(tableIndex), String.valueOf(tableCount));
             }
 
             boolean last = (tableIndex + 1) == tableCount;
@@ -164,7 +165,7 @@ public class FlatDtdWriter // implements IDataSetConsumer
      * @version $Revision$ $Date$
      * @since Jun 13, 2003
      */
-    public static class ChoiceModel extends ContentModel {
+    private static class ChoiceModel extends ContentModel {
 
         /**
          * Logger for this class
@@ -175,10 +176,11 @@ public class FlatDtdWriter // implements IDataSetConsumer
             super("sequence");
         }
 
+        @Override
         public void write(PrintWriter writer, String tableName, int tableIndex, int tableCount) {
             if (logger.isDebugEnabled()) {
-                logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start",
-                        new Object[] { writer, tableName, String.valueOf(tableIndex), String.valueOf(tableCount) });
+                logger.debug("write(writer={}, tableName={}, tableIndex={}, tableCount={}) - start", writer, tableName,
+                        String.valueOf(tableIndex), String.valueOf(tableCount));
             }
 
             boolean first = tableIndex == 0;

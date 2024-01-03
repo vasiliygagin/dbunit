@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.ProjectComponent;
@@ -39,7 +38,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvProducer;
-import org.dbunit.dataset.excel.XlsDataSet;
+import org.dbunit.dataset.excel.XlsDataSet2;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.dataset.xml.FlatDtdProducer;
@@ -90,7 +89,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             IDataSet[] dataSetsArray = null;
             if (config.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName()
                     .equals("org.dbunit.database.ForwardOnlyResultSetTableFactory")) {
-                dataSetsArray = (IDataSet[]) createForwardOnlyDataSetArray(queryDataSets);
+                dataSetsArray = createForwardOnlyDataSetArray(queryDataSets);
             } else {
                 dataSetsArray = (IDataSet[]) queryDataSets.toArray(new IDataSet[queryDataSets.size()]);
             }
@@ -118,9 +117,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
         QueryDataSet queryDataSet = new QueryDataSet(connection);
 
-        for (Iterator it = tables.iterator(); it.hasNext();) {
-            Object item = it.next();
-
+        for (Object item : tables) {
             if (item instanceof QuerySet) {
                 if (queryDataSet.getTableNames().length > 0)
                     queryDataSets.add(queryDataSet);
@@ -147,8 +144,8 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
     protected IDataSet getSrcDataSet(File src, String format, boolean forwardonly) throws DatabaseUnitException {
         if (logger.isDebugEnabled()) {
-            logger.debug("getSrcDataSet(src={}, format={}, forwardonly={}) - start",
-                    new Object[] { src, format, String.valueOf(forwardonly) });
+            logger.debug("getSrcDataSet(src={}, format={}, forwardonly={}) - start", src, format,
+                    String.valueOf(forwardonly));
         }
 
         try {
@@ -162,7 +159,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             } else if (format.equalsIgnoreCase(FORMAT_DTD)) {
                 producer = new FlatDtdProducer(getInputSource(src));
             } else if (format.equalsIgnoreCase(FORMAT_XLS)) {
-                return new CachedDataSet(new XlsDataSet(src));
+                return new CachedDataSet(new XlsDataSet2(src));
             } else {
                 throw new IllegalArgumentException(
                         "Type must be either 'flat'(default), 'xml', 'csv', 'xls' or 'dtd' but was: " + format);
@@ -179,7 +176,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
     /**
      * Checks if the given format is a format which contains tabular data.
-     * 
+     *
      * @param format The format to check
      * @return <code>true</code> if the given format is a data format. A data format
      *         is a format which holds tabular data that can be loaded via dbunit.
@@ -202,7 +199,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
      * Checks if the given data format is a valid one according to the method
      * {@link #isDataFormat(String)}. If it is not an
      * {@link IllegalArgumentException} is thrown.
-     * 
+     *
      * @param format The format to check
      * @throws IllegalArgumentException If the given format is not a valid data
      *                                  format
@@ -219,7 +216,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
     /**
      * Creates and returns an {@link InputSource}
-     * 
+     *
      * @param file The file for which an {@link InputSource} should be created
      * @return The input source for the given file
      * @throws MalformedURLException
@@ -237,6 +234,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
         this.ordered = ordered;
     }
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
         result.append("AbstractStep: ");

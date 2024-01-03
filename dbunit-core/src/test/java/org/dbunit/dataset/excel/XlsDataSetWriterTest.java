@@ -31,7 +31,7 @@ public class XlsDataSetWriterTest {
         URL excelFileUrl = getClass().getResource(INPUT_EXCEL_FILE);
         URI excelFileUri = excelFileUrl.toURI();
         File file = new File(excelFileUri);
-        IDataSet dataSet = new XlsDataSet(file);
+        IDataSet dataSet = new XlsDataSet2(file);
         FileOutputStream outputStream = new FileOutputStream(OUTPUT_EXCEL_FILE);
         new XlsDataSetWriter().write(dataSet, outputStream);
     }

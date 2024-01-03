@@ -89,15 +89,13 @@ public class FlatDtdProducer implements IDataSetProducer, EntityResolver, DeclHa
      */
     private static final Logger logger = LoggerFactory.getLogger(FlatDtdProducer.class);
 
-    private static final IDataSetConsumer EMPTY_CONSUMER = new DefaultConsumer();
-
     private static final String XML_CONTENT = "<?xml version=\"1.0\"?>" + "<!DOCTYPE dataset SYSTEM \"urn:/dummy.dtd\">"
             + "<dataset/>";
     private static final String DECL_HANDLER_PROPERTY_NAME = "http://xml.org/sax/properties/declaration-handler";
     private static final String LEXICAL_HANDLER_PROPERTY_NAME = "http://xml.org/sax/properties/lexical-handler";
 
     private InputSource _inputSource;
-    private IDataSetConsumer _consumer = EMPTY_CONSUMER;
+    private IDataSetConsumer _consumer = DefaultConsumer.NO_OP_CONSUMER;
 
     private String _rootName;
     private String _rootModel;
