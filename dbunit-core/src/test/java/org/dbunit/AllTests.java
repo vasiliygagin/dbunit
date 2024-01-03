@@ -31,7 +31,6 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
     public static Test suite() throws Exception {
         TestSuite suite = new TestSuite();
-        suite.addTest(org.dbunit.ant.AllTests.suite());
         suite.addTest(org.dbunit.assertion.AllTests.suite());
         suite.addTest(org.dbunit.database.AllTests.suite());
         suite.addTest(org.dbunit.database.search.AllTests.suite());

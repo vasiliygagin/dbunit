@@ -21,12 +21,19 @@
 package org.dbunit.dataset.excel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.dbunit.dataset.AbstractDataSet;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.DefaultTableIterator;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableIterator;
+import org.dbunit.dataset.OrderedTableNameMap;
 
 /**
  * This dataset implementation can read and write MS Excel documents. Each sheet
@@ -36,32 +43,41 @@ import org.dbunit.dataset.IDataSet;
  * @author Manuel Laflamme
  * @since Feb 21, 2003
  * @version $Revision$
- * @deprecated Keeping for compatibility
  */
-@Deprecated
-public class XlsDataSet extends XlsDataSet2 {
+public class XlsDataSet2 extends AbstractDataSet {
+
+    private final OrderedTableNameMap<ITable> _tables;
 
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
-    public XlsDataSet(File file) throws IOException, DataSetException {
-        super(file);
+    public XlsDataSet2(File file) throws IOException, DataSetException {
+        this(new FileInputStream(file));
     }
 
     /**
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
-    public XlsDataSet(InputStream in) throws IOException, DataSetException {
-        super(in);
+    public XlsDataSet2(InputStream in) throws IOException, DataSetException {
+        _tables = super.createTableNameMap();
+
+        Workbook workbook;
+        try {
+            workbook = WorkbookFactory.create(in);
+        } catch (EncryptedDocumentException e) {
+            throw new IOException(e);
+        }
+
+        int sheetCount = workbook.getNumberOfSheets();
+        for (int i = 0; i < sheetCount; i++) {
+            ITable table = new XlsTable(workbook.getSheetName(i), workbook.getSheetAt(i));
+            _tables.add(table.getTableMetaData().getTableName(), table);
+        }
     }
 
-    /**
-     * Write the specified dataset to the specified Excel document.
-     *
-     * @deprecated inline
-     */
-    @Deprecated
-    public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        new XlsDataSetWriter().write(dataSet, out);
+    @Override
+    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
+        ITable[] tables = _tables.orderedValues().toArray(new ITable[0]);
+        return new DefaultTableIterator(tables, reversed);
     }
 }

@@ -21,22 +21,21 @@
 
 package org.dbunit.dataset.xml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.dataset.CachedDataSet;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
-
-import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+
+import org.dbunit.dataset.CachedDataSet;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 
 /**
  * Reads and writes flat XML dataset document. Each XML element corresponds to a
@@ -45,7 +44,7 @@ import java.net.URL;
  * <p>
  * Flat XML dataset document sample:
  * <p>
- * 
+ *
  * <pre>
  * &lt;!DOCTYPE dataset SYSTEM "my-dataset.dtd"&gt;
  * &lt;dataset&gt;
@@ -75,23 +74,23 @@ import java.net.URL;
  * basically reads in the whole XML into a buffer and dynamically adds new
  * columns as they appear. It can be used as demonstrated in the following
  * example:
- * 
+ *
  * <pre>
  * // since dbunit 2.4.7
  * FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
  * builder.setInputSource(new File("src/xml/flatXmlTableTest.xml"));
  * builder.setColumnSensing(true);
  * IDataSet dataSet = builder.build();
- * 
+ *
  * // or dbunit release <= 2.4.6:
  * boolean enableColumnSensing = true;
  * IDataSet dataSet = new FlatXmlDataSet(new File("src/xml/flatXmlTableTest.xml"), false, enableColumnSensing);
  * </pre>
- * 
+ *
  * </li>
  * </ul>
  * </p>
- * 
+ *
  * @author Manuel Laflamme
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
@@ -106,7 +105,7 @@ public class FlatXmlDataSet extends CachedDataSet {
 
     /**
      * Creates a new {@link FlatXmlDataSet} with the data of the given producer.
-     * 
+     *
      * @param flatXmlProducer The producer that provides the {@link FlatXmlDataSet}
      *                        content
      * @throws DataSetException
@@ -118,10 +117,11 @@ public class FlatXmlDataSet extends CachedDataSet {
 
     /**
      * Creates an FlatXmlDataSet object with the specified InputSource.
-     * 
+     *
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(InputSource source) throws IOException, DataSetException {
         super(new FlatXmlProducer(source));
     }
@@ -134,6 +134,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(File xmlFile) throws IOException, DataSetException {
         this(xmlFile, true);
     }
@@ -147,6 +148,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata) throws IOException, DataSetException {
         this(xmlFile.toURL(), dtdMetadata);
     }
@@ -163,6 +165,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata, boolean columnSensing)
             throws IOException, DataSetException {
         this(xmlFile.toURL(), dtdMetadata, columnSensing);
@@ -184,6 +187,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(File xmlFile, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
             throws IOException, DataSetException {
         this(xmlFile.toURL(), dtdMetadata, columnSensing, caseSensitiveTableNames);
@@ -197,6 +201,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(URL xmlUrl) throws IOException, DataSetException {
         this(xmlUrl, true);
     }
@@ -210,6 +215,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata) throws IOException, DataSetException {
         this(xmlUrl, dtdMetadata, false);
     }
@@ -226,6 +232,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata, boolean columnSensing) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing));
     }
@@ -246,6 +253,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(URL xmlUrl, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
             throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlUrl.toString()), dtdMetadata, columnSensing,
@@ -260,6 +268,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(Reader xmlReader) throws IOException, DataSetException {
         this(xmlReader, true);
     }
@@ -273,6 +282,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(Reader xmlReader, boolean dtdMetadata) throws IOException, DataSetException {
         this(xmlReader, dtdMetadata, false, false);
     }
@@ -294,6 +304,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(Reader xmlReader, boolean dtdMetadata, boolean columnSensing, boolean caseSensitiveTableNames)
             throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlReader), dtdMetadata, columnSensing, caseSensitiveTableNames),
@@ -308,6 +319,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(Reader xmlReader, Reader dtdReader) throws IOException, DataSetException {
         this(xmlReader, new FlatDtdDataSet(dtdReader));
     }
@@ -320,6 +332,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(Reader xmlReader, IDataSet metaDataSet) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlReader), metaDataSet));
     }
@@ -332,6 +345,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(InputStream xmlStream) throws IOException, DataSetException {
         this(xmlStream, true);
     }
@@ -345,6 +359,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(InputStream xmlStream, boolean dtdMetadata) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlStream), dtdMetadata));
     }
@@ -357,6 +372,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(InputStream xmlStream, InputStream dtdStream) throws IOException, DataSetException {
         this(xmlStream, new FlatDtdDataSet(dtdStream));
     }
@@ -369,6 +385,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      * @deprecated since 2.4.7 - use {@link FlatXmlDataSetBuilder} to create a
      *             {@link FlatXmlDataSet}
      */
+    @Deprecated
     public FlatXmlDataSet(InputStream xmlStream, IDataSet metaDataSet) throws IOException, DataSetException {
         super(new FlatXmlProducer(new InputSource(xmlStream), metaDataSet));
     }
@@ -397,8 +414,7 @@ public class FlatXmlDataSet extends CachedDataSet {
      */
     public static void write(IDataSet dataSet, Writer writer, String encoding) throws IOException, DataSetException {
         if (logger.isDebugEnabled()) {
-            logger.debug("write(dataSet={}, writer={}, encoding={}) - start",
-                    new Object[] { dataSet, writer, encoding });
+            logger.debug("write(dataSet={}, writer={}, encoding={}) - start", dataSet, writer, encoding);
         }
 
         FlatXmlWriter datasetWriter = new FlatXmlWriter(writer, encoding);
@@ -408,11 +424,9 @@ public class FlatXmlDataSet extends CachedDataSet {
 
     /**
      * Write a DTD for the specified dataset to the specified output.
-     * 
-     * @deprecated use {@link FlatDtdDataSet#write}
      */
-    public static void writeDtd(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        logger.debug("writeDtd(dataSet={}, out={}) - start", dataSet, out);
-        FlatDtdDataSet.write(dataSet, out);
+    public static void writeDtd(IDataSet dataSet, OutputStream out) throws DataSetException {
+        FlatDtdWriter dtdWriter = new FlatDtdWriter(new OutputStreamWriter(out));
+        dtdWriter.write(dataSet);
     }
 }

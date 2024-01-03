@@ -12,7 +12,6 @@ import static org.mockito.Mockito.mock;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.dbunit.dataset.stream.IDataSetConsumerMockVerifyer;
-import org.dbunit.dataset.stream.IDataSetProducer;
 import org.junit.Test;
 
 public class FlatDtdProducerTest {
@@ -143,7 +142,7 @@ public class FlatDtdProducerTest {
 
     @Test
     public void testProduce() throws Exception {
-        IDataSetProducer producer = new FlatDtdProducer(
+        FlatDtdProducer producer = new FlatDtdProducer(
                 buildInputSourceFromFile("src/test/resources/dtd/flatDtdProducerTest.dtd"));
         IDataSetConsumer consumer = mock(IDataSetConsumer.class);
 
@@ -162,7 +161,7 @@ public class FlatDtdProducerTest {
 
     @Test
     public void testProduceWithoutConsumer() throws Exception {
-        IDataSetProducer producer = new FlatDtdProducer(
+        FlatDtdProducer producer = new FlatDtdProducer(
                 buildInputSourceFromFile("src/test/resources/dtd/flatDtdProducerTest.dtd"));
         producer.produce();
     }

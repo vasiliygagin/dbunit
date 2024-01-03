@@ -21,7 +21,6 @@
 
 package org.dbunit.dataset.xml;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -58,11 +57,11 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
         initialize();
     }
 
-    public FlatDtdDataSet(InputStream in) throws DataSetException, IOException {
+    public FlatDtdDataSet(InputStream in) throws DataSetException {
         this(new FlatDtdProducer(new InputSource(in)));
     }
 
-    public FlatDtdDataSet(Reader reader) throws DataSetException, IOException {
+    public FlatDtdDataSet(Reader reader) throws DataSetException {
         this(new FlatDtdProducer(new InputSource(reader)));
     }
 
@@ -79,22 +78,19 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
     }
 
     /**
-     * Write the specified dataset to the specified output stream as DTD.
-     *
-     * @see FlatDtdWriter
+     * @deprecated Wrong place, this method is not specific for {@link FlatDtdDataSet}. inline
      */
-    public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
-        write(dataSet, new OutputStreamWriter(out));
+    @Deprecated
+    public static void write(IDataSet dataSet, OutputStream out) throws DataSetException {
+        FlatDtdWriter datasetWriter = new FlatDtdWriter(new OutputStreamWriter(out));
+        datasetWriter.write(dataSet);
     }
 
     /**
-     * Write the specified dataset to the specified writer as DTD.
-     *
-     * @see FlatDtdWriter
+     * @deprecated Wrong place, this method is not specific for {@link FlatDtdDataSet}. inline
      */
-    public static void write(IDataSet dataSet, Writer out) throws IOException, DataSetException {
-        logger.debug("write(dataSet={}, out={}) - start", dataSet, out);
+    @Deprecated
+    public static void write(IDataSet dataSet, Writer out) throws DataSetException {
         FlatDtdWriter datasetWriter = new FlatDtdWriter(out);
         datasetWriter.write(dataSet);
     }
