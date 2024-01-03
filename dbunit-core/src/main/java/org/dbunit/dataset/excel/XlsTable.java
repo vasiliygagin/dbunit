@@ -140,7 +140,7 @@ class XlsTable extends AbstractTable {
             CellStyle style = cell.getCellStyle();
             if (DateUtil.isCellDateFormatted(cell)) {
                 return getDateValue(cell);
-            } else if (XlsDataSetWriter.DATE_FORMAT_AS_NUMBER_DBUNIT.equals(style.getDataFormatString())) {
+            } else if ("####################".equals(style.getDataFormatString())) {
                 // The special dbunit date format
                 return getDateValueFromJavaNumber(cell);
             } else {

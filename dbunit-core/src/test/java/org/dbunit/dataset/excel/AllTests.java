@@ -34,7 +34,6 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTest(new TestSuite(XlsDataSetTest.class));
         suite.addTest(new TestSuite(XlsTableTest.class));
-        suite.addTest(new TestSuite(XlsTableWriteTest.class));
         suite.addTest(new TestSuite(XlsxDataSetTest.class));
         suite.addTest(new TestSuite(XlsxTableTest.class));
 
