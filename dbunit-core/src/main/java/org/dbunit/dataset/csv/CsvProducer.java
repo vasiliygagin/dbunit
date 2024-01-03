@@ -126,7 +126,7 @@ public class CsvProducer implements IDataSetProducer {
                 List rowList = (List) readData.get(i);
                 Object[] row = rowList.toArray();
                 for (int col = 0; col < row.length; col++) {
-                    row[col] = row[col].equals(CsvDataSetWriter.NULL) ? null : row[col];
+                    row[col] = row[col].equals("null") ? null : row[col];
                 }
                 _consumer.row(row);
             }

@@ -34,7 +34,6 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTest(new TestSuite(CsvParserTest.class));
         suite.addTest(new TestSuite(CsvProducerTest.class));
-        suite.addTest(new TestSuite(CsvDataSetWriterTest.class));
         suite.addTest(new TestSuite(CsvDataSetTest.class));
         suite.addTest(new TestSuite(CsvURLDataSetTest.class));
         suite.addTest(new TestSuite(CsvURLProducerTest.class));

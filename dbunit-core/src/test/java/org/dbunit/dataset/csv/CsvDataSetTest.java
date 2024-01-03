@@ -22,17 +22,12 @@
 package org.dbunit.dataset.csv;
 
 import java.io.File;
-import java.io.IOException;
 
-import junit.framework.TestCase;
-
-import org.dbunit.Assertion;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DataSetUtils;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.testutil.TestUtils;
-import org.dbunit.util.FileHelper;
+
+import junit.framework.TestCase;
 
 /**
  * @author Lenny Marks (lenny@aps.org)
@@ -56,56 +51,4 @@ public class CsvDataSetTest extends TestCase {
         assertNull(table.getValue(4, "description"));
 
     }
-
-    public void testWrite() throws Exception {
-
-        IDataSet expectedDataSet = new CsvDataSet(DATASET_DIR);
-
-        File tempDir = createTmpDir();
-        try {
-            // modified this test from FlatXmlDataSetTest
-            CsvDataSetWriter.write(expectedDataSet, tempDir);
-
-            File tableOrderingFile = new File(tempDir, CsvDataSet.TABLE_ORDERING_FILE);
-            assertTrue(tableOrderingFile.exists());
-
-            IDataSet actualDataSet = new CsvDataSet(tempDir);
-
-            // verify table count
-            assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
-
-            // verify each table
-            ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-            ITable[] actual = DataSetUtils.getTables(actualDataSet);
-            assertEquals("table count", expected.length, actual.length);
-            for (int i = 0; i < expected.length; i++) {
-                String expectedName = expected[i].getTableMetaData().getTableName();
-                String actualName = actual[i].getTableMetaData().getTableName();
-                assertEquals("table name", expectedName, actualName);
-
-                assertTrue("not same instance", expected[i] != actual[i]);
-                Assertion.assertEquals(expected[i], actual[i]);
-            }
-
-        } finally {
-            FileHelper.deleteDirectory(tempDir, true);
-
-        }
-
-        // assertFalse("temporary directory was not deleted", tempDir.exists());
-    }
-
-    private File createTmpDir() throws IOException {
-        File tmpFile = File.createTempFile("CsvDataSetTest", "-csv");
-        String fullPath = tmpFile.getAbsolutePath();
-        tmpFile.delete();
-
-        File tmpDir = new File(fullPath);
-        if (!tmpDir.mkdir()) {
-            throw new IOException("Failed to create tmpDir: " + fullPath);
-        }
-
-        return tmpDir;
-    }
-
 }
