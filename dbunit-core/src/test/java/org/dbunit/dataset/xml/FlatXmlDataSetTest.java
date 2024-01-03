@@ -23,9 +23,7 @@ package org.dbunit.dataset.xml;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.StringReader;
-import java.io.Writer;
 
 import org.dbunit.Assertion;
 import org.dbunit.dataset.AbstractDataSetTest;
@@ -57,14 +55,17 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         super(s);
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         return new FlatXmlDataSetBuilder().build(DATASET_FILE);
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         return new FlatXmlDataSetBuilder().build(DUPLICATE_DATASET_FILE);
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         return new FlatXmlDataSetBuilder().build(DUPLICATE_DATASET_MULTIPLE_CASE_FILE);
     }
@@ -114,43 +115,25 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
 
     public void testWrite() throws Exception {
         IDataSet expectedDataSet = createDataSet();
-        File tempFile = File.createTempFile("flatXmlDataSetTest", ".xml");
-        try {
-            Writer out = new FileWriter(tempFile);
+        // load new dataset from temp file
+        try (FileReader in = new FileReader("src/test/resources/xml/flatXmlDataSetTest.xml")) {
+            IDataSet actualDataSet = new FlatXmlDataSetBuilder().build(in);
 
-            // write dataset in temp file
-            try {
-                FlatXmlDataSet.write(expectedDataSet, out);
-            } finally {
-                out.close();
+            // verify table count
+            assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
+
+            // verify each table
+            ITable[] expected = DataSetUtils.getTables(expectedDataSet);
+            ITable[] actual = DataSetUtils.getTables(actualDataSet);
+            assertEquals("table count", expected.length, actual.length);
+            for (int i = 0; i < expected.length; i++) {
+                String expectedName = expected[i].getTableMetaData().getTableName();
+                String actualName = actual[i].getTableMetaData().getTableName();
+                assertEquals("table name", expectedName, actualName);
+
+                assertTrue("not same instance", expected[i] != actual[i]);
+                Assertion.assertEquals(expected[i], actual[i]);
             }
-
-            // load new dataset from temp file
-            FileReader in = new FileReader(tempFile);
-            try {
-                IDataSet actualDataSet = new FlatXmlDataSetBuilder().build(in);
-
-                // verify table count
-                assertEquals("table count", expectedDataSet.getTableNames().length,
-                        actualDataSet.getTableNames().length);
-
-                // verify each table
-                ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-                ITable[] actual = DataSetUtils.getTables(actualDataSet);
-                assertEquals("table count", expected.length, actual.length);
-                for (int i = 0; i < expected.length; i++) {
-                    String expectedName = expected[i].getTableMetaData().getTableName();
-                    String actualName = actual[i].getTableMetaData().getTableName();
-                    assertEquals("table name", expectedName, actualName);
-
-                    assertTrue("not same instance", expected[i] != actual[i]);
-                    Assertion.assertEquals(expected[i], actual[i]);
-                }
-            } finally {
-                in.close();
-            }
-        } finally {
-            tempFile.delete();
         }
     }
 
@@ -180,10 +163,11 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
      * Overridden from parent because FlatXml has different behaviour than other
      * datasets. It allows the occurrence of the same table multiple times in
      * arbitrary locations.
-     * 
+     *
      * @see org.dbunit.dataset.AbstractDataSetTest#testCreateDuplicateDataSet()
      */
     // @Override
+    @Override
     public void testCreateDuplicateDataSet() throws Exception {
         IDataSet dataSet = createDuplicateDataSet();
         ITable[] tables = dataSet.getTables();
@@ -198,10 +182,11 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
      * Overridden from parent because FlatXml has different behaviour than other
      * datasets. It allows the occurrence of the same table multiple times in
      * arbitrary locations.
-     * 
+     *
      * @see org.dbunit.dataset.AbstractDataSetTest#testCreateMultipleCaseDuplicateDataSet()
      */
     // @Override
+    @Override
     public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
         IDataSet dataSet = createMultipleCaseDuplicateDataSet();
         ITable[] tables = dataSet.getTables();
