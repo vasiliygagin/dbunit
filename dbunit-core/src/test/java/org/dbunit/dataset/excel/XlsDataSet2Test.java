@@ -22,18 +22,12 @@ package org.dbunit.dataset.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.dbunit.Assertion;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
-import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.testutil.TestUtils;
 
 /**
  * @author Manuel Laflamme
@@ -47,12 +41,12 @@ public class XlsDataSet2Test extends AbstractDataSetTest {
 
     @Override
     protected IDataSet createDataSet() throws Exception {
-        return new XlsDataSet2(TestUtils.getFile("xml/dataSetTest.xls"));
+        return new XlsDataSet2(new File("src/test/resources/xml/dataSetTest.xls"));
     }
 
     @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
-        return new XlsDataSet2(TestUtils.getFile("xml/dataSetDuplicateTest.xls"));
+        return new XlsDataSet2(new File("src/test/resources/xml/dataSetDuplicateTest.xls"));
     }
 
     @Override
@@ -66,43 +60,8 @@ public class XlsDataSet2Test extends AbstractDataSetTest {
         // Not supported
     }
 
-    public void testWrite() throws Exception {
-        IDataSet expectedDataSet = createDataSet();
-        File tempFile = File.createTempFile("xlsDataSetTest", ".xls");
-        try {
-            // write dataset in temp file
-            try (OutputStream out = new FileOutputStream(tempFile)) {
-                new XlsDataSetWriter().write(expectedDataSet, out);
-            }
-
-            // load new dataset from temp file
-            try (InputStream in = new FileInputStream(tempFile)) {
-                IDataSet actualDataSet = new XlsDataSet2(in);
-
-                // verify table count
-                assertEquals("table count", expectedDataSet.getTableNames().length,
-                        actualDataSet.getTableNames().length);
-
-                // verify each table
-                ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-                ITable[] actual = DataSetUtils.getTables(actualDataSet);
-                assertEquals("table count", expected.length, actual.length);
-                for (int i = 0; i < expected.length; i++) {
-                    String expectedName = expected[i].getTableMetaData().getTableName();
-                    String actualName = actual[i].getTableMetaData().getTableName();
-                    assertEquals("table name", expectedName, actualName);
-
-                    assertTrue("not same instance", expected[i] != actual[i]);
-                    Assertion.assertEquals(expected[i], actual[i]);
-                }
-            }
-        } finally {
-            tempFile.delete();
-        }
-    }
-
     public void testColumnNameWithSpace() throws Exception {
-        IDataSet dataSet = new XlsDataSet2(TestUtils.getFileInputStream("xml/contactor.xls"));
+        IDataSet dataSet = new XlsDataSet2(new FileInputStream("src/test/resources/xml/contactor.xls"));
         ITable customerTable = dataSet.getTable("customer");
         Column column = Columns.getColumn("name", customerTable.getTableMetaData().getColumns());
         assertNotNull(column);

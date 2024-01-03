@@ -21,10 +21,11 @@
 
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
+import java.sql.DatabaseMetaData;
+
 import org.dbunit.dataset.datatype.DataType;
 
-import java.sql.DatabaseMetaData;
+import junit.framework.TestCase;
 
 /**
  * @author Manuel Laflamme

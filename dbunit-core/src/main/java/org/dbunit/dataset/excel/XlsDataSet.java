@@ -23,10 +23,8 @@ package org.dbunit.dataset.excel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
 
 /**
  * This dataset implementation can read and write MS Excel documents. Each sheet
@@ -53,15 +51,5 @@ public class XlsDataSet extends XlsDataSet2 {
      */
     public XlsDataSet(InputStream in) throws IOException, DataSetException {
         super(in);
-    }
-
-    /**
-     * Write the specified dataset to the specified Excel document.
-     *
-     * @deprecated inline
-     */
-    @Deprecated
-    public static void write(IDataSet dataSet, OutputStream out) throws IOException, DataSetException {
-        new XlsDataSetWriter().write(dataSet, out);
     }
 }
