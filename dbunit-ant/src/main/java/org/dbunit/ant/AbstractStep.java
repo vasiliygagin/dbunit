@@ -38,7 +38,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvProducer;
-import org.dbunit.dataset.excel.XlsDataSet2;
+import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.dataset.xml.FlatDtdProducer;
@@ -159,7 +159,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             } else if (format.equalsIgnoreCase(FORMAT_DTD)) {
                 producer = new FlatDtdProducer(getInputSource(src));
             } else if (format.equalsIgnoreCase(FORMAT_XLS)) {
-                return new CachedDataSet(new XlsDataSet2(src));
+                return new CachedDataSet(new XlsDataSet(src));
             } else {
                 throw new IllegalArgumentException(
                         "Type must be either 'flat'(default), 'xml', 'csv', 'xls' or 'dtd' but was: " + format);

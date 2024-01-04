@@ -101,102 +101,17 @@
         <wagonSshVersion>2.10</wagonSshVersion>
     </properties>
 
-<!--    <dependencyManagement>-->
-<!--        <dependencies>-->
-<!--             databases -->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.derby</groupId>-->
-<!--                <artifactId>derby</artifactId>-->
-<!--                <version>${derbyDriverVersion}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.h2database</groupId>-->
-<!--                <artifactId>h2</artifactId>-->
-<!--                <version>${h2DriverVersion}</version>-->
-<!--                 Note that the 1.1.113 version is the last one officially-->
-<!--                built with JDK 1.4 -->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>hsqldb</groupId>-->
-<!--                <artifactId>hsqldb</artifactId>-->
-<!--                <version>${hsqldbDriverVersion}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>mysql</groupId>-->
-<!--                <artifactId>mysql-connector-java</artifactId>-->
-<!--                <version>${mysqlDriverVersion}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.jdbc</groupId>-->
-<!--                <artifactId>ojdbc6</artifactId>-->
-<!--                <version>${oracleJ6DriverVersion}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.jdbc</groupId>-->
-<!--                <artifactId>ojdbc8</artifactId>-->
-<!--                <version>${oracleJ8v19DriverVersion}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.jdbc</groupId>-->
-<!--                <artifactId>ojdbc10</artifactId>-->
-<!--                <version>${oracleJ10v19DriverVersion}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.xml</groupId>-->
-<!--                <artifactId>xdb</artifactId>-->
-<!--                <version>${oracleXdbVersion}</version>-->
-<!--                <scope>test</scope>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.postgresql</groupId>-->
-<!--                <artifactId>postgresql</artifactId>-->
-<!--                <version>${postgresqlDriverVersion}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>net.postgis</groupId>-->
-<!--                <artifactId>postgis-jdbc</artifactId>-->
-<!--                <version>${postgisDriverVersion}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.microsoft.sqlserver</groupId>-->
-<!--                <artifactId>mssql-jdbc</artifactId>-->
-<!--                <version>${sqlServer41DriverVersion}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
-<!--        </dependencies>-->
-<!--    </dependencyManagement>-->
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dbunit-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        -->
-<!--      TODO: check which dependencies could marked as optional. For-->
-<!--      instance, ant is optional because it's only necessary for the-->
-<!--      dbunit Ant tasks.-->
-<!--    -->
-
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-api</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-classic</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dbunit-xls</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

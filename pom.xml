@@ -56,6 +56,7 @@
         <module>dbunit-core</module>
         <module>dbunit-ant</module>
         <module>dbunit-junit-legacy</module>
+        <module>dbunit-xls</module>
         <module>dbunit-spring</module>
         <module>dbunit-spring-sample</module>
     </modules>
