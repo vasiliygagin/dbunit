@@ -1,7 +1,7 @@
 /*
  *
  * The DbUnit Database Testing Framework
- * Copyright (C)2002-2004, DbUnit.org
+ * Copyright (C)2002-2008, DbUnit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,38 +18,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-package org.dbunit.dataset.excel;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+package org.dbunit.util.fileloader;
+
+import junit.framework.TestCase;
 
 import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 
 /**
- * This dataset implementation can read and write MS Excel documents. Each sheet
- * represents a table. The first row of a sheet defines the columns names and
- * remaining rows contains the data.
- *
- * @author Manuel Laflamme
- * @since Feb 21, 2003
- * @version $Revision$
- * @deprecated Keeping for compatibility
+ * @author Jeff Jensen jeffjensen AT users.sourceforge.net
+ * @author Last changed by: $Author$
+ * @version $Revision$ $Date$
+ * @since 2.4.8
  */
-@Deprecated
-public class XlsDataSet extends XlsDataSet2 {
+public class XlsDataFileLoaderTest extends TestCase {
+    XlsDataFileLoader loader = null;
 
     /**
-     * Creates a new XlsDataSet object that loads the specified Excel document.
+     * {@inheritDoc}
      */
-    public XlsDataSet(File file) throws IOException, DataSetException {
-        super(file);
+    protected void setUp() throws Exception {
+        loader = new XlsDataFileLoader();
     }
 
     /**
-     * Creates a new XlsDataSet object that loads the specified Excel document.
+     * Test can load the specified file.
      */
-    public XlsDataSet(InputStream in) throws IOException, DataSetException {
-        super(in);
+    public void testLoad() throws DataSetException {
+        String filename = "/xml/dataSetTest.xls";
+        IDataSet ds = loader.load(filename);
+        assertTrue("No tables found in dataset.", ds.getTableNames().length > 0);
+        // DataSet loading tests verify data accuracy
     }
 }

@@ -68,8 +68,6 @@
         <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
 
         <!-- Framework versions -->
-        <ant-testutil.version>1.10.14</ant-testutil.version>
-        <ant.version>1.10.14</ant.version>
         <gsbaseVersion>2.0.1</gsbaseVersion>
         <junitAddonsVersion>1.4</junitAddonsVersion>
         <mmmockobjectsVersion>1.12.0</mmmockobjectsVersion>
@@ -177,11 +175,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!--
-      TODO: check which dependencies could marked as optional. For
-      instance, ant is optional because it's only necessary for the
-      dbunit Ant tasks.
-    -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -204,36 +197,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poiVersion}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poiVersion}</version>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant-testutil</artifactId>
-            <version>${ant-testutil.version}</version>
-            <optional>true</optional>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -279,6 +242,11 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-compress</artifactId>
+        	<version>1.18</version>
         </dependency>
     </dependencies>
 

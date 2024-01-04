@@ -9,9 +9,9 @@
         <relativePath>../dbunit-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>dbunit-junit-legacy</artifactId>
+    <artifactId>dbunit-xls</artifactId>
     <packaging>jar</packaging>
-    <name>Legacy (Original) dbUnit JUnit4 integration</name>
+    <name>Legacy (Original) dbUnit support for XSL files</name>
     <description>
         dbUnit is a JUnit extension (also usable from Ant and Maven) targeted
         for database-driven projects that, among other things, puts your
@@ -68,6 +68,7 @@
         <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
         <wagonSshVersion>2.10</wagonSshVersion>
 
+        <poiVersion>4.1.0</poiVersion>
         <mockObjectsVersion>0.09</mockObjectsVersion>
         <hsqldbDriverVersion>1.8.0.1</hsqldbDriverVersion>
     </properties>
@@ -97,13 +98,35 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poiVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poiVersion}</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <optional>true</optional>
+            <scope>true</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+            <scope>true</scope>
         </dependency>
 
         <dependency>

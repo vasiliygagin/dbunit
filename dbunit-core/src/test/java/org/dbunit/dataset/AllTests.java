@@ -33,7 +33,6 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTest(org.dbunit.dataset.common.handlers.AllTests.suite());
         suite.addTest(org.dbunit.dataset.datatype.AllTests.suite());
-        suite.addTest(org.dbunit.dataset.excel.AllTests.suite());
         suite.addTest(org.dbunit.dataset.filter.AllTests.suite());
         suite.addTest(org.dbunit.dataset.stream.AllTests.suite());
         suite.addTest(org.dbunit.dataset.sqlloader.AllTests.suite());

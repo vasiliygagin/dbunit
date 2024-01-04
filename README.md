@@ -33,7 +33,24 @@ Starting with version 2.9.0, support for Ant has moved to
         </dependency>
 Various Writers are being move to dbunit-ant too. They are user only there. Do not see why would anyone need to write file while unit testing their code.
 
-More artifacts will be split of original artifacts in the future releases. Like support for junit 2 and junit 4 will probably moved to dbunit-ant, dbunit-junit2 and dbunit-junit4. So I can amputate those easier when time comes.
+Starting with version 2.10.0 all legacy Junit support moved out to 
+
+        <dependency>
+            <groupId>io.github.vasiliygagin</groupId>
+            <artifactId>dbunit-junit-legacy</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+All legacy JUnit support classes are based on extending TestCase (I think it from Junit 2 times). They can not be upgraded to modern Junit 4 in compatible manner.
+If there ever will be support for JUnit, it will probably be for JUnit 5.
+
+Starting with version 2.10.0 all XLS support moved out to 
+
+        <dependency>
+            <groupId>io.github.vasiliygagin</groupId>
+            <artifactId>dbunit-junit-legacy</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+XLS support was very primitive and deprecated, but was pulling a lot of dependencies.
 
 Broken things
 =============
