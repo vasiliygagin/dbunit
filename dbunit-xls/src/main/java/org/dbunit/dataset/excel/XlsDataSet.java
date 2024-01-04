@@ -61,7 +61,7 @@ public class XlsDataSet extends AbstractDataSet {
      * Creates a new XlsDataSet object that loads the specified Excel document.
      */
     public XlsDataSet(InputStream in) throws IOException, DataSetException {
-        _tables = super.createTableNameMap();
+        _tables = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
 
         Workbook workbook;
         try {

@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Locale;
+
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.dataset.AbstractDataSet;
 import org.dbunit.dataset.Column;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides access to a database instance as a {@link IDataSet}.
- * 
+ *
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -60,7 +61,7 @@ public class DatabaseDataSet extends AbstractDataSet {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSet.class);
 
     private final IDatabaseConnection _connection;
-    private OrderedTableNameMap _tableMap = null;
+    private OrderedTableNameMap<ITableMetaData> tableMetaDatas = null;
     private SchemaSet _schemaSet = new SchemaSet(isCaseSensitiveTableNames());
 
     private final ITableFilterSimple _tableFilter;
@@ -68,17 +69,7 @@ public class DatabaseDataSet extends AbstractDataSet {
 
     /**
      * Creates a new database data set
-     * 
-     * @param connection
-     * @throws SQLException
-     */
-    DatabaseDataSet(IDatabaseConnection connection) throws SQLException {
-        this(connection, connection.getConfig().getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES));
-    }
-
-    /**
-     * Creates a new database data set
-     * 
+     *
      * @param connection              The database connection
      * @param caseSensitiveTableNames Whether or not this dataset should use case
      *                                sensitive table names
@@ -91,7 +82,7 @@ public class DatabaseDataSet extends AbstractDataSet {
 
     /**
      * Creates a new database data set
-     * 
+     *
      * @param connection              The database connection
      * @param caseSensitiveTableNames Whether or not this dataset should use case
      *                                sensitive table names
@@ -114,8 +105,8 @@ public class DatabaseDataSet extends AbstractDataSet {
     static String getSelectStatement(String schema, ITableMetaData metaData, String escapePattern)
             throws DataSetException {
         if (logger.isDebugEnabled()) {
-            logger.debug("getSelectStatement(schema={}, metaData={}, escapePattern={}) - start",
-                    new Object[] { schema, metaData, escapePattern });
+            logger.debug("getSelectStatement(schema={}, metaData={}, escapePattern={}) - start", schema, metaData,
+                    escapePattern);
         }
 
         Column[] columns = metaData.getColumns();
@@ -173,7 +164,7 @@ public class DatabaseDataSet extends AbstractDataSet {
             schema = getDefaultSchema();
         }
 
-        if (_tableMap != null && _schemaSet.contains(schema)) {
+        if (tableMetaDatas != null && _schemaSet.contains(schema)) {
             return;
         }
 
@@ -202,8 +193,8 @@ public class DatabaseDataSet extends AbstractDataSet {
             }
 
             try {
-                if (_tableMap == null) {
-                    _tableMap = super.createTableNameMap();
+                if (tableMetaDatas == null) {
+                    tableMetaDatas = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
                 }
                 _schemaSet.add(schema);
                 while (resultSet.next()) {
@@ -226,7 +217,7 @@ public class DatabaseDataSet extends AbstractDataSet {
                     tableName = qualifiedTableName.getQualifiedNameIfEnabled(config);
 
                     // Put the table into the table map
-                    _tableMap.add(tableName, null);
+                    tableMetaDatas.add(tableName, null);
                 }
             } finally {
                 resultSet.close();
@@ -243,6 +234,7 @@ public class DatabaseDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
         if (logger.isDebugEnabled()) {
             logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
@@ -259,12 +251,14 @@ public class DatabaseDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
+    @Override
     public String[] getTableNames() throws DataSetException {
         initialize(null);
 
-        return _tableMap.getTableNames();
+        return tableMetaDatas.getTableNames();
     }
 
+    @Override
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
@@ -273,13 +267,13 @@ public class DatabaseDataSet extends AbstractDataSet {
         initialize(qualifiedTableName.getSchema());
 
         // Verify if table exist in the database
-        if (!_tableMap.containsTable(tableName)) {
-            logger.error("Table '{}' not found in tableMap={}", tableName, _tableMap);
+        if (!tableMetaDatas.containsTable(tableName)) {
+            logger.error("Table '{}' not found in tableMap={}", tableName, tableMetaDatas);
             throw new NoSuchTableException(tableName);
         }
 
         // Try to find cached metadata
-        ITableMetaData metaData = (ITableMetaData) _tableMap.get(tableName);
+        ITableMetaData metaData = tableMetaDatas.get(tableName);
         if (metaData != null) {
             return metaData;
         }
@@ -287,11 +281,12 @@ public class DatabaseDataSet extends AbstractDataSet {
         // Create metadata and cache it
         metaData = new DatabaseTableMetaData(tableName, _connection, true, super.isCaseSensitiveTableNames());
         // Put the metadata object into the cache map
-        _tableMap.update(tableName, metaData);
+        tableMetaDatas.update(tableName, metaData);
 
         return metaData;
     }
 
+    @Override
     public ITable getTable(String tableName) throws DataSetException {
         logger.debug("getTable(tableName={}) - start", tableName);
 
@@ -349,6 +344,7 @@ public class DatabaseDataSet extends AbstractDataSet {
             this._config = config;
         }
 
+        @Override
         public boolean accept(String tableName) throws DataSetException {
             // skip oracle 10g recycle bin system tables if enabled
             if (_config.getFeature(DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES)) {

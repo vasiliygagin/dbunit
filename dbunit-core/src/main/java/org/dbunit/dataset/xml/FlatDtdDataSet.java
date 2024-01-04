@@ -32,6 +32,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.NoSuchTableException;
+import org.dbunit.dataset.OrderedTableNameMap;
 import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class FlatDtdDataSet extends AbstractDataSet implements IDataSetConsumer 
     @Override
     protected void initialize() {
         if (_orderedTableNameMap == null) {
-            _orderedTableNameMap = super.createTableNameMap();
+            _orderedTableNameMap = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
         }
     }
 

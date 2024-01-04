@@ -59,22 +59,26 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection interface
 
+    @Override
     public IDataSet createDataSet() throws SQLException {
         logger.debug("createDataSet() - start");
 
         if (_dataSet == null) {
-            _dataSet = new DatabaseDataSet(this);
+            boolean caseSensitiveTableNames = _databaseConfig.getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+            _dataSet = new DatabaseDataSet(this, caseSensitiveTableNames);
         }
 
         return _dataSet;
     }
 
+    @Override
     public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
         logger.debug("createDataSet(tableNames={}) - start", tableNames);
 
         return new FilteredDataSet(tableNames, createDataSet());
     }
 
+    @Override
     public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         logger.debug("createQueryTable(resultName={}, sql={}) - start", resultName, sql);
 
@@ -93,6 +97,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return rsTable;
     }
 
+    @Override
     public ITable createTable(String resultName, PreparedStatement preparedStatement)
             throws DataSetException, SQLException {
         logger.debug("createQueryTable(resultName={}, preparedStatement={}) - start", resultName, preparedStatement);
@@ -102,6 +107,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return rsTable;
     }
 
+    @Override
     public ITable createTable(String tableName) throws DataSetException, SQLException {
         logger.debug("createTable(tableName={}) - start", tableName);
 
@@ -118,12 +124,14 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return this.createQueryTable(tableName, sql);
     }
 
+    @Override
     public int getRowCount(String tableName) throws SQLException {
         logger.debug("getRowCount(tableName={}) - start", tableName);
 
         return getRowCount(tableName, null);
     }
 
+    @Override
     public int getRowCount(String tableName, String whereClause) throws SQLException {
         logger.debug("getRowCount(tableName={}, whereClause={}) - start", tableName, whereClause);
 
@@ -154,6 +162,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         }
     }
 
+    @Override
     public DatabaseConfig getConfig() {
         return _databaseConfig;
     }
@@ -161,6 +170,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     /**
      * @deprecated Use {@link #getConfig}
      */
+    @Override
     @Deprecated
     public IStatementFactory getStatementFactory() {
         return (IStatementFactory) _databaseConfig.getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);

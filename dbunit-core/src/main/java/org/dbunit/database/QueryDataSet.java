@@ -73,7 +73,7 @@ public class QueryDataSet extends AbstractDataSet {
             throw new NullPointerException("The parameter 'connection' must not be null");
         }
         _connection = connection;
-        _tables = super.createTableNameMap();
+        _tables = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
     }
 
     /**

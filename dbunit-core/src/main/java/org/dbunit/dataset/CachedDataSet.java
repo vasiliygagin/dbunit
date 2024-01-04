@@ -100,7 +100,7 @@ public class CachedDataSet extends AbstractDataSet implements IDataSetConsumer {
     @Override
     public void startDataSet() throws DataSetException {
         logger.debug("startDataSet() - start");
-        _orderedTableNameMap = super.createTableNameMap();
+        _orderedTableNameMap = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
     }
 
     @Override
