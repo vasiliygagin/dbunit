@@ -9,9 +9,9 @@
         <relativePath>../dbunit-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>dbunit-core</artifactId>
+    <artifactId>dbunit-junit-legacy</artifactId>
     <packaging>jar</packaging>
-    <name>dbUnit Extension</name>
+    <name>Legacy (Original) dbUnit JUnit4 integration</name>
     <description>
         dbUnit is a JUnit extension (also usable from Ant and Maven) targeted
         for database-driven projects that, among other things, puts your
@@ -177,6 +177,13 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dbunit-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!--
       TODO: check which dependencies could marked as optional. For
       instance, ant is optional because it's only necessary for the
@@ -196,12 +203,17 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

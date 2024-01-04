@@ -30,12 +30,14 @@ import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import junit.framework.TestCase;
+
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class AbstractDatabaseIT extends DatabaseTestCase {
+public abstract class AbstractDatabaseIT extends TestCase {
     protected IDatabaseConnection _connection;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -59,7 +61,7 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
      * of the database environment. Most databases convert all metadata identifiers
      * to uppercase. PostgreSQL converts identifiers to lowercase. MySQL preserves
      * case.
-     * 
+     *
      * @param str The identifier.
      * @return The identifier converted according to database rules.
      */
@@ -70,8 +72,9 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
+    @Override
     protected void setUp() throws Exception {
-        super.setUp();
+        super_setUp();
 
         _connection = getDatabaseTester().getConnection();
         setUpDatabaseConfig(_connection.getConfig());
@@ -89,7 +92,7 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
             logger.error("getDatabaseTester()", e);
             e.printStackTrace();
         }
-        return super.getDatabaseTester();
+        return super_getDatabaseTester();
     }
 
     protected void setUpDatabaseConfig(DatabaseConfig config) {
@@ -100,8 +103,9 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
         }
     }
 
+    @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
+        super_tearDown();
 
         DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
 
@@ -137,7 +141,7 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
     /**
      * This method is used so sub-classes can disable the tests according to some
      * characteristics of the environment
-     * 
+     *
      * @param testName name of the test to be checked
      * @return flag indicating if the test should be executed or not
      */
@@ -145,6 +149,7 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
         return true;
     }
 
+    @Override
     protected void runTest() throws Throwable {
         if (runTest(getName())) {
             super.runTest();
@@ -165,4 +170,103 @@ public abstract class AbstractDatabaseIT extends DatabaseTestCase {
         }
     }
 
+    private IDatabaseTester tester;
+
+    private IOperationListener operationListener;
+
+    /**
+     * Creates a IDatabaseTester for this testCase.<br>
+     *
+     * A {@link DefaultDatabaseTester} is used by default.
+     *
+     * @throws Exception
+     */
+    protected IDatabaseTester newDatabaseTester() throws Exception {
+        logger.debug("newDatabaseTester() - start");
+
+        final IDatabaseConnection connection = getConnection();
+        getOperationListener().connectionRetrieved(connection);
+        final IDatabaseTester tester = new DefaultDatabaseTester(connection);
+        return tester;
+    }
+
+    /**
+     * Gets the IDatabaseTester for this testCase.<br>
+     * If the IDatabaseTester is not set yet, this method calls newDatabaseTester()
+     * to obtain a new instance.
+     *
+     * @throws Exception
+     */
+    protected IDatabaseTester super_getDatabaseTester() throws Exception {
+        if (this.tester == null) {
+            this.tester = newDatabaseTester();
+        }
+        return this.tester;
+    }
+
+    /**
+     * Returns the database operation executed in test setup.
+     */
+    protected DatabaseOperation getSetUpOperation() throws Exception {
+        return DatabaseOperation.CLEAN_INSERT;
+    }
+
+    /**
+     * Returns the database operation executed in test cleanup.
+     */
+    protected DatabaseOperation getTearDownOperation() throws Exception {
+        return DatabaseOperation.NONE;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // TestCase class
+
+    protected void super_setUp() throws Exception {
+        logger.debug("setUp() - start");
+
+        super.setUp();
+        final IDatabaseTester databaseTester = getDatabaseTester();
+        assertNotNull("DatabaseTester is not set", databaseTester);
+        databaseTester.setSetUpOperation(getSetUpOperation());
+        databaseTester.setDataSet(getDataSet());
+        databaseTester.setOperationListener(getOperationListener());
+        databaseTester.onSetup();
+    }
+
+    protected void super_tearDown() throws Exception {
+        logger.debug("tearDown() - start");
+
+        try {
+            final IDatabaseTester databaseTester = getDatabaseTester();
+            assertNotNull("DatabaseTester is not set", databaseTester);
+            databaseTester.setTearDownOperation(getTearDownOperation());
+            databaseTester.setDataSet(getDataSet());
+            databaseTester.setOperationListener(getOperationListener());
+            databaseTester.onTearDown();
+        } finally {
+            tester = null;
+            super.tearDown();
+        }
+    }
+
+    /**
+     * @return The {@link IOperationListener} to be used by the
+     *         {@link IDatabaseTester}.
+     * @since 2.4.4
+     */
+    protected IOperationListener getOperationListener() {
+        logger.debug("getOperationListener() - start");
+        if (this.operationListener == null) {
+            this.operationListener = new DefaultOperationListener() {
+                @Override
+                public void connectionRetrieved(IDatabaseConnection connection) {
+                    super.connectionRetrieved(connection);
+                    // When a new connection has been created then invoke the setUp method
+                    // so that user defined DatabaseConfig parameters can be set.
+                    setUpDatabaseConfig(connection.getConfig());
+                }
+            };
+        }
+        return this.operationListener;
+    }
 }
