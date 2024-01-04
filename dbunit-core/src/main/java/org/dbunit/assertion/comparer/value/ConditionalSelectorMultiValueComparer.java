@@ -1,6 +1,6 @@
 package org.dbunit.assertion.comparer.value;
 
-import static org.junit.Assert.assertNotNull;
+import static org.dbunit.assertion.comparer.value.AssertNotNull.assertNotNull;
 
 import java.util.Map;
 

@@ -24,9 +24,6 @@ package org.dbunit.assertion;
 import java.io.StringReader;
 import java.math.BigDecimal;
 
-import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
-
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.IDatabaseConnection;
@@ -46,6 +43,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
+
+import junit.framework.TestCase;
 
 /**
  * @author Manuel Laflamme
@@ -158,7 +157,7 @@ public class DbUnitAssertIT extends TestCase {
         IDataSet dataSet = getDataSet();
 
         // Column2 has the wrong value, so exclude -> test should run successfully
-        String[] allColumnsThatAreNotEqual = new String[] { "COLUMN2" };
+        String[] allColumnsThatAreNotEqual = { "COLUMN2" };
         assertion.assertEqualsIgnoreCols(dataSet.getTable("TEST_TABLE"),
                 dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), allColumnsThatAreNotEqual);
     }
@@ -168,7 +167,7 @@ public class DbUnitAssertIT extends TestCase {
 
         // Column0 has correct value. Column2 has the wrong value but is not filtered.
         // -> test should fail
-        String[] filteredColumns = new String[] { "COLUMN0" };
+        String[] filteredColumns = { "COLUMN0" };
         try {
             assertion.assertEqualsIgnoreCols(dataSet.getTable("TEST_TABLE"),
                     dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), filteredColumns);
@@ -185,12 +184,12 @@ public class DbUnitAssertIT extends TestCase {
         IDataSet dataSet = getDataSet();
 
         try {
-            Column[] additionalColInfo = new Column[] { new Column("COLUMN0", DataType.VARCHAR) };
+            Column[] additionalColInfo = { new Column("COLUMN0", DataType.VARCHAR) };
             assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
                     additionalColInfo);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
-            String expectedMsg = "junit.framework.ComparisonFailure: value (table=TEST_TABLE, row=1, col=COLUMN2, "
+            String expectedMsg = "org.dbunit.assertion.ComparisonFailure: value (table=TEST_TABLE, row=1, col=COLUMN2, "
                     + "Additional row info: ('COLUMN0': expected=<row 1 col 0>, actual=<row 1 col 0>)) "
                     + "expected:<[row 1 col 2]> but was:<[wrong value]>";
             String actualMsg = expected.toString();
@@ -204,14 +203,14 @@ public class DbUnitAssertIT extends TestCase {
         String tableName = "TABLE_NAME";
 
         // Setup actual table
-        Column[] actualColumns = new Column[] { new Column("BOOLEAN", DataType.BOOLEAN), };
-        Object[] actualRow = new Object[] { Boolean.TRUE, };
+        Column[] actualColumns = { new Column("BOOLEAN", DataType.BOOLEAN), };
+        Object[] actualRow = { Boolean.TRUE, };
         DefaultTable actualTable = new DefaultTable(tableName, actualColumns);
         actualTable.addRow(actualRow);
 
         // Setup expected table
-        Column[] expectedColumns = new Column[] { new Column("BOOLEAN", DataType.VARCHAR), };
-        Object[] expectedRow = new Object[] { "1", };
+        Column[] expectedColumns = { new Column("BOOLEAN", DataType.VARCHAR), };
+        Object[] expectedRow = { "1", };
         DefaultTable expectedTable = new DefaultTable(tableName, expectedColumns);
         expectedTable.addRow(expectedRow);
 
@@ -239,7 +238,7 @@ public class DbUnitAssertIT extends TestCase {
         // Ignore COLUMN2 which has been modified by the "ModifyingTable" above and
         // hence does not match.
         // When we ignore this column, the assertion should work without failure
-        String[] ignoreCols = new String[] { "COLUMN2" };
+        String[] ignoreCols = { "COLUMN2" };
         assertion.assertEqualsByQuery(expectedTable, connection, "TEST_TABLE", "select * from TEST_TABLE order by 1",
                 ignoreCols);
     }
@@ -258,7 +257,7 @@ public class DbUnitAssertIT extends TestCase {
         // Ignore COLUMN1 which has NOT been modified by the "ModifyingTable". The
         // modified COLUMN2 does
         // not match and is not ignored. So the assertion should fail.
-        String[] ignoreCols = new String[] { "COLUMN1" };
+        String[] ignoreCols = { "COLUMN1" };
         try {
             assertion.assertEqualsByQuery(expectedTable, connection, "TEST_TABLE",
                     "select * from TEST_TABLE order by 1", ignoreCols);
@@ -276,18 +275,16 @@ public class DbUnitAssertIT extends TestCase {
         java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
 
         // Setup actual table
-        Column[] actualColumns = new Column[] { new Column("BOOLEAN", DataType.BOOLEAN),
-                new Column("TIMESTAMP", DataType.TIMESTAMP), new Column("STRING", DataType.CHAR),
-                new Column("NUMERIC", DataType.NUMERIC), };
-        Object[] actualRow = new Object[] { Boolean.TRUE, now, "0", new BigDecimal("123.4"), };
+        Column[] actualColumns = { new Column("BOOLEAN", DataType.BOOLEAN), new Column("TIMESTAMP", DataType.TIMESTAMP),
+                new Column("STRING", DataType.CHAR), new Column("NUMERIC", DataType.NUMERIC), };
+        Object[] actualRow = { Boolean.TRUE, now, "0", new BigDecimal("123.4"), };
         DefaultTable actualTable = new DefaultTable(tableName, actualColumns);
         actualTable.addRow(actualRow);
 
         // Setup expected table
-        Column[] expectedColumns = new Column[] { new Column("BOOLEAN", DataType.UNKNOWN),
-                new Column("TIMESTAMP", DataType.UNKNOWN), new Column("STRING", DataType.UNKNOWN),
-                new Column("NUMERIC", DataType.UNKNOWN), };
-        Object[] expectedRow = new Object[] { "1", new Long(now.getTime()), new Integer("0"), "123.4000", };
+        Column[] expectedColumns = { new Column("BOOLEAN", DataType.UNKNOWN), new Column("TIMESTAMP", DataType.UNKNOWN),
+                new Column("STRING", DataType.UNKNOWN), new Column("NUMERIC", DataType.UNKNOWN), };
+        Object[] expectedRow = { "1", new Long(now.getTime()), new Integer("0"), "123.4000", };
         DefaultTable expectedTable = new DefaultTable(tableName, expectedColumns);
         expectedTable.addRow(expectedRow);
 
@@ -349,7 +346,7 @@ public class DbUnitAssertIT extends TestCase {
         IDataSet dataSet1 = getDataSet();
 
         // only one table
-        String[] names = new String[] { dataSet1.getTableNames()[0] };
+        String[] names = { dataSet1.getTableNames()[0] };
         IDataSet dataSet2 = new FilteredDataSet(names, dataSet1);
 
         assertTrue("Datasets are the same instances.", dataSet1 != dataSet2);
@@ -481,14 +478,17 @@ public class DbUnitAssertIT extends TestCase {
             this._columnToModify = columnToModify;
         }
 
+        @Override
         public int getRowCount() {
             return this._wrappedTable.getRowCount();
         }
 
+        @Override
         public ITableMetaData getTableMetaData() {
             return this._wrappedTable.getTableMetaData();
         }
 
+        @Override
         public Object getValue(int row, String column) throws DataSetException {
             Object originalValue = _wrappedTable.getValue(row, column);
 
