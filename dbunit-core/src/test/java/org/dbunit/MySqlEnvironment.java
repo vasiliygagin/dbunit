@@ -21,9 +21,6 @@
 
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.ext.mysql.MySqlDataTypeFactory;
-
 /**
  * @author John Hurst (adapted from Manuel Laflamme: OracleEnvironment)
  * @version $Revision$
@@ -31,12 +28,7 @@ import org.dbunit.ext.mysql.MySqlDataTypeFactory;
  */
 public class MySqlEnvironment extends DatabaseEnvironment {
     public MySqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile);
-    }
-
-    @Override
-    protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setDataTypeFactory(new MySqlDataTypeFactory());
+        super(profile, new MySqlDatabaseConfig());
     }
 
     /**

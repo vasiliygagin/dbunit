@@ -21,13 +21,18 @@
 
 package org.dbunit;
 
+import java.sql.Connection;
+
 import org.dbunit.assertion.DefaultFailureHandler;
 import org.dbunit.assertion.SimpleAssert;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Basic implementation of IDatabaseTester.<br>
@@ -47,7 +52,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     /**
      * Enumeration of the valid {@link OperationType}s
      */
-    private static final class OperationType {
+    static final class OperationType {
         public static final OperationType SET_UP = new OperationType("setUp");
         public static final OperationType TEAR_DOWN = new OperationType("tearDown");
 
@@ -68,6 +73,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     private DatabaseOperation setUpOperation = DatabaseOperation.CLEAN_INSERT;
     private DatabaseOperation tearDownOperation = DatabaseOperation.NONE;
     private IOperationListener operationListener;
+    private DatabaseConfig databaseConfig = new DatabaseConfig();
 
     public AbstractDatabaseTester() {
         this(null);
@@ -82,34 +88,57 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
         this.schema = schema;
     }
 
+    public void setDatabaseConfig(DatabaseConfig databaseConfig) {
+        this.databaseConfig = databaseConfig;
+    }
+
+    @Override
+    public IDatabaseConnection getConnection() throws Exception {
+        Connection connection = buildJdbcConnection();
+        return buildConnection(databaseConfig, connection);
+    }
+
+    protected abstract Connection buildJdbcConnection() throws Exception;
+
+    protected final DatabaseConnection buildConnection(DatabaseConfig config, Connection conn)
+            throws DatabaseUnitException {
+        return new DatabaseConnection(conn, config, getSchema());
+    }
+
+    @Override
     public void closeConnection(IDatabaseConnection connection) throws Exception {
         logger.debug("closeConnection(connection={}) - start", connection);
 
         connection.close();
     }
 
+    @Override
     public IDataSet getDataSet() {
         logger.debug("getDataSet() - start");
 
         return dataSet;
     }
 
+    @Override
     public void onSetup() throws Exception {
         logger.debug("onSetup() - start");
         executeOperation(getSetUpOperation(), OperationType.SET_UP);
     }
 
+    @Override
     public void onTearDown() throws Exception {
         logger.debug("onTearDown() - start");
         executeOperation(getTearDownOperation(), OperationType.TEAR_DOWN);
     }
 
+    @Override
     public void setDataSet(IDataSet dataSet) {
         logger.debug("setDataSet(dataSet={}) - start", dataSet);
 
         this.dataSet = dataSet;
     }
 
+    @Override
     public void setSchema(String schema) {
         logger.debug("setSchema(schema={}) - start", schema);
 
@@ -117,12 +146,14 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
         this.schema = schema;
     }
 
+    @Override
     public void setSetUpOperation(DatabaseOperation setUpOperation) {
         logger.debug("setSetUpOperation(setUpOperation={}) - start", setUpOperation);
 
         this.setUpOperation = setUpOperation;
     }
 
+    @Override
     public void setTearDownOperation(DatabaseOperation tearDownOperation) {
         logger.debug("setTearDownOperation(tearDownOperation={}) - start", tearDownOperation);
 
@@ -141,6 +172,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     /**
      * Returns the DatabaseOperation to call when starting the test.
      */
+    @Override
     public DatabaseOperation getSetUpOperation() {
         logger.trace("getSetUpOperation() - start");
 
@@ -150,6 +182,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     /**
      * Returns the DatabaseOperation to call when ending the test.
      */
+    @Override
     public DatabaseOperation getTearDownOperation() {
         logger.trace("getTearDownOperation() - start");
 
@@ -189,21 +222,9 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
         }
     }
 
+    @Override
     public void setOperationListener(IOperationListener operationListener) {
         logger.debug("setOperationListener(operationListener={}) - start", operationListener);
         this.operationListener = operationListener;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("schema=").append(schema);
-        sb.append(", dataSet=").append(dataSet);
-        sb.append(", setUpOperation=").append(setUpOperation);
-        sb.append(", tearDownOperation=").append(tearDownOperation);
-        sb.append(", operationListener=").append(operationListener);
-        sb.append("]");
-        return sb.toString();
     }
 }

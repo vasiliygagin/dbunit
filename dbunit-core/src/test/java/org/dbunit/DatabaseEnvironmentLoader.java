@@ -24,6 +24,8 @@ package org.dbunit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 public class DatabaseEnvironmentLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseEnvironmentLoader.class);
@@ -52,7 +54,7 @@ public class DatabaseEnvironmentLoader {
                 INSTANCE = new MsSqlEnvironment(profile);
             } else {
                 logger.warn("getInstance: activeProfile={} not known," + " using generic profile", profile.profileName);
-                INSTANCE = new DatabaseEnvironment(profile);
+                INSTANCE = new DatabaseEnvironment(profile, new DatabaseConfig());
             }
         }
 

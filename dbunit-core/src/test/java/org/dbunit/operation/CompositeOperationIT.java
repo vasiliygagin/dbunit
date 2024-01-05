@@ -55,7 +55,7 @@ public class CompositeOperationIT extends AbstractDatabaseIT {
         assertEquals("before", "2", tableBefore.getValue(2, columnName).toString());
 
         DatabaseOperation operation = new CompositeOperation(DatabaseOperation.DELETE_ALL, DatabaseOperation.INSERT);
-        operation.execute(_connection, xmlDataSet);
+        operation.execute(customizedConnection, xmlDataSet);
 
         ITable tableAfter = createOrderedTable(tableName, columnName);
         assertEquals("row count after", 2, tableAfter.getRowCount());

@@ -29,6 +29,7 @@ import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 import io.github.vasiliygagin.dbunit.jdbc.SingleConnectionDataSource;
 
 /**

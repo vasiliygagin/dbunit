@@ -22,11 +22,11 @@
 package org.dbunit.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseProfile;
+import org.dbunit.DefaultDatabaseTester;
 import org.dbunit.IDatabaseTester;
 
 /**
@@ -42,6 +42,11 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         super(s);
     }
 
+    public DatabaseProfile getProfile() {
+        return profile;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.profile = super.getEnvironment().getProfile();
@@ -49,13 +54,13 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
     }
 
     public final void testGetRowCount() throws Exception {
-        assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE", null));
-        assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE"));
+        assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE", null));
+        assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE"));
 
-        assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE", null));
-        assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE"));
+        assertEquals("TEST_TABLE", 6, customizedConnection.getRowCount("TEST_TABLE", null));
+        assertEquals("TEST_TABLE", 6, customizedConnection.getRowCount("TEST_TABLE"));
 
-        assertEquals("PK_TABLE", 1, _connection.getRowCount("PK_TABLE", "where PK0 = 0"));
+        assertEquals("PK_TABLE", 1, customizedConnection.getRowCount("PK_TABLE", "where PK0 = 0"));
     }
 
     public final void testGetRowCount_NonexistingSchema() throws Exception {
@@ -89,7 +94,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
             IDatabaseConnection dbConnection = dbTester.getConnection();
 
             assertEquals(null, dbConnection.getSchema());
-            assertEquals("TEST_TABLE", 6, _connection.getRowCount("TEST_TABLE", null));
+            assertEquals("TEST_TABLE", 6, customizedConnection.getRowCount("TEST_TABLE", null));
         } finally {
             // Reset the testers schema for subsequent tests (environment.dbTester is a
             // singleton)
@@ -97,21 +102,18 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         }
     }
 
-    private IDatabaseTester newDatabaseTester(String schema) throws Exception {
-        IDatabaseTester tester = super.newDatabaseTester();
+    private DefaultDatabaseTester newDatabaseTester(String schema) throws Exception {
+        logger.debug("newDatabaseTester() - start");
+        Connection connection1 = getEnvironment().buildJdbcConnection();
+
+        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config1 = new io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig();
+        customizedConnection = new DatabaseConnection(connection1, config1, profile.getSchema());
+
+        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config2 = getEnvironment().getDatabaseConfig();
+
+        final DatabaseConnection connection = new DatabaseConnection(connection1, config2, this.schema);
+        DefaultDatabaseTester tester = new DefaultDatabaseTester(connection);
         tester.setSchema(schema);
         return tester;
     }
-
-    protected IDatabaseConnection getConnection() throws Exception {
-        String name = profile.getDriverClass();
-        Class.forName(name);
-        Connection connection = DriverManager.getConnection(profile.getConnectionUrl(), profile.getUser(),
-                profile.getPassword());
-        _connection = new DatabaseConnection(connection, new DatabaseConfig(), profile.getSchema());
-
-        IDatabaseConnection dbunitConnection = new DatabaseConnection(connection, new DatabaseConfig(), this.schema);
-        return dbunitConnection;
-    }
-
 }

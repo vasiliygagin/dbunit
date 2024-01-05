@@ -49,14 +49,14 @@ public class AbstractBatchOperationIT extends AbstractDatabaseIT {
             ITableMetaData xmlMetaData = xmlTable.getTableMetaData();
             String tableName = xmlMetaData.getTableName();
 
-            ITable databaseTable = _connection.createDataSet().getTable(tableName);
+            ITable databaseTable = customizedConnection.createDataSet().getTable(tableName);
             ITableMetaData databaseMetaData = databaseTable.getTableMetaData();
 
             // ensure xml table is missing some columns present in database table
             assertTrue(tableName + " missing columns",
                     xmlMetaData.getColumns().length < databaseMetaData.getColumns().length);
 
-            ITableMetaData resultMetaData = AbstractBatchOperation.getOperationMetaData(_connection, xmlMetaData);
+            ITableMetaData resultMetaData = AbstractBatchOperation.getOperationMetaData(customizedConnection, xmlMetaData);
 
             // result metadata must contains database columns matching the xml columns
             Column[] resultColumns = resultMetaData.getColumns();
@@ -89,7 +89,7 @@ public class AbstractBatchOperationIT extends AbstractDatabaseIT {
         ITable xmlTable = xmlDataSet.getTable(tableName);
 
         try {
-            AbstractBatchOperation.getOperationMetaData(_connection, xmlTable.getTableMetaData());
+            AbstractBatchOperation.getOperationMetaData(customizedConnection, xmlTable.getTableMetaData());
             fail("Should throw a NoSuchColumnException");
         } catch (NoSuchColumnException e) {
         }

@@ -25,13 +25,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
-import org.dbunit.database.AbstractDatabaseConnection;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
-import org.dbunit.testutil.TestUtils;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -40,23 +40,30 @@ import org.dbunit.testutil.TestUtils;
  */
 public class DatabaseEnvironment {
 
-    private DatabaseProfile _profile = null;
-    private AbstractDatabaseConnection _connection = null;
-    private IDataSet _dataSet = null;
-    private IDatabaseTester _databaseTester = null;
+    private final DatabaseProfile _profile;
+    private final IDataSet _dataSet;
+    private final JdbcDatabaseTester _databaseTester;
+    private final DatabaseConfig databaseConfig;
 
-    protected DatabaseEnvironment(final DatabaseProfile profile) throws Exception {
+    private DatabaseConnection _connection = null;
+
+    protected DatabaseEnvironment(final DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
         _profile = profile;
-        final File file = TestUtils.getFile("xml/dataSetTest.xml");
-        _dataSet = new XmlDataSet(new FileReader(file));
+        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
         _databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
                 _profile.getUser(), _profile.getPassword(), _profile.getSchema());
+        this.databaseConfig = databaseConfig;
+        _connection = buildConnection();
 
-        DdlExecutor.execute("sql/" + _profile.getProfileDdl(), getConnection().getConnection(),
+        DdlExecutor.execute("sql/" + _profile.getProfileDdl(), _connection.getConnection(),
                 profile.getProfileMultilineSupport(), true);
     }
 
-    public AbstractDatabaseConnection getConnection() throws Exception {
+    public DatabaseConfig getDatabaseConfig() {
+        return databaseConfig;
+    }
+
+    public DatabaseConnection getConnection() throws Exception {
         // First check if the current connection is still valid and open
         // The connection may have been closed by a consumer
         if (_connection != null && _connection.getConnection().isClosed()) {
@@ -65,20 +72,22 @@ public class DatabaseEnvironment {
         }
 
         if (_connection == null) {
-            final String name = _profile.getDriverClass();
-            Class.forName(name);
-            final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
-                    _profile.getPassword());
-            _connection = new DatabaseConnection(connection, new DatabaseConfig(), _profile.getSchema());
+            _connection = buildConnection();
         }
         return _connection;
     }
 
-    protected void setupDatabaseConfig(final DatabaseConfig config) {
-        // Override in subclasses as necessary.
+    private DatabaseConnection buildConnection() throws ClassNotFoundException, SQLException, DatabaseUnitException {
+        return new DatabaseConnection(buildJdbcConnection(), databaseConfig, _profile.getSchema());
     }
 
-    public IDatabaseTester getDatabaseTester() {
+    public Connection buildJdbcConnection() throws ClassNotFoundException, SQLException {
+        final String name = _profile.getDriverClass();
+        Class.forName(name);
+        return DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(), _profile.getPassword());
+    }
+
+    public final JdbcDatabaseTester getDatabaseTester() {
         return _databaseTester;
     }
 
@@ -119,17 +128,5 @@ public class DatabaseEnvironment {
      */
     public String convertString(final String str) {
         return str == null ? null : str.toUpperCase();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("_profile=").append(_profile);
-        sb.append(", _connection=").append(_connection);
-        sb.append(", _dataSet=").append(_dataSet);
-        sb.append(", _databaseTester=").append(_databaseTester);
-        sb.append("]");
-        return sb.toString();
     }
 }

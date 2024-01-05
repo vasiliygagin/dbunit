@@ -20,8 +20,6 @@
  */
 package org.dbunit;
 
-import junit.framework.TestCase;
-
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -29,6 +27,8 @@ import org.dbunit.dataset.SortedTable;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import junit.framework.TestCase;
 
 /**
  * @author Andres Almiray (aalmiray@users.sourceforge.net)
@@ -57,8 +57,8 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     // //////////////////////////////////////////////////////////////////////////
     // TestCase class
 
+    @Override
     protected void setUp() throws Exception {
-        super.setUp();
 
         assertNotNull("DatabaseTester is not set", getDatabaseTester());
         getDatabaseTester().setSetUpOperation(getSetUpOperation());
@@ -68,8 +68,8 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
         _connection = getDatabaseTester().getConnection();
     }
 
+    @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
 
         assertNotNull("DatabaseTester is not set", getDatabaseTester());
         getDatabaseTester().setTearDownOperation(getTearDownOperation());
@@ -100,7 +100,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     /**
      * This method is used so sub-classes can disable the tests according to some
      * characteristics of the environment
-     * 
+     *
      * @param testName name of the test to be checked
      * @return flag indicating if the test should be executed or not
      */
@@ -108,6 +108,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
         return true;
     }
 
+    @Override
     protected void runTest() throws Throwable {
         if (runTest(getName())) {
             super.runTest();

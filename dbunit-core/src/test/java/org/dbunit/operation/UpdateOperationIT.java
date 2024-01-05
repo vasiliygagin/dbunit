@@ -321,16 +321,16 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/clobInsertTest.xml"));
 
-                ITable tableBefore = _connection.createDataSet().getTable(tableName);
-                assertEquals("count before", 3, _connection.getRowCount(tableName));
+                ITable tableBefore = customizedConnection.createDataSet().getTable(tableName);
+                assertEquals("count before", 3, customizedConnection.getRowCount(tableName));
                 Assertion.assertEquals(beforeDataSet.getTable(tableName), tableBefore);
             }
 
             IDataSet afterDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/clobUpdateTest.xml"));
-            DatabaseOperation.REFRESH.execute(_connection, afterDataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, afterDataSet);
 
             {
-                ITable tableAfter = _connection.createDataSet().getTable(tableName);
+                ITable tableAfter = customizedConnection.createDataSet().getTable(tableName);
                 assertEquals("count after", 4, tableAfter.getRowCount());
                 Assertion.assertEquals(afterDataSet.getTable(tableName), tableAfter);
             }
@@ -346,8 +346,8 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/blobInsertTest.xml"));
 
-                ITable tableBefore = _connection.createDataSet().getTable(tableName);
-                assertEquals("count before", 3, _connection.getRowCount(tableName));
+                ITable tableBefore = customizedConnection.createDataSet().getTable(tableName);
+                assertEquals("count before", 3, customizedConnection.getRowCount(tableName));
                 Assertion.assertEquals(beforeDataSet.getTable(tableName), tableBefore);
 
 //                System.out.println("****** BEFORE *******");
@@ -355,10 +355,10 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
             }
 
             IDataSet afterDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/blobUpdateTest.xml"));
-            DatabaseOperation.REFRESH.execute(_connection, afterDataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, afterDataSet);
 
             {
-                ITable tableAfter = _connection.createDataSet().getTable(tableName);
+                ITable tableAfter = customizedConnection.createDataSet().getTable(tableName);
                 assertEquals("count after", 4, tableAfter.getRowCount());
                 Assertion.assertEquals(afterDataSet.getTable(tableName), tableAfter);
 
@@ -378,17 +378,17 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder()
                         .build(TestUtils.getFile("xml/sdoGeometryInsertTest.xml"));
 
-                ITable tableBefore = _connection.createDataSet().getTable(tableName);
-                assertEquals("count before", 1, _connection.getRowCount(tableName));
+                ITable tableBefore = customizedConnection.createDataSet().getTable(tableName);
+                assertEquals("count before", 1, customizedConnection.getRowCount(tableName));
                 Assertion.assertEquals(beforeDataSet.getTable(tableName), tableBefore);
             }
 
             IDataSet afterDataSet = new FlatXmlDataSetBuilder()
                     .build(TestUtils.getFile("xml/sdoGeometryUpdateTest.xml"));
-            DatabaseOperation.REFRESH.execute(_connection, afterDataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, afterDataSet);
 
             {
-                ITable tableAfter = _connection.createDataSet().getTable(tableName);
+                ITable tableAfter = customizedConnection.createDataSet().getTable(tableName);
                 assertEquals("count after", 8, tableAfter.getRowCount());
                 Assertion.assertEquals(afterDataSet.getTable(tableName), tableAfter);
             }
@@ -405,16 +405,16 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder()
                         .build(TestUtils.getFile("xml/xmlTypeInsertTest.xml"));
 
-                ITable tableBefore = _connection.createDataSet().getTable(tableName);
-                assertEquals("count before", 3, _connection.getRowCount(tableName));
+                ITable tableBefore = customizedConnection.createDataSet().getTable(tableName);
+                assertEquals("count before", 3, customizedConnection.getRowCount(tableName));
                 Assertion.assertEquals(beforeDataSet.getTable(tableName), tableBefore);
             }
 
             IDataSet afterDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/xmlTypeUpdateTest.xml"));
-            DatabaseOperation.REFRESH.execute(_connection, afterDataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, afterDataSet);
 
             {
-                ITable tableAfter = _connection.createDataSet().getTable(tableName);
+                ITable tableAfter = customizedConnection.createDataSet().getTable(tableName);
                 assertEquals("count after", 4, tableAfter.getRowCount());
                 Assertion.assertEquals(afterDataSet.getTable(tableName), tableAfter);
             }
@@ -450,17 +450,17 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
 
         // verify table before
-        assertEquals("row count before", 6, _connection.getRowCount(tableName));
+        assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
 
         try {
-            DatabaseOperation.REFRESH.execute(_connection, dataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, dataSet);
             fail("Should not be here!");
         } catch (NoPrimaryKeyException e) {
 
         }
 
         // verify table after
-        assertEquals("row count before", 6, _connection.getRowCount(tableName));
+        assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
     }
 
     private void testExecute(IDataSet dataSet) throws Exception {
@@ -472,7 +472,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         ITable tableBefore = createOrderedTable(tableName, columnNames[0]);
         assertEquals("row count before", 3, tableBefore.getRowCount());
 
-        DatabaseOperation.UPDATE.execute(_connection, dataSet);
+        DatabaseOperation.UPDATE.execute(customizedConnection, dataSet);
 
         ITable tableAfter = createOrderedTable(tableName, columnNames[0]);
         assertEquals("row count after", 3, tableAfter.getRowCount());

@@ -21,13 +21,13 @@
 
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.ext.oracle.OracleDataTypeFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -36,12 +36,16 @@ import org.dbunit.ext.oracle.OracleDataTypeFactory;
  */
 public class OracleEnvironment extends DatabaseEnvironment {
     public OracleEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile);
+        super(profile, new OracleDatabaseConfig());
     }
 
-    @Override
-    protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setDataTypeFactory(new OracleDataTypeFactory());
+    /**
+     * @param profile
+     * @param oracle10DatabaseConfig
+     * @throws Exception
+     */
+    public OracleEnvironment(DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
+        super(profile, databaseConfig);
     }
 
     @Override
