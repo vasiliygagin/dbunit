@@ -26,9 +26,9 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
@@ -41,7 +41,7 @@ import org.dbunit.testutil.TestUtils;
 public class DatabaseEnvironment {
 
     private DatabaseProfile _profile = null;
-    private IDatabaseConnection _connection = null;
+    private AbstractDatabaseConnection _connection = null;
     private IDataSet _dataSet = null;
     private IDatabaseTester _databaseTester = null;
 
@@ -56,7 +56,7 @@ public class DatabaseEnvironment {
                 profile.getProfileMultilineSupport(), true);
     }
 
-    public IDatabaseConnection getConnection() throws Exception {
+    public AbstractDatabaseConnection getConnection() throws Exception {
         // First check if the current connection is still valid and open
         // The connection may have been closed by a consumer
         if (_connection != null && _connection.getConnection().isClosed()) {
@@ -69,7 +69,7 @@ public class DatabaseEnvironment {
             Class.forName(name);
             final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
                     _profile.getPassword());
-            _connection = new DatabaseConnection(connection, _profile.getSchema());
+            _connection = new DatabaseConnection(connection, new DatabaseConfig(), _profile.getSchema());
         }
         return _connection;
     }
@@ -99,8 +99,7 @@ public class DatabaseEnvironment {
 
     public boolean support(final TestFeature feature) {
         final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
-        for (int i = 0; i < unsupportedFeatures.length; i++) {
-            final String unsupportedFeature = unsupportedFeatures[i];
+        for (final String unsupportedFeature : unsupportedFeatures) {
             if (feature.toString().equals(unsupportedFeature)) {
                 return false;
             }

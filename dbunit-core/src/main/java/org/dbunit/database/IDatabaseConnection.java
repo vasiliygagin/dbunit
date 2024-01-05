@@ -21,14 +21,14 @@
 
 package org.dbunit.database;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /**
  * This interface represents a connection to a specific database.
@@ -60,7 +60,7 @@ public interface IDatabaseConnection {
 
     /**
      * Creates a dataset containing only the specified tables from the database.
-     * 
+     *
      * @param tableNames The tables for which a dataset shall be created
      * @return The new dataset
      * @throws SQLException
@@ -122,13 +122,22 @@ public interface IDatabaseConnection {
      */
     public int getRowCount(String tableName, String whereClause) throws SQLException;
 
-    /**
-     * Returns this connection database configuration
-     */
-    public DatabaseConfig getConfig();
+    io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig getDatabaseConfig();
 
     /**
-     * @deprecated Use {@link #getConfig}
+     * Returns this connection database configuration
+     * @deprecated Use {@link #getDatabaseConfig()}
      */
-    public IStatementFactory getStatementFactory();
+    @Deprecated
+    default DatabaseConfig getConfig() {
+        return new DatabaseConfigWrapper(getDatabaseConfig());
+    }
+
+    /**
+     * @deprecated Use {@link #getDatabaseConfig()}
+     */
+    @Deprecated
+    default IStatementFactory getStatementFactory() {
+        return getDatabaseConfig().getStatementFactory();
+    }
 }

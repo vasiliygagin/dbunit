@@ -90,9 +90,10 @@ public class CsvURLProducerTest {
     }
 
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
-        DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password));
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new HsqldbDataTypeFactory());
+        DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password),
+                config);
         return connection;
     }
 

@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Container for the metadata for one database table. The metadata is
  * initialized using a {@link IDatabaseConnection}.
- * 
+ *
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -78,7 +78,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
 
     /**
      * Creates a new database table metadata
-     * 
+     *
      * @param tableName  The name of the table - can be fully qualified
      * @param connection The database connection
      * @param validate   Whether or not to validate the given input data. It is not
@@ -93,7 +93,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
 
     /**
      * Creates a new database table metadata
-     * 
+     *
      * @param tableName             The name of the table - can be fully qualified
      * @param connection            The database connection
      * @param validate              Whether or not to validate the given input data.
@@ -136,9 +136,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                 String plainTableName = _qualifiedTableNameSupport.getTable();
                 logger.debug("Validating if table '{}' exists in schema '{}' ...", plainTableName, schemaName);
                 try {
-                    DatabaseConfig config = connection.getConfig();
-                    IMetadataHandler metadataHandler = (IMetadataHandler) config
-                            .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+                    IMetadataHandler metadataHandler = connection.getDatabaseConfig().getMetadataHandler();
                     DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
                     if (!metadataHandler.tableExists(databaseMetaData, schemaName, plainTableName)) {
                         throw new NoSuchTableException(
@@ -168,11 +166,12 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
      * @deprecated since 2.3.0. use
      *             {@link ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDataTypeFactory, boolean)}
      */
+    @Deprecated
     public static ITableMetaData createMetaData(String tableName, ResultSet resultSet, IDataTypeFactory dataTypeFactory)
             throws DataSetException, SQLException {
         if (logger.isDebugEnabled()) {
-            logger.debug("createMetaData(tableName={}, resultSet={}, dataTypeFactory={}) - start",
-                    new Object[] { tableName, resultSet, dataTypeFactory });
+            logger.debug("createMetaData(tableName={}, resultSet={}, dataTypeFactory={}) - start", tableName, resultSet,
+                    dataTypeFactory);
         }
 
         return new ResultSetTableMetaData(tableName, resultSet, dataTypeFactory, false);
@@ -188,11 +187,12 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
      * @deprecated since 2.3.0. use
      *             {@link org.dbunit.database.ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDatabaseConnection, boolean)}
      */
+    @Deprecated
     public static ITableMetaData createMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         if (logger.isDebugEnabled()) {
-            logger.debug("createMetaData(tableName={}, resultSet={}, connection={}) - start",
-                    new Object[] { tableName, resultSet, connection });
+            logger.debug("createMetaData(tableName={}, resultSet={}, connection={}) - start", tableName, resultSet,
+                    connection);
         }
         return new ResultSetTableMetaData(tableName, resultSet, connection, false);
     }
@@ -206,9 +206,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         Connection connection = _connection.getConnection();
         DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-        DatabaseConfig config = _connection.getConfig();
-        IMetadataHandler metadataHandler = (IMetadataHandler) config
-                .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+        IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
 
         ResultSet resultSet = metadataHandler.getPrimaryKeys(databaseMetaData, schemaName, tableName);
 
@@ -255,6 +253,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         ////////////////////////////////////////////////////////////////////////
         // Comparable interface
 
+        @Override
         public int compareTo(Object o) {
             PrimaryKeyData data = (PrimaryKeyData) o;
             return getIndex() - data.getIndex();
@@ -264,6 +263,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
     ////////////////////////////////////////////////////////////////////////////
     // ITableMetaData interface
 
+    @Override
     public String getTableName() {
         // Ensure that the same table name is returned as specified in the input.
         // This is necessary to support fully qualified XML dataset imports.
@@ -274,6 +274,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         return this._originalTableName;
     }
 
+    @Override
     public Column[] getColumns() throws DataSetException {
         logger.debug("getColumns() - start");
 
@@ -286,15 +287,12 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                 Connection jdbcConnection = _connection.getConnection();
                 DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
 
-                DatabaseConfig config = _connection.getConfig();
-
-                IMetadataHandler metadataHandler = (IMetadataHandler) config
-                        .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+                IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
                 ResultSet resultSet = metadataHandler.getColumns(databaseMetaData, schemaName, tableName);
 
                 try {
                     IDataTypeFactory dataTypeFactory = super.getDataTypeFactory(_connection);
-                    boolean datatypeWarning = config.getFeature(DatabaseConfig.FEATURE_DATATYPE_WARNING);
+                    boolean datatypeWarning = _connection.getDatabaseConfig().isDatatypeWarning();
 
                     List columnList = new ArrayList();
                     while (resultSet.next()) {
@@ -333,11 +331,9 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         return (keyFilter != lastKeyFilter);
     }
 
+    @Override
     public Column[] getPrimaryKeys() throws DataSetException {
-        logger.debug("getPrimaryKeys() - start");
-        DatabaseConfig config = _connection.getConfig();
-        IColumnFilter primaryKeysFilter = (IColumnFilter) config
-                .getProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER);
+        IColumnFilter primaryKeysFilter = _connection.getDatabaseConfig().getPrimaryKeysFilter();
 
         if (_primaryKeys == null || primaryKeyFilterChanged(primaryKeysFilter)) {
             try {
@@ -357,6 +353,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
 
     ////////////////////////////////////////////////////////////////////////////
     // Object class
+    @Override
     public String toString() {
         try {
             String tableName = getTableName();

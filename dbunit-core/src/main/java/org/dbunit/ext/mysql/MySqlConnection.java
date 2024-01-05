@@ -20,22 +20,29 @@
  */
 package org.dbunit.ext.mysql;
 
+import java.sql.Connection;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-
-import java.sql.Connection;
 
 /**
  *
  * @author manuel.laflamme
  * @since Sep 4, 2003
  * @version $Revision$
+ * @deprecated VG: No need for separate class for this. Just need separate config.
  */
+@Deprecated
 public class MySqlConnection extends DatabaseConnection {
     public MySqlConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-        getConfig().setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, new MySqlMetadataHandler());
+        super(connection, buildConfig(), schema);
+    }
+
+    static DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new MySqlDataTypeFactory());
+        config.setMetadataHandler(new MySqlMetadataHandler());
+        return config;
     }
 }

@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.util.BitSet;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IPreparedBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
@@ -111,10 +110,8 @@ public abstract class AbstractBatchOperation extends AbstractOperation {
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-        DatabaseConfig databaseConfig = connection.getConfig();
-        IStatementFactory factory = (IStatementFactory) databaseConfig
-                .getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
-        boolean allowEmptyFields = connection.getConfig().getFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS);
+        IStatementFactory factory = connection.getDatabaseConfig().getStatementFactory();
+        boolean allowEmptyFields = connection.getDatabaseConfig().isAllowEmptyFields();
 
         // for each table
         ITableIterator iterator = iterator(dataSet);

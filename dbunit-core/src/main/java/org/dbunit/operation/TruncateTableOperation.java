@@ -21,15 +21,13 @@
 
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
-
-import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Truncate tables present in the specified dataset. If the dataset does not
@@ -59,6 +57,7 @@ public class TruncateTableOperation extends DeleteAllOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DeleteAllOperation class
 
+    @Override
     protected String getDeleteAllCommand() {
         return "truncate table ";
     }
@@ -66,17 +65,17 @@ public class TruncateTableOperation extends DeleteAllOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
+    @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
         // Patch to make it work with MS SQL Server
-        DatabaseConfig config = connection.getConfig();
-        boolean oldValue = config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
+        boolean oldValue = connection.getDatabaseConfig().isBatchedStatements();
         try {
-            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, false);
+            connection.getDatabaseConfig().setBatchedStatements(false);
             super.execute(connection, dataSet);
         } finally {
-            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, oldValue);
+            connection.getDatabaseConfig().setBatchedStatements(oldValue);
         }
     }
 }

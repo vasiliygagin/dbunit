@@ -56,7 +56,7 @@ public class QueryDataSet extends AbstractDataSet {
      * @param connection The connection object to the database.
      */
     public QueryDataSet(IDatabaseConnection connection) {
-        this(connection, connection.getConfig().getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES));
+        this(connection, connection.getDatabaseConfig().isCaseSensitiveTableNames());
     }
 
     /**
@@ -104,6 +104,7 @@ public class QueryDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
         if (logger.isDebugEnabled())
             logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
@@ -119,6 +120,7 @@ public class QueryDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
+    @Override
     public String[] getTableNames() throws DataSetException {
         logger.debug("getTableNames() - start");
         return this._tables.getTableNames();

@@ -1,20 +1,23 @@
 package org.dbunit.ext.postgresql;
 
-import junit.framework.TestCase;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.*;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
-import org.xml.sax.InputSource;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.io.StringReader;
 import java.sql.Statement;
 import java.sql.Types;
 
-import static org.junit.Assert.assertArrayEquals;
+import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.ReplacementDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
+import org.xml.sax.InputSource;
+
+import junit.framework.TestCase;
 
 public class PostgresSQLOidIT extends TestCase {
     private IDatabaseConnection _connection;
@@ -27,12 +30,14 @@ public class PostgresSQLOidIT extends TestCase {
             "</dataset>";
  // @formatter:on
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         // Load active postgreSQL profile and connection from Maven pom.xml.
         _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         if (_connection != null) {
@@ -47,8 +52,7 @@ public class PostgresSQLOidIT extends TestCase {
     public void xtestOidDataType() throws Exception {
         final String testTable = "t2";
         assertNotNull("didn't get a connection", _connection);
-        DatabaseConfig config = _connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+        _connection.getDatabaseConfig().setDataTypeFactory(new PostgresqlDataTypeFactory());
         Statement stat = _connection.getConnection().createStatement();
         // DELETE SQL OID tables
         stat.execute("DROP TABLE IF EXISTS " + testTable + ";");

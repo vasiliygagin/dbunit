@@ -20,17 +20,14 @@
  */
 package org.dbunit.database;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.statement.IStatementFactory;
-import org.dbunit.database.statement.PreparedStatementFactory;
-import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.slf4j.Logger;
@@ -38,14 +35,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Configuration used by the {@link DatabaseConnection}.
- * 
+ *
  * @author manuel.laflamme
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.0
+ * @deprecated
  */
-public class DatabaseConfig {
+@Deprecated
+public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig {
 
     /**
      * Logger for this class
@@ -75,72 +74,59 @@ public class DatabaseConfig {
      * A list of all properties as {@link ConfigProperty} objects. The objects
      * contain the allowed java type and whether or not a property is nullable.
      */
-    public static final ConfigProperty[] ALL_PROPERTIES = new ConfigProperty[] {
-            new ConfigProperty(PROPERTY_STATEMENT_FACTORY, IStatementFactory.class, false),
-            new ConfigProperty(PROPERTY_RESULTSET_TABLE_FACTORY, IResultSetTableFactory.class, false),
-            new ConfigProperty(PROPERTY_DATATYPE_FACTORY, IDataTypeFactory.class, false),
-            new ConfigProperty(PROPERTY_ESCAPE_PATTERN, String.class, true),
-            new ConfigProperty(PROPERTY_TABLE_TYPE, String[].class, false),
-            new ConfigProperty(PROPERTY_PRIMARY_KEY_FILTER, IColumnFilter.class, true),
-            new ConfigProperty(PROPERTY_BATCH_SIZE, Integer.class, false),
-            new ConfigProperty(PROPERTY_FETCH_SIZE, Integer.class, false),
-            new ConfigProperty(PROPERTY_METADATA_HANDLER, IMetadataHandler.class, false),
-            new ConfigProperty(PROPERTY_IDENTITY_COLUMN_FILTER, IColumnFilter.class, true),
-            new ConfigProperty(FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.class, false),
-            new ConfigProperty(FEATURE_QUALIFIED_TABLE_NAMES, Boolean.class, false),
-            new ConfigProperty(FEATURE_BATCHED_STATEMENTS, Boolean.class, false),
-            new ConfigProperty(FEATURE_DATATYPE_WARNING, Boolean.class, false),
-            new ConfigProperty(FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, Boolean.class, false),
-            new ConfigProperty(FEATURE_ALLOW_EMPTY_FIELDS, Boolean.class, false), new ConfigProperty(
-                    PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.class, false), };
+    public static final ConfigProperty[] ALL_PROPERTIES = {
+            new ConfigProperty<>(PROPERTY_STATEMENT_FACTORY, IStatementFactory.class, false,
+                    DatabaseConfig::getStatementFactory, DatabaseConfig::setStatementFactory),
+            new ConfigProperty<>(PROPERTY_RESULTSET_TABLE_FACTORY, IResultSetTableFactory.class, false,
+                    DatabaseConfig::getResultSetTableFactory, DatabaseConfig::setResultSetTableFactory),
+            new ConfigProperty<>(PROPERTY_DATATYPE_FACTORY, IDataTypeFactory.class, false,
+                    DatabaseConfig::getDataTypeFactory, DatabaseConfig::setDataTypeFactory),
+            new ConfigProperty<>(PROPERTY_ESCAPE_PATTERN, String.class, true, DatabaseConfig::getEscapePattern,
+                    DatabaseConfig::setEscapePattern),
+            new ConfigProperty<>(PROPERTY_TABLE_TYPE, String[].class, false, DatabaseConfig::getTableTypes,
+                    DatabaseConfig::setTableTypes),
+            new ConfigProperty<>(PROPERTY_PRIMARY_KEY_FILTER, IColumnFilter.class, true,
+                    DatabaseConfig::getPrimaryKeysFilter, DatabaseConfig::setPrimaryKeysFilter),
+            new ConfigProperty<>(PROPERTY_BATCH_SIZE, Integer.class, false, DatabaseConfig::getBatchSize,
+                    DatabaseConfig::setBatchSize),
+            new ConfigProperty<>(PROPERTY_FETCH_SIZE, Integer.class, false, DatabaseConfig::getFetchSize,
+                    DatabaseConfig::setFetchSize),
+            new ConfigProperty<>(PROPERTY_METADATA_HANDLER, IMetadataHandler.class, false,
+                    DatabaseConfig::getMetadataHandler, DatabaseConfig::setMetadataHandler),
+            new ConfigProperty<>(PROPERTY_IDENTITY_COLUMN_FILTER, IColumnFilter.class, true,
+                    DatabaseConfig::getIdentityFilter, DatabaseConfig::setIdentityFilter),
+            new ConfigProperty<>(FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.class, false,
+                    DatabaseConfig::isCaseSensitiveTableNames, DatabaseConfig::setCaseSensitiveTableNames),
+            new ConfigProperty<>(FEATURE_QUALIFIED_TABLE_NAMES, Boolean.class, false,
+                    DatabaseConfig::isQualifiedTableNames, DatabaseConfig::setQualifiedTableNames),
+            new ConfigProperty<>(FEATURE_BATCHED_STATEMENTS, Boolean.class, false, DatabaseConfig::isBatchedStatements,
+                    DatabaseConfig::setBatchedStatements),
+            new ConfigProperty<>(FEATURE_DATATYPE_WARNING, Boolean.class, false, DatabaseConfig::isDatatypeWarning,
+                    DatabaseConfig::setDatatypeWarning),
+            new ConfigProperty<>(FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, Boolean.class, false,
+                    DatabaseConfig::isSkipOracleRecycleBinTables, DatabaseConfig::setSkipOracleRecycleBinTables),
+            new ConfigProperty<>(FEATURE_ALLOW_EMPTY_FIELDS, Boolean.class, false, DatabaseConfig::isAllowEmptyFields,
+                    DatabaseConfig::setAllowEmptyFields),
+            new ConfigProperty<>(PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.class,
+                    false, DatabaseConfig::isAllowCountMismatch, DatabaseConfig::setAllowCountMismatch), //
+    };
 
     /**
      * A list of all features as strings
-     * 
+     *
      * @deprecated since 2.4.7 Use the {@link #ALL_PROPERTIES} where features are
      *             listed now as well
      */
-    public static final String[] ALL_FEATURES = new String[] { FEATURE_CASE_SENSITIVE_TABLE_NAMES,
-            FEATURE_QUALIFIED_TABLE_NAMES, FEATURE_BATCHED_STATEMENTS, FEATURE_DATATYPE_WARNING,
-            FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES, FEATURE_ALLOW_EMPTY_FIELDS };
-
-    private static final DefaultDataTypeFactory DEFAULT_DATA_TYPE_FACTORY = new DefaultDataTypeFactory();
-    private static final PreparedStatementFactory PREPARED_STATEMENT_FACTORY = new PreparedStatementFactory();
-    private static final CachedResultSetTableFactory RESULT_SET_TABLE_FACTORY = new CachedResultSetTableFactory();
-    private static final String DEFAULT_ESCAPE_PATTERN = null;
-    private static final String[] DEFAULT_TABLE_TYPE = { "TABLE" };
-    private static final Integer DEFAULT_BATCH_SIZE = new Integer(100);
-    private static final Integer DEFAULT_FETCH_SIZE = new Integer(100);
-
-    private Map _propertyMap = new HashMap();
-
-    private final Configurator configurator;
+    @Deprecated
+    public static final String[] ALL_FEATURES = { FEATURE_CASE_SENSITIVE_TABLE_NAMES, FEATURE_QUALIFIED_TABLE_NAMES,
+            FEATURE_BATCHED_STATEMENTS, FEATURE_DATATYPE_WARNING, FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES,
+            FEATURE_ALLOW_EMPTY_FIELDS };
 
     public DatabaseConfig() {
-        setFeature(FEATURE_BATCHED_STATEMENTS, false);
-        setFeature(FEATURE_QUALIFIED_TABLE_NAMES, false);
-        setFeature(FEATURE_CASE_SENSITIVE_TABLE_NAMES, false);
-        setFeature(FEATURE_DATATYPE_WARNING, true);
-        setFeature(FEATURE_ALLOW_EMPTY_FIELDS, false);
-
-        setProperty(PROPERTY_STATEMENT_FACTORY, PREPARED_STATEMENT_FACTORY);
-        setProperty(PROPERTY_RESULTSET_TABLE_FACTORY, RESULT_SET_TABLE_FACTORY);
-        setProperty(PROPERTY_DATATYPE_FACTORY, DEFAULT_DATA_TYPE_FACTORY);
-        setProperty(PROPERTY_ESCAPE_PATTERN, DEFAULT_ESCAPE_PATTERN);
-        setProperty(PROPERTY_TABLE_TYPE, DEFAULT_TABLE_TYPE);
-        setProperty(PROPERTY_BATCH_SIZE, DEFAULT_BATCH_SIZE);
-        setProperty(PROPERTY_FETCH_SIZE, DEFAULT_FETCH_SIZE);
-        setProperty(PROPERTY_METADATA_HANDLER, new DefaultMetadataHandler());
-        setProperty(PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, Boolean.FALSE);
-
-        this.configurator = new Configurator(this);
     }
 
-    /**
-     * @return The configurator of this database config
-     */
-    protected Configurator getConfigurator() {
-        return configurator;
+    public DatabaseConfig(io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig databaseConfig) {
+        apply(databaseConfig);
     }
 
     /**
@@ -151,6 +137,7 @@ public class DatabaseConfig {
      * @deprecated since 2.4.7 Use the {@link #setProperty(String, Object)} also for
      *             features
      */
+    @Deprecated
     public void setFeature(String name, boolean value) {
         logger.trace("setFeature(name={}, value={}) - start", name, String.valueOf(value));
 
@@ -165,59 +152,64 @@ public class DatabaseConfig {
      * @deprecated since 2.4.7 Use the {@link #getProperty(String)} where features
      *             are listed now as well
      */
+    @Deprecated
     public boolean getFeature(String name) {
-        logger.trace("getFeature(name={}) - start", name);
-
         Object property = getProperty(name);
+        boolean result;
         if (property == null) {
-            return false;
+            result = false;
         } else if (property instanceof Boolean) {
             Boolean feature = (Boolean) property;
-            return feature.booleanValue();
+            result = feature.booleanValue();
         } else {
             String propString = String.valueOf(property);
             Boolean feature = Boolean.valueOf(propString);
-            return feature.booleanValue();
+            result = feature.booleanValue();
         }
+        return result;
     }
 
     /**
      * Set the value of a property.
      *
-     * @param name  the property id
+     * @param fullName  the property id
      * @param value the property value
      */
-    public void setProperty(String name, Object value) {
-        logger.trace("setProperty(name={}, value={}) - start", name, value);
+    public void setProperty(String fullName, Object value) {
 
-        value = convertIfNeeded(name, value);
+        ConfigProperty prop = findByName(fullName);
+        if (prop == null) {
+            throw new IllegalArgumentException("Did not find property with name '" + fullName + "'");
+        }
+        setProperty(prop, value);
+    }
+
+    private void setProperty(ConfigProperty prop, Object value) {
+        value = convertIfNeeded(prop, value);
 
         // Validate if the type of the given object is correct
-        checkObjectAllowed(name, value);
+        checkObjectAllowed(prop, value);
 
         // If we get here the type is allowed (no exception was thrown)
-        _propertyMap.put(name, value);
+        prop.setter.accept(this, value);
     }
 
     /**
      * Look up the value of a property.
      *
-     * @param name the property id
+     * @param fullName the property id
      * @return the property value
      */
-    public Object getProperty(String name) {
-        logger.trace("getProperty(name={}) - start", name);
+    public <T> T getProperty(String fullName) {
+        ConfigProperty prop = findByName(fullName);
+        if (prop == null) {
+            return null;
+        }
 
-        return _propertyMap.get(name);
+        return (T) prop.getter.apply(this);
     }
 
-    private Object convertIfNeeded(String property, Object value) {
-        logger.trace("convertIfNeeded(property={}, value={}) - start", property, value);
-
-        ConfigProperty prop = findByName(property);
-        if (prop == null) {
-            throw new IllegalArgumentException("Did not find property with name '" + property + "'");
-        }
+    private Object convertIfNeeded(ConfigProperty prop, Object value) {
         Class allowedPropType = prop.getPropertyType();
 
         if (allowedPropType == Boolean.class || allowedPropType == boolean.class) {
@@ -234,34 +226,33 @@ public class DatabaseConfig {
      * Checks whether the given value has the correct java type for the given
      * property. If the value is not allowed for the given property an
      * {@link IllegalArgumentException} is thrown.
-     * 
-     * @param property The property to be set
+     *
+     * @param propertyName The property to be set
      * @param value    The value to which the property should be set
      */
-    protected void checkObjectAllowed(String property, Object value) {
-        logger.trace("checkObjectAllowed(property={}, value={}) - start", property, value);
+    protected void checkObjectAllowed(String propertyName, Object value) {
 
-        ConfigProperty prop = findByName(property);
-
+        ConfigProperty prop = findByName(propertyName);
         if (prop != null) {
             // First check for null
-            if (value == null) {
-                if (prop.isNullable()) {
-                    // All right. No class check is needed
-                    return;
-                } else {
-                    throw new IllegalArgumentException("The property '" + property + "' is not nullable.");
-                }
-            } else {
-                Class allowedPropType = prop.getPropertyType();
-                if (!allowedPropType.isAssignableFrom(value.getClass())) {
-                    throw new IllegalArgumentException("Cannot cast object of type '" + value.getClass()
-                            + "' to allowed type '" + allowedPropType + "'.");
-                }
+            checkObjectAllowed(prop, value);
+        } else {
+            logger.info("Unknown property '" + prop.property + "'. Cannot validate the type of the object to be set."
+                    + " Please notify a developer to update the list of properties.");
+        }
+    }
+
+    private void checkObjectAllowed(ConfigProperty prop, Object value) {
+        if (value == null) {
+            if (!prop.isNullable()) {
+                throw new IllegalArgumentException("The property '" + prop.property + "' is not nullable.");
             }
         } else {
-            logger.info("Unknown property '" + property + "'. Cannot validate the type of the object to be set."
-                    + " Please notify a developer to update the list of properties.");
+            Class allowedPropType = prop.getPropertyType();
+            if (!allowedPropType.isAssignableFrom(value.getClass())) {
+                throw new IllegalArgumentException("Cannot cast object of type '" + value.getClass()
+                        + "' to allowed type '" + allowedPropType + "'.");
+            }
         }
     }
 
@@ -270,35 +261,41 @@ public class DatabaseConfig {
      * given String values. This is useful to set properties configured as strings
      * by a build tool like ant or maven. If the required property type is an object
      * it uses reflection to create an instance of the class specified as string.
-     * 
+     *
      * @param stringProperties The properties as strings. The key of the properties
      *                         can be either the long or the short name.
      * @throws DatabaseUnitException
      */
     public void setPropertiesByString(Properties stringProperties) throws DatabaseUnitException {
-        for (Iterator iterator = stringProperties.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-
+        for (Entry<Object, Object> entry : stringProperties.entrySet()) {
             String propKey = (String) entry.getKey();
             String propValue = (String) entry.getValue();
 
-            ConfigProperty dbunitProp = DatabaseConfig.findByName(propKey);
-            if (dbunitProp == null) {
-                logger.debug("Did not find long name property {} - trying short name...", entry);
-                dbunitProp = DatabaseConfig.findByShortName(propKey);
-            }
-
-            if (dbunitProp == null) {
-                logger.info("Could not set property '" + entry + "' - not found in the list of known properties.");
-            } else {
-                String fullPropName = dbunitProp.getProperty();
-                Object obj = createObjectFromString(dbunitProp, propValue);
-                this.setProperty(fullPropName, obj);
-            }
+            setPropertyByString(propKey, propValue);
         }
     }
 
-    private Object createObjectFromString(ConfigProperty dbunitProp, String propValue) throws DatabaseUnitException {
+    private void setPropertyByString(String propertyName, String propertyValue) throws DatabaseUnitException {
+        ConfigProperty<?> property = findByFullOrShortName(propertyName);
+
+        if (property == null) {
+            logger.info("Could not set property '{}' - not found in the list of known properties.", propertyName);
+        } else {
+            Object obj = createObjectFromString(property, propertyValue);
+
+            setProperty(property, obj);
+        }
+    }
+
+    private ConfigProperty<?> findByFullOrShortName(String propKey) {
+        ConfigProperty<?> dbunitProp = findByName(propKey);
+        if (dbunitProp == null) {
+            dbunitProp = findByShortName(propKey);
+        }
+        return dbunitProp;
+    }
+
+    private <T> T createObjectFromString(ConfigProperty<T> dbunitProp, String propValue) throws DatabaseUnitException {
         if (dbunitProp == null) {
             throw new NullPointerException("The parameter 'dbunitProp' must not be null");
         }
@@ -309,20 +306,20 @@ public class DatabaseConfig {
 
         Class targetClass = dbunitProp.getPropertyType();
         if (targetClass == String.class) {
-            return propValue;
+            return (T) propValue;
         } else if (targetClass == Boolean.class) {
-            return Boolean.valueOf(propValue);
+            return (T) Boolean.valueOf(propValue);
         } else if (targetClass == String[].class) {
             String[] result = propValue.split(",");
             for (int i = 0; i < result.length; i++) {
                 result[i] = result[i].trim();
             }
-            return result;
+            return (T) result;
         } else if (targetClass == Integer.class) {
-            return new Integer(propValue);
+            return (T) new Integer(propValue);
         } else {
             // Try via reflection
-            return createInstance(propValue);
+            return (T) createInstance(propValue);
         }
     }
 
@@ -343,50 +340,40 @@ public class DatabaseConfig {
     /**
      * Searches the {@link ConfigProperty} object for the property with the given
      * name
-     * 
-     * @param property The property for which the enumerated object should be
+     *
+     * @param propertyName The property for which the enumerated object should be
      *                 resolved
      * @return The property object or <code>null</code> if it was not found.
      */
-    public static final ConfigProperty findByName(String property) {
-        for (int i = 0; i < ALL_PROPERTIES.length; i++) {
-            if (ALL_PROPERTIES[i].getProperty().equals(property)) {
-                return ALL_PROPERTIES[i];
+    public static final ConfigProperty<?> findByName(String propertyName) {
+        for (ConfigProperty<?> property : ALL_PROPERTIES) {
+            if (property.getProperty().equals(propertyName)) {
+                return property;
             }
         }
-        // property not found.
+
         return null;
     }
 
     /**
      * Searches the {@link ConfigProperty} object for the property with the given
      * name
-     * 
-     * @param propShortName The property short name for which the enumerated object
+     *
+     * @param shortPropertyName The property short name for which the enumerated object
      *                      should be resolved. Example: the short name of
      *                      {@value #PROPERTY_FETCH_SIZE} is <code>fetchSize</code>
      *                      which is the last part of the fully qualified URL.
      * @return The property object or <code>null</code> if it was not found.
      */
-    public static final ConfigProperty findByShortName(String propShortName) {
-        for (int i = 0; i < DatabaseConfig.ALL_PROPERTIES.length; i++) {
-            String fullProperty = DatabaseConfig.ALL_PROPERTIES[i].getProperty();
-            if (fullProperty.endsWith(propShortName)) {
-                return DatabaseConfig.ALL_PROPERTIES[i];
+    public static final ConfigProperty<?> findByShortName(String shortPropertyName) {
+        for (ConfigProperty<?> property : DatabaseConfig.ALL_PROPERTIES) {
+            String fullProperty = property.getProperty();
+            if (fullProperty.endsWith(shortPropertyName)) {
+                return property;
             }
         }
-        // Property not found
-        logger.info("The property ending with '" + propShortName + "' was not found. "
-                + "Please notify a dbunit developer to add the property to the " + DatabaseConfig.class);
-        return null;
-    }
 
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append(", _propertyMap=").append(_propertyMap);
-        sb.append("]");
-        return sb.toString();
+        return null;
     }
 
     /**
@@ -395,14 +382,15 @@ public class DatabaseConfig {
      * @version $Revision$ $Date$
      * @since 2.4.0
      */
-    public static class ConfigProperty {
+    public static class ConfigProperty<T> {
         private String property;
-        private Class propertyType;
+        private Class<T> propertyType;
         private boolean nullable;
+        private final Function<? extends DatabaseConfig, T> getter;
+        private final BiConsumer<? extends DatabaseConfig, T> setter;
 
-        public ConfigProperty(String property, Class propertyType, boolean nullable) {
-            super();
-
+        public ConfigProperty(String property, Class<T> propertyType, boolean nullable,
+                Function<? extends DatabaseConfig, T> getter, BiConsumer<? extends DatabaseConfig, T> setter) {
             if (property == null) {
                 throw new NullPointerException("The parameter 'property' must not be null");
             }
@@ -413,13 +401,15 @@ public class DatabaseConfig {
             this.property = property;
             this.propertyType = propertyType;
             this.nullable = nullable;
+            this.getter = getter;
+            this.setter = setter;
         }
 
         public String getProperty() {
             return property;
         }
 
-        public Class getPropertyType() {
+        public Class<?> getPropertyType() {
             return propertyType;
         }
 
@@ -427,13 +417,12 @@ public class DatabaseConfig {
             return nullable;
         }
 
+        @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((property == null) ? 0 : property.hashCode());
-            return result;
+            return Objects.hash(property);
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (this == obj)
                 return true;
@@ -442,14 +431,13 @@ public class DatabaseConfig {
             if (getClass() != obj.getClass())
                 return false;
             ConfigProperty other = (ConfigProperty) obj;
-            if (property == null) {
-                if (other.property != null)
-                    return false;
-            } else if (!property.equals(other.property))
+            if (!Objects.equals(property, other.property)) {
                 return false;
+            }
             return true;
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append(getClass().getName()).append("[");
@@ -460,51 +448,4 @@ public class DatabaseConfig {
             return sb.toString();
         }
     }
-
-    /**
-     * Sets parameters stored in the {@link DatabaseConfig} on specific java objects
-     * like {@link Statement}. Is mainly there to avoid code duplication where
-     * {@link DatabaseConfig} parameters are used.
-     * 
-     * @author gommma (gommma AT users.sourceforge.net)
-     * @author Last changed by: $Author$
-     * @version $Revision$ $Date$
-     * @since 2.4.4
-     */
-    protected static class Configurator {
-        /**
-         * Logger for this class
-         */
-        private static final Logger logger = LoggerFactory.getLogger(Configurator.class);
-
-        private DatabaseConfig config;
-
-        /**
-         * @param config The configuration to be used by this configurator
-         * @since 2.4.4
-         */
-        public Configurator(DatabaseConfig config) {
-            if (config == null) {
-                throw new NullPointerException("The parameter 'config' must not be null");
-            }
-            this.config = config;
-        }
-
-        /**
-         * Configures the given statement so that it has the properties that are
-         * configured in this {@link DatabaseConfig}.
-         * 
-         * @param stmt The statement to be configured.
-         * @throws SQLException
-         * @since 2.4.4
-         */
-        void configureStatement(Statement stmt) throws SQLException {
-            logger.trace("configureStatement(stmt={}) - start", stmt);
-            Integer fetchSize = (Integer) config.getProperty(DatabaseConfig.PROPERTY_FETCH_SIZE);
-            stmt.setFetchSize(fetchSize.intValue());
-            logger.debug("Statement fetch size set to {}", fetchSize);
-        }
-
-    }
-
 }

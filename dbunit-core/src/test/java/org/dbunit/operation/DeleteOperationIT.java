@@ -21,8 +21,10 @@
 
 package org.dbunit.operation;
 
+import java.io.FileReader;
+import java.io.Reader;
+
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -38,10 +40,6 @@ import org.dbunit.dataset.NoPrimaryKeyException;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 
 /**
  * @author Manuel Laflamme
@@ -62,7 +60,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
                 "delete from schema.table1 where c2 = 1234 and c1 = 'toto'",
                 "delete from schema.table1 where c2 = 123.45 and c1 = 'qwerty'", };
 
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.BOOLEAN), };
         String[] primaryKeys = { "c2", "c1" };
 
@@ -104,7 +102,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         String[] expected = { "delete from [schema].[table] where [c2] = 123.45 and [c1] = 'qwerty'",
                 "delete from [schema].[table] where [c2] = 1234 and [c1] = 'toto'", };
 
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.BOOLEAN), };
         String[] primaryKeys = { "c2", "c1" };
 
@@ -131,7 +129,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "[?]");
+        connection.getDatabaseConfig().setEscapePattern("[?]");
         new DeleteOperation().execute(connection, dataSet);
 
         statement.verify();

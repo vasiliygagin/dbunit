@@ -20,8 +20,13 @@
  */
 package org.dbunit.ant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -34,14 +39,8 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>DbUnitTask</code> is the task definition for an Ant interface to
@@ -108,29 +107,32 @@ public class DbUnitTask extends Task {
 
     /**
      * Flag for using the qualified table names.
-     * 
+     *
      * @deprecated since 2.4. Use {@link #dbConfig} instead. Only here because of
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private Boolean useQualifiedTableNames = null;
 
     /**
      * Flag for using batched statements.
-     * 
+     *
      * @deprecated since 2.4. Use {@link #dbConfig} instead. Only here because of
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private Boolean supportBatchStatement = null;
 
     /**
      * Flag for datatype warning.
-     * 
+     *
      * @deprecated since 2.4. Use {@link #dbConfig} instead. Only here because of
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private Boolean datatypeWarning = null;
 
     /**
@@ -138,6 +140,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private String escapePattern = null;
 
     /**
@@ -145,6 +148,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private String dataTypeFactory = null;
 
     /**
@@ -152,6 +156,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private String batchSize = null;
 
     /**
@@ -159,6 +164,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private String fetchSize = null;
 
     /**
@@ -166,6 +172,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private Boolean skipOracleRecycleBinTables = null;
 
     /**
@@ -173,6 +180,7 @@ public class DbUnitTask extends Task {
      *             backwards compatibility should be removed in the next major
      *             release.
      */
+    @Deprecated
     private Boolean allowEmptyFields = null;
 
     /**
@@ -254,7 +262,7 @@ public class DbUnitTask extends Task {
         return dbConfig;
     }
 
-//    public void setDbConfig(DbConfig dbConfig) 
+//    public void setDbConfig(DbConfig dbConfig)
 //    {
 //        logger.debug("setDbConfig(dbConfig={}) - start", dbConfig);
 //        this.dbConfig = dbConfig;
@@ -338,7 +346,7 @@ public class DbUnitTask extends Task {
 
     /**
      * sets the size of batch inserts.
-     * 
+     *
      * @param batchSize
      */
     public void setBatchSize(String batchSize) {
@@ -360,6 +368,7 @@ public class DbUnitTask extends Task {
     /**
      * Load the step and then execute it
      */
+    @Override
     public void execute() throws BuildException {
         logger.trace("execute() - start");
 
@@ -372,9 +381,7 @@ public class DbUnitTask extends Task {
                 log(step.getLogMessage(), Project.MSG_INFO);
                 step.execute(connection);
             }
-        } catch (DatabaseUnitException e) {
-            throw new BuildException(e, getLocation());
-        } catch (SQLException e) {
+        } catch (DatabaseUnitException | SQLException e) {
             throw new BuildException(e, getLocation());
         } finally {
             try {
@@ -443,29 +450,26 @@ public class DbUnitTask extends Task {
         }
         conn.setAutoCommit(true);
 
-        IDatabaseConnection connection = createDatabaseConnection(conn, schema);
-        return connection;
+        return createDatabaseConnection(conn, schema);
     }
 
     /**
      * Creates the dbunit connection using the two given arguments. The
      * configuration properties of the dbunit connection are initialized using the
      * fields of this class.
-     * 
+     *
      * @param jdbcConnection
      * @param dbSchema
      * @return The dbunit connection
      */
     protected IDatabaseConnection createDatabaseConnection(Connection jdbcConnection, String dbSchema) {
-        logger.trace("createDatabaseConnection(jdbcConnection={}, dbSchema={}) - start", jdbcConnection, dbSchema);
-
+        DatabaseConfig config = new DatabaseConfig();
         IDatabaseConnection connection = null;
         try {
-            connection = new DatabaseConnection(jdbcConnection, dbSchema);
+            connection = new DatabaseConnection(jdbcConnection, config, dbSchema);
         } catch (DatabaseUnitException e) {
             throw new BuildException("Could not create dbunit connection object", e);
         }
-        DatabaseConfig config = connection.getConfig();
 
         if (this.dbConfig != null) {
             try {
@@ -489,35 +493,35 @@ public class DbUnitTask extends Task {
      * @deprecated since 2.4. Only here because of backwards compatibility should be
      *             removed in the next major release.
      */
+    @Deprecated
     private void copyAttributes(DatabaseConfig config) {
         if (supportBatchStatement != null)
-            config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, supportBatchStatement.booleanValue());
+            config.setBatchedStatements(supportBatchStatement.booleanValue());
         if (useQualifiedTableNames != null)
-            config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, useQualifiedTableNames.booleanValue());
+            config.setQualifiedTableNames(useQualifiedTableNames.booleanValue());
         if (datatypeWarning != null)
-            config.setFeature(DatabaseConfig.FEATURE_DATATYPE_WARNING, datatypeWarning.booleanValue());
+            config.setDatatypeWarning(datatypeWarning.booleanValue());
         if (skipOracleRecycleBinTables != null)
-            config.setFeature(DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES,
-                    skipOracleRecycleBinTables.booleanValue());
+            config.setSkipOracleRecycleBinTables(skipOracleRecycleBinTables.booleanValue());
         if (allowEmptyFields != null)
-            config.setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, allowEmptyFields.booleanValue());
+            config.setAllowEmptyFields(allowEmptyFields.booleanValue());
 
         if (escapePattern != null) {
-            config.setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, escapePattern);
+            config.setEscapePattern(escapePattern);
         }
         if (batchSize != null) {
             Integer batchSizeInteger = new Integer(batchSize);
-            config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, batchSizeInteger);
+            config.setBatchSize(batchSizeInteger);
         }
         if (fetchSize != null) {
-            config.setProperty(DatabaseConfig.PROPERTY_FETCH_SIZE, new Integer(fetchSize));
+            config.setFetchSize(new Integer(fetchSize));
         }
 
         // Setup data type factory
         if (this.dataTypeFactory != null) {
             try {
                 IDataTypeFactory dataTypeFactory = (IDataTypeFactory) Class.forName(this.dataTypeFactory).newInstance();
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
+                config.setDataTypeFactory(dataTypeFactory);
             } catch (ClassNotFoundException e) {
                 throw new BuildException("Class Not Found: DataType factory " + driver + " could not be loaded", e,
                         getLocation());

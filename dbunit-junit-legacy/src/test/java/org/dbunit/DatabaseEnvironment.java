@@ -69,7 +69,7 @@ public class DatabaseEnvironment {
             Class.forName(name);
             final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
                     _profile.getPassword());
-            _connection = new DatabaseConnection(connection, _profile.getSchema());
+            _connection = new DatabaseConnection(connection, new DatabaseConfig(), _profile.getSchema());
         }
         return _connection;
     }

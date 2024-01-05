@@ -20,11 +20,11 @@
  */
 package org.dbunit.ext.h2;
 
+import java.sql.Connection;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-
-import java.sql.Connection;
 
 /**
  *
@@ -32,10 +32,17 @@ import java.sql.Connection;
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.2.1
+ * @deprecated VG: No need for separate class for this. Just need separate config.
  */
+@Deprecated
 public class H2Connection extends DatabaseConnection {
     public H2Connection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+        super(connection, buildConfig(), schema);
+    }
+
+    static DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new H2DataTypeFactory());
+        return config;
     }
 }

@@ -36,7 +36,7 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
             String tableName = "PATTERN_LIKE_TABLE_X_";

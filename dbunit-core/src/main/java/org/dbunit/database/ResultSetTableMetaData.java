@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * dbunit worked until the 2.4 release)</li>
  * </ol>
  * </p>
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -93,7 +93,6 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
      */
     public ResultSetTableMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection,
             boolean caseSensitiveMetaData) throws DataSetException, SQLException {
-        super();
         _caseSensitiveMetaData = caseSensitiveMetaData;
         this.wrappedTableMetaData = createMetaData(tableName, resultSet, connection);
 
@@ -110,9 +109,9 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
      * @deprecated since 2.4.4. use
      *             {@link ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDatabaseConnection, boolean)}
      */
+    @Deprecated
     public ResultSetTableMetaData(String tableName, ResultSet resultSet, IDataTypeFactory dataTypeFactory,
             boolean caseSensitiveMetaData) throws DataSetException, SQLException {
-        super();
         _caseSensitiveMetaData = caseSensitiveMetaData;
         this.wrappedTableMetaData = createMetaData(tableName, resultSet, dataTypeFactory, new DefaultMetadataHandler());
     }
@@ -120,12 +119,10 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
     private DefaultTableMetaData createMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
-            logger.trace("createMetaData(tableName={}, resultSet={}, connection={}) - start",
-                    new Object[] { tableName, resultSet, connection });
+            logger.trace("createMetaData(tableName={}, resultSet={}, connection={}) - start", tableName, resultSet,
+                    connection);
 
-        DatabaseConfig dbConfig = connection.getConfig();
-        IMetadataHandler columnFactory = (IMetadataHandler) dbConfig
-                .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+        IMetadataHandler columnFactory = connection.getDatabaseConfig().getMetadataHandler();
         IDataTypeFactory typeFactory = super.getDataTypeFactory(connection);
         return createMetaData(tableName, resultSet, typeFactory, columnFactory);
     }
@@ -134,7 +131,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
             IMetadataHandler columnFactory) throws DataSetException, SQLException {
         if (logger.isTraceEnabled())
             logger.trace("createMetaData(tableName={}, resultSet={}, dataTypeFactory={}, columnFactory={}) - start",
-                    new Object[] { tableName, resultSet, dataTypeFactory, columnFactory });
+                    tableName, resultSet, dataTypeFactory, columnFactory);
 
         Connection connection = resultSet.getStatement().getConnection();
         DatabaseMetaData databaseMetaData = connection.getMetaData();
@@ -169,7 +166,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
             logger.trace(
                     "createColumnFromRsMetaData(rsMetaData={}, rsIndex={},"
                             + " tableName={}, dataTypeFactory={}) - start",
-                    new Object[] { rsMetaData, String.valueOf(rsIndex), tableName, dataTypeFactory });
+                    rsMetaData, String.valueOf(rsIndex), tableName, dataTypeFactory);
         }
 
         int columnType = rsMetaData.getColumnType(rsIndex);
@@ -190,7 +187,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
      * the required information (one of catalog/schema/table is "") the search for
      * the Column via {@link DatabaseMetaData} is not executed and <code>null</code>
      * is returned immediately.
-     * 
+     *
      * @param rsMetaData       The {@link ResultSetMetaData} from which to retrieve
      *                         the {@link DatabaseMetaData}
      * @param rsIndex          The current index in the {@link ResultSetMetaData}
@@ -213,8 +210,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
             logger.trace(
                     "createColumnFromMetaData(rsMetaData={}, rsIndex={},"
                             + " databaseMetaData={}, dataTypeFactory={}, columnFactory={}) - start",
-                    new Object[] { rsMetaData, String.valueOf(rsIndex), databaseMetaData, dataTypeFactory,
-                            metadataHandler });
+                    rsMetaData, String.valueOf(rsIndex), databaseMetaData, dataTypeFactory, metadataHandler);
         }
 
         // use DatabaseMetaData to retrieve the actual column definition
@@ -252,7 +248,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
             logger.debug(
                     "All attributes from the ResultSetMetaData are valid, "
                             + "trying to lookup values in DatabaseMetaData. catalog={}, schema={}, table={}, column={}",
-                    new Object[] { catalogName, schemaName, tableName, columnName });
+                    catalogName, schemaName, tableName, columnName);
 
         // All of the retrieved attributes are valid,
         // so lookup the column via DatabaseMetaData
@@ -279,7 +275,7 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
 
     /**
      * Trims the given string in a null-safe way
-     * 
+     *
      * @param value
      * @return
      * @since 2.4.6
@@ -307,18 +303,22 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
         throw new IllegalStateException(msg);
     }
 
+    @Override
     public Column[] getColumns() throws DataSetException {
         return this.wrappedTableMetaData.getColumns();
     }
 
+    @Override
     public Column[] getPrimaryKeys() throws DataSetException {
         return this.wrappedTableMetaData.getPrimaryKeys();
     }
 
+    @Override
     public String getTableName() {
         return this.wrappedTableMetaData.getTableName();
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

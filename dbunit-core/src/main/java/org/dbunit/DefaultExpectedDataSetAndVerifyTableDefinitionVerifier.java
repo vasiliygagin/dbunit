@@ -30,6 +30,7 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifier
         implements ExpectedDataSetAndVerifyTableDefinitionVerifier {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    @Override
     public void verify(final VerifyTableDefinition[] verifyTableDefinitions, final IDataSet expectedDataSet,
             final DatabaseConfig config) throws DataSetException {
         final String methodName = "verify";
@@ -66,7 +67,7 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifier
 
     protected Set<String> makeMismatchedTableNamesList(final VerifyTableDefinition[] verifyTableDefinitions,
             final String[] expectedTableNames) {
-        final Set<String> tables = new HashSet<String>();
+        final Set<String> tables = new HashSet<>();
 
         final String methodName = "makeMismatchedTableNamesList";
 
@@ -101,18 +102,15 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifier
             throws DataSetException {
         final String methodName = "failOnMismatch";
 
-        final boolean allowCountMismatch = (Boolean) config
-                .getProperty(DatabaseConfig.PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH);
+        final boolean allowCountMismatch = config.isAllowCountMismatch();
         final String willFailTestWord = allowCountMismatch ? " not" : "";
-        log.info("{}: Property {} is set to {} so will{} fail test", methodName,
-                DatabaseConfig.PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH, allowCountMismatch,
+        log.info("{}: Property allowCountMismatch is set to {} so will{} fail test", methodName, allowCountMismatch,
                 willFailTestWord);
         if (!allowCountMismatch) {
             final int mismatchCount = mismatchCountTables.size();
             final String msg = "The following " + mismatchCount + " expected tables do not have"
-                    + " corresponding VerifyTableDefinitions: " + mismatchCountTables + "\nSet property '"
-                    + DatabaseConfig.PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH
-                    + "' to true to suppress test fail.";
+                    + " corresponding VerifyTableDefinitions: " + mismatchCountTables
+                    + "\nSet property 'allowCountMismatch' to true to suppress test fail.";
             throw new DataSetException(msg);
         }
     }

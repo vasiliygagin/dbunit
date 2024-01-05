@@ -127,7 +127,7 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAn
             final String[] expectedDataFiles) throws Exception {
         log.info("configureTest: saving instance variables");
 
-        final boolean isCaseSensitiveTableNames = lookupFeatureValue(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+        final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
         log.info("configureTest: using case sensitive table names={}", isCaseSensitiveTableNames);
 
         this.prepDataSet = makeCompositeDataSet(prepDataFiles, "prep", isCaseSensitiveTableNames);
@@ -136,14 +136,13 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAn
         this.verifyTableDefs = verifyTableDefinitions;
     }
 
-    private boolean lookupFeatureValue(final String featureName) throws Exception {
+    private boolean isCaseSensitiveTableNames() throws Exception {
         boolean featureValue;
 
         IDatabaseConnection connection = null;
         try {
             connection = getConnection();
-            final DatabaseConfig config = connection.getConfig();
-            featureValue = config.getFeature(featureName);
+            featureValue = connection.getDatabaseConfig().isCaseSensitiveTableNames();
         } finally {
             if (connection != null) {
                 connection.close();
@@ -229,11 +228,10 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAn
     @Override
     public void cleanupData() throws Exception {
         try {
-            final boolean isCaseSensitiveTableNames = lookupFeatureValue(
-                    DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+            final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
             log.info("cleanupData: using case sensitive table names={}", isCaseSensitiveTableNames);
 
-            final IDataSet[] dataSets = new IDataSet[] { prepDataSet, expectedDataSet };
+            final IDataSet[] dataSets = { prepDataSet, expectedDataSet };
             final IDataSet dataset = new CompositeDataSet(dataSets, true, isCaseSensitiveTableNames);
             final String[] tableNames = dataset.getTableNames();
             final int count = tableNames.length;

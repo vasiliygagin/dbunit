@@ -44,7 +44,7 @@ public class DatabaseTestCaseIT extends TestCase {
      * Tests whether the user can simply change the {@link DatabaseConfig} by
      * overriding the method
      * {@link DatabaseTestCase#setUpDatabaseConfig(DatabaseConfig)}.
-     * 
+     *
      * @throws Exception
      */
     public void testConfigureConnection() throws Exception {
@@ -56,22 +56,27 @@ public class DatabaseTestCaseIT extends TestCase {
             /**
              * method under test
              */
+            @Override
             protected void setUpDatabaseConfig(DatabaseConfig config) {
-                config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, new Integer(97));
+                config.setBatchSize(97);
             }
 
+            @Override
             protected IDatabaseConnection getConnection() throws Exception {
                 return conn;
             }
 
+            @Override
             protected IDataSet getDataSet() throws Exception {
                 return null;
             }
 
+            @Override
             protected DatabaseOperation getSetUpOperation() throws Exception {
                 return DatabaseOperation.NONE;
             }
 
+            @Override
             protected DatabaseOperation getTearDownOperation() throws Exception {
                 return DatabaseOperation.NONE;
             }
@@ -81,9 +86,9 @@ public class DatabaseTestCaseIT extends TestCase {
         testSubject.setUp();
 
         IDatabaseConnection actualConn = testSubject.getConnection();
-        assertEquals(new Integer(97), actualConn.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        assertEquals(97, actualConn.getDatabaseConfig().getBatchSize());
 
         IDatabaseConnection actualConn2 = testSubject.getDatabaseTester().getConnection();
-        assertEquals(new Integer(97), actualConn2.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        assertEquals(97, actualConn2.getDatabaseConfig().getBatchSize());
     }
 }

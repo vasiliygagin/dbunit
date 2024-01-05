@@ -36,12 +36,12 @@ public class MySqlEnvironment extends DatabaseEnvironment {
 
     @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+        config.setDataTypeFactory(new MySqlDataTypeFactory());
     }
 
     /**
      * Preserve case for MySQL
-     * 
+     *
      * @see DatabaseEnvironment#convertString(String)
      */
     @Override

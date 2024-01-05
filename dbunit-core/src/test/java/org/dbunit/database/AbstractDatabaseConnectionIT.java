@@ -108,9 +108,9 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         Class.forName(name);
         Connection connection = DriverManager.getConnection(profile.getConnectionUrl(), profile.getUser(),
                 profile.getPassword());
-        _connection = new DatabaseConnection(connection, profile.getSchema());
+        _connection = new DatabaseConnection(connection, new DatabaseConfig(), profile.getSchema());
 
-        IDatabaseConnection dbunitConnection = new DatabaseConnection(connection, this.schema);
+        IDatabaseConnection dbunitConnection = new DatabaseConnection(connection, new DatabaseConfig(), this.schema);
         return dbunitConnection;
     }
 

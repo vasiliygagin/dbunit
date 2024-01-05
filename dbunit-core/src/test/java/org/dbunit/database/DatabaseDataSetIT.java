@@ -21,16 +21,12 @@
 
 package org.dbunit.database;
 
-import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.Column;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DefaultTableMetaData;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.NoSuchTableException;
-import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilterSimple;
 import org.dbunit.util.QualifiedTableName;
@@ -41,7 +37,8 @@ import org.dbunit.util.QualifiedTableName;
  * @since Feb 18, 2002
  */
 public class DatabaseDataSetIT extends AbstractDataSetTest {
-    private IDatabaseConnection _connection;
+
+    private AbstractDatabaseConnection _connection;
 
     public DatabaseDataSetIT(String s) {
         super(s);
@@ -50,12 +47,14 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
 
@@ -65,22 +64,27 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSetTest class
 
+    @Override
     protected String convertString(String str) throws Exception {
         return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         return _connection.createDataSet();
     }
 
+    @Override
     protected String[] getExpectedNames() throws Exception {
         return _connection.createDataSet().getTableNames();
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         throw new UnsupportedOperationException();
     }
@@ -88,61 +92,13 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
-    public void testGetSelectStatement() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        Column[] columns = new Column[] { new Column("c1", DataType.UNKNOWN), new Column("c2", DataType.UNKNOWN),
-                new Column("c3", DataType.UNKNOWN), };
-        String expected = "select c1, c2, c3 from schema.table";
-
-        ITableMetaData metaData = new DefaultTableMetaData(tableName, columns);
-        String sql = DatabaseDataSet.getSelectStatement(schemaName, metaData, null);
-        assertEquals("select statement", expected, sql);
-    }
-
-    public void testGetSelectStatementWithEscapedNames() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        Column[] columns = new Column[] { new Column("c1", DataType.UNKNOWN), new Column("c2", DataType.UNKNOWN),
-                new Column("c3", DataType.UNKNOWN), };
-        String expected = "select 'c1', 'c2', 'c3' from 'schema'.'table'";
-
-        ITableMetaData metaData = new DefaultTableMetaData(tableName, columns);
-        String sql = DatabaseDataSet.getSelectStatement(schemaName, metaData, "'?'");
-        assertEquals("select statement", expected, sql);
-    }
-
-    public void testGetSelectStatementWithEscapedNamesAndOrderBy() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        Column[] columns = new Column[] { new Column("c1", DataType.UNKNOWN), new Column("c2", DataType.UNKNOWN),
-                new Column("c3", DataType.UNKNOWN), };
-        String expected = "select 'c1', 'c2', 'c3' from 'schema'.'table' order by 'c1', 'c2'";
-
-        String[] primaryKeys = { "c1", "c2" };
-
-        ITableMetaData metaData = new DefaultTableMetaData(tableName, columns, primaryKeys);
-        String sql = DatabaseDataSet.getSelectStatement(schemaName, metaData, "'?'");
-        assertEquals("select statement", expected, sql);
-    }
-
-    public void testGetSelectStatementWithPrimaryKeys() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        Column[] columns = new Column[] { new Column("c1", DataType.UNKNOWN), new Column("c2", DataType.UNKNOWN),
-                new Column("c3", DataType.UNKNOWN), };
-        String expected = "select c1, c2, c3 from schema.table order by c1, c2, c3";
-
-        ITableMetaData metaData = new DefaultTableMetaData(tableName, columns, columns);
-        String sql = DatabaseDataSet.getSelectStatement(schemaName, metaData, null);
-        assertEquals("select statement", expected, sql);
-    }
-
     public void testGetQualifiedTableNames() throws Exception {
         String[] expectedNames = getExpectedNames();
 
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), _connection.getSchema());
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setQualifiedTableNames(true);
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema());
 
         IDataSet dataSet = connection.createDataSet();
         String[] actualNames = dataSet.getTableNames();
@@ -159,8 +115,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         String tableName = new QualifiedTableName("TEST_TABLE", _connection.getSchema()).getQualifiedName();
         String[] expected = { "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3" };
 
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), _connection.getSchema());
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setQualifiedTableNames(true);
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema());
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getColumns();
@@ -175,8 +133,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         String tableName = new QualifiedTableName("PK_TABLE", _connection.getSchema()).getQualifiedName();
         String[] expected = { "PK0", "PK1", "PK2" };
 
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), _connection.getSchema());
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setQualifiedTableNames(true);
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema());
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getPrimaryKeys();
@@ -202,8 +162,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         filter.includeColumn("PK0");
         filter.includeColumn("PK2");
 
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), _connection.getSchema());
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, filter);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setPrimaryKeysFilter(filter);
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema());
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getPrimaryKeys();
@@ -220,22 +182,22 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 //        metaData.
 //    }
 
+    @Override
     public void testCreateDuplicateDataSet() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
     public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
     public void testGetTableThatIsFiltered() throws Exception {
         final String existingTableToFilter = convertString("TEST_TABLE");
-        ITableFilterSimple tableFilter = new ITableFilterSimple() {
-            public boolean accept(String tableName) throws DataSetException {
-                if (tableName.equals(existingTableToFilter))
-                    return false;
-                return true;
-            }
+        ITableFilterSimple tableFilter = tableName -> {
+            if (tableName.equals(existingTableToFilter))
+                return false;
+            return true;
         };
         IDataSet dataSet = new DatabaseDataSet(_connection, false, tableFilter);
         try {

@@ -25,11 +25,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.dbunit.DatabaseUnitRuntimeException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.datatype.IDbProductRelatable;
@@ -64,6 +61,7 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
      * @return The primary key columns
      * @deprecated since 2.3.0 - use {@link Columns#getColumns(String[], Column[])}
      */
+    @Deprecated
     protected static Column[] getPrimaryKeys(Column[] columns, String[] keyNames) {
         logger.debug("getPrimaryKeys(columns={}, keyNames={}) - start", columns, keyNames);
         return Columns.getColumns(keyNames, columns);
@@ -76,10 +74,11 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
      * @return The filtered primary key columns
      * @deprecated since 2.3.0 - use {@link Columns#getColumns(String[], Column[])}
      */
+    @Deprecated
     protected static Column[] getPrimaryKeys(String tableName, Column[] columns, IColumnFilter columnFilter) {
         if (logger.isDebugEnabled()) {
-            logger.debug("getPrimaryKeys(tableName={}, columns={}, columnFilter={}) - start",
-                    new Object[] { tableName, columns, columnFilter });
+            logger.debug("getPrimaryKeys(tableName={}, columns={}, columnFilter={}) - start", tableName, columns,
+                    columnFilter);
         }
         return Columns.getColumns(tableName, columns, columnFilter);
     }
@@ -87,10 +86,11 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
     /**
      * Provides the index of the column with the given name within this table. Uses
      * method {@link ITableMetaData#getColumns()} to retrieve all available columns.
-     * 
+     *
      * @throws DataSetException
      * @see org.dbunit.dataset.ITableMetaData#getColumnIndex(java.lang.String)
      */
+    @Override
     public int getColumnIndex(String columnName) throws DataSetException {
         logger.debug("getColumnIndex(columnName={}) - start", columnName);
 
@@ -124,25 +124,13 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
 
     /**
      * Validates and returns the datatype factory of the given connection
-     * 
+     *
      * @param connection The connection providing the {@link IDataTypeFactory}
      * @return The datatype factory of the given connection
      * @throws SQLException
      */
     public IDataTypeFactory getDataTypeFactory(IDatabaseConnection connection) throws SQLException {
-        DatabaseConfig config = connection.getConfig();
-        Object factoryObj = config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
-        if (!IDataTypeFactory.class.isAssignableFrom(factoryObj.getClass())) {
-            String msg = "Invalid datatype factory configured. Class '" + factoryObj.getClass()
-                    + "' does not implement '" + IDataTypeFactory.class + "'.";
-            if (factoryObj instanceof String) {
-                msg += " Ensure not to specify the fully qualified class name as String but the concrete "
-                        + "instance of the datatype factory (for example 'new OracleDataTypeFactory()').";
-            }
-            // TODO Would a "DatabaseUnitConfigurationException make more sense?
-            throw new DatabaseUnitRuntimeException(msg);
-        }
-        IDataTypeFactory dataTypeFactory = (IDataTypeFactory) factoryObj;
+        IDataTypeFactory dataTypeFactory = connection.getDatabaseConfig().getDataTypeFactory();
 
         // Validate, e.g. oracle metaData + oracleDataTypeFactory ==> OK
         Connection jdbcConnection = connection.getConnection();
@@ -161,7 +149,7 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
      * Verifies that the data type factory supports the database product on the
      * connection. If the data type factory is not valid for the connection, a
      * warning is logged.
-     * 
+     *
      * @param dataTypeFactory The data type factory to validate.
      * @param metaData        The {@link DatabaseMetaData} needed to get the DB
      *                        product name of the connection RDBMS.
@@ -179,8 +167,8 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
         Collection validDbProductCollection = productRelatable.getValidDbProducts();
         if (validDbProductCollection != null) {
             String lowerCaseDbProductName = databaseProductName.toLowerCase();
-            for (Iterator iterator = validDbProductCollection.iterator(); iterator.hasNext();) {
-                String validDbProduct = ((String) iterator.next()).toLowerCase();
+            for (Object element : validDbProductCollection) {
+                String validDbProduct = ((String) element).toLowerCase();
                 if (lowerCaseDbProductName.indexOf(validDbProduct) > -1) {
                     logger.debug(
                             "The current database '{}' fits to the configured data type factory '{}'. Validation successful.",

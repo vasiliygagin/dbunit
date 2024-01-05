@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTableMetaData;
@@ -49,11 +48,10 @@ public abstract class AbstractOperation extends DatabaseOperation {
 
     protected String getQualifiedName(String prefix, String name, IDatabaseConnection connection) {
         if (logger.isDebugEnabled()) {
-            logger.debug("getQualifiedName(prefix={}, name={}, connection={}) - start",
-                    new Object[] { prefix, name, connection });
+            logger.debug("getQualifiedName(prefix={}, name={}, connection={}) - start", prefix, name, connection);
         }
 
-        String escapePattern = (String) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        String escapePattern = connection.getDatabaseConfig().getEscapePattern();
         QualifiedTableName qualifiedTbleName = new QualifiedTableName(name, prefix, escapePattern);
         return qualifiedTbleName.getQualifiedName();
     }
@@ -76,8 +74,8 @@ public abstract class AbstractOperation extends DatabaseOperation {
         Column[] columns = metaData.getColumns();
 
         List columnList = new ArrayList();
-        for (int j = 0; j < columns.length; j++) {
-            String columnName = columns[j].getColumnName();
+        for (Column column : columns) {
+            String columnName = column.getColumnName();
             // Check if column exists in database
             // method "getColumnIndex()" throws NoSuchColumnsException when columns have not
             // been found

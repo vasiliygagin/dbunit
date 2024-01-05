@@ -20,13 +20,13 @@
  */
 package org.dbunit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.sql.DataSource;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DatabaseTester that uses a {@link DataSource} to create connections.
@@ -52,8 +52,6 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
      * @param dataSource the DataSource to pull connections from
      */
     public DataSourceDatabaseTester(DataSource dataSource) {
-        super();
-
         if (dataSource == null) {
             throw new NullPointerException("The parameter 'dataSource' must not be null");
         }
@@ -63,7 +61,7 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
     /**
      * Creates a new DataSourceDatabaseTester with the specified DataSource and
      * schema name.
-     * 
+     *
      * @param dataSource the DataSource to pull connections from
      * @param schema     The schema name to be used for new dbunit connections
      * @since 2.4.5
@@ -77,10 +75,11 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
         this.dataSource = dataSource;
     }
 
+    @Override
     public IDatabaseConnection getConnection() throws Exception {
         logger.debug("getConnection() - start");
 
         assertTrue("DataSource is not set", dataSource != null);
-        return new DatabaseConnection(dataSource.getConnection(), getSchema());
+        return new DatabaseConnection(dataSource.getConnection(), new DatabaseConfig(), getSchema());
     }
 }

@@ -21,14 +21,11 @@
 
 package org.dbunit.ext.mssql;
 
-import java.io.FileReader;
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
 import org.dbunit.TestFeature;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -51,6 +48,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
         super(s);
     }
 
+    @Override
     protected boolean runTest(String testName) {
         return environmentHasFeature(TestFeature.INSERT_IDENTITY);
     }
@@ -141,7 +139,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
     }
 
     public void testSetCustomIdentityColumnFilter() throws Exception {
-        _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, IDENTITY_FILTER_INVALID);
+        _connection.getDatabaseConfig().setIdentityFilter(IDENTITY_FILTER_INVALID);
         try {
             IDataSet dataSet = _connection.createDataSet();
             ITable table = dataSet.getTable("IDENTITY_TABLE");
@@ -152,21 +150,17 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
             // Verify that identity column is still correctly recognized with default
             // identityColumnFilter
-            _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
+            _connection.getDatabaseConfig().setIdentityFilter(null);
             op = new InsertIdentityOperation(DatabaseOperation.INSERT);
             hasIdentityColumn = op.hasIdentityColumn(table.getTableMetaData(), _connection);
             assertTrue("Identity column not recognized", hasIdentityColumn);
         } finally {
             // Reset property
-            _connection.getConfig().setProperty(DatabaseConfig.PROPERTY_IDENTITY_COLUMN_FILTER, null);
+            _connection.getDatabaseConfig().setIdentityFilter(null);
         }
     }
 
-    private static final IColumnFilter IDENTITY_FILTER_INVALID = new IColumnFilter() {
-
-        public boolean accept(String tableName, Column column) {
-            return column.getSqlTypeName().endsWith("invalid");
-        }
-    };
+    private static final IColumnFilter IDENTITY_FILTER_INVALID = (tableName, column) -> column.getSqlTypeName()
+            .endsWith("invalid");
 
 }

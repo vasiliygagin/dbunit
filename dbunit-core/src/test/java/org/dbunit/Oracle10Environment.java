@@ -34,8 +34,9 @@ public class Oracle10Environment extends OracleEnvironment {
         super(profile);
     }
 
+    @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
+        config.setDataTypeFactory(new Oracle10DataTypeFactory());
     }
 
 }

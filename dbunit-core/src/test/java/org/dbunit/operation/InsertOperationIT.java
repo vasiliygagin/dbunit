@@ -20,7 +20,6 @@
  */
 package org.dbunit.operation;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -30,7 +29,6 @@ import org.dbunit.Assertion;
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -67,7 +65,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
                 "insert into schema.table (c1, c2, c3) values ('qwerty', 123.45, 'true')", };
 
         // setup table
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.BOOLEAN), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "toto", "1234", Boolean.FALSE });
@@ -103,7 +101,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         String schemaName = "schema";
         String tableName = "table";
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "", "1" });
         IDataSet dataSet = new DefaultDataSet(table);
@@ -125,7 +123,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, false);
+        connection.getDatabaseConfig().setAllowEmptyFields(false);
         try {
             new InsertOperation().execute(connection, dataSet);
             fail("Update should not succedd");
@@ -145,7 +143,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
                 String.format("insert into %s.%s (c3, c4) values ('not-empty', 1)", schemaName, tableName),
                 String.format("insert into %s.%s (c3, c4) values (NULL, 2)", schemaName, tableName) };
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "not-empty", "1" });
         table.addRow(new Object[] { null, "2" });
@@ -169,7 +167,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, false);
+        connection.getDatabaseConfig().setAllowEmptyFields(false);
         new InsertOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -185,7 +183,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
                 String.format("insert into %s.%s (c3, c4) values (NULL, 2)", schemaName, tableName),
                 String.format("insert into %s.%s (c3, c4) values ('', 3)", schemaName, tableName), };
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "not-empty", "1" });
         table.addRow(new Object[] { null, "2" });
@@ -210,7 +208,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
+        connection.getDatabaseConfig().setAllowEmptyFields(true);
         new InsertOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -222,8 +220,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         String tableName = "table";
 
         // setup table
-        Column[] columns = new Column[] { new Column("column", DataType.VARCHAR),
-                new Column("unknown", DataType.VARCHAR), };
+        Column[] columns = { new Column("column", DataType.VARCHAR), new Column("unknown", DataType.VARCHAR), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow();
         table.setValue(0, columns[0].getColumnName(), null);
@@ -271,7 +268,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
                 "insert into schema.table (c3) values ('false')", };
 
         // setup table
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.BOOLEAN), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "toto", "1234", Boolean.FALSE });
@@ -367,7 +364,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
                 "insert into 'schema'.'table' ('c1', 'c2', 'c3') values ('qwerty', 123.45, 'true')", };
 
         // setup table
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.BOOLEAN), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow(new Object[] { "toto", "1234", Boolean.FALSE });
@@ -392,7 +389,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "'?'");
+        connection.getDatabaseConfig().setEscapePattern("'?'");
         new InsertOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -506,8 +503,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
 
         // verify tables before
-        for (int i = 0; i < tablesBefore.length; i++) {
-            ITable table = tablesBefore[i];
+        for (ITable table : tablesBefore) {
             String tableName = table.getTableMetaData().getTableName();
             if (tableName.startsWith("EMPTY")) {
                 assertEquals(tableName + " before", 0, table.getRowCount());
@@ -515,8 +511,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         }
 
         // verify tables after
-        for (int i = 0; i < tablesAfter.length; i++) {
-            ITable databaseTable = tablesAfter[i];
+        for (ITable databaseTable : tablesAfter) {
             String tableName = databaseTable.getTableMetaData().getTableName();
 
             if (tableName.startsWith("EMPTY")) {
@@ -552,8 +547,8 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         String[] expected = { "insert into schema.table (c1, c3, c4) values (NULL, NULL, NULL)" };
 
         // setup table
-        Column[] columns = new Column[] { new Column("c1", DataType.NUMERIC, Column.NO_NULLS), // Disallow null, no
-                                                                                               // default
+        Column[] columns = { new Column("c1", DataType.NUMERIC, Column.NO_NULLS), // Disallow null, no
+                                                                                  // default
                 new Column("c2", DataType.NUMERIC, DataType.NUMERIC.toString(), Column.NO_NULLS, "2"), // Disallow null,
                                                                                                        // default
                 new Column("c3", DataType.NUMERIC, Column.NULLABLE), // Allow null, no default
@@ -616,8 +611,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         ITable[] tablesAfter = DataSetUtils.getTables(_connection.createDataSet());
 
         assertEquals("table count", tablesBefore.length, tablesAfter.length);
-        for (int i = 0; i < tablesBefore.length; i++) {
-            ITable table = tablesBefore[i];
+        for (ITable table : tablesBefore) {
             String name = table.getTableMetaData().getTableName();
 
             if (name.startsWith("EMPTY")) {
@@ -625,8 +619,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
             }
         }
 
-        for (int i = 0; i < tablesAfter.length; i++) {
-            ITable table = tablesAfter[i];
+        for (ITable table : tablesAfter) {
             String name = table.getTableMetaData().getTableName();
 
             if (name.startsWith("EMPTY")) {

@@ -29,6 +29,8 @@ import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.SingleConnectionDataSource;
+
 /**
  * This class adapts a JDBC <code>Connection</code> to a
  * {@link IDatabaseConnection}.
@@ -51,16 +53,18 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      * Creates a new <code>DatabaseConnection</code>.
      *
      * @param connection the adapted JDBC connection
+     * @param config TODO
      * @throws DatabaseUnitException
      */
-    public DatabaseConnection(Connection connection) throws DatabaseUnitException {
-        this(connection, null);
+    public DatabaseConnection(Connection connection, DatabaseConfig config) throws DatabaseUnitException {
+        this(connection, config, null);
     }
 
     /**
      * Creates a new <code>DatabaseConnection</code> using a specific schema.
      *
      * @param connection the adapted JDBC connection
+     * @param config TODO
      * @param schema     the database schema. Note that the schema name is case
      *                   sensitive. This is necessary because schemas with the same
      *                   name but different case can coexist on one database. <br>
@@ -74,14 +78,16 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *                   completely lowercase because of the quotes.
      * @throws DatabaseUnitException
      */
-    public DatabaseConnection(Connection connection, String schema) throws DatabaseUnitException {
-        this(connection, schema, false);
+    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema)
+            throws DatabaseUnitException {
+        this(connection, config, schema, false);
     }
 
     /**
      * Creates a new <code>DatabaseConnection</code> using a specific schema.
      *
      * @param connection the adapted JDBC connection
+     * @param config TODO
      * @param schema     the database schema. Note that the schema name is case
      *                   sensitive. This is necessary because schemas with the same
      *                   name but different case can coexist on one database. <br>
@@ -106,10 +112,9 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *                               driver does not implement the
      *                               metaData.getSchemas() method properly.
      */
-    public DatabaseConnection(Connection connection, String schema, boolean validate) throws DatabaseUnitException {
-        if (connection == null) {
-            throw new NullPointerException("The parameter 'connection' must not be null");
-        }
+    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema, boolean validate)
+            throws DatabaseUnitException {
+        super(new SingleConnectionDataSource(connection), config, null, schema);
         _connection = connection;
 
         if (schema != null) {
@@ -157,7 +162,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
 
     /**
      * Validates if the database schema exists for this connection.
-     * 
+     *
      * @param validateStrict If <code>true</code> an exception is thrown when the
      *                       given schema does not exist according to the
      *                       DatabaseMetaData. If <code>false</code> the validation

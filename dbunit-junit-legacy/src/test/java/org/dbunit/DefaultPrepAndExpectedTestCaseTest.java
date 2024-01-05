@@ -1,6 +1,5 @@
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
@@ -125,8 +124,7 @@ public class DefaultPrepAndExpectedTestCaseTest extends TestCase {
         mockDbConnection.setupConnection(mockConnection);
         mockDbConnection.setupStatementFactory(mockStatementFactory);
 
-        final DatabaseConfig config = mockDbConnection.getConfig();
-        config.setFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES, true);
+        mockDbConnection.getDatabaseConfig().setCaseSensitiveTableNames(true);
 
         return mockDbConnection;
     }

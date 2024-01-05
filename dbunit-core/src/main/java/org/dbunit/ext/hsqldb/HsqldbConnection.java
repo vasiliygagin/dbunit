@@ -20,21 +20,28 @@
  */
 package org.dbunit.ext.hsqldb;
 
+import java.sql.Connection;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-
-import java.sql.Connection;
 
 /**
  * @author Klas Axell
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.2.0
+ * @deprecated VG: No need for separate class for this. Just need separate config.
  */
+@Deprecated
 public class HsqldbConnection extends DatabaseConnection {
     public HsqldbConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        super(connection, buildconfig(), schema);
+    }
+
+    static DatabaseConfig buildconfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new HsqldbDataTypeFactory());
+        return config;
     }
 }

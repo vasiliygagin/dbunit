@@ -18,26 +18,28 @@ package com.github.springtestdbunit;
 
 import javax.sql.DataSource;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 public class TransactionAwareConnectionHelper {
 
     public static TransactionAwareDataSourceProxy makeTransactionAware(DataSource dataSource) {
-	if (dataSource instanceof TransactionAwareDataSourceProxy) {
-	    return (TransactionAwareDataSourceProxy) dataSource;
-	}
-	return new TransactionAwareDataSourceProxy(dataSource);
+        if (dataSource instanceof TransactionAwareDataSourceProxy) {
+            return (TransactionAwareDataSourceProxy) dataSource;
+        }
+        return new TransactionAwareDataSourceProxy(dataSource);
     }
 
     /**
      * Convenience method that can be used to construct a transaction aware
      * {@link DatabaseDataSourceConnection} from a {@link DataSource}.
-     * 
+     *
      * @param dataSource The data source
      * @return A {@link DatabaseDataSourceConnection}
      */
     public static DatabaseDataSourceConnection newConnection(DataSource dataSource) {
-	return new DatabaseDataSourceConnection(makeTransactionAware(dataSource), null, null, null);
+        return new DatabaseDataSourceConnection(makeTransactionAware(dataSource), new DatabaseConfig(), null, null,
+                null);
     }
 }
