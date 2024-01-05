@@ -112,7 +112,7 @@ public class DefaultDataSet extends AbstractDataSet {
 
         // Gather all tables in the OrderedTableNameMap which also makes the duplicate
         // check
-        _orderedTableNameMap = this.createTableNameMap();
+        _orderedTableNameMap = new OrderedTableNameMap<>(this.isCaseSensitiveTableNames());
 
     }
 

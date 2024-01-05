@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
@@ -36,6 +38,9 @@ import org.dbunit.util.QualifiedTableName;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+import io.github.vasiliygagin.dbunit.jdbc.MetadataManager;
 
 /**
  * @author Manuel Laflamme
@@ -50,35 +55,42 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDatabaseConnection.class);
 
     private IDataSet _dataSet = null;
-    private final DatabaseConfig _databaseConfig;
+    final DatabaseConfig _databaseConfig;
+    private final MetadataManager metadataManager;
 
-    public AbstractDatabaseConnection() {
-        _databaseConfig = new DatabaseConfig();
+    public AbstractDatabaseConnection(DataSource dataSource, DatabaseConfig config, String defaultCatalog,
+            String defaultSchema) {
+        _databaseConfig = config;
+        metadataManager = new MetadataManager(dataSource, defaultCatalog, defaultSchema);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection interface
 
+    @Override
     public IDataSet createDataSet() throws SQLException {
         logger.debug("createDataSet() - start");
 
         if (_dataSet == null) {
-            _dataSet = new DatabaseDataSet(this);
+            boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
+            _dataSet = new DatabaseDataSet(this, caseSensitiveTableNames);
         }
 
         return _dataSet;
     }
 
+    @Override
     public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
         logger.debug("createDataSet(tableNames={}) - start", tableNames);
 
         return new FilteredDataSet(tableNames, createDataSet());
     }
 
+    @Override
     public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         logger.debug("createQueryTable(resultName={}, sql={}) - start", resultName, sql);
 
-        IResultSetTableFactory tableFactory = getResultSetTableFactory();
+        IResultSetTableFactory tableFactory = _databaseConfig.getResultSetTableFactory();
         IResultSetTable rsTable = tableFactory.createTable(resultName, sql, this);
         if (logger.isDebugEnabled()) {
             String rowCount = null;
@@ -93,15 +105,17 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return rsTable;
     }
 
+    @Override
     public ITable createTable(String resultName, PreparedStatement preparedStatement)
             throws DataSetException, SQLException {
         logger.debug("createQueryTable(resultName={}, preparedStatement={}) - start", resultName, preparedStatement);
 
-        IResultSetTableFactory tableFactory = getResultSetTableFactory();
+        IResultSetTableFactory tableFactory = _databaseConfig.getResultSetTableFactory();
         IResultSetTable rsTable = tableFactory.createTable(resultName, preparedStatement, this);
         return rsTable;
     }
 
+    @Override
     public ITable createTable(String tableName) throws DataSetException, SQLException {
         logger.debug("createTable(tableName={}) - start", tableName);
 
@@ -109,7 +123,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
             throw new NullPointerException("The parameter 'tableName' must not be null");
         }
 
-        String escapePattern = (String) getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        String escapePattern = getDatabaseConfig().getEscapePattern();
 
         // qualify with schema if configured
         QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, this.getSchema(), escapePattern);
@@ -118,12 +132,14 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return this.createQueryTable(tableName, sql);
     }
 
+    @Override
     public int getRowCount(String tableName) throws SQLException {
         logger.debug("getRowCount(tableName={}) - start", tableName);
 
         return getRowCount(tableName, null);
     }
 
+    @Override
     public int getRowCount(String tableName, String whereClause) throws SQLException {
         logger.debug("getRowCount(tableName={}, whereClause={}) - start", tableName, whereClause);
 
@@ -154,21 +170,18 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         }
     }
 
-    public DatabaseConfig getConfig() {
+    @Override
+    public DatabaseConfig getDatabaseConfig() {
         return _databaseConfig;
     }
 
     /**
      * @deprecated Use {@link #getConfig}
      */
+    @Override
     @Deprecated
     public IStatementFactory getStatementFactory() {
-        return (IStatementFactory) _databaseConfig.getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
-    }
-
-    private IResultSetTableFactory getResultSetTableFactory() {
-        return (IResultSetTableFactory) _databaseConfig.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY);
-
+        return _databaseConfig.getStatementFactory();
     }
 
     @Override
@@ -177,5 +190,9 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         sb.append("_databaseConfig=").append(_databaseConfig);
         sb.append(", _dataSet=").append(_dataSet);
         return sb.toString();
+    }
+
+    public Object getMetadataStore() {
+        return null;
     }
 }

@@ -75,7 +75,7 @@ public class CompositeDataSet extends AbstractDataSet {
         super(caseSensitiveTableNames);
 
         // Check for duplicates using the OrderedTableNameMap as helper
-        OrderedTableNameMap orderedTableMap = super.createTableNameMap();
+        OrderedTableNameMap orderedTableMap = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
         for (int i = 0; i < dataSets.length; i++) {
             IDataSet dataSet = dataSets[i];
             ITableIterator iterator = dataSet.iterator();
@@ -152,7 +152,7 @@ public class CompositeDataSet extends AbstractDataSet {
     public CompositeDataSet(ITable[] tables, boolean caseSensitiveTableNames) throws DataSetException {
         super(caseSensitiveTableNames);
 
-        OrderedTableNameMap orderedTableMap = super.createTableNameMap();
+        OrderedTableNameMap orderedTableMap = new OrderedTableNameMap<>(isCaseSensitiveTableNames());
         for (int i = 0; i < tables.length; i++) {
             addTable(tables[i], orderedTableMap, true);
         }

@@ -59,8 +59,8 @@ public class DBTestCaseIT extends TestCase {
             @Override
             public void execute(IDatabaseConnection connection, IDataSet dataSet)
                     throws DatabaseUnitException, SQLException {
-                assertEquals(new Integer(97), connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
-                assertEquals(true, connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+                assertEquals(97, connection.getDatabaseConfig().getBatchSize());
+                assertEquals(true, connection.getDatabaseConfig().isBatchedStatements());
             }
         };
 
@@ -71,8 +71,8 @@ public class DBTestCaseIT extends TestCase {
              */
             @Override
             protected void setUpDatabaseConfig(DatabaseConfig config) {
-                config.setProperty(DatabaseConfig.PROPERTY_BATCH_SIZE, new Integer(97));
-                config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, true);
+                config.setBatchSize(97);
+                config.setBatchedStatements(true);
             }
 
             @Override
@@ -100,11 +100,11 @@ public class DBTestCaseIT extends TestCase {
         testSubject.setUp();
 
         IDatabaseConnection actualConn = testSubject.getConnection();
-        assertEquals(new Integer(97), actualConn.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        assertEquals(97, actualConn.getDatabaseConfig().getBatchSize());
         assertSame(conn, actualConn);
 
         IDatabaseConnection actualConn2 = testSubject.getDatabaseTester().getConnection();
-        assertEquals(new Integer(97), actualConn2.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE));
+        assertEquals(97, actualConn2.getDatabaseConfig().getBatchSize());
         assertSame(tester, testSubject.getDatabaseTester());
         assertSame(conn, testSubject.getDatabaseTester().getConnection());
     }

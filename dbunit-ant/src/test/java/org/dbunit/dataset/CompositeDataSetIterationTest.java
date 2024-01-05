@@ -66,9 +66,9 @@ public class CompositeDataSetIterationTest extends TestCase {
 
         executeSql(connection2, sql);
 
-        this.connection = new DatabaseConnection(jdbcConnection);
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        DatabaseConfig config = new DatabaseConfig();
+        this.connection = new DatabaseConnection(jdbcConnection, config);
+        config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
     private String readSqlFromFile(final File ddlFile) throws IOException {

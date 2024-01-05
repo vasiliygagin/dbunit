@@ -25,11 +25,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
-import org.dbunit.DatabaseUnitRuntimeException;
-import org.dbunit.dataset.AbstractDataSet;
-import org.dbunit.dataset.Column;
+
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.IDataSet;
@@ -40,19 +39,20 @@ import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.OrderedTableNameMap;
 import org.dbunit.dataset.filter.ITableFilterSimple;
 import org.dbunit.util.QualifiedTableName;
-import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 /**
  * Provides access to a database instance as a {@link IDataSet}.
- * 
+ *
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 1.0 (Feb 17, 2002)
  */
-public class DatabaseDataSet extends AbstractDataSet {
+public class DatabaseDataSet implements IDataSet {
 
     /**
      * Logger for this class
@@ -60,38 +60,42 @@ public class DatabaseDataSet extends AbstractDataSet {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSet.class);
 
     private final IDatabaseConnection _connection;
-    private OrderedTableNameMap _tableMap = null;
-    private SchemaSet _schemaSet = new SchemaSet(isCaseSensitiveTableNames());
+    private final String defaultSchema;
+    private final DatabaseConfig config;
+    private final boolean qualifiedTableNamesActive;
+    private final String[] tableType;
+    private final IMetadataHandler metadataHandler;
+
+    private OrderedTableNameMap<ITableMetaData> tableMetaDatas = null;
+    private final SchemaSet loadedSchemas;
 
     private final ITableFilterSimple _tableFilter;
     private final ITableFilterSimple _oracleRecycleBinTableFilter;
 
+    private ITable[] cachedTables;
+
     /**
-     * Creates a new database data set
-     * 
-     * @param connection
-     * @throws SQLException
+     * Whether or not table names of this dataset are case sensitive. By default
+     * case-sensitivity is set to false for datasets
      */
-    DatabaseDataSet(IDatabaseConnection connection) throws SQLException {
-        this(connection, connection.getConfig().getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES));
-    }
+    private boolean _caseSensitiveTableNames = false;
 
     /**
      * Creates a new database data set
-     * 
+     *
      * @param connection              The database connection
      * @param caseSensitiveTableNames Whether or not this dataset should use case
      *                                sensitive table names
      * @throws SQLException
      * @since 2.4
      */
-    public DatabaseDataSet(IDatabaseConnection connection, boolean caseSensitiveTableNames) throws SQLException {
+    public DatabaseDataSet(AbstractDatabaseConnection connection, boolean caseSensitiveTableNames) throws SQLException {
         this(connection, caseSensitiveTableNames, null);
     }
 
     /**
      * Creates a new database data set
-     * 
+     *
      * @param connection              The database connection
      * @param caseSensitiveTableNames Whether or not this dataset should use case
      *                                sensitive table names
@@ -100,61 +104,26 @@ public class DatabaseDataSet extends AbstractDataSet {
      * @throws SQLException
      * @since 2.4.3
      */
-    public DatabaseDataSet(IDatabaseConnection connection, boolean caseSensitiveTableNames,
+    public DatabaseDataSet(AbstractDatabaseConnection connection, boolean caseSensitiveTableNames,
             ITableFilterSimple tableFilter) throws SQLException {
-        super(caseSensitiveTableNames);
+        _caseSensitiveTableNames = caseSensitiveTableNames;
         if (connection == null) {
             throw new NullPointerException("The parameter 'connection' must not be null");
         }
         _connection = connection;
+        defaultSchema = _connection.getSchema();
+        config = connection.getDatabaseConfig();
+        metadataHandler = config.getMetadataHandler();
+        qualifiedTableNamesActive = config.isQualifiedTableNames();
+        tableType = config.getTableTypes();
         _tableFilter = tableFilter;
-        _oracleRecycleBinTableFilter = new OracleRecycleBinTableFilter(connection.getConfig());
+        _oracleRecycleBinTableFilter = new OracleRecycleBinTableFilter(config);
+        loadedSchemas = new SchemaSet(caseSensitiveTableNames);
     }
 
-    static String getSelectStatement(String schema, ITableMetaData metaData, String escapePattern)
-            throws DataSetException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getSelectStatement(schema={}, metaData={}, escapePattern={}) - start",
-                    new Object[] { schema, metaData, escapePattern });
-        }
-
-        Column[] columns = metaData.getColumns();
-        Column[] primaryKeys = metaData.getPrimaryKeys();
-
-        if (columns.length == 0) {
-            throw new DatabaseUnitRuntimeException("At least one column is required to build a valid select statement. "
-                    + "Cannot load data for " + metaData);
-        }
-
-        // select
-        StringBuffer sqlBuffer = new StringBuffer(128);
-        sqlBuffer.append("select ");
-        for (int i = 0; i < columns.length; i++) {
-            if (i > 0) {
-                sqlBuffer.append(", ");
-            }
-            String columnName = new QualifiedTableName(columns[i].getColumnName(), null, escapePattern)
-                    .getQualifiedName();
-            sqlBuffer.append(columnName);
-        }
-
-        // from
-        sqlBuffer.append(" from ");
-        sqlBuffer.append(new QualifiedTableName(metaData.getTableName(), schema, escapePattern).getQualifiedName());
-
-        // order by
-        for (int i = 0; i < primaryKeys.length; i++) {
-            if (i == 0) {
-                sqlBuffer.append(" order by ");
-            } else {
-                sqlBuffer.append(", ");
-            }
-            sqlBuffer.append(
-                    new QualifiedTableName(primaryKeys[i].getColumnName(), null, escapePattern).getQualifiedName());
-
-        }
-
-        return sqlBuffer.toString();
+    private String qualifiedNameIfEnabled(String schemaName, String tableName) {
+        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, schemaName, null);
+        return qualifiedTableName.getTableName(qualifiedTableNamesActive);
     }
 
     /**
@@ -163,70 +132,46 @@ public class DatabaseDataSet extends AbstractDataSet {
     private void initialize(String schema) throws DataSetException {
         logger.debug("initialize() - start");
 
-        DatabaseConfig config = _connection.getConfig();
-        boolean qualifiedTableNamesActive = Boolean.TRUE == config
-                .getProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES);
-
         if (schema == null || !qualifiedTableNamesActive) {
             // If FEATURE_QUALIFIED_TABLE_NAMES is inactive or no schema did have been
             // provided
-            schema = getDefaultSchema();
+            schema = defaultSchema;
         }
 
-        if (_tableMap != null && _schemaSet.contains(schema)) {
+        if (tableMetaDatas != null && loadedSchemas.contains(schema)) {
             return;
         }
 
-        try {
-            logger.debug("Initializing the data set from the database...");
+        if (tableMetaDatas == null) {
+            tableMetaDatas = new OrderedTableNameMap<>(this._caseSensitiveTableNames);
+        }
 
+        try {
             Connection jdbcConnection = _connection.getConnection();
             DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
-
-            if (SQLHelper.isSybaseDb(jdbcConnection.getMetaData())
-                    && !jdbcConnection.getMetaData().getUserName().equals(schema)) {
-                logger.warn("For sybase the schema name should be equal to the user name. "
-                        + "Otherwise the DatabaseMetaData#getTables() method might not return any columns. "
-                        + "See dbunit tracker #1628896 and http://issues.apache.org/jira/browse/TORQUE-40?page=all");
-            }
-
-            String[] tableType = (String[]) config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE);
-            IMetadataHandler metadataHandler = (IMetadataHandler) config
-                    .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
-
             ResultSet resultSet = metadataHandler.getTables(databaseMetaData, schema, tableType);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug(SQLHelper.getDatabaseInfo(jdbcConnection.getMetaData()));
-                logger.debug("metadata resultset={}", resultSet);
-            }
-
             try {
-                if (_tableMap == null) {
-                    _tableMap = super.createTableNameMap();
-                }
-                _schemaSet.add(schema);
+                loadedSchemas.add(schema);
                 while (resultSet.next()) {
                     String schemaName = metadataHandler.getSchema(resultSet);
                     String tableName = resultSet.getString(3);
 
                     if (_tableFilter != null && !_tableFilter.accept(tableName)) {
-                        logger.debug("Skipping table '{}'", tableName);
                         continue;
                     }
                     if (!_oracleRecycleBinTableFilter.accept(tableName)) {
                         logger.debug("Skipping oracle recycle bin table '{}'", tableName);
                         continue;
                     }
-                    if (schema == null && !_schemaSet.contains(schemaName)) {
-                        _schemaSet.add(schemaName);
+                    if (schema == null && !loadedSchemas.contains(schemaName)) {
+                        loadedSchemas.add(schemaName);
                     }
 
-                    QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, schemaName);
-                    tableName = qualifiedTableName.getQualifiedNameIfEnabled(config);
+                    tableName = qualifiedNameIfEnabled(schemaName, tableName);
 
                     // Put the table into the table map
-                    _tableMap.add(tableName, null);
+                    tableMetaDatas.add(tableName, null);
                 }
             } finally {
                 resultSet.close();
@@ -236,18 +181,7 @@ public class DatabaseDataSet extends AbstractDataSet {
         }
     }
 
-    private String getDefaultSchema() {
-        return _connection.getSchema();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // AbstractDataSet class
-
-    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
-        }
-
+    private ITableIterator createIterator(boolean reversed) throws DataSetException {
         String[] names = getTableNames();
         if (reversed) {
             names = DataSetUtils.reverseStringArray(names);
@@ -259,86 +193,88 @@ public class DatabaseDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
+    @Override
     public String[] getTableNames() throws DataSetException {
         initialize(null);
 
-        return _tableMap.getTableNames();
+        return tableMetaDatas.getTableNames();
     }
 
+    @Override
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
-        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, getDefaultSchema());
+        String schema = getSchema(tableName);
 
-        initialize(qualifiedTableName.getSchema());
+        initialize(schema);
 
         // Verify if table exist in the database
-        if (!_tableMap.containsTable(tableName)) {
-            logger.error("Table '{}' not found in tableMap={}", tableName, _tableMap);
+        if (!tableMetaDatas.containsTable(tableName)) {
+            logger.error("Table '{}' not found in tableMap={}", tableName, tableMetaDatas);
             throw new NoSuchTableException(tableName);
         }
 
         // Try to find cached metadata
-        ITableMetaData metaData = (ITableMetaData) _tableMap.get(tableName);
+        ITableMetaData metaData = tableMetaDatas.get(tableName);
         if (metaData != null) {
             return metaData;
         }
 
         // Create metadata and cache it
-        metaData = new DatabaseTableMetaData(tableName, _connection, true, super.isCaseSensitiveTableNames());
+        metaData = new DatabaseTableMetaData(tableName, _connection, true, isCaseSensitiveTableNames());
         // Put the metadata object into the cache map
-        _tableMap.update(tableName, metaData);
+        tableMetaDatas.update(tableName, metaData);
 
         return metaData;
     }
 
+    @Override
     public ITable getTable(String tableName) throws DataSetException {
         logger.debug("getTable(tableName={}) - start", tableName);
 
-        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, getDefaultSchema());
+        String schema = getSchema(tableName);
 
-        initialize(qualifiedTableName.getSchema());
+        initialize(schema);
 
         try {
             ITableMetaData metaData = getTableMetaData(tableName);
 
-            DatabaseConfig config = _connection.getConfig();
-            IResultSetTableFactory factory = (IResultSetTableFactory) config
-                    .getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY);
+            IResultSetTableFactory factory = config.getResultSetTableFactory();
             return factory.createTable(metaData, _connection);
         } catch (SQLException e) {
             throw new DataSetException(e);
         }
     }
 
-    private static class SchemaSet extends HashSet<String> {
-        private static final long serialVersionUID = 1L;
+    protected String getSchema(String tableName) {
+        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, defaultSchema);
+        return qualifiedTableName.getSchema();
+    }
 
-        private static final String NULL_REPLACEMENT = "NULL_REPLACEMENT_HASHKEY";
+    private static class SchemaSet {
 
-        private boolean isCaseSensitive;
+        private final boolean isCaseSensitive;
+        private final HashSet<String> set = new HashSet<>();
 
         private SchemaSet(boolean isCaseSensitive) {
             this.isCaseSensitive = isCaseSensitive;
         }
 
-        @Override
-        public boolean contains(Object o) {
-            return super.contains(normalizeSchema(o));
+        public boolean contains(String schema) {
+            return set.contains(normalizeSchema(schema));
         }
 
-        @Override
-        public boolean add(String e) {
-            return super.add(normalizeSchema(e));
+        public boolean add(String schema) {
+            return set.add(normalizeSchema(schema));
         }
 
-        private String normalizeSchema(Object source) {
-            if (source == null) {
-                return NULL_REPLACEMENT;
+        private String normalizeSchema(String schema) {
+            if (schema == null) {
+                return null;
             } else if (!isCaseSensitive) {
-                return source.toString().toUpperCase(Locale.ENGLISH);
+                return schema.toUpperCase(Locale.ENGLISH);
             }
-            return source.toString();
+            return schema;
         }
     }
 
@@ -349,9 +285,11 @@ public class DatabaseDataSet extends AbstractDataSet {
             this._config = config;
         }
 
+        @Override
         public boolean accept(String tableName) throws DataSetException {
             // skip oracle 10g recycle bin system tables if enabled
-            if (_config.getFeature(DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES)) {
+//            if (_config.isSkipOracleRecycleBinTables()) {
+            if (_config.isSkipOracleRecycleBinTables()) {
                 // Oracle 10g workaround
                 // don't process system tables (oracle recycle bin tables) which
                 // are reported to the application due a bug in the oracle JDBC driver
@@ -362,5 +300,45 @@ public class DatabaseDataSet extends AbstractDataSet {
 
             return true;
         }
+    }
+
+    /**
+     * @return <code>true</code> if the case sensitivity of table names is used in
+     *         this dataset.
+     * @since 2.4
+     */
+    @Override
+    public boolean isCaseSensitiveTableNames() {
+        return this._caseSensitiveTableNames;
+    }
+
+    @Override
+    public ITable[] getTables() throws DataSetException {
+        if (cachedTables == null) {
+
+            // Gather all tables in the OrderedTableNameMap which also makes the duplicate
+            // check
+            OrderedTableNameMap<ITable> _orderedTableNameMap = new OrderedTableNameMap<>(this._caseSensitiveTableNames);
+            initialize(null);
+            String[] names = tableMetaDatas.getTableNames();
+            DatabaseTableIterator iterator = new DatabaseTableIterator(names, this);
+            while (iterator.next()) {
+                ITable table = iterator.getTable();
+                _orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
+            }
+            cachedTables = _orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+        }
+
+        return Arrays.copyOf(cachedTables, cachedTables.length); // Not sure why this has to be new array every time.
+    }
+
+    @Override
+    public ITableIterator iterator() throws DataSetException {
+        return createIterator(false);
+    }
+
+    @Override
+    public ITableIterator reverseIterator() throws DataSetException {
+        return createIterator(true);
     }
 }

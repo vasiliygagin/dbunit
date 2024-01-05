@@ -34,10 +34,12 @@ public class PostgresqlEnvironment extends DatabaseEnvironment {
         super(profile);
     }
 
+    @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+        config.setDataTypeFactory(new PostgresqlDataTypeFactory());
     }
 
+    @Override
     public String convertString(String str) {
         return str == null ? null : str.toLowerCase();
     }

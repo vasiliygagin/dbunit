@@ -31,7 +31,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
-import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.util.CollectionsHelper;
 
@@ -49,11 +48,11 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
         super(name, "hypersonic_dataset.sql");
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         IDatabaseConnection connection = super.getConnection();
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        connection.getDatabaseConfig().setDataTypeFactory(new HsqldbDataTypeFactory());
         this.fDataSet = connection.createDataSet();
         this.fTable = this.fDataSet.getTable(E);
     }

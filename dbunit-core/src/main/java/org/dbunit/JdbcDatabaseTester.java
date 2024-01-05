@@ -23,6 +23,7 @@ package org.dbunit;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.slf4j.Logger;
@@ -102,6 +103,7 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
         Class.forName(driverClass);
     }
 
+    @Override
     public IDatabaseConnection getConnection() throws Exception {
         logger.debug("getConnection() - start");
 
@@ -112,9 +114,10 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
         } else {
             conn = DriverManager.getConnection(connectionUrl, username, password);
         }
-        return new DatabaseConnection(conn, getSchema());
+        return new DatabaseConnection(conn, new DatabaseConfig(), getSchema());
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

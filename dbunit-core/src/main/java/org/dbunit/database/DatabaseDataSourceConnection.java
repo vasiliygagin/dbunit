@@ -53,12 +53,12 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
     private Connection _connection;
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema) throws NamingException {
-        this((DataSource) context.lookup(jndiName), schema, null, null);
+        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, null, null);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema, String user,
             String password) throws NamingException {
-        this((DataSource) context.lookup(jndiName), schema, user, password);
+        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, user, password);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName) throws NamingException {
@@ -71,18 +71,20 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource) {
-        this(dataSource, null, null, null);
+        this(dataSource, new DatabaseConfig(), null, null, null);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, String user, String password) {
-        this(dataSource, null, user, password);
+        this(dataSource, new DatabaseConfig(), null, user, password);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, String schema) {
-        this(dataSource, schema, null, null);
+        this(dataSource, new DatabaseConfig(), schema, null, null);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource, String schema, String user, String password) {
+    public DatabaseDataSourceConnection(DataSource dataSource, DatabaseConfig config, String schema, String user,
+            String password) {
+        super(dataSource, config, null, schema);
         _dataSource = dataSource;
         _schema = schema;
         _user = user;

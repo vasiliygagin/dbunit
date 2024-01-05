@@ -39,10 +39,12 @@ public class OracleEnvironment extends DatabaseEnvironment {
         super(profile);
     }
 
+    @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
+        config.setDataTypeFactory(new OracleDataTypeFactory());
     }
 
+    @Override
     public IDataSet getInitDataSet() throws Exception {
         ITable[] extraTables = { new DefaultTable("CLOB_TABLE"), new DefaultTable("BLOB_TABLE"),
                 new DefaultTable("SDO_GEOMETRY_TABLE"), new DefaultTable("XML_TYPE_TABLE"), };

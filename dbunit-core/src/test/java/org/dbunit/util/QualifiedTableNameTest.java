@@ -72,7 +72,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled() {
         DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        config.setQualifiedTableNames(true);
         String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null)
                 .getQualifiedNameIfEnabled(config);
         assertEquals("DEFAULT_SCHEMA.MY_TABLE", qualifiedName);
@@ -80,7 +80,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled() {
         DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
+        config.setQualifiedTableNames(false);
         String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", null)
                 .getQualifiedNameIfEnabled(config);
         assertEquals("MY_TABLE", qualifiedName);
@@ -88,7 +88,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_Escaping() {
         DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        config.setQualifiedTableNames(true);
         String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'")
                 .getQualifiedNameIfEnabled(config);
         assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);
@@ -96,7 +96,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testGetQualifiedTableName_DefaultSchema_FeatureDisabled_Escaping() {
         DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, false);
+        config.setQualifiedTableNames(false);
         String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'?'")
                 .getQualifiedNameIfEnabled(config);
         assertEquals("'MY_TABLE'", qualifiedName);
@@ -104,7 +104,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testGetQualifiedTableName_DefaultSchema_FeatureEnabled_EscapingWithoutQuestionmark() {
         DatabaseConfig config = new DatabaseConfig();
-        config.setFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, true);
+        config.setQualifiedTableNames(true);
         String qualifiedName = new QualifiedTableName("MY_TABLE", "DEFAULT_SCHEMA", "'")
                 .getQualifiedNameIfEnabled(config);
         assertEquals("'DEFAULT_SCHEMA'.'MY_TABLE'", qualifiedName);

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Iterator used to iterate over a list of tables using a specific query for
  * retrieving data for every table.
- * 
+ *
  * @author Manuel Laflamme
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
@@ -76,6 +76,7 @@ public class QueryTableIterator implements ITableIterator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean next() throws DataSetException {
         logger.debug("next() - start");
 
@@ -100,6 +101,7 @@ public class QueryTableIterator implements ITableIterator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ITableMetaData getTableMetaData() throws DataSetException {
         logger.debug("getTableMetaData() - start");
 
@@ -121,6 +123,7 @@ public class QueryTableIterator implements ITableIterator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ITable getTable() throws DataSetException {
         logger.debug("getTable() - start");
 
@@ -132,9 +135,7 @@ public class QueryTableIterator implements ITableIterator {
                 if (entry.getQuery() == null) {
                     _currentTable = (IResultSetTable) _connection.createTable(entry.getTableName());
                 } else {
-                    DatabaseConfig config = _connection.getConfig();
-                    IResultSetTableFactory factory = (IResultSetTableFactory) config
-                            .getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY);
+                    IResultSetTableFactory factory = _connection.getDatabaseConfig().getResultSetTableFactory();
 
                     _currentTable = factory.createTable(entry.getTableName(), entry.getQuery(), _connection);
                 }

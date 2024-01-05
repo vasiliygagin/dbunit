@@ -21,13 +21,11 @@
 
 package org.dbunit.database.statement;
 
+import java.sql.SQLException;
+
+import org.dbunit.database.IDatabaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.IDatabaseConnection;
-
-import java.sql.SQLException;
 
 /**
  * @author Manuel Laflamme
@@ -41,6 +39,7 @@ public class PreparedStatementFactory extends AbstractStatementFactory {
      */
     private static final Logger logger = LoggerFactory.getLogger(PreparedStatementFactory.class);
 
+    @Override
     public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
 
         logger.debug("createBatchStatement(connection={}) - start", connection);
@@ -52,13 +51,14 @@ public class PreparedStatementFactory extends AbstractStatementFactory {
         }
     }
 
+    @Override
     public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
             throws SQLException {
         if (logger.isDebugEnabled()) {
             logger.debug("createPreparedBatchStatement(sql={}, connection={}) - start", sql, connection);
         }
 
-        Integer batchSize = (Integer) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_BATCH_SIZE);
+        int batchSize = connection.getDatabaseConfig().getBatchSize();
 
         IPreparedBatchStatement statement = null;
         if (supportBatchStatement(connection)) {
@@ -66,6 +66,6 @@ public class PreparedStatementFactory extends AbstractStatementFactory {
         } else {
             statement = new SimplePreparedStatement(sql, connection.getConnection());
         }
-        return new AutomaticPreparedBatchStatement(statement, batchSize.intValue());
+        return new AutomaticPreparedBatchStatement(statement, batchSize);
     }
 }

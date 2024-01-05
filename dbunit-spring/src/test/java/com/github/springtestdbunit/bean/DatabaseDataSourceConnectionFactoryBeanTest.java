@@ -24,11 +24,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,11 +97,14 @@ public class DatabaseDataSourceConnectionFactoryBeanTest {
     public void shouldSupportDatabaseConfigBean() throws Exception {
         DataSource dataSource = mock(DataSource.class);
         this.factoryBean.setDataSource(dataSource);
-        DatabaseConfigBean databaseConfig = mock(DatabaseConfigBean.class);
-        this.factoryBean.setDatabaseConfig(databaseConfig);
+        DatabaseConfigBean databaseConfigBean = mock(DatabaseConfigBean.class);
+        this.factoryBean.setDatabaseConfig(databaseConfigBean);
+        DatabaseConfig config = mock(DatabaseConfig.class);
+        when(databaseConfigBean.buildConfig()).thenReturn(config);
+
         DatabaseDataSourceConnection bean = this.factoryBean.getObject();
         assertNotNull(bean);
-        verify(databaseConfig).apply(bean.getConfig());
+        verify(databaseConfigBean).buildConfig();
     }
 
     @Test

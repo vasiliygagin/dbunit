@@ -28,13 +28,14 @@ public class MsSqlEnvironment extends DatabaseEnvironment {
         super(profile);
     }
 
+    @Override
     protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        config.setDataTypeFactory(new MsSqlDataTypeFactory());
     }
 
     /**
      * Preserve case for MS SQL
-     * 
+     *
      * @see DatabaseEnvironment#convertString(String)
      */
     @Override

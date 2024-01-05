@@ -22,7 +22,6 @@
 package org.dbunit.operation;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -47,6 +46,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         super(s);
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -118,7 +118,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "'?'");
+        connection.getDatabaseConfig().setEscapePattern("'?'");
         getDeleteAllOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -150,7 +150,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
      * The AbstractDataSetTest.removeExtraTestTables() is required when you run on
      * something besides hypersone (like mssql or oracle) to deal with the extra
      * tables that may not have data.
-     * 
+     *
      * Need something like getDefaultTables or something that is totally cross dbms.
      */
     private void testExecute(IDataSet dataSet) throws Exception {
@@ -163,8 +163,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
 
         assertTrue("table count > 0", tablesBefore.length > 0);
         assertEquals("table count", tablesBefore.length, tablesAfter.length);
-        for (int i = 0; i < tablesBefore.length; i++) {
-            ITable table = tablesBefore[i];
+        for (ITable table : tablesBefore) {
             String name = table.getTableMetaData().getTableName();
 
             if (!name.toUpperCase().startsWith("EMPTY")) {

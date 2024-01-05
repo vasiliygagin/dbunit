@@ -21,7 +21,6 @@
 
 package org.dbunit.operation;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 
@@ -30,7 +29,6 @@ import org.dbunit.Assertion;
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -62,6 +60,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     ////////////////////////////////////////////////////////////////////////////
     //
 
+    @Override
     protected IDataSet getDataSet() throws Exception {
         IDataSet dataSet = super.getDataSet();
 
@@ -98,7 +97,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         String[] expected = { "update schema.table set c2 = 1234, c3 = 'false' where c4 = 0 and c1 = 'toto'",
                 "update schema.table set c2 = 123.45, c3 = NULL where c4 = 0 and c1 = 'qwerty'", };
 
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         String[] primaryKeys = { "c4", "c1" };
         DefaultTable table = new DefaultTable(new DefaultTableMetaData(tableName, columns, primaryKeys));
@@ -135,7 +134,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         String schemaName = "schema";
         String tableName = "table";
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         String[] primaryKeys = { "c4" };
         DefaultTable table = new DefaultTable(new DefaultTableMetaData(tableName, columns, primaryKeys));
         table.addRow(new Object[] { "", "1" });
@@ -158,7 +157,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, false);
+        connection.getDatabaseConfig().setAllowEmptyFields(false);
         try {
             new UpdateOperation().execute(connection, dataSet);
             fail("Update should not succedd");
@@ -177,7 +176,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         String[] expected = { String.format("update %s.%s set c3 = 'not-empty' where c4 = 1", schemaName, tableName),
                 String.format("update %s.%s set c3 = NULL where c4 = 2", schemaName, tableName) };
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         String[] primaryKeys = { "c4" };
         DefaultTable table = new DefaultTable(new DefaultTableMetaData(tableName, columns, primaryKeys));
         table.addRow(new Object[] { "not-empty", "1" });
@@ -202,7 +201,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, false);
+        connection.getDatabaseConfig().setAllowEmptyFields(false);
         new UpdateOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -217,7 +216,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
                 String.format("update %s.%s set c3 = NULL where c4 = 2", schemaName, tableName),
                 String.format("update %s.%s set c3 = '' where c4 = 3", schemaName, tableName), };
 
-        Column[] columns = new Column[] { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
+        Column[] columns = { new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         String[] primaryKeys = { "c4" };
         DefaultTable table = new DefaultTable(new DefaultTableMetaData(tableName, columns, primaryKeys));
         table.addRow(new Object[] { "not-empty", "1" });
@@ -243,7 +242,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setFeature(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
+        connection.getDatabaseConfig().setAllowEmptyFields(true);
         new UpdateOperation().execute(connection, dataSet);
 
         statement.verify();
@@ -258,7 +257,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
                 "update [schema].[table] set [c2] = 1234, [c3] = 'false' where [c4] = 0 and [c1] = 'toto'",
                 "update [schema].[table] set [c2] = 123.45, [c3] = NULL where [c4] = 0 and [c1] = 'qwerty'", };
 
-        Column[] columns = new Column[] { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
+        Column[] columns = { new Column("c1", DataType.VARCHAR), new Column("c2", DataType.NUMERIC),
                 new Column("c3", DataType.VARCHAR), new Column("c4", DataType.NUMERIC), };
         String[] primaryKeys = { "c4", "c1" };
         DefaultTable table = new DefaultTable(new DefaultTableMetaData(tableName, columns, primaryKeys));
@@ -284,7 +283,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.setExpectedCloseCalls(0);
 
         // execute operation
-        connection.getConfig().setProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN, "[?]");
+        connection.getDatabaseConfig().setEscapePattern("[?]");
         new UpdateOperation().execute(connection, dataSet);
 
         statement.verify();

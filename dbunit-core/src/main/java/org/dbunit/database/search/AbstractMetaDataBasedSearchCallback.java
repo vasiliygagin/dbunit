@@ -28,7 +28,6 @@ import java.sql.SQLException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.NoSuchTableException;
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Super-class for the ISearchCallback that implements the
  * <code>getEdges()</code> method using the database meta-data.
- * 
+ *
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Aug 25, 2005
@@ -59,7 +58,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
 
     /**
      * Default constructor.
-     * 
+     *
      * @param connection connection where the edges will be calculated from
      */
     public AbstractMetaDataBasedSearchCallback(IDatabaseConnection connection) {
@@ -68,7 +67,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
 
     /**
      * Get the connection where the edges will be calculated from.
-     * 
+     *
      * @return the connection where the edges will be calculated from
      */
     public IDatabaseConnection getConnection() {
@@ -89,7 +88,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
     /**
      * Get the nodes using the direct foreign key dependency, i.e, if table A has a
      * FK for a table B, then getNodesFromImportedKeys(A) will return B.
-     * 
+     *
      * @param node table name
      * @return tables with direct FK dependency from node
      * @throws SearchException
@@ -103,12 +102,12 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
     /**
      * Get the nodes using the reverse foreign key dependency, i.e, if table C has a
      * FK for a table A, then getNodesFromExportedKeys(A) will return C.<br>
-     * 
+     *
      * <strong>NOTE:</strong> this method should be used only as an auxiliary method
      * for sub-classes that also use <code>getNodesFromImportedKeys()</code> or
      * something similar, otherwise the generated sequence of tables might not work
      * when inserted in the database (as some tables might be missing). <br>
-     * 
+     *
      * @param node table name
      * @return tables with reverse FK dependency from node
      * @throws SearchException
@@ -123,7 +122,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * Get the nodes using the both direct and reverse foreign key dependency, i.e,
      * if table C has a FK for a table A and table A has a FK for a table B, then
      * getNodesFromImportAndExportedKeys(A) will return B and C.
-     * 
+     *
      * @param node table name
      * @return tables with reverse and direct FK dependency from node
      * @throws SearchException
@@ -148,9 +147,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
             SortedSet edges = new TreeSet();
             getNodes(type, node, conn, schema, metaData, edges);
             return edges;
-        } catch (SQLException e) {
-            throw new SearchException(e);
-        } catch (NoSuchTableException e) {
+        } catch (SQLException | NoSuchTableException e) {
             throw new SearchException(e);
         }
     }
@@ -159,7 +156,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
             SortedSet edges) throws SearchException, NoSuchTableException {
         if (logger.isDebugEnabled()) {
             logger.debug("getNodes(type={}, node={}, conn={}, schema={}, metaData={}, edges={}) - start",
-                    new Object[] { String.valueOf(type), node, conn, schema, metaData, edges });
+                    String.valueOf(type), node, conn, schema, metaData, edges);
             logger.debug("Getting edges for node " + node);
         }
 
@@ -175,8 +172,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
 
         ResultSet rs = null;
         try {
-            IMetadataHandler metadataHandler = (IMetadataHandler) this.connection.getConfig()
-                    .getProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER);
+            IMetadataHandler metadataHandler = this.connection.getDatabaseConfig().getMetadataHandler();
             // Validate if the table exists
             if (!metadataHandler.tableExists(metaData, schema, tableName)) {
                 throw new NoSuchTableException(
@@ -192,7 +188,6 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
                 break;
             }
 
-            DatabaseConfig dbConfig = this.connection.getConfig();
             while (rs.next()) {
                 int index = TABLENAME_INDEXES[type];
                 int schemaindex = SCHEMANAME_INDEXES[type];
@@ -203,9 +198,10 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
 
                 // set the schema in front if there is none ("SCHEMA.TABLE") - depending on the
                 // "qualified table names" feature
-                tableName = new QualifiedTableName(tableName, schema).getQualifiedNameIfEnabled(dbConfig);
+                tableName = new QualifiedTableName(tableName, schema)
+                        .getQualifiedNameIfEnabled(this.connection.getDatabaseConfig());
                 dependentTableName = new QualifiedTableName(dependentTableName, dependentSchemaName)
-                        .getQualifiedNameIfEnabled(dbConfig);
+                        .getQualifiedNameIfEnabled(this.connection.getDatabaseConfig());
 
                 IEdge edge = newEdge(rs, type, tableName, dependentTableName, fkColumn, pkColumn);
                 if (logger.isDebugEnabled()) {
@@ -226,7 +222,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
 
     /**
      * Creates an edge representing a foreign key relationship between 2 tables.<br>
-     * 
+     *
      * @param rs       database meta-data result set
      * @param type     type of relationship (IMPORT or EXPORT)
      * @param from     name of the table representing the 'from' node
@@ -240,8 +236,8 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
     protected static ForeignKeyRelationshipEdge createFKEdge(ResultSet rs, int type, String from, String to,
             String fkColumn, String pkColumn) throws SearchException {
         if (logger.isDebugEnabled()) {
-            logger.debug("createFKEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-                    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
+            logger.debug("createFKEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start", rs,
+                    String.valueOf(type), from, to, fkColumn, pkColumn);
         }
 
         return type == IMPORT ? new ForeignKeyRelationshipEdge(from, to, fkColumn, pkColumn)
@@ -252,7 +248,7 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
      * This method can be overwritten by the sub-classes if they need to decorate
      * the edge (for instance, providing an Edge that contains the primary and
      * foreign keys used).
-     * 
+     *
      * @param rs       database meta-data result set
      * @param type     type of relationship (IMPORT or EXPORT)
      * @param from     name of the table representing the 'from' node
@@ -266,8 +262,8 @@ public abstract class AbstractMetaDataBasedSearchCallback extends AbstractNodesF
     protected IEdge newEdge(ResultSet rs, int type, String from, String to, String fkColumn, String pkColumn)
             throws SearchException {
         if (logger.isDebugEnabled()) {
-            logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start",
-                    new Object[] { rs, String.valueOf(type), from, to, fkColumn, pkColumn });
+            logger.debug("newEdge(rs={}, type={}, from={}, to={}, fkColumn={}, pkColumn={}) - start", rs,
+                    String.valueOf(type), from, to, fkColumn, pkColumn);
         }
 
         return createFKEdge(rs, type, from, to, fkColumn, pkColumn);

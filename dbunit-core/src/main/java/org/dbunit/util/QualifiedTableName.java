@@ -21,14 +21,15 @@
 package org.dbunit.util;
 
 import org.dbunit.DatabaseUnitRuntimeException;
-import org.dbunit.database.DatabaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Utility to parse a fully qualified table name into its components
  * <i>schema</i> and <i>table</i>.
- * 
+ *
  * @author gommma
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -46,7 +47,7 @@ public class QualifiedTableName {
 
     /**
      * Creates an object parsing the given tableName.
-     * 
+     *
      * @param tableName     The table name, either qualified or unqualified. If it
      *                      is qualified (like "MYSCHEMA.MYTABLE") this schema name
      *                      has precedence before the given
@@ -61,7 +62,7 @@ public class QualifiedTableName {
 
     /**
      * Creates an object parsing the given tableName.
-     * 
+     *
      * @param tableName     The table name, either qualified or unqualified. If it
      *                      is qualified (like "MYSCHEMA.MYTABLE") this schema name
      *                      has precedence before the given
@@ -84,7 +85,7 @@ public class QualifiedTableName {
      * Parses the given full table name into a schema name and a table name if
      * available. If no schema is set the value of the {@link #getSchema()} is null.
      * Sets the corresponding members of this class if found.
-     * 
+     *
      * @param fullTableName potentially fully qualified table name
      * @param defaultSchema The schema that is used when the given tableName is not
      *                      fully qualified (i.e. it is not like
@@ -94,21 +95,9 @@ public class QualifiedTableName {
         if (fullTableName == null) {
             throw new NullPointerException("The parameter 'fullTableName' must not be null");
         }
-        // check if a schema is in front
-        int firstDotIndex = fullTableName.indexOf(".");
-        if (firstDotIndex != -1) {
-            // set schema
-            this.schema = fullTableName.substring(0, firstDotIndex);
-            // set table name without schema
-            this.table = fullTableName.substring(firstDotIndex + 1);
-        } else {
-            // No schema name found in table
-            this.table = fullTableName;
-            // If the schema has not been found in the given table name
-            // (that means there is no "MYSCHEMA.MYTABLE" but only a "MYTABLE")
-            // then set the schema to the given default schema
-            this.schema = defaultSchema;
-        }
+        QualifiedTableName2 tn = QualifiedTableName2.parseFullTableName2(fullTableName, defaultSchema);
+        this.schema = tn.schema;
+        this.table = tn.table;
     }
 
     /**
@@ -142,26 +131,29 @@ public class QualifiedTableName {
      * {@link DatabaseConfig#FEATURE_QUALIFIED_TABLE_NAMES} is set. Otherwise the
      * given name is returned unqualified (i.e. without prepending the
      * prefix/schema).
-     * 
+     *
      * @return The qualified table name with the prepended schema if a schema is
      *         available. The qualified table name is <b>only</b> returned if the
      *         feature {@link DatabaseConfig#FEATURE_QUALIFIED_TABLE_NAMES} is set
      *         in the given <code>config</code>.
+     *         @deprecated inline
      */
+    @Deprecated
     public String getQualifiedNameIfEnabled(DatabaseConfig config) {
-        logger.debug("getQualifiedNameIfEnabled(config={}) - start", config);
 
-        boolean feature = config.getFeature(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES);
-        if (feature) {
-            logger.debug("Qualified table names feature is enabled. Returning qualified table name");
+        boolean useQualifiedTableNames = config.isQualifiedTableNames();
+        return getTableName(useQualifiedTableNames);
+    }
+
+    public String getTableName(boolean useQualifiedTableNames) {
+        if (useQualifiedTableNames) {
             return getQualifiedName(this.schema, this.table, this.escapePattern);
         } else {
-            logger.debug("Qualified table names feature is disabled. Returning plain table name");
-//        	return this.table;
             return getQualifiedName(null, this.table, this.escapePattern);
         }
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");
@@ -182,7 +174,7 @@ public class QualifiedTableName {
      * <code>"PREFIX.NAME"</code> and
      * <code>getQualifiedName("PREFIX2", "PREFIX1.NAME")</code> returns
      * <code>"PREFIX1.NAME"</code>.
-     * 
+     *
      * @param prefix        the prefix that qualifies the name and is prepended if
      *                      the name is not qualified yet
      * @param name          the name The name to be qualified if it is not qualified
@@ -193,8 +185,7 @@ public class QualifiedTableName {
      */
     private String getQualifiedName(String prefix, String name, String escapePattern) {
         if (logger.isDebugEnabled())
-            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
-                    new String[] { prefix, name, escapePattern });
+            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start", prefix, name, escapePattern);
 
         if (escapePattern != null) {
             prefix = getEscapedName(prefix, escapePattern);

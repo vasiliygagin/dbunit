@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.tools.ant.ProjectComponent;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
@@ -48,6 +47,8 @@ import org.dbunit.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -71,12 +72,9 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
     private boolean ordered = false;
 
     protected IDataSet getDatabaseDataSet(IDatabaseConnection connection, List tables) throws DatabaseUnitException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getDatabaseDataSet(connection={}, tables={}) - start", new Object[] { connection, tables });
-        }
 
         try {
-            DatabaseConfig config = connection.getConfig();
+            DatabaseConfig config = connection.getDatabaseConfig();
 
             // Retrieve the complete database if no tables or queries specified.
             if (tables.size() == 0) {
@@ -87,7 +85,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             List queryDataSets = createQueryDataSet(tables, connection);
 
             IDataSet[] dataSetsArray = null;
-            if (config.getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName()
+            if (config.getResultSetTableFactory().getClass().getName()
                     .equals("org.dbunit.database.ForwardOnlyResultSetTableFactory")) {
                 dataSetsArray = createForwardOnlyDataSetArray(queryDataSets);
             } else {
@@ -99,8 +97,7 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
         }
     }
 
-    private ForwardOnlyDataSet[] createForwardOnlyDataSetArray(List<QueryDataSet> dataSets)
-            throws DataSetException, SQLException {
+    private ForwardOnlyDataSet[] createForwardOnlyDataSetArray(List<QueryDataSet> dataSets) {
         ForwardOnlyDataSet[] forwardOnlyDataSets = new ForwardOnlyDataSet[dataSets.size()];
 
         for (int i = 0; i < dataSets.size(); i++) {

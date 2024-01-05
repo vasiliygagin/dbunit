@@ -114,10 +114,10 @@ public class CsvProducerTest extends TestCase {
     }
 
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
-        DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password));
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-        return connection;
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new HsqldbDataTypeFactory());
+        return new DatabaseConnection(DriverManager.getConnection(url, user, password),
+                config);
     }
 
     @Override

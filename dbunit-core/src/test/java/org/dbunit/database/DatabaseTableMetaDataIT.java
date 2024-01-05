@@ -62,6 +62,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         return _connection.createDataSet();
     }
 
+    @Override
     protected String convertString(String str) throws Exception {
         return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
     }
@@ -125,26 +126,27 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertEquals("column count", nullable.length + notNullable.length, columns.length);
 
         // not nullable
-        for (int i = 0; i < notNullable.length; i++) {
-            Column column = Columns.getColumn(notNullable[i], columns);
-            assertEquals(notNullable[i], Column.NO_NULLS, column.getNullable());
+        for (String element : notNullable) {
+            Column column = Columns.getColumn(element, columns);
+            assertEquals(element, Column.NO_NULLS, column.getNullable());
         }
 
         // nullable
-        for (int i = 0; i < nullable.length; i++) {
-            Column column = Columns.getColumn(nullable[i], columns);
-            assertEquals(nullable[i], Column.NULLABLE, column.getNullable());
+        for (String element : nullable) {
+            Column column = Columns.getColumn(element, columns);
+            assertEquals(element, Column.NULLABLE, column.getNullable());
         }
     }
 
     public void testUnsupportedColumnDataType() throws Exception {
         IDataTypeFactory dataTypeFactory = new DefaultDataTypeFactory() {
+            @Override
             public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
                     throws DataTypeException {
                 return DataType.UNKNOWN;
             }
         };
-        this._connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
+        this._connection.getDatabaseConfig().setDataTypeFactory(dataTypeFactory);
 
         String tableName = "EMPTY_MULTITYPE_TABLE";
         ITableMetaData metaData = createDataSet().getTableMetaData(tableName);
@@ -199,7 +201,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
                 // Need to move DataType comparison to DatabaseEnvironment.
                 assertTrue(true);
             } else {
-                assertEquals("datatype", (DataType) expectedTypes.get(i), column.getDataType());
+                assertEquals("datatype", expectedTypes.get(i), column.getDataType());
             }
         }
     }
@@ -208,7 +210,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      * Tests whether dbunit works correctly when the local machine has a specific
      * locale set while having case sensitivity=false (so that the "toUpperCase()"
      * is internally invoked on table names)
-     * 
+     *
      * @throws Exception
      */
     public void testCaseInsensitiveAndI18n() throws Exception {
@@ -245,13 +247,13 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     /**
      * Tests the pattern-like column retrieval from the database. DbUnit should not
      * interpret any table names as regex patterns.
-     * 
+     *
      * @throws Exception
      */
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
             String tableName = "PATTERN_LIKE_TABLE_X_";
@@ -262,9 +264,9 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
             assertEquals("column count", columnNames.length, columns.length);
 
-            for (int i = 0; i < columnNames.length; i++) {
-                Column column = Columns.getColumn(columnNames[i], columns);
-                assertEquals(columnNames[i], columnNames[i], column.getColumnName());
+            for (String columnName : columnNames) {
+                Column column = Columns.getColumn(columnName, columns);
+                assertEquals(columnName, columnName, column.getColumnName());
             }
         } finally {
             HypersonicEnvironment.shutdown(jdbcConnection);
@@ -276,7 +278,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     public void testCaseSensitive() throws Exception {
         Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), jdbcConnection);
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
             String tableName = "MixedCaseTable";
@@ -309,7 +311,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      * Ensure that the same table name is returned by
      * {@link DatabaseTableMetaData#getTableName()} as the specified by the input
      * parameter.
-     * 
+     *
      * @throws Exception
      */
     public void testFullyQualifiedTableName() throws Exception {

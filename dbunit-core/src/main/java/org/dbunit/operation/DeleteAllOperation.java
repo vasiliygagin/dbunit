@@ -20,22 +20,20 @@
  */
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
-
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Deletes all rows of tables present in the specified dataset. If the dataset
@@ -69,14 +67,13 @@ public class DeleteAllOperation extends AbstractOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
+    @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
         IDataSet databaseDataSet = connection.createDataSet();
 
-        DatabaseConfig databaseConfig = connection.getConfig();
-        IStatementFactory statementFactory = (IStatementFactory) databaseConfig
-                .getProperty(DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
+        IStatementFactory statementFactory = connection.getDatabaseConfig().getStatementFactory();
         IBatchStatement statement = statementFactory.createBatchStatement(connection);
         try {
             int count = 0;

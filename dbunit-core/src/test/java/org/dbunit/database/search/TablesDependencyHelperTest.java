@@ -27,6 +27,7 @@ import java.util.TreeSet;
 
 import org.dbunit.DdlExecutor;
 import org.dbunit.HypersonicEnvironment;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
@@ -56,11 +57,11 @@ public class TablesDependencyHelperTest extends TestCase {
 
     protected void setUp(String[] sqlFileList) throws Exception {
         this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-        for (int i = 0; i < sqlFileList.length; i++) {
-            File sql = TestUtils.getFile("sql/" + sqlFileList[i]);
+        for (String element : sqlFileList) {
+            File sql = TestUtils.getFile("sql/" + element);
             DdlExecutor.executeDdlFile(sql, this.jdbcConnection);
         }
-        this.connection = new DatabaseConnection(jdbcConnection);
+        this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
     }
 
     @Override
@@ -163,7 +164,7 @@ public class TablesDependencyHelperTest extends TestCase {
     /**
      * Ensure the order is not lost on the way because of the conversion between Map
      * and Array
-     * 
+     *
      * @throws Exception
      */
     public void testGetDatasetFromManyTables() throws Exception {
@@ -173,8 +174,8 @@ public class TablesDependencyHelperTest extends TestCase {
         for (int i = 0; i < allInput.length; i++) {
             String[] input = allInput[i];
             PkTableMap inputMap = new PkTableMap();
-            for (int j = 0; j < input.length; j++) {
-                inputMap.put(input[j], new TreeSet());
+            for (String element : input) {
+                inputMap.put(element, new TreeSet());
             }
 
             String[] expectedOutput = allExpectedOutput[i];

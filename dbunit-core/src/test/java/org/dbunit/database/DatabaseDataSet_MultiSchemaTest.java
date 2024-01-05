@@ -28,7 +28,7 @@ import org.junit.Test;
 
 /**
  * Test the multiple schema support of DatabaseDataSet.
- * 
+ *
  * <p>
  * This test case uses the H2 database because it offers easy handling of
  * schemas / users.
@@ -88,7 +88,7 @@ public class DatabaseDataSet_MultiSchemaTest {
 
     /**
      * Admin user has full access to all tables in all schemas.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -106,7 +106,7 @@ public class DatabaseDataSet_MultiSchemaTest {
     /**
      * As basic schema owner you will have access to your own tables, but not to
      * other ones.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -131,7 +131,7 @@ public class DatabaseDataSet_MultiSchemaTest {
 
     /**
      * If we don't use qualified table names, then we still use only our own tables.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -156,7 +156,7 @@ public class DatabaseDataSet_MultiSchemaTest {
     /**
      * A special dbunit user could be allowed to access tables from other users to
      * prepare test data.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -207,7 +207,7 @@ public class DatabaseDataSet_MultiSchemaTest {
 
     /**
      * Without explicit schema selection, all available tables will be loaded...
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -241,7 +241,7 @@ public class DatabaseDataSet_MultiSchemaTest {
     /**
      * Without explizit schema selection, all available tables will be loaded - but
      * without qualified table access, no metadata will be found.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -299,11 +299,11 @@ public class DatabaseDataSet_MultiSchemaTest {
     private void makeDatabaseConnection(String databaseName, String username, String password, String schema,
             boolean useQualifiedTableNames) throws Exception {
         Connection jdbcConnection = H2Environment.createJdbcConnection(databaseName, username, password);
-        connectionTest = new DatabaseConnection(jdbcConnection, schema);
-        final DatabaseConfig config = connectionTest.getConfig();
-        config.setProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, useQualifiedTableNames);
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
-        config.setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, testMetadataHandler);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setQualifiedTableNames(useQualifiedTableNames);
+        config.setDataTypeFactory(new H2DataTypeFactory());
+        config.setMetadataHandler(testMetadataHandler);
+        connectionTest = new DatabaseConnection(jdbcConnection, config, schema);
     }
 
     private static class TestMetadataHandler extends DefaultMetadataHandler {

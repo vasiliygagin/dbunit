@@ -30,6 +30,8 @@ import org.dbunit.dataset.ITableMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 /**
  * @author manuel.laflamme
  * @author Last changed by: $Author$
@@ -43,15 +45,17 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
      */
     private static final Logger logger = LoggerFactory.getLogger(ForwardOnlyResultSetTableFactory.class);
 
+    @Override
     public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
-                    new Object[] { tableName, selectStatement, connection });
+            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start", tableName,
+                    selectStatement, connection);
 
         return new ForwardOnlyResultSetTable(tableName, selectStatement, connection);
     }
 
+    @Override
     public IResultSetTable createTable(ITableMetaData metaData, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
@@ -59,11 +63,12 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
         return new ForwardOnlyResultSetTable(metaData, connection);
     }
 
+    @Override
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
             IDatabaseConnection connection) throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
-                    new Object[] { tableName, preparedStatement, connection });
+            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start", tableName,
+                    preparedStatement, connection);
 
         return createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
     }
@@ -71,7 +76,7 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
     /**
      * Creates a new {@link ForwardOnlyResultSetTable} using the given
      * {@link PreparedStatement} to retrieve the data.
-     * 
+     *
      * @param tableName         The name the {@link ITable} will have
      * @param preparedStatement The statement which provides the data
      * @param connection        The database connection which also holds dbunit
@@ -82,16 +87,12 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
      */
     ForwardOnlyResultSetTable createForwardOnlyResultSetTable(String tableName, PreparedStatement preparedStatement,
             IDatabaseConnection connection) throws SQLException, DataSetException {
-        if (logger.isTraceEnabled())
-            logger.trace("createForwardOnlyResultSetTable(tableName={}, preparedStatement={}, connection={}) - start",
-                    new Object[] { tableName, preparedStatement, connection });
-
-        connection.getConfig().getConfigurator().configureStatement(preparedStatement);
+        DatabaseConfig config = connection.getDatabaseConfig();
+        preparedStatement.setFetchSize(config.getFetchSize());
 
         ResultSet rs = preparedStatement.executeQuery();
 
-        boolean caseSensitiveTableNames = connection.getConfig()
-                .getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+        boolean caseSensitiveTableNames = config.isCaseSensitiveTableNames();
         ITableMetaData metaData = new ResultSetTableMetaData(tableName, rs, connection, caseSensitiveTableNames);
         ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTable(metaData, rs);
         return table;

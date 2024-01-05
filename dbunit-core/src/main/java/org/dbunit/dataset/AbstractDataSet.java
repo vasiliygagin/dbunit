@@ -57,7 +57,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
     /**
      * Constructor
-     * 
+     *
      * @param caseSensitiveTableNames Whether or not table names should be case
      *                                sensitive
      * @since 2.4
@@ -80,17 +80,17 @@ public abstract class AbstractDataSet implements IDataSet {
      * Creates and returns a new instance of the table names container. Implementors
      * should use this method to retrieve a map which stores table names which can
      * be linked with arbitrary objects.
-     * 
+     *
      * @return a new empty instance of the table names container
      * @since 2.4
      */
-    protected OrderedTableNameMap<ITable> createTableNameMap() {
-        return new OrderedTableNameMap<ITable>(this._caseSensitiveTableNames);
+    protected final OrderedTableNameMap<ITable> createTableNameMap() {
+        return new OrderedTableNameMap<>(isCaseSensitiveTableNames());
     }
 
     /**
      * Initializes the tables of this dataset
-     * 
+     *
      * @throws DataSetException
      * @since 2.4
      */
@@ -105,7 +105,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
         // Gather all tables in the OrderedTableNameMap which also makes the duplicate
         // check
-        _orderedTableNameMap = this.createTableNameMap();
+        _orderedTableNameMap = new OrderedTableNameMap<>(this.isCaseSensitiveTableNames());
         ITableIterator iterator = createIterator(false);
         while (iterator.next()) {
             ITable table = iterator.getTable();
@@ -115,7 +115,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
     /**
      * Creates an iterator which provides access to all tables of this dataset
-     * 
+     *
      * @param reversed Whether the created iterator should be a reversed one or not
      * @return The created {@link ITableIterator}
      * @throws DataSetException

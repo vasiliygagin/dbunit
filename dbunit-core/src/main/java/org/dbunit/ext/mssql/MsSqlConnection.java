@@ -20,8 +20,8 @@
  */
 package org.dbunit.ext.mssql;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -31,9 +31,8 @@ import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ExcludeTableFilter;
 import org.dbunit.dataset.filter.ITableFilter;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Manuel Laflamme
@@ -57,8 +56,13 @@ public class MsSqlConnection extends DatabaseConnection {
      * @throws DatabaseUnitException
      */
     public MsSqlConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        super(connection, buildConfig(), schema);
+    }
+
+    static DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new MsSqlDataTypeFactory());
+        return config;
     }
 
     /**
@@ -68,13 +72,13 @@ public class MsSqlConnection extends DatabaseConnection {
      * @throws DatabaseUnitException
      */
     public MsSqlConnection(Connection connection) throws DatabaseUnitException {
-        super(connection);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MsSqlDataTypeFactory());
+        super(connection, buildConfig());
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection
 
+    @Override
     public IDataSet createDataSet() throws SQLException {
         logger.debug("createDataSet() - start");
 
@@ -82,6 +86,7 @@ public class MsSqlConnection extends DatabaseConnection {
         return new FilteredDataSet(_filter, dataSet);
     }
 
+    @Override
     public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException {
         logger.debug("createDataSet(tableNames={}) - start", tableNames);
 

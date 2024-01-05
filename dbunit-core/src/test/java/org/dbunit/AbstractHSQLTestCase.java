@@ -3,17 +3,16 @@ package org.dbunit;
 import java.sql.Connection;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.CollectionsHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import junit.framework.TestCase;
 
 public abstract class AbstractHSQLTestCase extends TestCase {
 
@@ -68,16 +67,18 @@ public abstract class AbstractHSQLTestCase extends TestCase {
         this.sqlFile = sqlFile;
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + sqlFile), jdbcConnection);
-        this.connection = new DatabaseConnection(jdbcConnection);
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+        DatabaseConfig config = new DatabaseConfig();
+        this.connection = new DatabaseConnection(jdbcConnection, config);
+        config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
 

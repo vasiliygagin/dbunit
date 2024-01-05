@@ -41,15 +41,16 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         super(s);
     }
 
+    @Override
     protected String convertString(String str) throws Exception {
         return getEnvironment().convertString(str);
     }
 
     public void testCreateNullConnection() throws Exception {
         try {
-            new DatabaseConnection(null);
+            new DatabaseConnection(null, new DatabaseConfig());
             fail("Should not be able to create a database connection without a JDBC connection");
-        } catch (NullPointerException expected) {
+        } catch (IllegalArgumentException expected) {
             // all right
         }
     }
@@ -61,7 +62,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         // Try to create a database connection with an invalid schema
         try {
             boolean validate = true;
-            new DatabaseConnection(validConnection.getConnection(), schema, validate);
+            new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(), schema, validate);
             fail("Should not be able to create a database connection object with an unknown schema.");
         } catch (DatabaseUnitException expected) {
             String expectedMsg = "The given schema '" + convertString(schema) + "' does not exist.";
@@ -75,7 +76,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         IDatabaseConnection validConnection = super.getConnection();
         // Try to create a database connection with an invalid schema
         boolean validate = false;
-        DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(), schema, validate);
+        DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(), schema, validate);
         assertNotNull(dbConnection);
     }
 
@@ -88,7 +89,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         if (metaData.storesUpperCaseIdentifiers()) {
             boolean validate = true;
             DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(),
-                    schema.toLowerCase(Locale.ENGLISH), validate);
+                    new DatabaseConfig(), schema.toLowerCase(Locale.ENGLISH), validate);
             assertNotNull(dbConnection);
             assertEquals(schema.toUpperCase(Locale.ENGLISH), dbConnection.getSchema());
         } else {
@@ -106,7 +107,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         if (metaData.storesLowerCaseIdentifiers()) {
             boolean validate = true;
             DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(),
-                    schema.toUpperCase(Locale.ENGLISH), validate);
+                    new DatabaseConfig(), schema.toUpperCase(Locale.ENGLISH), validate);
             assertNotNull(dbConnection);
             assertEquals(schema.toLowerCase(Locale.ENGLISH), dbConnection.getSchema());
         } else {

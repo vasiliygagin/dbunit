@@ -20,9 +20,6 @@
  */
 package org.dbunit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -30,8 +27,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DatabaseTester that pulls a DataSource from a JNDI location.
@@ -74,7 +74,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
 
     /**
      * Creates a JndiDatabaseTester with specific JNDI properties.
-     * 
+     *
      * @param environment A Properties object with JNDI properties. Can be
      *                    <code>null</code>
      * @param lookupName  the name of the resource in the JNDI context
@@ -92,6 +92,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
         this.environment = environment;
     }
 
+    @Override
     public IDatabaseConnection getConnection() throws Exception {
         logger.trace("getConnection() - start");
 
@@ -99,7 +100,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
             initialize();
         }
 
-        return new DatabaseConnection(dataSource.getConnection(), getSchema());
+        return new DatabaseConnection(dataSource.getConnection(), new DatabaseConfig(), getSchema());
     }
 
     /**
@@ -122,6 +123,7 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
         initialized = true;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

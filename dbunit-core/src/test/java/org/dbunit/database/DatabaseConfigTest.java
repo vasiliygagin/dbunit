@@ -47,7 +47,7 @@ public class DatabaseConfigTest extends TestCase {
 
     public void testSetProperty_CorrectType_Array() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
-        String[] stringArray = new String[] { "TABLE" };
+        String[] stringArray = { "TABLE" };
         config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, stringArray);
         assertEquals(stringArray, config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE));
     }
@@ -56,11 +56,13 @@ public class DatabaseConfigTest extends TestCase {
         DatabaseConfig config = new DatabaseConfig();
         IDataTypeFactory myFactory = new IDataTypeFactory() {
 
+            @Override
             public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
                     throws DataTypeException {
                 return null;
             }
 
+            @Override
             public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
                 return null;
             }

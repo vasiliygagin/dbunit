@@ -20,29 +20,36 @@
  */
 package org.dbunit.ext.oracle;
 
+import java.sql.Connection;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-
-import java.sql.Connection;
 
 /**
  *
  * @author manuel.laflamme
  * @since Sep 3, 2003
  * @version $Revision$
+ * @deprecated VG: No need for separate class for this. Just need separate config.
  */
+@Deprecated
 public class OracleConnection extends DatabaseConnection {
     /**
      * Creates a oracle connection. Beware that the given schema is passed in to the
      * parent class as "upper case" string.
-     * 
+     *
      * @param connection
      * @param schema     The schema name
      * @throws DatabaseUnitException
      */
     public OracleConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema != null ? schema.toUpperCase() : null);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
+        super(connection, buildConfig(), schema != null ? schema.toUpperCase() : null);
+    }
+
+    static DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new OracleDataTypeFactory());
+        return config;
     }
 }

@@ -67,7 +67,7 @@ public class DatabaseSequenceFilterTest extends TestCase {
         final String[] expectedFiltered = { "D", "A", "F", "C", "G", "E", "H", "B", };
 
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_fk.sql"), _jdbcConnection);
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
@@ -83,7 +83,7 @@ public class DatabaseSequenceFilterTest extends TestCase {
         final String[] expectedNoFilter = { "A", "B", "C", "D", "E", };
 
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_cyclic.sql"), _jdbcConnection);
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
@@ -107,9 +107,9 @@ public class DatabaseSequenceFilterTest extends TestCase {
         final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
 
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), _jdbcConnection);
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection);
-
-        connection.getConfig().setProperty(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES, Boolean.TRUE);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setCaseSensitiveTableNames(true);
+        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, config);
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
@@ -130,8 +130,9 @@ public class DatabaseSequenceFilterTest extends TestCase {
     public void testMultiSchemaFks() throws Exception {
         final Connection jdbcConnection = H2Environment.createJdbcConnection("test");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/h2_multischema_fk_test.sql"), jdbcConnection);
-        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
-        connection.getConfig().setProperty(DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, Boolean.TRUE);
+        DatabaseConfig config = new DatabaseConfig();
+        config.setQualifiedTableNames(true);
+        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config);
 
         final IDataSet databaseDataset = connection.createDataSet();
         final ITableFilter filter = new DatabaseSequenceFilter(connection);

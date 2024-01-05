@@ -21,25 +21,32 @@
 
 package org.dbunit.ext.mckoi;
 
+import java.sql.Connection;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 
-import java.sql.Connection;
-
 /**
  * Database connection for Mckoi that pre-configures all properties required to
  * successfully use dbunit with Mckoi.
- * 
+ *
  * @author Luigi Talamona (luigitalamona AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.8
+ * @deprecated VG: No need for separate class for this. Just need separate config.
  */
+@Deprecated
 public class MckoiConnection extends DatabaseConnection {
 
     public MckoiConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, schema);
-        getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MckoiDataTypeFactory());
+        super(connection, buildConfig(), schema);
+    }
+
+    static DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        config.setDataTypeFactory(new MckoiDataTypeFactory());
+        return config;
     }
 }

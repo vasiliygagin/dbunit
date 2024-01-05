@@ -56,7 +56,6 @@ import org.apache.tools.ant.util.ProcessUtil;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -72,6 +71,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Ant-based test class for the Dbunit ant task definition.
@@ -295,8 +296,8 @@ public class DbUnitTaskIT {
         DbUnitTask task = getFirstTargetTask(targetName);
         IDatabaseConnection connection = task.createConnection();
         export.getExportDataSet(connection);
-        assertEquals("org.dbunit.database.ForwardOnlyResultSetTableFactory", connection.getConfig()
-                .getProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY).getClass().getName());
+        assertEquals("org.dbunit.database.ForwardOnlyResultSetTableFactory",
+                connection.getDatabaseConfig().getResultSetTableFactory().getClass().getName());
     }
 
     @Test
@@ -502,8 +503,7 @@ public class DbUnitTaskIT {
         DbUnitTask task = getFirstTargetTask(targetName);
 
         IDatabaseConnection connection = task.createConnection();
-        IDataTypeFactory factory = (IDataTypeFactory) connection.getConfig()
-                .getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
+        IDataTypeFactory factory = connection.getDatabaseConfig().getDataTypeFactory();
 
         Class<OracleDataTypeFactory> expectedClass = OracleDataTypeFactory.class;
         assertEquals("factory", expectedClass, factory.getClass());
@@ -515,7 +515,7 @@ public class DbUnitTaskIT {
         DbUnitTask task = getFirstTargetTask(targetName);
 
         IDatabaseConnection connection = task.createConnection();
-        String actualPattern = (String) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        String actualPattern = connection.getDatabaseConfig().getEscapePattern();
 
         String expectedPattern = "[?]";
         assertEquals("factory", expectedPattern, actualPattern);
@@ -528,18 +528,17 @@ public class DbUnitTaskIT {
 
         IDatabaseConnection connection = task.createConnection();
 
-        DatabaseConfig config = connection.getConfig();
+        DatabaseConfig config = connection.getDatabaseConfig();
 
-        IDataTypeFactory factory = (IDataTypeFactory) config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
+        IDataTypeFactory factory = config.getDataTypeFactory();
         Class<OracleDataTypeFactory> expectedClass = OracleDataTypeFactory.class;
         assertEquals("factory", expectedClass, factory.getClass());
 
-        String[] actualTableType = (String[]) config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE);
+        String[] actualTableType = config.getTableTypes();
         assertArrayEquals("tableType", new String[] { "TABLE", "SYNONYM" }, actualTableType);
-        assertTrue("batched statements feature should be true",
-                connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
+        assertTrue("batched statements feature should be true", connection.getDatabaseConfig().isBatchedStatements());
         assertTrue("qualified tablenames feature should be true",
-                connection.getConfig().getFeature(DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES));
+                connection.getDatabaseConfig().isCaseSensitiveTableNames());
     }
 
     @Test

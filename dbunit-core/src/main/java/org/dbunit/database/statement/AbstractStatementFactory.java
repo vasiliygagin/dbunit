@@ -21,13 +21,11 @@
 
 package org.dbunit.database.statement;
 
+import java.sql.SQLException;
+
+import org.dbunit.database.IDatabaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.IDatabaseConnection;
-
-import java.sql.SQLException;
 
 /**
  * @author Manuel Laflamme
@@ -47,7 +45,7 @@ public abstract class AbstractStatementFactory implements IStatementFactory {
     protected boolean supportBatchStatement(IDatabaseConnection connection) throws SQLException {
         logger.debug("supportBatchStatement(connection={}) - start", connection);
 
-        if (connection.getConfig().getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS)) {
+        if (connection.getDatabaseConfig().isBatchedStatements()) {
             return connection.getConnection().getMetaData().supportsBatchUpdates();
         }
 

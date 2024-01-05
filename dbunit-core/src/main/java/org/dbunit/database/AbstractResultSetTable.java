@@ -25,9 +25,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.dataset.AbstractTable;
+import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.util.QualifiedTableName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +87,7 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
             throws DataSetException, SQLException {
         _statement = createStatement(connection);
 
-        String escapePattern = (String) connection.getConfig().getProperty(DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        String escapePattern = connection.getDatabaseConfig().getEscapePattern();
 
         try {
             String schema = connection.getSchema();
@@ -102,23 +105,64 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
         }
     }
 
-    private Statement createStatement(IDatabaseConnection connection) throws SQLException {
-        logger.trace("createStatement() - start");
-
-        Connection jdbcConnection = connection.getConnection();
-        Statement stmt = jdbcConnection.createStatement();
-        connection.getConfig().getConfigurator().configureStatement(stmt);
-        return stmt;
-    }
-
     static String getSelectStatement(String schema, ITableMetaData metaData, String escapePattern)
             throws DataSetException {
-        return DatabaseDataSet.getSelectStatement(schema, metaData, escapePattern);
+        if (logger.isDebugEnabled()) {
+            logger.debug("getSelectStatement(schema={}, metaData={}, escapePattern={}) - start", schema, metaData,
+                    escapePattern);
+        }
+
+        Column[] columns = metaData.getColumns();
+        Column[] primaryKeys = metaData.getPrimaryKeys();
+
+        if (columns.length == 0) {
+            throw new DatabaseUnitRuntimeException("At least one column is required to build a valid select statement. "
+                    + "Cannot load data for " + metaData);
+        }
+
+        // select
+        StringBuffer sqlBuffer = new StringBuffer(128);
+        sqlBuffer.append("select ");
+        for (int i = 0; i < columns.length; i++) {
+            if (i > 0) {
+                sqlBuffer.append(", ");
+            }
+            String columnName = new QualifiedTableName(columns[i].getColumnName(), null, escapePattern)
+                    .getQualifiedName();
+            sqlBuffer.append(columnName);
+        }
+
+        // from
+        sqlBuffer.append(" from ");
+        sqlBuffer.append(new QualifiedTableName(metaData.getTableName(), schema, escapePattern).getQualifiedName());
+
+        // order by
+        for (int i = 0; i < primaryKeys.length; i++) {
+            if (i == 0) {
+                sqlBuffer.append(" order by ");
+            } else {
+                sqlBuffer.append(", ");
+            }
+            sqlBuffer.append(
+                    new QualifiedTableName(primaryKeys[i].getColumnName(), null, escapePattern).getQualifiedName());
+
+        }
+
+        return sqlBuffer.toString();
+    }
+
+    private Statement createStatement(IDatabaseConnection connection) throws SQLException {
+        int fetchSize = connection.getDatabaseConfig().getFetchSize();
+        Connection jdbcConnection = connection.getConnection();
+        Statement stmt = jdbcConnection.createStatement();
+        stmt.setFetchSize(fetchSize);
+        return stmt;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITable interface
 
+    @Override
     public ITableMetaData getTableMetaData() {
         return _metaData;
     }
@@ -126,6 +170,7 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
     ////////////////////////////////////////////////////////////////////////////
     // IResultSetTable interface
 
+    @Override
     public void close() throws DataSetException {
         logger.trace("close() - start");
 
@@ -147,6 +192,7 @@ public abstract class AbstractResultSetTable extends AbstractTable implements IR
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(2000);
 

@@ -16,11 +16,7 @@
 
 package com.github.springtestdbunit.bean;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConfig.ConfigProperty;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.database.IResultSetTableFactory;
 import org.dbunit.database.statement.IStatementFactory;
@@ -38,370 +34,329 @@ import org.springframework.util.Assert;
  */
 public class DatabaseConfigBean {
 
-    private static final Map<String, ConfigProperty> CONFIG_PROPERTIES;
-
-    static {
-	CONFIG_PROPERTIES = new HashMap<String, ConfigProperty>();
-	for (ConfigProperty configProperty : DatabaseConfig.ALL_PROPERTIES) {
-	    CONFIG_PROPERTIES.put(configProperty.getProperty(), configProperty);
-	}
-    }
-
-    private DatabaseConfig databaseConfig = new DatabaseConfig();
+    private io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig databaseConfig = new io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig();
 
     /**
      * Gets the statement factory database config property.
-     * 
+     *
      * @return the statement factory
      * @see DatabaseConfig#PROPERTY_STATEMENT_FACTORY
      */
     public IStatementFactory getStatementFactory() {
-	return (IStatementFactory) getProperty("statementFactory", DatabaseConfig.PROPERTY_STATEMENT_FACTORY);
+        return this.databaseConfig.getStatementFactory();
     }
 
     /**
      * Sets the statement factory database config property.
-     * 
+     *
      * @param statementFactory the statement factory
      * @see DatabaseConfig#PROPERTY_STATEMENT_FACTORY
      */
     public void setStatementFactory(IStatementFactory statementFactory) {
-	setProperty("statementFactory", DatabaseConfig.PROPERTY_STATEMENT_FACTORY, statementFactory);
+        this.databaseConfig.setStatementFactory(statementFactory);
     }
 
     /**
      * Gets the result set table factory database config property.
-     * 
+     *
      * @return the result set table factory
      * @see DatabaseConfig#PROPERTY_RESULTSET_TABLE_FACTORY
      */
     public IResultSetTableFactory getResultsetTableFactory() {
-	return (IResultSetTableFactory) getProperty("resultSetTableFactory",
-		DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY);
+        return this.databaseConfig.getResultSetTableFactory();
     }
 
     /**
      * Sets the result set table factory database config property.
-     * 
+     *
      * @param resultSetTableFactory the result set table factory
      * @see DatabaseConfig#PROPERTY_RESULTSET_TABLE_FACTORY
      */
     public void setResultsetTableFactory(IResultSetTableFactory resultSetTableFactory) {
-	setProperty("resultSetTableFactory", DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, resultSetTableFactory);
+        this.databaseConfig.setResultSetTableFactory(resultSetTableFactory);
     }
 
     /**
      * Gets the data type factory database config property.
-     * 
+     *
      * @return the data type factory
      * @see DatabaseConfig#PROPERTY_DATATYPE_FACTORY
      */
     public IDataTypeFactory getDatatypeFactory() {
-	return (IDataTypeFactory) getProperty("dataTypeFactory", DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
+        return this.databaseConfig.getDataTypeFactory();
     }
 
     /**
      * Sets the data type factory database config property.
-     * 
+     *
      * @param dataTypeFactory the data type factory
      * @see DatabaseConfig#PROPERTY_DATATYPE_FACTORY
      */
     public void setDatatypeFactory(IDataTypeFactory dataTypeFactory) {
-	setProperty("dataTypeFactory", DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
+        this.databaseConfig.setDataTypeFactory(dataTypeFactory);
     }
 
     /**
      * Gets the escape pattern database config property.
-     * 
+     *
      * @return the escape pattern
      * @see DatabaseConfig#PROPERTY_ESCAPE_PATTERN
      */
     public String getEscapePattern() {
-	return (String) getProperty("escapePattern", DatabaseConfig.PROPERTY_ESCAPE_PATTERN);
+        return this.databaseConfig.getEscapePattern();
     }
 
     /**
      * Sets the escape pattern database config property.
-     * 
+     *
      * @param escapePattern the escape pattern
      * @see DatabaseConfig#PROPERTY_ESCAPE_PATTERN
      */
     public void setEscapePattern(String escapePattern) {
-	setProperty("escapePattern", DatabaseConfig.PROPERTY_ESCAPE_PATTERN, escapePattern);
+        this.databaseConfig.setEscapePattern(escapePattern);
     }
 
     /**
      * Gets the table type database config property.
-     * 
+     *
      * @return the table type
      * @see DatabaseConfig#PROPERTY_TABLE_TYPE
      */
     public String[] getTableType() {
-	return (String[]) getProperty("tableTable", DatabaseConfig.PROPERTY_TABLE_TYPE);
+        return this.databaseConfig.getTableTypes();
     }
 
     /**
      * Sets the table type database config property.
-     * 
-     * @param tableTable the table type
+     *
+     * @param tableTypes the table type
      * @see DatabaseConfig#PROPERTY_TABLE_TYPE
      */
-    public void setTableType(String[] tableTable) {
-	setProperty("tableTable", DatabaseConfig.PROPERTY_TABLE_TYPE, tableTable);
+    public void setTableType(String[] tableTypes) {
+        this.databaseConfig.setTableTypes(tableTypes);
     }
 
     /**
      * Gets the primary key filter database config property.
-     * 
+     *
      * @return the primary key filter
      * @see DatabaseConfig#PROPERTY_PRIMARY_KEY_FILTER
      */
     public IColumnFilter getPrimaryKeyFilter() {
-	return (IColumnFilter) getProperty("primaryKeyFilter", DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER);
+        return this.databaseConfig.getPrimaryKeysFilter();
     }
 
     /**
      * Sets the primary key filter database config property.
-     * 
+     *
      * @param primaryKeyFilter the primary key filter
      * @see DatabaseConfig#PROPERTY_PRIMARY_KEY_FILTER
      */
     public void setPrimaryKeyFilter(IColumnFilter primaryKeyFilter) {
-	setProperty("primaryKeyFilter", DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, primaryKeyFilter);
+        this.databaseConfig.setPrimaryKeysFilter(primaryKeyFilter);
     }
 
     /**
      * Gets the batch size database config property.
-     * 
+     *
      * @return the batch size
      * @see DatabaseConfig#PROPERTY_BATCH_SIZE
      */
     public Integer getBatchSize() {
-	return (Integer) getProperty("batchSize", DatabaseConfig.PROPERTY_BATCH_SIZE);
+        return this.databaseConfig.getBatchSize();
     }
 
     /**
      * Sets the batch size database config property.
-     * 
+     *
      * @param batchSize the batch size
      * @see DatabaseConfig#PROPERTY_BATCH_SIZE
      */
     public void setBatchSize(Integer batchSize) {
-	setProperty("batchSize", DatabaseConfig.PROPERTY_BATCH_SIZE, batchSize);
+        Assert.notNull(batchSize, "batchSize cannot be null");
+        this.databaseConfig.setBatchSize(batchSize);
     }
 
     /**
      * Gets the fetch size database config property.
-     * 
+     *
      * @return the fetch size
      * @see DatabaseConfig#PROPERTY_FETCH_SIZE
      */
     public Integer getFetchSize() {
-	return (Integer) getProperty("fetchSize", DatabaseConfig.PROPERTY_FETCH_SIZE);
+        return this.databaseConfig.getFetchSize();
     }
 
     /**
      * Sets the fetch size database config property.
-     * 
+     *
      * @param fetchSize the fetch size
      * @see DatabaseConfig#PROPERTY_FETCH_SIZE
      */
     public void setFetchSize(Integer fetchSize) {
-	setProperty("fetchSize", DatabaseConfig.PROPERTY_FETCH_SIZE, fetchSize);
+        Assert.notNull(fetchSize, "fetchSize cannot be null");
+        this.databaseConfig.setFetchSize(fetchSize);
     }
 
     /**
      * Gets the meta-data handler database config property.
-     * 
+     *
      * @return the meta-data handler
      * @see DatabaseConfig#PROPERTY_METADATA_HANDLER
      */
     public IMetadataHandler getMetadataHandler() {
-	return (IMetadataHandler) getProperty("metadataHandler", DatabaseConfig.PROPERTY_METADATA_HANDLER);
+        return this.databaseConfig.getMetadataHandler();
     }
 
     /**
      * Sets the meta-data handler database config property.
-     * 
+     *
      * @param metadataHandler meta-data handler
      * @see DatabaseConfig#PROPERTY_METADATA_HANDLER
      */
     public void setMetadataHandler(IMetadataHandler metadataHandler) {
-	setProperty("metadataHandler", DatabaseConfig.PROPERTY_METADATA_HANDLER, metadataHandler);
+        this.databaseConfig.setMetadataHandler(metadataHandler);
     }
 
     /**
      * Gets the case sensitive table names database config feature.
-     * 
+     *
      * @return case sensitive table names
      * @see DatabaseConfig#FEATURE_CASE_SENSITIVE_TABLE_NAMES
      */
     public Boolean getCaseSensitiveTableNames() {
-	return (Boolean) getProperty("caseSensitiveTableNames", DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES);
+        return this.databaseConfig.isCaseSensitiveTableNames();
     }
 
     /**
      * Sets the case sensitive table names database config feature.
-     * 
+     *
      * @param caseSensitiveTableNames case sensitive table names
      * @see DatabaseConfig#FEATURE_CASE_SENSITIVE_TABLE_NAMES
      */
     public void setCaseSensitiveTableNames(Boolean caseSensitiveTableNames) {
-	setProperty("caseSensitiveTableNames", DatabaseConfig.FEATURE_CASE_SENSITIVE_TABLE_NAMES,
-		caseSensitiveTableNames);
+        Assert.notNull(caseSensitiveTableNames, "caseSensitiveTableNames cannot be null");
+        this.databaseConfig.setCaseSensitiveTableNames(caseSensitiveTableNames);
     }
 
     /**
      * Gets the qualified table names database config feature.
-     * 
+     *
      * @return the qualified table names
      * @see DatabaseConfig#FEATURE_QUALIFIED_TABLE_NAMES
      */
     public Boolean getQualifiedTableNames() {
-	return (Boolean) getProperty("qualifiedTableNames", DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES);
+        return this.databaseConfig.isQualifiedTableNames();
     }
 
     /**
      * Sets the qualified table names database config feature.
-     * 
+     *
      * @param qualifiedTableNames the qualified table names
      * @see DatabaseConfig#FEATURE_QUALIFIED_TABLE_NAMES
      */
     public void setQualifiedTableNames(Boolean qualifiedTableNames) {
-	setProperty("qualifiedTableNames", DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES, qualifiedTableNames);
+        Assert.notNull(qualifiedTableNames, "qualifiedTableNames" + " cannot be null");
+        this.databaseConfig.setQualifiedTableNames(qualifiedTableNames);
     }
 
     /**
      * Gets the batched statements database config feature.
-     * 
+     *
      * @return the batched statements
      * @see DatabaseConfig#FEATURE_BATCHED_STATEMENTS
      */
     public Boolean getBatchedStatements() {
-	return (Boolean) getProperty("batchedStatements", DatabaseConfig.FEATURE_BATCHED_STATEMENTS);
+        return this.databaseConfig.isBatchedStatements();
     }
 
     /**
      * Sets the batched statements database config feature.
-     * 
+     *
      * @param batchedStatements the batched statements
      * @see DatabaseConfig#FEATURE_BATCHED_STATEMENTS
      */
     public void setBatchedStatements(Boolean batchedStatements) {
-	setProperty("batchedStatements", DatabaseConfig.FEATURE_BATCHED_STATEMENTS, batchedStatements);
+        Assert.notNull(batchedStatements, "batchedStatements cannot be null");
+        this.databaseConfig.setBatchedStatements(batchedStatements);
     }
 
     /**
      * Gets the datatype warning database config feature.
-     * 
+     *
      * @return the datatype warning
      * @see DatabaseConfig#FEATURE_DATATYPE_WARNING
      */
     public Boolean getDatatypeWarning() {
-	return (Boolean) getProperty("datatypeWarning", DatabaseConfig.FEATURE_DATATYPE_WARNING);
+        return this.databaseConfig.isDatatypeWarning();
     }
 
     /**
      * Sets the datatype warning database config feature.
-     * 
+     *
      * @param datatypeWarning the datatype warning
      * @see DatabaseConfig#FEATURE_DATATYPE_WARNING
      */
     public void setDatatypeWarning(Boolean datatypeWarning) {
-	setProperty("datatypeWarning", DatabaseConfig.FEATURE_DATATYPE_WARNING, datatypeWarning);
+        Assert.notNull(datatypeWarning, "datatypeWarning cannot be null");
+        this.databaseConfig.setDatatypeWarning(datatypeWarning);
     }
 
     /**
      * Gets the skip oracle recyclebin tables database config feature.
-     * 
+     *
      * @return the skip oracle recyclebin tables
      * @see DatabaseConfig#FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES
      */
     public Boolean getSkipOracleRecyclebinTables() {
-	return (Boolean) getProperty("skipOracleRecyclebinTables",
-		DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES);
+        return this.databaseConfig.isSkipOracleRecycleBinTables();
     }
 
     /**
      * Sets the skip oracle recyclebin tables database config feature.
-     * 
+     *
      * @param skipOracleRecyclebinTables skip oracle recyclebin tables
      * @see DatabaseConfig#FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES
      */
     public void setSkipOracleRecyclebinTables(Boolean skipOracleRecyclebinTables) {
-	setProperty("skipOracleRecyclebinTables", DatabaseConfig.FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES,
-		skipOracleRecyclebinTables);
+        Assert.notNull(skipOracleRecyclebinTables, "skipOracleRecyclebinTables cannot be null");
+        this.databaseConfig.setSkipOracleRecycleBinTables(skipOracleRecyclebinTables);
     }
 
     /**
      * Gets the allow empty fields database config feature.
-     * 
+     *
      * @return the allow empty fields
      * @see DatabaseConfig#FEATURE_ALLOW_EMPTY_FIELDS
      */
     public Boolean getAllowEmptyFields() {
-	return (Boolean) getProperty("allowEmptyFields", DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS);
+        return this.databaseConfig.isAllowEmptyFields();
     }
 
     /**
      * Sets the allow empty fields database config feature.
-     * 
+     *
      * @param allowEmptyFields allow empty fields
      * @see DatabaseConfig#FEATURE_ALLOW_EMPTY_FIELDS
      */
     public void setAllowEmptyFields(Boolean allowEmptyFields) {
-	setProperty("allowEmptyFields", DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, allowEmptyFields);
-    }
-
-    /**
-     * Get a property from the underlying database config.
-     * 
-     * @param propertyName           The name of the attribute
-     * @param dataConfigPropertyName The data config property name
-     * @return the value of the property
-     */
-    private Object getProperty(String propertyName, String dataConfigPropertyName) {
-	try {
-	    return this.databaseConfig.getProperty(dataConfigPropertyName);
-	} catch (RuntimeException ex) {
-	    throw new IllegalArgumentException("Unable to get " + propertyName, ex);
-	}
-    }
-
-    /**
-     * Set a property to the underlying data config.
-     * 
-     * @param propertyName           the name of the property
-     * @param dataConfigPropertyName the data config property name
-     * @param value                  the value to set
-     */
-    private void setProperty(String propertyName, String dataConfigPropertyName, Object value) {
-	ConfigProperty configProperty = CONFIG_PROPERTIES.get(dataConfigPropertyName);
-	Assert.state(configProperty != null,
-		"Unsupported config property " + dataConfigPropertyName + " for " + propertyName);
-	if (!configProperty.isNullable()) {
-	    Assert.notNull(value, propertyName + " cannot be null");
-	}
-	if (value != null) {
-	    Assert.isInstanceOf(configProperty.getPropertyType(), value, "Unable to set " + propertyName + " ");
-	}
-	this.databaseConfig.setProperty(dataConfigPropertyName, value);
+        Assert.notNull(allowEmptyFields, "allowEmptyFields cannot be null");
+        this.databaseConfig.setAllowEmptyFields(allowEmptyFields);
     }
 
     /**
      * Apply the configuration represented by this bean to the specified
      * databaseConfig.
-     * 
-     * @param databaseConfig the database config to be updated.
+     *
+     * @param targetDatabaseConfig the database config to be updated.
      */
-    public void apply(DatabaseConfig databaseConfig) {
-	for (ConfigProperty configProperty : DatabaseConfig.ALL_PROPERTIES) {
-	    String name = configProperty.getProperty();
-	    Object value = this.databaseConfig.getProperty(name);
-	    if ((configProperty.isNullable()) || ((!configProperty.isNullable()) && (value != null))) {
-		databaseConfig.setProperty(name, value);
-	    }
-	}
+    void apply(io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig targetDatabaseConfig) {
+        targetDatabaseConfig.apply(this.databaseConfig);
     }
 
+    public DatabaseConfig buildConfig() {
+        DatabaseConfig config = new DatabaseConfig();
+        apply(config);
+        return config;
+    }
 }
