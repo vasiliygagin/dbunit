@@ -20,13 +20,10 @@
  */
 package org.dbunit;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.sql.DataSource;
 
 /**
  * DatabaseTester that uses a {@link DataSource} to create connections.
@@ -38,11 +35,6 @@ import org.slf4j.LoggerFactory;
  * @since 2.2.0
  */
 public class DataSourceDatabaseTester extends AbstractDatabaseTester {
-
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceDatabaseTester.class);
 
     private DataSource dataSource;
 
@@ -76,10 +68,8 @@ public class DataSourceDatabaseTester extends AbstractDatabaseTester {
     }
 
     @Override
-    public IDatabaseConnection getConnection() throws Exception {
-        logger.debug("getConnection() - start");
-
+    protected Connection buildJdbcConnection() throws SQLException {
         assertTrue("DataSource is not set", dataSource != null);
-        return new DatabaseConnection(dataSource.getConnection(), new DatabaseConfig(), getSchema());
+        return dataSource.getConnection();
     }
 }

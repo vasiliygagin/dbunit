@@ -21,9 +21,6 @@
 
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
-
 /**
  * @author John Hurst (adapted from Manuel Laflamme: OracleEnvironment)
  * @version $Revision$
@@ -31,12 +28,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
  */
 public class PostgresqlEnvironment extends DatabaseEnvironment {
     public PostgresqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile);
-    }
-
-    @Override
-    protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setDataTypeFactory(new PostgresqlDataTypeFactory());
+        super(profile, new PostgresqlDatabaseConfig());
     }
 
     @Override

@@ -23,6 +23,7 @@
 
 package org.dbunit.database;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.util.Locale;
@@ -58,7 +59,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     public void testCreateConnectionWithNonExistingSchemaAndStrictValidation() throws Exception {
         DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
-        IDatabaseConnection validConnection = super.getConnection();
+        IDatabaseConnection validConnection = getConnection32();
         // Try to create a database connection with an invalid schema
         try {
             boolean validate = true;
@@ -73,15 +74,16 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     public void testCreateConnectionWithNonExistingSchemaAndLenientValidation() throws Exception {
         DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
-        IDatabaseConnection validConnection = super.getConnection();
+        IDatabaseConnection validConnection = getConnection32();
         // Try to create a database connection with an invalid schema
         boolean validate = false;
-        DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(), schema, validate);
+        DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(),
+                schema, validate);
         assertNotNull(dbConnection);
     }
 
     public void testCreateConnectionWithSchemaDbStoresUpperCaseIdentifiers() throws Exception {
-        IDatabaseConnection validConnection = super.getConnection();
+        IDatabaseConnection validConnection = getConnection32();
         String schema = validConnection.getSchema();
         assertNotNull("Precondition: schema of connection must not be null", schema);
 
@@ -99,7 +101,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     }
 
     public void testCreateConnectionWithSchemaDbStoresLowerCaseIdentifiers() throws Exception {
-        IDatabaseConnection validConnection = super.getConnection();
+        IDatabaseConnection validConnection = getConnection32();
         String schema = validConnection.getSchema();
         assertNotNull("Precondition: schema of connection must not be null", schema);
 
@@ -117,7 +119,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     }
 
     public void testCreateQueryWithPreparedStatement() throws Exception {
-        IDatabaseConnection connection = super.getConnection();
+        IDatabaseConnection connection = getConnection32();
         PreparedStatement pstmt = connection.getConnection()
                 .prepareStatement("select * from TEST_TABLE where COLUMN0=?");
 
@@ -139,4 +141,9 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         }
     }
 
+    private final IDatabaseConnection getConnection32() throws Exception {
+        Connection connection = getEnvironment().buildJdbcConnection();
+        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config2 = new DatabaseConfig();
+        return new DatabaseConnection(connection, config2, getProfile().getSchema());
+    }
 }

@@ -21,7 +21,9 @@
 
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
+import java.sql.Connection;
+
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -30,6 +32,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 import junit.framework.TestCase;
 
 /**
@@ -38,20 +41,54 @@ import junit.framework.TestCase;
  * @since Feb 18, 2002
  */
 public abstract class AbstractDatabaseIT extends TestCase {
-    protected IDatabaseConnection _connection;
+
+    protected IDatabaseConnection customizedConnection;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private DatabaseEnvironment environment;
 
     public AbstractDatabaseIT(String s) {
         super(s);
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance(null);
+
+        JdbcDatabaseTester databaseTester = environment.getDatabaseTester();
+
+        DatabaseConfig config = new DatabaseConfig();
+        databaseTester.setDatabaseConfig(config);
+        databaseTester.setSetUpOperation(getSetUpOperation());
+        databaseTester.setDataSet(getDataSet());
+        databaseTester.onSetup();
+
+        Connection conn = databaseTester.buildJdbcConnection();
+        customizedConnection = new DatabaseConnection(conn, config, databaseTester.getSchema());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        final IDatabaseTester databaseTester = environment.getDatabaseTester();
+
+        databaseTester.setTearDownOperation(getTearDownOperation());
+        databaseTester.setDataSet(getDataSet());
+        databaseTester.onTearDown();
+
+        DatabaseOperation.DELETE_ALL.execute(customizedConnection, customizedConnection.createDataSet());
+
+        customizedConnection.close();
+        customizedConnection = null;
+    }
+
     protected DatabaseEnvironment getEnvironment() throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null);
+        return environment;
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
-        return new SortedTable(_connection.createDataSet().getTable(tableName), new String[] { orderByColumn });
+        return new SortedTable(customizedConnection.createDataSet().getTable(tableName),
+                new String[] { orderByColumn });
 //        String sql = "select * from " + tableName + " order by " + orderByColumn;
 //        return _connection.createQueryTable(tableName, sql);
     }
@@ -66,77 +103,15 @@ public abstract class AbstractDatabaseIT extends TestCase {
      * @return The identifier converted according to database rules.
      */
     protected String convertString(String str) throws Exception {
-        return getEnvironment().convertString(str);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // TestCase class
-
-    @Override
-    protected void setUp() throws Exception {
-        super_setUp();
-
-        _connection = getDatabaseTester().getConnection();
-        setUpDatabaseConfig(_connection.getConfig());
-    }
-
-    protected IDatabaseTester getDatabaseTester() throws Exception {
-        try {
-            return getEnvironment().getDatabaseTester();
-        } catch (Exception e) {
-            // TODO matthias: this here hides original exceptions from being shown in the
-            // JUnit results
-            // (logger is not configured for unit tests). Think about how exceptions can be
-            // passed through
-            // So I temporarily added the "e.printStackTrace()"...
-            logger.error("getDatabaseTester()", e);
-            e.printStackTrace();
-        }
-        return super_getDatabaseTester();
-    }
-
-    protected void setUpDatabaseConfig(DatabaseConfig config) {
-        try {
-            getEnvironment().setupDatabaseConfig(config);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex); // JH_TODO: is this the "DbUnit way" to handle exceptions?
-        }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super_tearDown();
-
-        DatabaseOperation.DELETE_ALL.execute(_connection, _connection.createDataSet());
-
-        _connection.close();
-
-        _connection = null;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // DatabaseTestCase class
-
-    protected IDatabaseConnection getConnection() throws Exception {
-        IDatabaseConnection connection = getEnvironment().getConnection();
-        return connection;
-
-//        return new DatabaseEnvironment(getEnvironment().getProfile()).getConnection();
-//        return new DatabaseConnection(connection.getConnection(), connection.getSchema());
+        return environment.convertString(str);
     }
 
     protected IDataSet getDataSet() throws Exception {
-        return getEnvironment().getInitDataSet();
+        return environment.getInitDataSet();
     }
 
     protected void closeConnection(IDatabaseConnection connection) throws Exception {
-//        getEnvironment().closeConnection();
     }
-//
-//    protected DatabaseOperation getTearDownOperation() throws Exception
-//    {
-//        return DatabaseOperation.DELETE_ALL;
-//    }
 
     /**
      * This method is used so sub-classes can disable the tests according to some
@@ -170,40 +145,6 @@ public abstract class AbstractDatabaseIT extends TestCase {
         }
     }
 
-    private IDatabaseTester tester;
-
-    private IOperationListener operationListener;
-
-    /**
-     * Creates a IDatabaseTester for this testCase.<br>
-     *
-     * A {@link DefaultDatabaseTester} is used by default.
-     *
-     * @throws Exception
-     */
-    protected IDatabaseTester newDatabaseTester() throws Exception {
-        logger.debug("newDatabaseTester() - start");
-
-        final IDatabaseConnection connection = getConnection();
-        getOperationListener().connectionRetrieved(connection);
-        final IDatabaseTester tester = new DefaultDatabaseTester(connection);
-        return tester;
-    }
-
-    /**
-     * Gets the IDatabaseTester for this testCase.<br>
-     * If the IDatabaseTester is not set yet, this method calls newDatabaseTester()
-     * to obtain a new instance.
-     *
-     * @throws Exception
-     */
-    protected IDatabaseTester super_getDatabaseTester() throws Exception {
-        if (this.tester == null) {
-            this.tester = newDatabaseTester();
-        }
-        return this.tester;
-    }
-
     /**
      * Returns the database operation executed in test setup.
      */
@@ -216,57 +157,5 @@ public abstract class AbstractDatabaseIT extends TestCase {
      */
     protected DatabaseOperation getTearDownOperation() throws Exception {
         return DatabaseOperation.NONE;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // TestCase class
-
-    protected void super_setUp() throws Exception {
-        logger.debug("setUp() - start");
-
-        super.setUp();
-        final IDatabaseTester databaseTester = getDatabaseTester();
-        assertNotNull("DatabaseTester is not set", databaseTester);
-        databaseTester.setSetUpOperation(getSetUpOperation());
-        databaseTester.setDataSet(getDataSet());
-        databaseTester.setOperationListener(getOperationListener());
-        databaseTester.onSetup();
-    }
-
-    protected void super_tearDown() throws Exception {
-        logger.debug("tearDown() - start");
-
-        try {
-            final IDatabaseTester databaseTester = getDatabaseTester();
-            assertNotNull("DatabaseTester is not set", databaseTester);
-            databaseTester.setTearDownOperation(getTearDownOperation());
-            databaseTester.setDataSet(getDataSet());
-            databaseTester.setOperationListener(getOperationListener());
-            databaseTester.onTearDown();
-        } finally {
-            tester = null;
-            super.tearDown();
-        }
-    }
-
-    /**
-     * @return The {@link IOperationListener} to be used by the
-     *         {@link IDatabaseTester}.
-     * @since 2.4.4
-     */
-    protected IOperationListener getOperationListener() {
-        logger.debug("getOperationListener() - start");
-        if (this.operationListener == null) {
-            this.operationListener = new DefaultOperationListener() {
-                @Override
-                public void connectionRetrieved(IDatabaseConnection connection) {
-                    super.connectionRetrieved(connection);
-                    // When a new connection has been created then invoke the setUp method
-                    // so that user defined DatabaseConfig parameters can be set.
-                    setUpDatabaseConfig(connection.getConfig());
-                }
-            };
-        }
-        return this.operationListener;
     }
 }

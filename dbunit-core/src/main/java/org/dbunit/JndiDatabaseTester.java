@@ -20,6 +20,8 @@
  */
 package org.dbunit;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -27,9 +29,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,14 +92,12 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
     }
 
     @Override
-    public IDatabaseConnection getConnection() throws Exception {
-        logger.trace("getConnection() - start");
-
+    protected Connection buildJdbcConnection() throws NamingException, SQLException {
         if (!initialized) {
             initialize();
         }
 
-        return new DatabaseConnection(dataSource.getConnection(), new DatabaseConfig(), getSchema());
+        return dataSource.getConnection();
     }
 
     /**
@@ -122,18 +119,4 @@ public class JndiDatabaseTester extends AbstractDatabaseTester {
         assertTrue("DataSource is not set", dataSource != null);
         initialized = true;
     }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("lookupName=").append(this.lookupName);
-        sb.append(", environment=").append(this.environment);
-        sb.append(", initialized=").append(this.initialized);
-        sb.append(", dataSource=").append(this.dataSource);
-        sb.append(", schema=").append(super.getSchema());
-        sb.append("]");
-        return sb.toString();
-    }
-
 }

@@ -25,10 +25,12 @@ import java.io.File;
 
 import org.dbunit.util.FileHelper;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 public class DerbyEnvironment extends DatabaseEnvironment {
 
     public DerbyEnvironment(DatabaseProfile profile) throws Exception {
-        super(prepare(profile));
+        super(prepare(profile), new DatabaseConfig());
     }
 
     private static DatabaseProfile prepare(DatabaseProfile profile) {

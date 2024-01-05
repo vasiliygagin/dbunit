@@ -159,10 +159,10 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
     }
 
     public void testExecuteAndNoPrimaryKey() throws Exception {
-        IDataSet dataSet = _connection.createDataSet();
+        IDataSet dataSet = customizedConnection.createDataSet();
         ITableMetaData metaData = dataSet.getTableMetaData("TEST_TABLE");
         try {
-            new DeleteOperation().getOperationData(metaData, null, _connection);
+            new DeleteOperation().getOperationData(metaData, null, customizedConnection);
             fail("Should throw a NoPrimaryKeyException");
         } catch (NoPrimaryKeyException e) {
         }
@@ -194,7 +194,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         assertEquals("before", "1", tableBefore.getValue(1, columnName).toString());
         assertEquals("before", "2", tableBefore.getValue(2, columnName).toString());
 
-        DatabaseOperation.DELETE.execute(_connection, dataSet);
+        DatabaseOperation.DELETE.execute(customizedConnection, dataSet);
 
         ITable tableAfter = createOrderedTable(tableName, columnName);
         assertEquals("row count after", 2, tableAfter.getRowCount());

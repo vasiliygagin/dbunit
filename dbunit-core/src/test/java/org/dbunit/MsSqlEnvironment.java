@@ -20,17 +20,10 @@
  */
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
-
 public class MsSqlEnvironment extends DatabaseEnvironment {
-    public MsSqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile);
-    }
 
-    @Override
-    protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setDataTypeFactory(new MsSqlDataTypeFactory());
+    public MsSqlEnvironment(DatabaseProfile profile) throws Exception {
+        super(profile, new MsSqlDatabaseConfig());
     }
 
     /**

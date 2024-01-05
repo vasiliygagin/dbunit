@@ -21,22 +21,14 @@
 
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
-
 /**
  * @author John Hurst (adpated from Manuel Laflamme: OracleEnvironment)
  * @version $Revision$
  * @since DbUnit 2.4.7
  */
 public class Oracle10Environment extends OracleEnvironment {
+
     public Oracle10Environment(DatabaseProfile profile) throws Exception {
-        super(profile);
+        super(profile, new Oracle10DatabaseConfig());
     }
-
-    @Override
-    protected void setupDatabaseConfig(DatabaseConfig config) {
-        config.setDataTypeFactory(new Oracle10DataTypeFactory());
-    }
-
 }

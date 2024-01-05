@@ -21,13 +21,13 @@
 
 package org.dbunit;
 
-import org.dbunit.operation.DatabaseOperation;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.dbunit.operation.DatabaseOperation;
 
 /**
  * @author Manuel Laflamme
@@ -59,17 +59,14 @@ public class HypersonicEnvironment extends DatabaseEnvironment {
     }
 
     public static void deleteFiles(File directory, final String filename) {
-        File[] files = directory.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                if (name.indexOf(filename) != -1) {
-                    return true;
-                }
-                return false;
+        File[] files = directory.listFiles((FilenameFilter) (dir, name) -> {
+            if (name.indexOf(filename) != -1) {
+                return true;
             }
+            return false;
         });
 
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
+        for (File file : files) {
             file.delete();
         }
 

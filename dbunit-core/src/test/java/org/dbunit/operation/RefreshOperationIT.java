@@ -86,7 +86,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
             assertEquals("row count before", tableRowCount[i], tableBefore.getRowCount());
         }
 
-        DatabaseOperation.REFRESH.execute(_connection, dataSet);
+        DatabaseOperation.REFRESH.execute(customizedConnection, dataSet);
 
         // verify table after
         IDataSet expectedDataSet = new FlatXmlDataSetBuilder()
@@ -106,17 +106,17 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
 
         // verify table before
-        assertEquals("row count before", 6, _connection.getRowCount(tableName));
+        assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
 
         try {
-            DatabaseOperation.REFRESH.execute(_connection, dataSet);
+            DatabaseOperation.REFRESH.execute(customizedConnection, dataSet);
             fail("Should not be here!");
         } catch (NoPrimaryKeyException e) {
 
         }
 
         // verify table after
-        assertEquals("row count before", 6, _connection.getRowCount(tableName));
+        assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
     }
 
     public void testExecuteWithEmptyTable() throws Exception {

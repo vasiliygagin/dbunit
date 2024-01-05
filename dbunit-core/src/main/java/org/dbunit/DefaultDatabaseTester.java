@@ -20,6 +20,8 @@
  */
 package org.dbunit;
 
+import java.sql.Connection;
+
 import org.dbunit.database.IDatabaseConnection;
 
 /**
@@ -42,8 +44,14 @@ public class DefaultDatabaseTester extends AbstractDatabaseTester {
         this.connection = connection;
     }
 
+    @Override
     public IDatabaseConnection getConnection() throws Exception {
         return this.connection;
+    }
+
+    @Override
+    protected Connection buildJdbcConnection() throws Exception {
+        throw new UnsupportedOperationException();
     }
 
 }

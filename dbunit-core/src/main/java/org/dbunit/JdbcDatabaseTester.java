@@ -22,12 +22,7 @@ package org.dbunit;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.SQLException;
 
 /**
  * DatabaseTester that uses JDBC's Driver Manager to create connections.<br>
@@ -39,13 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JdbcDatabaseTester extends AbstractDatabaseTester {
 
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(JdbcDatabaseTester.class);
-
     private String connectionUrl;
-    private String driverClass;
     private String password;
     private String username;
 
@@ -94,7 +83,6 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
     public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password, String schema)
             throws ClassNotFoundException {
         super(schema);
-        this.driverClass = driverClass;
         this.connectionUrl = connectionUrl;
         this.username = username;
         this.password = password;
@@ -104,9 +92,7 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
     }
 
     @Override
-    public IDatabaseConnection getConnection() throws Exception {
-        logger.debug("getConnection() - start");
-
+    protected Connection buildJdbcConnection() throws SQLException {
         assertNotNullNorEmpty("connectionUrl", connectionUrl);
         Connection conn = null;
         if (username == null && password == null) {
@@ -114,20 +100,6 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
         } else {
             conn = DriverManager.getConnection(connectionUrl, username, password);
         }
-        return new DatabaseConnection(conn, new DatabaseConfig(), getSchema());
+        return conn;
     }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("connectionUrl=").append(this.connectionUrl);
-        sb.append(", driverClass=").append(this.driverClass);
-        sb.append(", username=").append(this.username);
-        sb.append(", password=**********");
-        sb.append(", schema=").append(super.getSchema());
-        sb.append("]");
-        return sb.toString();
-    }
-
 }
