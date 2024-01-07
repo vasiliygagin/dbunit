@@ -21,17 +21,16 @@
 
 package org.dbunit.database.statement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.dataset.DataSetUtils;
-import org.dbunit.dataset.datatype.DataType;
-import org.dbunit.dataset.datatype.TypeCastException;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.dbunit.dataset.DataSetUtils;
+import org.dbunit.dataset.datatype.DataType;
+import org.dbunit.dataset.datatype.TypeCastException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Manuel Laflamme
@@ -50,7 +49,7 @@ public class BatchStatementDecorator implements IPreparedBatchStatement {
     private StringBuffer _sqlBuffer;
     private int _index;
 
-    BatchStatementDecorator(String sql, IBatchStatement statement) {
+    public BatchStatementDecorator(String sql, IBatchStatement statement) {
         List list = new ArrayList();
         StringTokenizer tokenizer = new StringTokenizer(sql, "?");
         while (tokenizer.hasMoreTokens()) {
@@ -72,6 +71,7 @@ public class BatchStatementDecorator implements IPreparedBatchStatement {
     ////////////////////////////////////////////////////////////////////////////
     // IPreparedBatchStatement interface
 
+    @Override
     public void addValue(Object value, DataType dataType) throws TypeCastException, SQLException {
         logger.debug("addValue(value={}, dataType={}) - start", value, dataType);
 
@@ -79,6 +79,7 @@ public class BatchStatementDecorator implements IPreparedBatchStatement {
         _sqlBuffer.append(_sqlTemplate[_index++]);
     }
 
+    @Override
     public void addBatch() throws SQLException {
         logger.debug("addBatch() - start");
 
@@ -89,12 +90,14 @@ public class BatchStatementDecorator implements IPreparedBatchStatement {
         _sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
     }
 
+    @Override
     public int executeBatch() throws SQLException {
         logger.debug("executeBatch() - start");
 
         return _statement.executeBatch();
     }
 
+    @Override
     public void clearBatch() throws SQLException {
         logger.debug("clearBatch() - start");
 
@@ -105,6 +108,7 @@ public class BatchStatementDecorator implements IPreparedBatchStatement {
         _sqlBuffer = new StringBuffer(_sqlTemplate[_index++]);
     }
 
+    @Override
     public void close() throws SQLException {
         logger.debug("close() - start");
 
