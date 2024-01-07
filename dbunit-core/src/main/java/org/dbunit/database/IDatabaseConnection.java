@@ -37,7 +37,8 @@ import org.dbunit.dataset.ITable;
  * @version $Revision$
  * @since Mar 6, 2002
  */
-public interface IDatabaseConnection {
+public interface IDatabaseConnection extends DbConnection {
+
     /**
      * Returns a JDBC database connection.
      */

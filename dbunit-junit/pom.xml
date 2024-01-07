@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.vasiliygagin</groupId>
+        <artifactId>dbunit-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../dbunit-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>dbunit-junit</artifactId>
+    <packaging>jar</packaging>
+    <name>Legacy (Original) dbUnit JUnit4 integration</name>
+    <description>
+        dbUnit is a JUnit extension (also usable from Ant and Maven) targeted
+        for database-driven projects that, among other things, puts your
+        database into a known state between test runs. This is an excellent way
+        to avoid the myriad of problems that can occur when one test case
+        corrupts the database and causes subsequent tests to fail or exacerbate
+        the damage.
+    </description>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License, Version 2.1</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- Maven configuration -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.scm.id>sourceforge</project.scm.id>
+
+        <!-- General values -->
+        <compileSource>1.8</compileSource>
+        <checkstyle.excludes>org/dbunit/util/concurrent/*.java</checkstyle.excludes>
+        <mavenVersion>3.0.4</mavenVersion>
+
+        <!-- Maven plugin versions -->
+        <assemblyPluginVersion>3.1.0</assemblyPluginVersion>
+        <changelogPluginVersion>2.3</changelogPluginVersion>
+        <changesPluginVersion>2.12.1</changesPluginVersion>
+        <checkstylePluginVersion>2.17</checkstylePluginVersion>
+        <cleanPluginVersion>3.0.0</cleanPluginVersion>
+        <compilerPluginVersion>3.7.0</compilerPluginVersion>
+        <deployPluginVersion>2.8.2</deployPluginVersion>
+        <enforcerPluginVersion>1.4.1</enforcerPluginVersion>
+        <failsafePluginVersion>2.21.0</failsafePluginVersion>
+        <gpgPluginVersion>1.6</gpgPluginVersion>
+        <installPluginVersion>2.5.2</installPluginVersion>
+        <jacocoPluginVersion>0.8.3</jacocoPluginVersion>
+        <japicmpPluginVersion>0.15.3</japicmpPluginVersion>
+        <jarPluginVersion>3.0.2</jarPluginVersion>
+        <jdependPluginVersion>2.0</jdependPluginVersion>
+        <jxrPluginVersion>2.5</jxrPluginVersion>
+        <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
+        <pmdPluginVersion>3.8</pmdPluginVersion>
+        <projectInfoReportsPluginVersion>2.9</projectInfoReportsPluginVersion>
+        <propertiesPluginVersion>1.0.0</propertiesPluginVersion>
+        <releasePluginVersion>2.5.3</releasePluginVersion>
+        <resourcesPluginVersion>3.0.2</resourcesPluginVersion>
+        <sitePluginVersion>3.7.1</sitePluginVersion>
+        <sourcePluginVersion>3.0.1</sourcePluginVersion>
+        <surefirePluginVersion>2.21.0</surefirePluginVersion>
+        <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
+        <wagonSshVersion>2.10</wagonSshVersion>
+
+        <mockObjectsVersion>0.09</mockObjectsVersion>
+        <hsqldbDriverVersion>1.8.0.1</hsqldbDriverVersion>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dbunit-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--
+      TODO: check which dependencies could marked as optional. For
+      instance, ant is optional because it's only necessary for the
+      dbunit Ant tasks.
+    -->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mockobjects</groupId>
+            <artifactId>mockobjects-core</artifactId>
+            <version>${mockObjectsVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO: check why follow dependency is necessary -->
+        <dependency>
+            <groupId>mockobjects</groupId>
+            <artifactId>mockobjects-jdk1.3</artifactId>
+            <version>${mockObjectsVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+                <version>${hsqldbDriverVersion}</version>
+                <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${assemblyPluginVersion}</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>assembly.xml</descriptor>
+                        </descriptors>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-changelog-plugin</artifactId>
+                    <version>${changelogPluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-changes-plugin</artifactId>
+                    <version>${changesPluginVersion}</version>
+                    <executions>
+                        <execution>
+                            <id>check-changes</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>changes-check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${checkstylePluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${cleanPluginVersion}</version>
+                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
+<!--                    <version>${enforcerPluginVersion}</version>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <id>enforce-versions</id>-->
+<!--                            <goals>-->
+<!--                                <goal>enforce</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                    <configuration>-->
+<!--                        <rules>-->
+<!--                            <requireMavenVersion>-->
+<!--                                <version>${mavenVersion}</version>-->
+<!--                            </requireMavenVersion>-->
+<!--                            <requireJavaVersion>-->
+<!--                                <version>${compileSource}</version>-->
+<!--                            </requireJavaVersion>-->
+<!--                            <requirePluginVersions>-->
+<!--                                <phases>compile</phases>-->
+<!--                            </requirePluginVersions>-->
+<!--                        </rules>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${failsafePluginVersion}</version>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacocoPluginVersion}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <!--
+enable this to generate coverage report HTML files during build (same as site)
+            <execution>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+-->
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${jarPluginVersion}</version>
+                    <configuration>
+                        <includes>
+                            <include>/LICENSE.txt</include>
+                            <include>**</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jdepend-maven-plugin</artifactId>
+                    <version>${jdependPluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <version>${jxrPluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.gaul</groupId>
+                    <artifactId>modernizer-maven-plugin</artifactId>
+                    <version>${modernizer-maven-plugin}</version>
+                    <configuration>
+                        <javaVersion>${compileSource}</javaVersion>
+                        <!-- TODO enable failOnViolations after fixing
+                        failures-->
+                        <failOnViolations>false</failOnViolations>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>modernizer</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>modernizer</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${pmdPluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>${propertiesPluginVersion}</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>read-project-properties</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>${projectInfoReportsPluginVersion}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${sitePluginVersion}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ssh</artifactId>
+                            <version>${wagonSshVersion}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefirePluginVersion}</version>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <excludes>
+                            <exclude>**/Abstract*.java</exclude>
+                        </excludes>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versionsMavenPluginVersion}</version>
+                    <configuration>
+                        <rulesUri>
+                            file:///${project.basedir}/versions-maven-plugin-rules.xml</rulesUri>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

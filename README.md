@@ -6,6 +6,19 @@ This project was forked from latest dbUnit and spring-test-dbunit versions I fou
 It seems that both projects are abandoned.
 I am giving them a throw grooming and some modernization.
 
+State of things
+===============
+
+- At the core dbUnid is still an old self both powerfull and weak. And also outdated. Things are being worked on.
+- Project structure have changed to modern Maven multi-module structure.
+- All ant support moved to its own 'dbunit-ant' module. no clue if anyone needs it. It seems outdated. No plans to improve it. Unless there is an interest in it.
+- All original junit support moved to 'dbunit-junit-legacy module. I think it was written for JUnit 2. Not sure why anyone would want to use it. Will try keep it compatible and operatiional. Though it seems to be waste of time.
+- Most of the work currently done on integration with Junit 4 and 5. Cleaning dependencies.
+- Hashing plans for improving core.
+
+Information BLOB
+================
+
 Initial releases of new forked artifacts are:
 
         <dependency>

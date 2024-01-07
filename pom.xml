@@ -6,7 +6,7 @@
 
     <groupId>io.github.vasiliygagin</groupId>
     <artifactId>dbunit</artifactId>
-    <version>2.11.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -54,6 +54,7 @@
     <modules>
         <module>dbunit-parent</module>
         <module>dbunit-core</module>
+        <module>dbunit-junit</module>
         <module>dbunit-ant</module>
         <module>dbunit-junit-legacy</module>
         <module>dbunit-xls</module>
@@ -66,17 +67,17 @@
             <dependency>
                 <groupId>io.github.vasiliygagin</groupId>
                 <artifactId>dbunit-core</artifactId>
-                <version>2.11.0-SNAPSHOT</version>
+                <version>3.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.github.vasiliygagin</groupId>
                 <artifactId>dbunit-spring</artifactId>
-                <version>2.11.0-SNAPSHOT</version>
+                <version>3.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.github.vasiliygagin</groupId>
                 <artifactId>dbunit-spring-sample</artifactId>
-                <version>2.11.0-SNAPSHOT</version>
+                <version>3.0.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
