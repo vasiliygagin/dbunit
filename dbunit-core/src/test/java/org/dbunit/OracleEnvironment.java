@@ -35,8 +35,9 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @since May 2, 2002
  */
 public class OracleEnvironment extends DatabaseEnvironment {
-    public OracleEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile, new OracleDatabaseConfig());
+
+    public OracleEnvironment() throws Exception {
+        super(new OracleDatabaseProfile(), new OracleDatabaseConfig());
     }
 
     /**
@@ -54,5 +55,16 @@ public class OracleEnvironment extends DatabaseEnvironment {
                 new DefaultTable("SDO_GEOMETRY_TABLE"), new DefaultTable("XML_TYPE_TABLE"), };
 
         return new CompositeDataSet(super.getInitDataSet(), new DefaultDataSet(extraTables));
+    }
+
+    /**
+     *
+     */
+    private static class OracleDatabaseProfile extends DatabaseProfile {
+
+        public OracleDatabaseProfile() {
+            super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "DBUNIT", "dbunit", "dbunit",
+                    "oracle.sql", false, new String[] { "INSERT_IDENTITY", "SCROLLABLE_RESULTSET" });
+        }
     }
 }

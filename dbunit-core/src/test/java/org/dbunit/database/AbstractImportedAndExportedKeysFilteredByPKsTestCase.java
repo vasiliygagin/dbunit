@@ -10,8 +10,8 @@ import org.dbunit.util.search.SearchException;
 public abstract class AbstractImportedAndExportedKeysFilteredByPKsTestCase
         extends AbstractSearchCallbackFilteredByPKsTestCase {
 
-    public AbstractImportedAndExportedKeysFilteredByPKsTestCase(String testName, String sqlFile) {
-        super(testName, sqlFile);
+    public AbstractImportedAndExportedKeysFilteredByPKsTestCase(String sqlFile) {
+        super(sqlFile);
     }
 
     protected IDataSet getDataset() throws SQLException, SearchException, DataSetException {

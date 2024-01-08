@@ -1,16 +1,14 @@
-/**
-
- Create tables used to test ImportedAndExportedKeysSearchCallback's ordering algorithm with 
- the following dependencies:
-
-    A - B
-    |
-    C    D - E
-          \ /
-           F  
-	     
- 
-*/
+--
+-- Create tables used to test ImportedAndExportedKeysSearchCallback's ordering algorithm with 
+-- the following dependencies:
+--
+--    A - B
+--    |
+--    C    D - E
+--          \ /
+--           F  
+--	     
+--
 
 CREATE TABLE A
   (PKA NUMERIC,

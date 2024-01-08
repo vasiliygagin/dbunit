@@ -35,7 +35,7 @@ import org.dbunit.DatabaseEnvironmentLoader;
  */
 public class TestUtils {
     private static String getProfileName() throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null).getProfile().profileName;
+        return DatabaseEnvironmentLoader.getInstance().getProfile().profileName;
     }
 
     public static String getFileName(String fileName) {

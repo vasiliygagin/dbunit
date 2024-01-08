@@ -25,7 +25,7 @@ public class DatabaseEnvironmentLoader {
 
     private static DatabaseEnvironment INSTANCE = null;
 
-    public static DatabaseEnvironment getInstance(String profileName) throws Exception {
+    public static DatabaseEnvironment getInstance() throws Exception {
         if (INSTANCE == null) {
             final DatabaseProfile profile = new DatabaseProfile("hsqldb");
             INSTANCE = new HypersonicEnvironment(profile);

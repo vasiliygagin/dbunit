@@ -26,17 +26,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
-
 /**
  * @author John Hurst (john.b.hurst@gmail.com)
  * @since 2.4.8
  */
 public class TestUtils {
-    private static String getProfileName() throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null).getProfile().profileName;
-    }
 
     public static String getFileName(String fileName) {
         return "src/test/resources/" + fileName;
@@ -44,16 +38,6 @@ public class TestUtils {
 
     public static File getFile(String fileName) {
         return new File(getFileName(fileName));
-    }
-
-    public static File getFileForDatabaseEnvironment(String originalFileName) throws Exception {
-        String profilePath = originalFileName.replace(".", "-" + getProfileName() + ".");
-        File profileFile = new File(profilePath);
-        if (profileFile.exists()) {
-            return profileFile;
-        } else {
-            return new File(originalFileName);
-        }
     }
 
     public static FileReader getFileReader(String fileName) throws FileNotFoundException {

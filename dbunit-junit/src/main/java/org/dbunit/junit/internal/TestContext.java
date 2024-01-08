@@ -5,6 +5,7 @@ package org.dbunit.junit.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.junit.ConnectionSource;
@@ -16,15 +17,40 @@ import org.dbunit.junit.DatabaseException;
 public class TestContext {
 
     private Map<String, ConnectionSource> connectionSources = new HashMap<>();
-    private DatabaseConnection connection;
+    private Map<String, DatabaseConnection> connections = new HashMap<>();
     private String schema;
 
-    public DatabaseConnection getConnection() {
-        return connection;
+    public DatabaseConnection getConnection() throws DatabaseException {
+        String connectionName = getConnectionName();
+        return getConnection(connectionName);
     }
 
-    public void setConnection(DatabaseConnection connection) {
-        this.connection = connection;
+    /**
+     * @param connectionName
+     * @return
+     * @throws DatabaseException
+     */
+    public DatabaseConnection getConnection(String connectionName) throws DatabaseException {
+        DatabaseConnection databaseConnection = connections.get(connectionName);
+        if (databaseConnection == null) {
+            ConnectionSource connectionSource = connectionSources.get(connectionName);
+            if (connectionSource == null) {
+                throw new AssertionError("No connection named [" + connectionName + "] is registered for test case");
+            }
+            databaseConnection = connectionSource.getConnection();
+            connections.put(connectionName, databaseConnection);
+        }
+        return databaseConnection;
+    }
+
+    public String getConnectionName() {
+        if (connectionSources.size() > 1) {
+            throw new AssertionError("Multiple connections registered for test case");
+        }
+        if (connectionSources.size() == 1) {
+            return connectionSources.keySet().iterator().next();
+        }
+        throw new AssertionError("No connections registered for test case");
     }
 
     /**
@@ -34,10 +60,6 @@ public class TestContext {
     public void addConnecionSource(String dataSourceName, ConnectionSource connectionSource) {
         connectionSources.put(dataSourceName, connectionSource);
 
-    }
-
-    public void addConnecionSource(ConnectionSource connectionSource) {
-        connectionSources.put("", connectionSource);
     }
 
     public ConnectionSource getSingleConnectionSource() {
@@ -50,18 +72,13 @@ public class TestContext {
         throw new AssertionError("No connections registered for test case");
     }
 
-    public DatabaseConnection getSingleSourceConnection() throws DatabaseException {
-        if (connection == null) {
-            connection = getSingleConnectionSource().getConnection();
+    public void releaseConnections() {
+        for (Entry<String, DatabaseConnection> entry : connections.entrySet()) {
+            String connectionName = entry.getKey();
+            DatabaseConnection connection = entry.getValue();
+            connectionSources.get(connectionName).releaseConnection(connection);
         }
-        return connection;
-    }
-
-    public void releaseConnection() {
-        if (connection != null) {
-            getSingleConnectionSource().releaseConnection(connection);
-            this.connection = null;
-        }
+        connections.clear();
     }
 
     public String getSchema() {

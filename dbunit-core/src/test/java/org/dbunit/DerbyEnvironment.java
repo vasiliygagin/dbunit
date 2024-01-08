@@ -29,12 +29,21 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class DerbyEnvironment extends DatabaseEnvironment {
 
-    public DerbyEnvironment(DatabaseProfile profile) throws Exception {
-        super(prepare(profile), new DatabaseConfig());
+    public DerbyEnvironment() throws Exception {
+        super(prepare(new DerbyDatabaseProfile()), new DatabaseConfig());
     }
 
     private static DatabaseProfile prepare(DatabaseProfile profile) {
         FileHelper.deleteDirectory(new File("./target/derby_db"));
         return profile;
+    }
+
+    private static class DerbyDatabaseProfile extends DatabaseProfile {
+
+        public DerbyDatabaseProfile() {
+            super("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:target/derby_db;create=true", "APP", "APP", "APP",
+                    "derby.sql", false, new String[] { "VARBINARY", "BLOB", "CLOB", "TRANSACTION",
+                            "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE", "SDO_GEOMETRY", "XML_TYPE" });
+        }
     }
 }

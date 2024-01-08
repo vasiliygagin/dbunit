@@ -1,7 +1,7 @@
 /*
  * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
-package io.github.vasiliygagin.dbunit.jdbc;
+package org.dbunit.internal.connections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -65,5 +65,15 @@ public class SingleConnectionDataSourceTest {
     public void getConnectionWithcredentials() throws Exception {
         Connection result = tested.getConnection(null, null);
         assertEquals(connection, ((UncloseableConnection) result).delegate);
+    }
+
+    @Test
+    public void equalsIfWrappedConnectionsEqual() {
+        assertEquals(tested, new SingleConnectionDataSource(connection));
+    }
+
+    @Test
+    public void hashCodeFromWrappedConnection() {
+        assertEquals(connection.hashCode(), tested.hashCode());
     }
 }

@@ -1,24 +1,22 @@
-/**
-
- Create tables used to test ImportedKeysSearchCallback's ordering algorithm with the 
- following dependencies:
- 
-	  D - D
-	 / \   \  
-	F   A - G
-	 \ / \ /
-	  C   E H
-	   \ / /
-	     B
-	     
- The correct result should be: D, A, F, C, G, E, H, B
- 
- Cycles:
- 
- D <-> D
- A -> G -> D
- 
-*/
+--
+-- Create tables used to test ImportedKeysSearchCallback's ordering algorithm with the 
+-- following dependencies:
+--
+--	  D - D
+--	 / \   \  
+--	F   A - G
+--	 \ / \ /
+--	  C   E H
+--	   \ / /
+--	     B
+--	     
+-- The correct result should be: D, A, F, C, G, E, H, B
+-- 
+-- Cycles:
+-- 
+-- D <-> D
+-- A -> G -> D
+-- 
 
 CREATE TABLE A
   (PKA NUMERIC,

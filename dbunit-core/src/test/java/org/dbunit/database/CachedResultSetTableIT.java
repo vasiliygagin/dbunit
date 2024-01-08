@@ -37,7 +37,7 @@ public class CachedResultSetTableIT extends AbstractTableTest {
     }
 
     protected ITable createTable() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
         IDatabaseConnection connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
@@ -47,7 +47,7 @@ public class CachedResultSetTableIT extends AbstractTableTest {
     }
 
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
+        return DatabaseEnvironmentLoader.getInstance().convertString(str);
     }
 
     public void testGetMissingValue() throws Exception {

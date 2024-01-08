@@ -20,6 +20,8 @@
  */
 package org.dbunit.database.search;
 
+import java.util.Arrays;
+
 import org.dbunit.database.IDatabaseConnection;
 
 /**
@@ -29,20 +31,16 @@ import org.dbunit.database.IDatabaseConnection;
  */
 public class ImportAndExportNodesFilterSearchCallbackTest extends ImportNodesFilterSearchCallbackTest {
 
-    public ImportAndExportNodesFilterSearchCallbackTest(String testName) {
-        super(testName);
-    }
-
+    @Override
     protected String[][] getExpectedOutput() {
         int size = getInput().length;
         String[][] result = new String[size][];
         String[] allResults = super.getExpectedOutput()[1];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = allResults;
-        }
+        Arrays.fill(result, allResults);
         return result;
     }
 
+    @Override
     protected AbstractMetaDataBasedSearchCallback getCallback(IDatabaseConnection connection) {
         return new ImportedAndExportedKeysSearchCallback(connection);
     }

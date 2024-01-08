@@ -23,7 +23,6 @@ package org.dbunit.junit4;
 import static org.dbunit.junit4.DbunitTestCaseTestRunner.assertAfter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -50,16 +49,11 @@ public class DriverManagerConnectionIT {
     @Test
     public void testConnectionLifecycle() throws Exception {
         TestContext testContext = dbUnit.getTestContext();
-        assertNull(testContext.getConnection());
 
         DatabaseMetaData metadata = dbUnit.getJdbcConnection().getMetaData();
         assertNotNull(testContext.getConnection());
 
         assertEquals("HSQL Database Engine", metadata.getDatabaseProductName());
-
-        assertAfter(() -> {
-            assertNull(testContext.getConnection());
-        });
     }
 
     @Test

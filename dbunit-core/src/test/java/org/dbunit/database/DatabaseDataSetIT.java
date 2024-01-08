@@ -48,14 +48,12 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
     // TestCase class
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
+    protected final void setUp() throws Exception {
+        _connection = DatabaseEnvironmentLoader.getInstance().getConnection();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected final void tearDown() throws Exception {
         super.tearDown();
 
         _connection = null;
@@ -66,7 +64,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
     @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
+        return DatabaseEnvironmentLoader.getInstance().convertString(str);
     }
 
     @Override

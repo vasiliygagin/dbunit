@@ -1,7 +1,7 @@
 /*
  * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
-package io.github.vasiliygagin.dbunit.jdbc;
+package org.dbunit.internal.connections;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,7 +24,10 @@ public class SingleConnectionDataSource implements DataSource {
         if (connection == null) {
             throw new IllegalArgumentException("The parameter 'connection' must not be null");
         }
-        this.connection = new UncloseableConnection(connection);
+        if (!(connection instanceof UncloseableConnection)) {
+            connection = new UncloseableConnection(connection);
+        }
+        this.connection = connection;
     }
 
     @Override
@@ -70,5 +73,18 @@ public class SingleConnectionDataSource implements DataSource {
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         return connection;
+    }
+
+    @Override
+    public int hashCode() {
+        return connection.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        SingleConnectionDataSource other = (SingleConnectionDataSource) obj;
+        return connection.equals(other.connection);
     }
 }

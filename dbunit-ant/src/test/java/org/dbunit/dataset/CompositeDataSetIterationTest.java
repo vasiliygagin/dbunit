@@ -21,16 +21,13 @@
 
 package org.dbunit.dataset;
 
-import java.io.BufferedReader;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
+import org.dbunit.DdlExecutor;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -38,8 +35,10 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-
-import junit.framework.TestCase;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test Case for issue #1721870
@@ -48,60 +47,32 @@ import junit.framework.TestCase;
  * @version $Revision$
  * @since Mar 11, 2008
  */
-public class CompositeDataSetIterationTest extends TestCase {
+public class CompositeDataSetIterationTest {
 
     private Connection jdbcConnection;
     private IDatabaseConnection connection;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        Class.forName("org.hsqldb.jdbcDriver");
-        Connection connection1 = DriverManager.getConnection("jdbc:hsqldb:" + "mem:tempdb", "sa", "");
-        this.jdbcConnection = connection1;
+    @Before
+    public void setUp() throws Exception {
+        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+                "jdbc:hsqldb:mem:tempdb", "sa", "");
         final File ddlFile = new File("src/test/resources/sql/hypersonic_simple_dataset.sql");
-        final Connection connection2 = jdbcConnection;
 
-        final String sql = readSqlFromFile(ddlFile);
-
-        executeSql(connection2, sql);
+        DdlExecutor.executeDdlFile(ddlFile, jdbcConnection, false);
 
         DatabaseConfig config = new DatabaseConfig();
         this.connection = new DatabaseConnection(jdbcConnection, config);
         config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
-    private String readSqlFromFile(final File ddlFile) throws IOException {
-        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
-        final StringBuilder sqlBuffer = new StringBuilder();
-        while (sqlReader.ready()) {
-            String line = sqlReader.readLine();
-            if (!line.startsWith("-")) {
-                sqlBuffer.append(line);
-            }
-        }
-
-        sqlReader.close();
-
-        return sqlBuffer.toString();
-    }
-
-    private void executeSql(final Connection connection2, final String sql) throws SQLException {
-
-        try (final Statement statement = connection2.createStatement();) {
-            statement.execute(sql);
-        }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         final Connection connection = this.jdbcConnection;
 
-        executeSql(connection, "SHUTDOWN IMMEDIATELY");
-        this.jdbcConnection.close();
+//        executeSql(connection, "SHUTDOWN IMMEDIATELY");
     }
 
+    @Test
     public void testMe() throws Exception {
 
         // 1. QueryDataSet

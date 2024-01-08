@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
-import java.sql.DriverManager;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -39,6 +39,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
@@ -92,9 +93,9 @@ public class CsvURLProducerTest {
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
         DatabaseConfig config = new DatabaseConfig();
         config.setDataTypeFactory(new HsqldbDataTypeFactory());
-        DatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection(url, user, password),
-                config);
-        return connection;
+        Connection connection2 = DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), url,
+                user, password);
+        return new DatabaseConnection(connection2, config);
     }
 
     @Before
@@ -118,8 +119,8 @@ public class CsvURLProducerTest {
             statement.execute("DROP TABLE ORDERS_ROW");
         } catch (Exception ignored) {
         }
-        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR)");
-        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR, QUANTITY INTEGER)");
+        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
+        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
         // statement.execute("delete from orders");
         // statement.execute("delete from orders_row");
         statement.close();

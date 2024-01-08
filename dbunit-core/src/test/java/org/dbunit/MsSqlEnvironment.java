@@ -22,8 +22,8 @@ package org.dbunit;
 
 public class MsSqlEnvironment extends DatabaseEnvironment {
 
-    public MsSqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile, new MsSqlDatabaseConfig());
+    public MsSqlEnvironment() throws Exception {
+        super(new MsSqlDatabaseProfile(), new MsSqlDatabaseConfig());
     }
 
     /**
@@ -34,5 +34,15 @@ public class MsSqlEnvironment extends DatabaseEnvironment {
     @Override
     public String convertString(final String str) {
         return str;
+    }
+
+    private static class MsSqlDatabaseProfile extends DatabaseProfile {
+
+        public MsSqlDatabaseProfile() {
+            super("com.microsoft.sqlserver.jdbc.SQLServerDriver",
+                    "jdbc:sqlserver://localhost:1433;user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor",
+                    "dbo", "sa", "theSaPassword1234", "mssql.sql", false,
+                    new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "SDO_GEOMETRY", "XML_TYPE" });
+        }
     }
 }

@@ -47,7 +47,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
         _connection = env.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(_connection, env.getInitDataSet());

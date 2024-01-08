@@ -3,8 +3,6 @@
  */
 package org.dbunit.junit.internal.connections;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -14,7 +12,6 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.junit.ConnectionSource;
 import org.dbunit.junit.DatabaseException;
-import org.dbunit.junit4.DdlExecutor;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
@@ -27,17 +24,6 @@ public class DataSourceConnectionSource implements ConnectionSource {
 
     public DataSourceConnectionSource(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-    private void initDB() throws DatabaseException {
-        try (//
-                Connection jdbcConnection = dataSource.getConnection(); //
-        ) {
-            final File ddlFile = new File("src/test/resources/sql/hypersonic.sql");
-            DdlExecutor.executeDdl(jdbcConnection, ddlFile);
-        } catch (SQLException | IOException exc) {
-            throw new DatabaseException(exc);
-        }
     }
 
     @Override

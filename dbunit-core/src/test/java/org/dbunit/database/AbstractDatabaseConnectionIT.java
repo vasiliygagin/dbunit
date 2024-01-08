@@ -104,7 +104,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
     private DefaultDatabaseTester newDatabaseTester(String schema) throws Exception {
         logger.debug("newDatabaseTester() - start");
-        Connection connection1 = getEnvironment().buildJdbcConnection();
+        Connection connection1 = getEnvironment().fetchJdbcConnection();
 
         io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config1 = new io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig();
         customizedConnection = new DatabaseConnection(connection1, config1, profile.getSchema());

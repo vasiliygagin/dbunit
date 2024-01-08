@@ -24,12 +24,11 @@ package org.dbunit;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
@@ -41,6 +40,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 public class DatabaseEnvironment {
 
     private final DatabaseProfile _profile;
+    private final Connection jdbcConnection;
     private final IDataSet _dataSet;
     private final JdbcDatabaseTester _databaseTester;
     private final DatabaseConfig databaseConfig;
@@ -49,14 +49,20 @@ public class DatabaseEnvironment {
 
     protected DatabaseEnvironment(final DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
         _profile = profile;
+        jdbcConnection = buildJdbcConnection();
         _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
         _databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
                 _profile.getUser(), _profile.getPassword(), _profile.getSchema());
         this.databaseConfig = databaseConfig;
-        _connection = buildConnection();
+        _connection = getConnection();
 
         DdlExecutor.execute("sql/" + _profile.getProfileDdl(), _connection.getConnection(),
                 profile.getProfileMultilineSupport(), true);
+    }
+
+    private Connection buildJdbcConnection() {
+        return DriverManagerConnectionsFactory.getIT().fetchConnection(_profile.getDriverClass(),
+                _profile.getConnectionUrl(), _profile.getUser(), _profile.getPassword());
     }
 
     public DatabaseConfig getDatabaseConfig() {
@@ -72,19 +78,13 @@ public class DatabaseEnvironment {
         }
 
         if (_connection == null) {
-            _connection = buildConnection();
+            _connection = new DatabaseConnection(jdbcConnection, databaseConfig, _profile.getSchema());
         }
         return _connection;
     }
 
-    private DatabaseConnection buildConnection() throws ClassNotFoundException, SQLException, DatabaseUnitException {
-        return new DatabaseConnection(buildJdbcConnection(), databaseConfig, _profile.getSchema());
-    }
-
-    public Connection buildJdbcConnection() throws ClassNotFoundException, SQLException {
-        final String name = _profile.getDriverClass();
-        Class.forName(name);
-        return DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(), _profile.getPassword());
+    public final Connection fetchJdbcConnection() {
+        return jdbcConnection;
     }
 
     public final JdbcDatabaseTester getDatabaseTester() {

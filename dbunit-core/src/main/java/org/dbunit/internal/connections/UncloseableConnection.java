@@ -1,7 +1,7 @@
 /*
  * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
-package io.github.vasiliygagin.dbunit.jdbc;
+package org.dbunit.internal.connections;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -19,6 +19,7 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
@@ -305,5 +306,22 @@ class UncloseableConnection implements Connection {
     @Override
     public int getNetworkTimeout() throws SQLException {
         return delegate.getNetworkTimeout();
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UncloseableConnection other = (UncloseableConnection) obj;
+        return Objects.equals(delegate, other.delegate);
     }
 }

@@ -47,7 +47,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     }
 
     protected DatabaseEnvironment getEnvironment() throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null);
+        return DatabaseEnvironmentLoader.getInstance();
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
@@ -121,7 +121,7 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
 
     public static boolean environmentHasFeature(TestFeature feature) {
         try {
-            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
             final boolean runIt = environment.support(feature);
             return runIt;
         } catch (Exception e) {

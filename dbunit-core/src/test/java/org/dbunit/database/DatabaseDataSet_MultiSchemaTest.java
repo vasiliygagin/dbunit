@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -14,15 +15,13 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.dbunit.DdlExecutor;
-import org.dbunit.H2Environment;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.ext.h2.H2DataTypeFactory;
-import org.dbunit.testutil.TestUtils;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,6 +34,7 @@ import org.junit.Test;
  * </p>
  */
 public class DatabaseDataSet_MultiSchemaTest {
+
     private static final String DATABASE = "multischematest";
     private static final String USERNAME_ADMIN = "sa";
     private static final String USERNAME_DBUNIT = "DBUNITUSER";
@@ -54,10 +54,6 @@ public class DatabaseDataSet_MultiSchemaTest {
     private static final Boolean IS_USING_QUALIFIED_TABLE_NAMES = Boolean.TRUE;
     private static final Boolean IS_NOT_USING_QUALIFIED_TABLE_NAMES = Boolean.FALSE;
 
-    private static final String SETUP_DDL_FILE = "sql/h2_multischema_permission_test.sql";
-
-    private static Connection connectionDdl;
-
     private IDatabaseConnection connectionTest;
 
     private final TestMetadataHandler testMetadataHandler = new TestMetadataHandler();
@@ -65,15 +61,12 @@ public class DatabaseDataSet_MultiSchemaTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         // create database and schemas for tests
-        connectionDdl = H2Environment.createJdbcConnection(DATABASE);
-        DdlExecutor.executeDdlFile(TestUtils.getFile(SETUP_DDL_FILE), connectionDdl);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        // close connection after all tests so schemas stay around
-        if (connectionDdl != null && !connectionDdl.isClosed()) {
-            connectionDdl.close();
+        try ( //
+                Connection connection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+                        "jdbc:h2:mem:multischematest", "sa", ""); //
+        ) {
+            DdlExecutor.executeDdlFile(new File("src/test/resources/sql/h2_multischema_permission_test.sql"),
+                    connection);
         }
     }
 
@@ -298,7 +291,9 @@ public class DatabaseDataSet_MultiSchemaTest {
 
     private void makeDatabaseConnection(String databaseName, String username, String password, String schema,
             boolean useQualifiedTableNames) throws Exception {
-        Connection jdbcConnection = H2Environment.createJdbcConnection(databaseName, username, password);
+        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+                "jdbc:h2:mem:" + databaseName, username, password);
+
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(useQualifiedTableNames);
         config.setDataTypeFactory(new H2DataTypeFactory());
@@ -307,6 +302,7 @@ public class DatabaseDataSet_MultiSchemaTest {
     }
 
     private static class TestMetadataHandler extends DefaultMetadataHandler {
+
         private final Set<String> schemaSet = new HashSet<>();
 
         @Override

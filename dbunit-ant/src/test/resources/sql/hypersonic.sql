@@ -28,17 +28,16 @@ CREATE TABLE EMPTY_TABLE
    COLUMN2 VARCHAR(32),
    COLUMN3 VARCHAR(32));
 
-/*
+--
 -----------------------------------------------------------------------------
 -- ESCAPED TABLE
 -----------------------------------------------------------------------------
 
-CREATE TABLE "ESCAPED TABLE"
-  (COLUMN0 VARCHAR(32),
-   COLUMN1 VARCHAR(32),
-   COLUMN2 VARCHAR(32),
-   "COLUMN 3" VARCHAR(32));
-*/
+--CREATE TABLE "ESCAPED TABLE"
+--  (COLUMN0 VARCHAR(32),
+--   COLUMN1 VARCHAR(32),
+--   COLUMN2 VARCHAR(32),
+--   "COLUMN 3" VARCHAR(32));
 
 -----------------------------------------------------------------------------
 -- PK_TABLE

@@ -27,12 +27,22 @@ package org.dbunit;
  * @since DbUnit 2.4.7
  */
 public class PostgresqlEnvironment extends DatabaseEnvironment {
-    public PostgresqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile, new PostgresqlDatabaseConfig());
+
+    public PostgresqlEnvironment() throws Exception {
+        super(new PostgresqlDatabaseProfile(), new PostgresqlDatabaseConfig());
     }
 
     @Override
     public String convertString(String str) {
         return str == null ? null : str.toLowerCase();
+    }
+
+    private static class PostgresqlDatabaseProfile extends DatabaseProfile {
+
+        public PostgresqlDatabaseProfile() {
+            super("org.postgresql.Driver", "jdbc:postgresql://localhost/dbunit", "public", "dbunit", "dbunit",
+                    "postgresql.sql", false, new String[] { "INSERT_IDENTITY", "CLOB", "BLOB", "SCROLLABLE_RESULTSET",
+                            "SDO_GEOMETRY", "XML_TYPE" });
+        }
     }
 }

@@ -31,7 +31,7 @@ public class SQLHelperDomainPostgreSQLIT extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = DatabaseEnvironmentLoader.getInstance(null).getConnection();
+        _connection = DatabaseEnvironmentLoader.getInstance().getConnection();
     }
 
     protected void tearDown() throws Exception {

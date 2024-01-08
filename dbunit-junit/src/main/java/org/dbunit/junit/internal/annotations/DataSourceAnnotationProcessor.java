@@ -30,7 +30,7 @@ public class DataSourceAnnotationProcessor {
             String dataSourceName = annotation.name();
             Class<? extends javax.sql.DataSource> dataSourceClass = annotation.dataSource();
             javax.sql.DataSource dataSource = buildDataSource(dataSourceClass);
-            ConnectionSource connectionSource = dbConnectionManager.registerDataSource(dataSource);
+            ConnectionSource connectionSource = dbConnectionManager.registerDataSourceByType(dataSource);
             testContext.addConnecionSource(dataSourceName, connectionSource);
         }
     }

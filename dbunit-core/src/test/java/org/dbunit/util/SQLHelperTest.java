@@ -21,11 +21,16 @@
 
 package org.dbunit.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import org.dbunit.AbstractHSQLTestCase;
+import org.junit.Test;
 
 import com.mockobjects.sql.MockDatabaseMetaData;
 
@@ -36,16 +41,16 @@ import com.mockobjects.sql.MockDatabaseMetaData;
  */
 public class SQLHelperTest extends AbstractHSQLTestCase {
 
-    public SQLHelperTest(String name) {
-        super(name, "hypersonic_dataset.sql");
+    public SQLHelperTest() {
+        super("hypersonic_dataset.sql");
     }
 
+    @Test
     public void testGetPrimaryKeyColumn() throws SQLException {
         String[] tables = { "A", "B", "C", "D", "E", "F", "G", "H" };
         Connection conn = getConnection().getConnection();
         assertNotNull("didn't get a connection", conn);
-        for (int i = 0; i < tables.length; i++) {
-            String table = tables[i];
+        for (String table : tables) {
             String expectedPK = "PK" + table;
             String actualPK = SQLHelper.getPrimaryKeyColumn(conn, table);
             assertNotNull(actualPK);
@@ -53,40 +58,50 @@ public class SQLHelperTest extends AbstractHSQLTestCase {
         }
     }
 
+    @Test
     public void testGetDatabaseInfoWithException() throws Exception {
         final String productName = "Some product";
         final String exceptionText = "Dummy exception to simulate unimplemented operation exception as occurs "
                 + "in sybase 'getDatabaseMajorVersion()' (com.sybase.jdbc3.utils.UnimplementedOperationException)";
 
         DatabaseMetaData metaData = new MockDatabaseMetaData() {
+
+            @Override
             public String getDatabaseProductName() throws SQLException {
                 return productName;
             }
 
+            @Override
             public String getDatabaseProductVersion() throws SQLException {
                 return null;
             }
 
+            @Override
             public int getDriverMajorVersion() {
                 return -1;
             }
 
+            @Override
             public int getDriverMinorVersion() {
                 return -1;
             }
 
+            @Override
             public String getDriverName() throws SQLException {
                 return null;
             }
 
+            @Override
             public String getDriverVersion() throws SQLException {
                 return null;
             }
 
+            @Override
             public int getDatabaseMajorVersion() throws SQLException {
                 throw new SQLException(exceptionText);
             }
 
+            @Override
             public int getDatabaseMinorVersion() throws SQLException {
                 return -1;
             }

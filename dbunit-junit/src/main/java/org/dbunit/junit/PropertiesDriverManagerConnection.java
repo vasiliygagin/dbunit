@@ -30,4 +30,9 @@ public @interface PropertiesDriverManagerConnection {
 
     /** A key for property that defines the database schema */
     public static final String DBUNIT_SCHEMA = "dbunit.schema";
+
+    /**
+     * @return Name, to register dataSource under.
+     */
+    String name() default "";
 }

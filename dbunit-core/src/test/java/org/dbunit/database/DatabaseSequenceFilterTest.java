@@ -20,15 +20,17 @@
  */
 package org.dbunit.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.Arrays;
 
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
-import org.dbunit.H2Environment;
 import org.dbunit.HypersonicEnvironment;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 
 import junit.framework.TestCase;
@@ -39,6 +41,7 @@ import junit.framework.TestCase;
  * @version $Revision$
  */
 public class DatabaseSequenceFilterTest extends TestCase {
+
     Connection _jdbcConnection;
 
     public DatabaseSequenceFilterTest(final String s) {
@@ -49,17 +52,17 @@ public class DatabaseSequenceFilterTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        _jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
+        _jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        HypersonicEnvironment.shutdown(_jdbcConnection);
-        _jdbcConnection.close();
-
-        HypersonicEnvironment.deleteFiles("tempdb");
+        DdlExecutor.executeSql(_jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        DdlExecutor.executeSql(_jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+        DdlExecutor.executeSql(_jdbcConnection, "SET SCHEMA PUBLIC");
     }
 
     public void testGetTableNames() throws Exception {
@@ -81,8 +84,13 @@ public class DatabaseSequenceFilterTest extends TestCase {
 
     public void testGetTableNamesCyclic() throws Exception {
         final String[] expectedNoFilter = { "A", "B", "C", "D", "E", };
+        final File ddlFile = new File("src/test/resources/sql/hypersonic_cyclic.sql");
+        final Connection connection1 = _jdbcConnection;
 
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_cyclic.sql"), _jdbcConnection);
+        final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance().getProfile()
+                .getProfileMultilineSupport();
+
+        DdlExecutor.executeDdlFile(ddlFile, connection1, multiLineSupport);
         final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());
 
         final IDataSet databaseDataset = connection.createDataSet();
@@ -128,7 +136,8 @@ public class DatabaseSequenceFilterTest extends TestCase {
      * @throws Exception
      */
     public void testMultiSchemaFks() throws Exception {
-        final Connection jdbcConnection = H2Environment.createJdbcConnection("test");
+        final Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+                "jdbc:h2:mem:test", "sa", "");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/h2_multischema_fk_test.sql"), jdbcConnection);
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);

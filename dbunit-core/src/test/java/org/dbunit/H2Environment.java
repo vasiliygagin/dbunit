@@ -21,37 +21,14 @@
 
 package org.dbunit;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import org.dbunit.operation.DatabaseOperation;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
-/**
- * @author Manuel Laflamme
- * @version $Revision$
- * @since Feb 18, 2002
- */
 public class H2Environment extends DatabaseEnvironment {
-    public static final String USERNAME_DEFAULT = "sa";
-    public static final String PASSWORD_DEFAULT = "";
 
-    public H2Environment(DatabaseProfile profile) throws Exception {
-        super(profile, new DatabaseConfig());
-    }
-
-    public static Connection createJdbcConnection(String databaseName) throws Exception {
-        return createJdbcConnection(databaseName, USERNAME_DEFAULT, PASSWORD_DEFAULT);
-    }
-
-    public static Connection createJdbcConnection(String databaseName, String username, String password)
-            throws Exception {
-        Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:mem:" + databaseName, username, password);
+    public H2Environment() throws Exception {
+        super(new H2DatabaseProfile(), new DatabaseConfig());
     }
 
     @Override
@@ -59,25 +36,12 @@ public class H2Environment extends DatabaseEnvironment {
         DatabaseOperation.DELETE_ALL.execute(getConnection(), getInitDataSet());
     }
 
-    public static void shutdown(Connection connection) throws SQLException {
-        DdlExecutor.executeSql(connection, "SHUTDOWN IMMEDIATELY");
-    }
+    private static class H2DatabaseProfile extends DatabaseProfile {
 
-    public static void deleteFiles(final String filename) {
-        deleteFiles(new File("."), filename);
-    }
-
-    public static void deleteFiles(File directory, final String filename) {
-        File[] files = directory.listFiles((FilenameFilter) (dir, name) -> {
-            if (name.indexOf(filename) != -1) {
-                return true;
-            }
-            return false;
-        });
-
-        for (File file : files) {
-            file.delete();
+        public H2DatabaseProfile() {
+            super("org.h2.Driver", "jdbc:h2:target/h2/test", "PUBLIC", "sa", "", "hypersonic.sql", true,
+                    new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE",
+                            "SDO_GEOMETRY", "XML_TYPE" });
         }
-
     }
 }

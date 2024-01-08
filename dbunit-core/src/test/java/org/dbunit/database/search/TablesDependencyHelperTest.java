@@ -20,6 +20,10 @@
  */
 package org.dbunit.database.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.sql.Connection;
 import java.util.HashSet;
@@ -33,11 +37,13 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.search.SearchException;
+import org.junit.After;
 import org.junit.Assert;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Felipe Leme (dbunit@felipeal.net)
@@ -45,34 +51,37 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since Aug 28, 2005
  */
-public class TablesDependencyHelperTest extends TestCase {
+public class TablesDependencyHelperTest {
 
     private Connection jdbcConnection;
 
     private IDatabaseConnection connection;
 
-    protected void setUp(String sqlFile) throws Exception {
-        this.setUp(new String[] { sqlFile });
-    }
-
-    protected void setUp(String[] sqlFileList) throws Exception {
-        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
-        for (String element : sqlFileList) {
+    protected void setUp(String... sqlFiles) throws Exception {
+        for (String element : sqlFiles) {
             File sql = TestUtils.getFile("sql/" + element);
             DdlExecutor.executeDdlFile(sql, this.jdbcConnection);
         }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        HypersonicEnvironment.shutdown(this.jdbcConnection);
-        this.jdbcConnection.close();
-//      HypersonicEnvironment.deleteFiles( "tempdb" );
+    @After
+    public void tearDown() throws Exception {
+        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+        DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");
     }
 
+    @Test
     public void testGetDependentTablesFromOneTable() throws Exception {
-        setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        setUp("hypersonic_import.sql");
         String[][] allInput = ImportNodesFilterSearchCallbackTest.SINGLE_INPUT;
         String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.SINGLE_OUTPUT;
         for (int i = 0; i < allInput.length; i++) {
@@ -83,8 +92,9 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetDependentTablesFromOneTable_RootTableDoesNotExist() throws Exception {
-        setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+        setUp("hypersonic_import.sql");
 
         try {
             TablesDependencyHelper.getDependentTables(this.connection, "XXXXXX_TABLE_NON_EXISTING");
@@ -97,8 +107,10 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetDependentTablesFromManyTables() throws Exception {
-        setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
+        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        setUp("hypersonic_import.sql");
         String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
         String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;
         for (int i = 0; i < allInput.length; i++) {
@@ -109,8 +121,9 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetAllDependentTablesFromOneTable() throws Exception {
-        setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
+        setUp("hypersonic_import_export.sql");
         String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
         String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
         for (int i = 0; i < allInput.length; i++) {
@@ -121,6 +134,7 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetAllDependentTablesFromManyTables() throws Exception {
         setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
         String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.COMPOUND_INPUT;
@@ -133,6 +147,7 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetAllDatasetFromOneTable() throws Exception {
         setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
         String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
@@ -146,8 +161,9 @@ public class TablesDependencyHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetAllDatasetFromOneTable_SeparateSchema() throws Exception {
-        setUp(new String[] { "hypersonic_switch_schema.sql", ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE });
+        setUp("hypersonic_switch_schema.sql", "hypersonic_import_export.sql");
 
         String[][] allInputWithSchema = ImportAndExportKeysSearchCallbackOwnFileTest
                 .getSingleInputWithSchema("TEST_SCHEMA");
@@ -167,6 +183,7 @@ public class TablesDependencyHelperTest extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testGetDatasetFromManyTables() throws Exception {
         setUp(ImportNodesFilterSearchCallbackTest.SQL_FILE);
         String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;

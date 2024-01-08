@@ -4,20 +4,22 @@ import java.sql.SQLException;
 
 import org.dbunit.database.AbstractImportedKeysFilteredByPKsTestCase;
 import org.dbunit.dataset.DataSetException;
-
 import org.dbunit.util.search.SearchException;
+import org.junit.Test;
 
 public class ImportedKeysFilteredByPKsTest extends AbstractImportedKeysFilteredByPKsTestCase {
 
-    public ImportedKeysFilteredByPKsTest(String testName) {
-        super(testName, "hypersonic_dataset.sql");
+    public ImportedKeysFilteredByPKsTest() {
+        super("hypersonic_dataset.sql");
     }
 
+    @Override
     protected int[] setupTablesSizeFixture() {
-        int[] sizes = new int[] { 2, 8, 4, 2, 4, 2, 2, 2 };
+        int[] sizes = { 2, 8, 4, 2, 4, 2, 2, 2 };
         return sizes;
     }
 
+    @Test
     public void testAWithOne() throws DataSetException, SQLException, SearchException {
         addInput(A, new String[] { A1 });
         addOutput(A, new String[] { A1 });
@@ -25,12 +27,14 @@ public class ImportedKeysFilteredByPKsTest extends AbstractImportedKeysFilteredB
         doIt();
     }
 
+    @Test
     public void testHWithOne() throws DataSetException, SQLException, SearchException {
         addInput(H, new String[] { H1 });
         addOutput(H, new String[] { H1 });
         doIt();
     }
 
+    @Test
     public void testBWithOne() throws DataSetException, SQLException, SearchException {
         addInput(B, new String[] { B1 });
         addOutput(B, new String[] { B1 });

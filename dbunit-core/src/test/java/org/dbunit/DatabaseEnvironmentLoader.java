@@ -24,37 +24,38 @@ package org.dbunit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
-
 public class DatabaseEnvironmentLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseEnvironmentLoader.class);
 
     private static DatabaseEnvironment INSTANCE = null;
 
-    public static DatabaseEnvironment getInstance(String profileName) throws Exception {
+    public static DatabaseEnvironment getInstance() throws Exception {
         if (INSTANCE == null) {
-            final DatabaseProfile profile = new DatabaseProfile(profileName);
+            String profileName = System.getProperty("dbunit.profile");
+            if (profileName == null) {
+                profileName = "hsqldb";
+            }
 
-            if (profile.profileName.equals("hsqldb")) {
-                INSTANCE = new HypersonicEnvironment(profile);
-            } else if (profile.profileName.equals("oracle")) {
-                INSTANCE = new OracleEnvironment(profile);
-            } else if (profile.profileName.equals("oracle10")) {
-                INSTANCE = new Oracle10Environment(profile);
-            } else if (profile.profileName.equals("postgresql")) {
-                INSTANCE = new PostgresqlEnvironment(profile);
-            } else if (profile.profileName.equals("mysql")) {
-                INSTANCE = new MySqlEnvironment(profile);
-            } else if (profile.profileName.equals("derby")) {
-                INSTANCE = new DerbyEnvironment(profile);
-            } else if (profile.profileName.equals("h2")) {
-                INSTANCE = new H2Environment(profile);
-            } else if (profile.profileName.equals("mssql")) {
-                INSTANCE = new MsSqlEnvironment(profile);
+            if (profileName.equals("hsqldb")) {
+                INSTANCE = new HypersonicEnvironment();
+            } else if (profileName.equals("oracle")) {
+                INSTANCE = new OracleEnvironment();
+            } else if (profileName.equals("oracle10")) {
+                INSTANCE = new Oracle10Environment();
+            } else if (profileName.equals("postgresql")) {
+                INSTANCE = new PostgresqlEnvironment();
+            } else if (profileName.equals("mysql")) {
+                INSTANCE = new MySqlEnvironment();
+            } else if (profileName.equals("derby")) {
+                INSTANCE = new DerbyEnvironment();
+            } else if (profileName.equals("h2")) {
+                INSTANCE = new H2Environment();
+            } else if (profileName.equals("mssql")) {
+                INSTANCE = new MsSqlEnvironment();
             } else {
-                logger.warn("getInstance: activeProfile={} not known," + " using generic profile", profile.profileName);
-                INSTANCE = new DatabaseEnvironment(profile, new DatabaseConfig());
+                logger.warn("getInstance: activeProfile={} not known, using generic profile", profileName);
+                INSTANCE = new GenericEnvironment(profileName);
             }
         }
 

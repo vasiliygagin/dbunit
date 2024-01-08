@@ -54,7 +54,7 @@ public abstract class AbstractDatabaseIT extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance(null);
+        environment = DatabaseEnvironmentLoader.getInstance();
 
         JdbcDatabaseTester databaseTester = environment.getDatabaseTester();
 
@@ -137,7 +137,7 @@ public abstract class AbstractDatabaseIT extends TestCase {
 
     public static boolean environmentHasFeature(TestFeature feature) {
         try {
-            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
             final boolean runIt = environment.support(feature);
             return runIt;
         } catch (Exception e) {

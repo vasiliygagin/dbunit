@@ -30,19 +30,21 @@ import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.CollectionsHelper;
 import org.dbunit.util.search.DepthFirstSearch;
 import org.dbunit.util.search.ISearchCallback;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Aug 28, 2005
  */
-public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCase {
+public abstract class AbstractMetaDataBasedSearchCallbackTestCase {
 
     private final String sqlFile;
 
@@ -50,21 +52,23 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
 
     private IDatabaseConnection connection;
 
-    public AbstractMetaDataBasedSearchCallbackTestCase(String testName, String sqlFile) {
-        super(testName);
+    public AbstractMetaDataBasedSearchCallbackTestCase(String sqlFile) {
         this.sqlFile = sqlFile;
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        this.jdbcConnection = HypersonicEnvironment.createJdbcConnection("mem:tempdb");
+    @Before
+    public final void setUp() throws Exception {
+        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + this.sqlFile), this.jdbcConnection);
         this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        HypersonicEnvironment.shutdown(this.jdbcConnection);
+    @After
+    public final void tearDown() throws Exception {
+        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+        DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");
         this.jdbcConnection.close();
 //     HypersonicEnvironment.deleteFiles( "tempdb" );
     }
@@ -79,6 +83,7 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends TestCa
 
     protected abstract AbstractMetaDataBasedSearchCallback getCallback(IDatabaseConnection connection2);
 
+    @Test
     public void testAllInput() throws Exception {
         IDatabaseConnection connection = getConnection();
 

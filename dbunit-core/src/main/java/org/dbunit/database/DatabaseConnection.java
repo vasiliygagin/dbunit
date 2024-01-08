@@ -25,12 +25,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.internal.connections.SingleConnectionDataSource;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
-import io.github.vasiliygagin.dbunit.jdbc.SingleConnectionDataSource;
 
 /**
  * This class adapts a JDBC <code>Connection</code> to a
