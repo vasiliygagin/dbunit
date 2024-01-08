@@ -45,6 +45,7 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 21, 2002
  */
 public class TransactionOperationIT extends AbstractDatabaseIT {
+
     public TransactionOperationIT(String s) {
         super(s);
     }
@@ -59,6 +60,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
         Connection jdbcConnection = customizedConnection.getConnection();
+        jdbcConnection.setAutoCommit(true);
 
         ITable tableBefore = customizedConnection.createDataSet().getTable(tableName);
         assertEquals("before row count", 6, tableBefore.getRowCount());

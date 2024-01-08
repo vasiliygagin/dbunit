@@ -26,13 +26,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.DriverManager;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.DdlExecutor;
 import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
@@ -44,12 +45,14 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
 
 import junit.framework.TestCase;
 
 public class CsvURLProducerTest extends TestCase {
+
     private String driverClass;
     private String url;
     private String user;
@@ -134,7 +137,9 @@ public class CsvURLProducerTest extends TestCase {
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
         DatabaseConfig config = new DatabaseConfig();
         config.setDataTypeFactory(new HsqldbDataTypeFactory());
-        return new DatabaseConnection(DriverManager.getConnection(url, user, password), config);
+        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), url,
+                user, password);
+        return new DatabaseConnection(jdbcConnection, config);
     }
 
     @Override
@@ -158,8 +163,8 @@ public class CsvURLProducerTest extends TestCase {
             statement.execute("DROP TABLE ORDERS_ROW");
         } catch (Exception ignored) {
         }
-        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR)");
-        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR, QUANTITY INTEGER)");
+        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
+        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
         // statement.execute("delete from orders");
         // statement.execute("delete from orders_row");
         statement.close();
@@ -167,7 +172,10 @@ public class CsvURLProducerTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        HypersonicEnvironment.shutdown(connection.getConnection());
+        Connection connection1 = connection.getConnection();
+        DdlExecutor.executeSql(connection1, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        DdlExecutor.executeSql(connection1, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+        DdlExecutor.executeSql(connection1, "SET SCHEMA PUBLIC");
         connection.close();
     }
 }

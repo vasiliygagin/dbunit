@@ -142,7 +142,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     }
 
     private final IDatabaseConnection getConnection32() throws Exception {
-        Connection connection = getEnvironment().buildJdbcConnection();
+        Connection connection = getEnvironment().fetchJdbcConnection();
         io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config2 = new DatabaseConfig();
         return new DatabaseConnection(connection, config2, getProfile().getSchema());
     }

@@ -21,6 +21,11 @@
 
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +38,8 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.util.CollectionsHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Felipe Leme (dbunit@felipeal.net)
@@ -44,19 +51,19 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
     private ITable fTable; // fixture
     private IDataSet fDataSet; // fixture
 
-    public PrimaryKeyFilteredTableWrapperTest(String name) {
-        super(name, "hypersonic_dataset.sql");
+    public PrimaryKeyFilteredTableWrapperTest() {
+        super("hypersonic_dataset.sql");
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp1() throws Exception {
         IDatabaseConnection connection = super.getConnection();
         connection.getDatabaseConfig().setDataTypeFactory(new HsqldbDataTypeFactory());
         this.fDataSet = connection.createDataSet();
         this.fTable = this.fDataSet.getTable(E);
     }
 
+    @Test
     public void testConstructorNullTable() throws DataSetException {
         try {
             PrimaryKeyFilteredTableWrapper table = new PrimaryKeyFilteredTableWrapper(null, new HashSet());
@@ -66,6 +73,7 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
         }
     }
 
+    @Test
     public void testConstructorNullSet() throws DataSetException {
         try {
             PrimaryKeyFilteredTableWrapper table = new PrimaryKeyFilteredTableWrapper(this.fTable, null);
@@ -75,6 +83,7 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
         }
     }
 
+    @Test
     public void testDenyEverything() throws DataSetException {
         PrimaryKeyFilteredTableWrapper table = new PrimaryKeyFilteredTableWrapper(this.fTable, new HashSet());
         assertMetaInformationEquals(this.fTable, table);
@@ -82,25 +91,30 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
         assertSecondTableIsEmpty(this.fTable, table);
     }
 
+    @Test
     public void testAllowEverything() throws DataSetException {
         Set allowedPKs = getPKs(this.fTable);
         allowEveryThingTest(allowedPKs);
     }
 
+    @Test
     public void testAllowEverythingWithClonedSet() throws DataSetException {
         Set allowedPKs = getPKs(this.fTable);
         Set newSet = new HashSet(allowedPKs);
         allowEveryThingTest(newSet);
     }
 
+    @Test
     public void testFilterLast() throws DataSetException {
         doFilter(new String[] { E1, E2, E3 });
     }
 
+    @Test
     public void testFilterFirst() throws DataSetException {
         doFilter(new String[] { E2, E3, E4 });
     }
 
+    @Test
     public void testFilterMiddle() throws DataSetException {
         doFilter(new String[] { E1, E4 });
     }

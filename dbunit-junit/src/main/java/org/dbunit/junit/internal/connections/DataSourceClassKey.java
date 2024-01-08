@@ -10,11 +10,11 @@ import javax.sql.DataSource;
 /**
  *
  */
-class DataSourceKey implements ConnectionKey {
+class DataSourceClassKey implements ConnectionKey {
 
     private final Class<? extends DataSource> klass;
 
-    public DataSourceKey(Class<? extends DataSource> klass) {
+    public DataSourceClassKey(Class<? extends DataSource> klass) {
         this.klass = klass;
     }
 
@@ -31,7 +31,7 @@ class DataSourceKey implements ConnectionKey {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DataSourceKey other = (DataSourceKey) obj;
+        DataSourceClassKey other = (DataSourceClassKey) obj;
         return Objects.equals(klass, other.klass);
     }
 }

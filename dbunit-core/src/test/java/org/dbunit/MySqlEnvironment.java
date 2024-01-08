@@ -27,8 +27,9 @@ package org.dbunit;
  * @since DbUnit 2.4.7
  */
 public class MySqlEnvironment extends DatabaseEnvironment {
-    public MySqlEnvironment(DatabaseProfile profile) throws Exception {
-        super(profile, new MySqlDatabaseConfig());
+
+    public MySqlEnvironment() throws Exception {
+        super(new MySqlDatabaseProfile(), new MySqlDatabaseConfig());
     }
 
     /**
@@ -41,4 +42,14 @@ public class MySqlEnvironment extends DatabaseEnvironment {
         return str;
     }
 
+    private static class MySqlDatabaseProfile extends DatabaseProfile {
+
+        public MySqlDatabaseProfile() {
+            super("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/dbunit", "", "dbunit", "dbunit", "mysql.sql",
+                    false,
+                    new String[] { "BLOB", "CLOB,SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "SDO_GEOMETRY",
+                            "XML_TYPEBLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "SDO_GEOMETRY",
+                            "XML_TYPE" });
+        }
+    }
 }

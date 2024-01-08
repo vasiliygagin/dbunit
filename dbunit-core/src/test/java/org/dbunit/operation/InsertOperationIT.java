@@ -420,7 +420,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
 
     public void testInsertClob() throws Exception {
         // execute this test only if the target database support CLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.CLOB)) {
             String tableName = "CLOB_TABLE";
 
@@ -439,7 +439,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
 
     public void testInsertBlob() throws Exception {
         // execute this test only if the target database support BLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.BLOB)) {
             String tableName = "BLOB_TABLE";
 
@@ -458,7 +458,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
 
     public void testInsertSdoGeometry() throws Exception {
         // execute this test only if the target database supports SDO_GEOMETRY
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.SDO_GEOMETRY)) {
             String tableName = "SDO_GEOMETRY_TABLE";
 
@@ -477,7 +477,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
 
     public void testInsertXmlType() throws Exception {
         // execute this test only if the target database support CLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.XML_TYPE)) {
             String tableName = "XML_TYPE_TABLE";
 

@@ -52,7 +52,7 @@ public class DBTestCaseIT extends TestCase {
      * @throws Exception
      */
     public void testConfigureConnection() throws Exception {
-        DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance();
         final IDatabaseConnection conn = dbEnv.getConnection();
         final DefaultDatabaseTester tester = new DefaultDatabaseTester(conn);
         final DatabaseOperation operation = new DatabaseOperation() {
@@ -117,7 +117,7 @@ public class DBTestCaseIT extends TestCase {
      */
     public void testExecuteSetUpTearDown() throws Exception {
         // TODO implement this
-        DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment dbEnv = DatabaseEnvironmentLoader.getInstance();
         // Retrieve one single connection which is
         final IDatabaseConnection conn = dbEnv.getConnection();
         try {

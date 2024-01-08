@@ -21,8 +21,9 @@
 package org.dbunit;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 
 /**
  * DatabaseTester that uses JDBC's Driver Manager to create connections.<br>
@@ -94,12 +95,7 @@ public class JdbcDatabaseTester extends AbstractDatabaseTester {
     @Override
     protected Connection buildJdbcConnection() throws SQLException {
         assertNotNullNorEmpty("connectionUrl", connectionUrl);
-        Connection conn = null;
-        if (username == null && password == null) {
-            conn = DriverManager.getConnection(connectionUrl);
-        } else {
-            conn = DriverManager.getConnection(connectionUrl, username, password);
-        }
-        return conn;
+        return DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), connectionUrl, username,
+                password);
     }
 }

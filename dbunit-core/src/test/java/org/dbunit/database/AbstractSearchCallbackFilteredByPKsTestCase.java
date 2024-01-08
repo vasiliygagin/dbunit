@@ -1,5 +1,9 @@
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +19,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.util.CollectionsHelper;
 import org.dbunit.util.search.SearchException;
+import org.junit.Test;
 
 public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends AbstractHSQLTestCase {
 
@@ -23,8 +28,8 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
     private PkTableMap fInput = new PkTableMap();
     private PkTableMap fOutput = new PkTableMap();
 
-    public AbstractSearchCallbackFilteredByPKsTestCase(String testName, String sqlFile) {
-        super(testName, sqlFile);
+    public AbstractSearchCallbackFilteredByPKsTestCase(String sqlFile) {
+        super(sqlFile);
     }
 
     protected abstract int[] setupTablesSizeFixture();
@@ -76,8 +81,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
         Set notExpectedTables = new HashSet();
         boolean ok = true;
         // first check if expected tables are lacking or nonExpected tables were found
-        for (int i = 0; i < outputTables.length; i++) {
-            String table = outputTables[i];
+        for (String table : outputTables) {
             if (expectedTables.contains(table)) {
                 expectedTables.remove(table);
             } else {
@@ -119,6 +123,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
         }
     }
 
+    @Test
     public void testSetupTables() throws SQLException, DataSetException {
         int[] sizes = setupTablesSizeFixture();
         IDataSet allDataSet = setupTablesDataSetFixture();

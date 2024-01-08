@@ -1,14 +1,13 @@
 package org.dbunit.database;
 
-import java.io.File;
 import java.sql.Connection;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 
 /**
@@ -30,11 +29,12 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
     /**
      * Tests the pattern-like column retrieval from the database. DbUnit should not
      * interpret any table names as regex patterns.
-     * 
+     *
      * @throws Exception
      */
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
+        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
@@ -50,14 +50,15 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
 
             assertEquals("column count", columnNames.length, columns.length);
 
-            for (int i = 0; i < columnNames.length; i++) {
-                Column column = Columns.getColumn(columnNames[i], columns);
-                assertEquals(columnNames[i], columnNames[i], column.getColumnName());
+            for (String columnName : columnNames) {
+                Column column = Columns.getColumn(columnName, columns);
+                assertEquals(columnName, columnName, column.getColumnName());
             }
         } finally {
-            HypersonicEnvironment.shutdown(jdbcConnection);
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
             jdbcConnection.close();
-            HypersonicEnvironment.deleteFiles("tempdb");
         }
     }
 

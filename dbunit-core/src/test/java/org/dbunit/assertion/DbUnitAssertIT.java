@@ -225,7 +225,7 @@ public class DbUnitAssertIT extends TestCase {
     }
 
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualExcluded() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
         IDatabaseConnection connection = env.getConnection();
 
         IDataSet dataSet = env.getInitDataSet();
@@ -244,7 +244,7 @@ public class DbUnitAssertIT extends TestCase {
     }
 
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualNotExcluded() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
         IDatabaseConnection connection = env.getConnection();
 
         IDataSet dataSet = env.getInitDataSet();

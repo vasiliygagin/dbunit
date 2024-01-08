@@ -1,18 +1,25 @@
-/**
+--
+--
+-- Creates tables use to test DatabaseSequenceFilter's ordering algorithm with following dependencies:
+-- 
+--	  D
+--	 / \
+--	F   A   G
+--	 \ / \ /
+--	  C   E H
+--	   \ / /
+--	     B
+--	     
+-- The correct result should be: D, A, F, C, G, E, H, B
 
- Creates tables use to test DatabaseSequenceFilter's ordering algorithm with following dependencies:
- 
-	  D
-	 / \
-	F   A   G
-	 \ / \ /
-	  C   E H
-	   \ / /
-	     B
-	     
- The correct result should be: D, A, F, C, G, E, H, B
-
-*/
+drop table if exists A CASCADE;
+drop table if exists B CASCADE;
+drop table if exists C CASCADE;
+drop table if exists D CASCADE;
+drop table if exists E CASCADE;
+drop table if exists F CASCADE;
+drop table if exists G CASCADE;
+drop table if exists H CASCADE;
 
 CREATE TABLE A
   (PKA NUMERIC,

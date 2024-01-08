@@ -1,8 +1,9 @@
 /*
  * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
-package io.github.vasiliygagin.dbunit.jdbc;
+package org.dbunit.internal.connections;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -21,5 +22,13 @@ public class UncloseableConnectionTest {
         verifyNoInteractions(connection);
     }
 
-    // rest of methods are generated delegates. Too lazy to test
+    @Test
+    public void equalsIfWrappedConnectionsEqual() {
+        assertEquals(tested, new UncloseableConnection(connection));
+    }
+
+    @Test
+    public void hashCodeFromWrappedConnection() {
+        assertEquals(connection.hashCode(), tested.hashCode());
+    }
 }

@@ -90,7 +90,7 @@ public final class DdlExecutor {
      * @throws Exception
      */
     public static void executeDdlFile(final File ddlFile, final Connection connection) throws Exception {
-        final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance(null).getProfile()
+        final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance().getProfile()
                 .getProfileMultilineSupport();
 
         LOG.debug("Executing DDL from file={}, multiLineSupport={}", ddlFile, multiLineSupport);

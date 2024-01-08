@@ -21,17 +21,17 @@ public class DbUnitFacade extends DbUnitRule {
      * @throws DatabaseException
      */
     public DatabaseConnection getConnection() throws DatabaseException {
-        return getTestContext().getSingleSourceConnection();
+        return getTestContext().getConnection();
     }
 
     @Override
     protected void after() {
-        releaseConnection();
+        releaseConnections();
         super.after();
     }
 
-    protected void releaseConnection() {
-        getTestContext().releaseConnection();
+    protected void releaseConnections() {
+        getTestContext().releaseConnections();
     }
 
     public Connection getJdbcConnection() throws Exception {

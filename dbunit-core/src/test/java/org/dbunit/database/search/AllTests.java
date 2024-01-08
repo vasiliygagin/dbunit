@@ -30,6 +30,7 @@ import junit.framework.TestSuite;
  * @since Aug 28, 2005
  */
 public class AllTests extends TestSuite {
+
     public static Test suite() throws Exception {
         TestSuite suite = new TestSuite();
         suite.addTest(new TestSuite(ForeignKeyRelationshipEdgeTest.class));
@@ -42,7 +43,6 @@ public class AllTests extends TestSuite {
         suite.addTest(new TestSuite(ImportedAndExportedKeysFilteredByPKsCyclicTest.class));
         suite.addTest(new TestSuite(ImportedAndExportedKeysFilteredByPKsSingleTest.class));
         suite.addTest(new TestSuite(ImportedAndExportedKeysFilteredByPKsTest.class));
-        suite.addTest(new TestSuite(TablesDependencyHelperTest.class));
         return suite;
     }
 }

@@ -31,7 +31,6 @@ import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
@@ -43,6 +42,7 @@ import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 
 /**
@@ -64,7 +64,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance(null).convertString(str);
+        return DatabaseEnvironmentLoader.getInstance().convertString(str);
     }
 
     public void testGetPrimaryKeys() throws Exception {
@@ -140,6 +140,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     public void testUnsupportedColumnDataType() throws Exception {
         IDataTypeFactory dataTypeFactory = new DefaultDataTypeFactory() {
+
             @Override
             public DataType createDataType(int sqlType, String sqlTypeName, String tableName, String columnName)
                     throws DataTypeException {
@@ -168,7 +169,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         expectedTypes.add(DataType.NUMERIC);
         expectedTypes.add(DataType.TIMESTAMP);
 
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.VARBINARY)) {
             expectedNames.add("VARBINARY_COL");
             expectedTypes.add(DataType.VARBINARY);
@@ -251,7 +252,8 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      * @throws Exception
      */
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
+        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
@@ -269,14 +271,16 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
                 assertEquals(columnName, columnName, column.getColumnName());
             }
         } finally {
-            HypersonicEnvironment.shutdown(jdbcConnection);
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
             jdbcConnection.close();
-            HypersonicEnvironment.deleteFiles("tempdb");
         }
     }
 
     public void testCaseSensitive() throws Exception {
-        Connection jdbcConnection = HypersonicEnvironment.createJdbcConnection("tempdb");
+        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), jdbcConnection);
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
@@ -301,9 +305,10 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
                 assertTrue(expected.getMessage().indexOf(tableNameWrongCase) != -1);
             }
         } finally {
-            HypersonicEnvironment.shutdown(jdbcConnection);
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
             jdbcConnection.close();
-            HypersonicEnvironment.deleteFiles("tempdb");
         }
     }
 
@@ -315,7 +320,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      * @throws Exception
      */
     public void testFullyQualifiedTableName() throws Exception {
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance(null);
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         String schema = environment.getProfile().getSchema();
 
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);

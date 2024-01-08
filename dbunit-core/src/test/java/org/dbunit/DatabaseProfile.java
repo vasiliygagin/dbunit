@@ -21,106 +21,68 @@
 
 package org.dbunit;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Vasiliy Gagin
  */
 public class DatabaseProfile {
 
-    private static final String[] EMPTY_ARRAY = new String[0];
+    private final String driverClass;
 
-    private static final String DATABASE_PROFILE = "dbunit.profile";
+    private final String connectionUrl;
 
-    private static final String PROFILE_DRIVER_CLASS = "dbunit.profile.driverClass";
-    private static final String PROFILE_URL = "dbunit.profile.url";
-    private static final String PROFILE_SCHEMA = "dbunit.profile.schema";
-    private static final String PROFILE_USER = "dbunit.profile.user";
-    private static final String PROFILE_PASSWORD = "dbunit.profile.password";
-    private static final String PROFILE_UNSUPPORTED_FEATURES = "dbunit.profile.unsupportedFeatures";
-    private static final String PROFILE_DDL = "dbunit.profile.ddl";
-    private static final String PROFILE_MULTILINE_SUPPORT = "dbunit.profile.multiLineSupport";
+    private final String schema;
 
-    public final String profileName;
-    private final Properties _properties;
+    private final String user;
 
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseProfile.class);
+    private final String password;
 
-    public DatabaseProfile(String profileName) throws IOException {
-        _properties = getProperties(profileName);
-        this.profileName = _properties.getProperty(DATABASE_PROFILE);
+    private final String profileDdl;
+
+    private final boolean profileMultilineSupport;
+
+    private final String[] unsupportedFeatures;
+
+    public DatabaseProfile(String driverClass, String connectionUrl, String schema, String user, String password,
+            String profileDdl, boolean profileMultilineSupport, String[] unsupportedFeatures) {
+        this.driverClass = driverClass;
+        this.connectionUrl = connectionUrl;
+        this.schema = schema;
+        this.user = user;
+        this.password = password;
+        this.profileDdl = profileDdl;
+        this.profileMultilineSupport = profileMultilineSupport;
+        this.unsupportedFeatures = unsupportedFeatures;
     }
 
     public String getDriverClass() {
-        return _properties.getProperty(PROFILE_DRIVER_CLASS);
+        return driverClass;
     }
 
     public String getConnectionUrl() {
-        return _properties.getProperty(PROFILE_URL);
+        return connectionUrl;
     }
 
     public String getSchema() {
-        return _properties.getProperty(PROFILE_SCHEMA, null);
+        return schema;
     }
 
     public String getUser() {
-        return _properties.getProperty(PROFILE_USER);
+        return user;
     }
 
     public String getPassword() {
-        return _properties.getProperty(PROFILE_PASSWORD);
+        return password;
     }
 
     public String getProfileDdl() {
-        return _properties.getProperty(PROFILE_DDL);
+        return profileDdl;
     }
 
     public boolean getProfileMultilineSupport() {
-        return Boolean.valueOf(_properties.getProperty(PROFILE_MULTILINE_SUPPORT));
+        return profileMultilineSupport;
     }
 
     public String[] getUnsupportedFeatures() {
-        String property = _properties.getProperty(PROFILE_UNSUPPORTED_FEATURES);
-
-        // If property is not set return an empty array
-        if (property == null) {
-            return EMPTY_ARRAY;
-        }
-
-        List<String> stringList = new ArrayList<String>();
-        StringTokenizer tokenizer = new StringTokenizer(property, ",");
-        while (tokenizer.hasMoreTokens()) {
-            stringList.add(tokenizer.nextToken().trim());
-        }
-        return stringList.toArray(new String[stringList.size()]);
-    }
-
-    private static Properties getProperties(String profileName) throws IOException {
-
-        final Properties properties = System.getProperties();
-        if (profileName == null) {
-            profileName = properties.getProperty(DATABASE_PROFILE);
-        }
-        if (profileName == null) {
-            profileName = "hsqldb";
-        }
-        logger.info("Selected profile '{}'", profileName);
-
-        String fileName = profileName + "-dbunit.properties";
-
-        final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
-        if (inputStream != null) {
-            properties.load(inputStream);
-            logger.info("Loaded properties from file '{}'", fileName);
-            inputStream.close();
-        } else {
-            logger.warn("Properties file '{}' is not found", fileName);
-        }
-        return properties;
+        return unsupportedFeatures;
     }
 }

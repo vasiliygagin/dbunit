@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 public @interface DriverManagerConnection {
 
     /**
+     * @return Name, to register dataSource under.
+     */
+    String name() default "";
+
+    /**
      * @return JDBC driver class name
      */
     String driver();

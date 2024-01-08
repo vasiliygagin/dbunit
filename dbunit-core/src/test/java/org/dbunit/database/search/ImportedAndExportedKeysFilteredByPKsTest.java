@@ -4,17 +4,18 @@ import java.sql.SQLException;
 
 import org.dbunit.database.AbstractImportedAndExportedKeysFilteredByPKsTestCase;
 import org.dbunit.dataset.DataSetException;
-
 import org.dbunit.util.search.SearchException;
+import org.junit.Test;
 
 public class ImportedAndExportedKeysFilteredByPKsTest extends AbstractImportedAndExportedKeysFilteredByPKsTestCase {
 
-    public ImportedAndExportedKeysFilteredByPKsTest(String testName) {
-        super(testName, "hypersonic_dataset.sql");
+    public ImportedAndExportedKeysFilteredByPKsTest() {
+        super("hypersonic_dataset.sql");
     }
 
+    @Override
     protected int[] setupTablesSizeFixture() {
-        int[] sizes = new int[] { 2, 8, 4, 2, 4, 2, 2, 2 };
+        int[] sizes = { 2, 8, 4, 2, 4, 2, 2, 2 };
         return sizes;
     }
 
@@ -29,6 +30,7 @@ public class ImportedAndExportedKeysFilteredByPKsTest extends AbstractImportedAn
         addOutput(H, new String[] { H1, H2 });
     }
 
+    @Test
     public void testBWithOne() throws DataSetException, SQLException, SearchException {
         addInput(B, new String[] { B1 });
         addOutput(A, new String[] { A1, A2 });
@@ -42,6 +44,7 @@ public class ImportedAndExportedKeysFilteredByPKsTest extends AbstractImportedAn
         doIt();
     }
 
+    @Test
     public void testBWithRepeated() throws DataSetException, SQLException, SearchException {
         addInput(B, new String[] { B1, B4, B3, B2, B1, B1, B8, B7 });
         addOutput(A, new String[] { A1, A2 });
@@ -55,12 +58,14 @@ public class ImportedAndExportedKeysFilteredByPKsTest extends AbstractImportedAn
         doIt();
     }
 
+    @Test
     public void testBWithAllRepeated() throws DataSetException, SQLException, SearchException {
         addInput(B, new String[] { B1, B4, B3, B2, B1, B1, B1, B6, B6, B1, B5, B8, B7 });
         addAllOutput();
         doIt();
     }
 
+    @Test
     public void testDWithOne() throws DataSetException, SQLException, SearchException {
         addInput(D, new String[] { D1 });
         addInput(B, new String[] { B1 });
@@ -75,12 +80,14 @@ public class ImportedAndExportedKeysFilteredByPKsTest extends AbstractImportedAn
         doIt();
     }
 
+    @Test
     public void testDWithTwo() throws DataSetException, SQLException, SearchException {
         addInput(D, new String[] { D1, D2 });
         addAllOutput();
         doIt();
     }
 
+    @Test
     public void testDWithRepeated() throws DataSetException, SQLException, SearchException {
         addInput(D, new String[] { D1, D2, D2, D1, D1, D1, D2, D2 });
         addAllOutput();
