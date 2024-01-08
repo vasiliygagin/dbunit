@@ -21,9 +21,12 @@
 
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +35,17 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public abstract class AbstractTableTest extends TestCase {
+public abstract class AbstractTableTest {
+
     protected static final int ROW_COUNT = 6;
     protected static final int COLUMN_COUNT = 4;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public AbstractTableTest(String s) {
-        super(s);
+    protected final DatabaseEnvironment environment;
+
+    public AbstractTableTest() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     /**
@@ -54,7 +60,7 @@ public abstract class AbstractTableTest extends TestCase {
      * of the database environment. Most databases convert all metadata identifiers
      * to uppercase. PostgreSQL converts identifiers to lowercase. MySQL preserves
      * case.
-     * 
+     *
      * @param str The identifier.
      * @return The identifier converted according to database rules.
      */
@@ -65,10 +71,12 @@ public abstract class AbstractTableTest extends TestCase {
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
+    @Test
     public void testGetRowCount() throws Exception {
         assertEquals("row count", ROW_COUNT, createTable().getRowCount());
     }
 
+    @Test
     public void testTableMetaData() throws Exception {
         Column[] columns = createTable().getTableMetaData().getColumns();
         assertEquals("column count", COLUMN_COUNT, columns.length);
@@ -79,6 +87,7 @@ public abstract class AbstractTableTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetValue() throws Exception {
         ITable table = createTable();
         for (int i = 0; i < ROW_COUNT; i++) {
@@ -91,6 +100,7 @@ public abstract class AbstractTableTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetValueCaseInsensitive() throws Exception {
         ITable table = createTable();
         for (int i = 0; i < ROW_COUNT; i++) {
@@ -103,22 +113,25 @@ public abstract class AbstractTableTest extends TestCase {
         }
     }
 
+    @Test
     public abstract void testGetMissingValue() throws Exception;
 
+    @Test
     public void testGetValueRowBounds() throws Exception {
-        int[] rows = new int[] { -2, -1, -ROW_COUNT, ROW_COUNT, ROW_COUNT + 1 };
+        int[] rows = { -2, -1, -ROW_COUNT, ROW_COUNT, ROW_COUNT + 1 };
         ITable table = createTable();
         String columnName = table.getTableMetaData().getColumns()[0].getColumnName();
 
-        for (int i = 0; i < rows.length; i++) {
+        for (int row : rows) {
             try {
-                table.getValue(rows[i], columnName);
+                table.getValue(row, columnName);
                 fail("Should throw a RowOutOfBoundsException!");
             } catch (RowOutOfBoundsException e) {
             }
         }
     }
 
+    @Test
     public void testGetValueAndNoSuchColumn() throws Exception {
         ITable table = createTable();
         String columnName = "Unknown";
@@ -133,22 +146,11 @@ public abstract class AbstractTableTest extends TestCase {
     /**
      * This method is used so sub-classes can disable the tests according to some
      * characteristics of the environment
-     * 
+     *
      * @param testName name of the test to be checked
      * @return flag indicating if the test should be executed or not
      */
-    protected boolean runTest(String testName) {
+    protected final boolean runTest(String testName) {
         return true;
     }
-
-    protected void runTest() throws Throwable {
-        if (runTest(getName())) {
-            super.runTest();
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Skipping test " + getClass().getName() + "." + getName());
-            }
-        }
-    }
-
 }

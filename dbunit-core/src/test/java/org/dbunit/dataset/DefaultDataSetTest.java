@@ -21,11 +21,12 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.FileReader;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -33,10 +34,11 @@ import java.io.FileReader;
  * @since Feb 22, 2002
  */
 public class DefaultDataSetTest extends AbstractDataSetTest {
-    public DefaultDataSetTest(String s) {
-        super(s);
+
+    public DefaultDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet = new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
         ITable[] tables = DataSetUtils.getTables(dataSet);
@@ -44,10 +46,12 @@ public class DefaultDataSetTest extends AbstractDataSetTest {
         return new DefaultDataSet(tables);
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         return createDuplicateDataSet(false);
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         return createDuplicateDataSet(true);
     }
@@ -57,6 +61,7 @@ public class DefaultDataSetTest extends AbstractDataSetTest {
         return new DefaultDataSet(tables);
     }
 
+    @Test
     public void testAddTableThenReadBackAndDoItAgainDataSet() throws Exception {
         String tableName1 = "TEST_TABLE";
         String tableName2 = "SECOND_TABLE";

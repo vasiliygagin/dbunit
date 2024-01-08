@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class ImportedKeysFilteredByPKsCyclicTest extends AbstractImportedKeysFilteredByPKsTestCase {
 
-    public ImportedKeysFilteredByPKsCyclicTest() {
+    public ImportedKeysFilteredByPKsCyclicTest() throws Exception {
         super("hypersonic_cyclic_dataset.sql");
     }
 

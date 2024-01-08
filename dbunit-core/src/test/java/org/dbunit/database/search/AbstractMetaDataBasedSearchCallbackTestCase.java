@@ -25,8 +25,9 @@ import static org.junit.Assert.assertArrayEquals;
 import java.sql.Connection;
 import java.util.Set;
 
+import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -52,15 +53,19 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase {
 
     private IDatabaseConnection connection;
 
-    public AbstractMetaDataBasedSearchCallbackTestCase(String sqlFile) {
+    protected final DatabaseEnvironment environment;
+
+    public AbstractMetaDataBasedSearchCallbackTestCase(String sqlFile) throws Exception {
         this.sqlFile = sqlFile;
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     @Before
     public final void setUp() throws Exception {
         this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/" + this.sqlFile), this.jdbcConnection);
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
+        final Connection connection1 = this.jdbcConnection;
+        DdlExecutor.executeDdlFile(environment, connection1, TestUtils.getFile("sql/" + this.sqlFile));
         this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
     }
 

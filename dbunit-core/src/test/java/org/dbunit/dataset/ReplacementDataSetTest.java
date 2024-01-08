@@ -20,12 +20,16 @@
  */
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileReader;
 
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.FlatXmlDataSetTest;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -33,18 +37,20 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$
  */
 public class ReplacementDataSetTest extends AbstractDataSetDecoratorTest {
-    public ReplacementDataSetTest(String s) {
-        super(s);
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSetTest class
 
+    public ReplacementDataSetTest() throws Exception {
+    }
+
+    @Override
     protected IDataSet createDataSet() throws Exception {
         return new ReplacementDataSet(
                 new FlatXmlDataSetBuilder().build(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
     }
 
+    @Test
     public void testConstructor_DataSetHasCaseSensitive_ReplacementSetHasCaseSensitive() throws Exception {
         FileReader xmlReader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
         FlatXmlDataSet flatDataSet = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true).build(xmlReader);
@@ -53,6 +59,7 @@ public class ReplacementDataSetTest extends AbstractDataSetDecoratorTest {
         assertTrue(dataSet.isCaseSensitiveTableNames());
     }
 
+    @Test
     public void testConstructor_DifferentCaseTableNames_CaseSensitiveMatch() throws Exception {
         FileReader fileReader = TestUtils.getFileReader("/xml/replacementDataSetCaseSensitive.xml");
         IDataSet originalDataSet = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true).build(fileReader);

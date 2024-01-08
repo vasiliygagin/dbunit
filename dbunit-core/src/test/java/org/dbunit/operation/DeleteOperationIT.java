@@ -52,6 +52,9 @@ import org.junit.Test;
  */
 public class DeleteOperationIT extends AbstractDatabaseIT {
 
+    public DeleteOperationIT() throws Exception {
+    }
+
     @Test
     public void testMockExecute() throws Exception {
         String schemaName = "schema";

@@ -41,7 +41,7 @@ import com.mockobjects.sql.MockDatabaseMetaData;
  */
 public class SQLHelperTest extends AbstractHSQLTestCase {
 
-    public SQLHelperTest() {
+    public SQLHelperTest() throws Exception {
         super("hypersonic_dataset.sql");
     }
 

@@ -30,8 +30,6 @@ import java.sql.SQLException;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
@@ -59,6 +57,9 @@ import org.junit.Test;
  * @since Feb 19, 2002
  */
 public class InsertOperationIT extends AbstractDatabaseIT {
+
+    public InsertOperationIT() throws Exception {
+    }
 
     @Test
     public void testMockExecute() throws Exception {
@@ -431,7 +432,6 @@ public class InsertOperationIT extends AbstractDatabaseIT {
     @Test
     public void testInsertClob() throws Exception {
         // execute this test only if the target database support CLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.CLOB)) {
             String tableName = "CLOB_TABLE";
 
@@ -451,7 +451,6 @@ public class InsertOperationIT extends AbstractDatabaseIT {
     @Test
     public void testInsertBlob() throws Exception {
         // execute this test only if the target database support BLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.BLOB)) {
             String tableName = "BLOB_TABLE";
 
@@ -471,7 +470,6 @@ public class InsertOperationIT extends AbstractDatabaseIT {
     @Test
     public void testInsertSdoGeometry() throws Exception {
         // execute this test only if the target database supports SDO_GEOMETRY
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.SDO_GEOMETRY)) {
             String tableName = "SDO_GEOMETRY_TABLE";
 
@@ -491,7 +489,6 @@ public class InsertOperationIT extends AbstractDatabaseIT {
     @Test
     public void testInsertXmlType() throws Exception {
         // execute this test only if the target database support CLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.XML_TYPE)) {
             String tableName = "XML_TYPE_TABLE";
 

@@ -48,7 +48,7 @@ public class ImportNodesFilterSearchCallbackTest extends AbstractMetaDataBasedSe
             new String[] { "G", "D", "A", "F", "C", "E", "H", "B" },
             new String[] { "G", "D", "A", "F", "C", "E", "H", "B" } };
 
-    public ImportNodesFilterSearchCallbackTest() {
+    public ImportNodesFilterSearchCallbackTest() throws Exception {
         super(SQL_FILE);
     }
 

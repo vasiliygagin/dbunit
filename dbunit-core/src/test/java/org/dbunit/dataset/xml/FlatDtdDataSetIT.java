@@ -30,16 +30,13 @@ import org.dbunit.testutil.TestUtils;
  * @since Apr 4, 2002
  */
 public class FlatDtdDataSetIT extends AbstractDataSetTest {
+
     private static final String DTD_FILE = "dtd/flatDtdDataSetTest.dtd";
     private static final String DUPLICATE_FILE = "dtd/flatDtdDataSetDuplicateTest.dtd";
     private static final String DUPLICATE_MULTIPLE_CASE_FILE = "dtd/flatDtdDataSetDuplicateMultipleCaseTest.dtd";
 
-    public FlatDtdDataSetIT(String s) {
-        super(s);
+    public FlatDtdDataSetIT() throws Exception {
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // AbstractDataSetTest class
 
     @Override
     protected IDataSet createDataSet() throws Exception {

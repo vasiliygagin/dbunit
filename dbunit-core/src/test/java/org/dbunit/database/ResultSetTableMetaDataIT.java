@@ -21,6 +21,9 @@ import org.junit.Test;
  */
 public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
 
+    public ResultSetTableMetaDataIT() throws Exception {
+    }
+
     protected IDataSet createDataSet() throws Exception {
         return customizedConnection.createDataSet();
     }
@@ -35,7 +38,8 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
+        DdlExecutor.executeDdlFile(environment, jdbcConnection,
+                TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {

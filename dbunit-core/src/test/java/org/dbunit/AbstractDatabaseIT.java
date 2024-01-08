@@ -47,11 +47,14 @@ public abstract class AbstractDatabaseIT {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private DatabaseEnvironment environment;
+    protected final DatabaseEnvironment environment;
+
+    public AbstractDatabaseIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
+    }
 
     @Before
     public final void setUp() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
 
         JdbcDatabaseTester databaseTester = environment.getDatabaseTester();
 
@@ -119,16 +122,6 @@ public abstract class AbstractDatabaseIT {
      */
     public final boolean runTest(String testName) {
         return true;
-    }
-
-    public static boolean environmentHasFeature(TestFeature feature) {
-        try {
-            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
-            final boolean runIt = environment.support(feature);
-            return runIt;
-        } catch (Exception e) {
-            throw new DatabaseUnitRuntimeException(e);
-        }
     }
 
     /**

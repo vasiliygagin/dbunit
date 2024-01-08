@@ -20,15 +20,17 @@
  */
 package org.dbunit;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.TestCase;
 
 /**
  * @author Andres Almiray (aalmiray@users.sourceforge.net)
@@ -36,18 +38,21 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public abstract class AbstractDatabaseTesterIT extends TestCase {
+public abstract class AbstractDatabaseTesterIT {
+
     protected IDatabaseConnection _connection;
     protected IDatabaseTester _databaseTester;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractDatabaseTesterIT.class);
 
-    public AbstractDatabaseTesterIT(String s) {
-        super(s);
+    protected final DatabaseEnvironment environment;
+
+    public AbstractDatabaseTesterIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     protected DatabaseEnvironment getEnvironment() throws Exception {
-        return DatabaseEnvironmentLoader.getInstance();
+        return environment;
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
@@ -57,8 +62,8 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     // //////////////////////////////////////////////////////////////////////////
     // TestCase class
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public final void setUp() throws Exception {
 
         assertNotNull("DatabaseTester is not set", getDatabaseTester());
         getDatabaseTester().setSetUpOperation(getSetUpOperation());
@@ -68,8 +73,8 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
         _connection = getDatabaseTester().getConnection();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public final void tearDown() throws Exception {
 
         assertNotNull("DatabaseTester is not set", getDatabaseTester());
         getDatabaseTester().setTearDownOperation(getTearDownOperation());
@@ -96,36 +101,4 @@ public abstract class AbstractDatabaseTesterIT extends TestCase {
     }
 
     protected abstract IDatabaseTester getDatabaseTester() throws Exception;
-
-    /**
-     * This method is used so sub-classes can disable the tests according to some
-     * characteristics of the environment
-     *
-     * @param testName name of the test to be checked
-     * @return flag indicating if the test should be executed or not
-     */
-    protected boolean runTest(String testName) {
-        return true;
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
-        if (runTest(getName())) {
-            super.runTest();
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Skipping test " + getClass().getName() + "." + getName());
-            }
-        }
-    }
-
-    public static boolean environmentHasFeature(TestFeature feature) {
-        try {
-            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
-            final boolean runIt = environment.support(feature);
-            return runIt;
-        } catch (Exception e) {
-            throw new DatabaseUnitRuntimeException(e);
-        }
-    }
 }

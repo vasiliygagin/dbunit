@@ -47,6 +47,9 @@ import org.junit.Test;
  */
 public class AbstractBatchOperationIT extends AbstractDatabaseIT {
 
+    public AbstractBatchOperationIT() throws Exception {
+    }
+
     @Test
     public void testGetOperationMetaDataAndMissingColumns() throws Exception {
         Reader in = TestUtils.getFileReader("xml/missingColumnTest.xml");

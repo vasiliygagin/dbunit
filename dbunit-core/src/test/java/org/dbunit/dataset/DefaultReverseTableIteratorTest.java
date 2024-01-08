@@ -26,18 +26,21 @@ package org.dbunit.dataset;
  * @version $Revision$
  */
 public class DefaultReverseTableIteratorTest extends DefaultTableIteratorTest {
-    public DefaultReverseTableIteratorTest(String s) {
-        super(s);
+
+    public DefaultReverseTableIteratorTest() throws Exception {
     }
 
+    @Override
     protected String[] getExpectedNames() throws Exception {
         return DataSetUtils.reverseStringArray(super.getExpectedNames());
     }
 
+    @Override
     protected ITableIterator getIterator() throws Exception {
         return getIterator(true);
     }
 
+    @Override
     protected ITableIterator getEmptyIterator() {
         return new DefaultTableIterator(new ITable[0], true);
     }

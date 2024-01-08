@@ -21,6 +21,10 @@
 
 package org.dbunit.assertion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.StringReader;
 import java.math.BigDecimal;
 
@@ -43,21 +47,23 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Mar 22, 2002
  */
-public class DbUnitAssertIT extends TestCase {
+public class DbUnitAssertIT {
+
     public static final String FILE_PATH = "xml/assertionTest.xml";
 
     private DbUnitAssert assertion = new DbUnitAssert();
 
-    public DbUnitAssertIT(String s) {
-        super(s);
+    private final DatabaseEnvironment environment;
+
+    public DbUnitAssertIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     private IDataSet getDataSet() throws Exception {
@@ -67,28 +73,33 @@ public class DbUnitAssertIT extends TestCase {
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
+    @Test
     public void testAssertTablesEquals() throws Exception {
         IDataSet dataSet = getDataSet();
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_SAME_VALUE"),
                 new Column[] { new Column("COLUMN0", DataType.VARCHAR) });
     }
 
+    @Test
     public void testAssertTablesEmtpyEquals() throws Exception {
         IDataSet empty1 = new XmlDataSet(TestUtils.getFileReader("xml/assertionTest-empty1.xml"));
         IDataSet empty2 = new FlatXmlDataSetBuilder().build(TestUtils.getFileReader("xml/assertionTest-empty2.xml"));
         assertion.assertEquals(empty1, empty2);
     }
 
+    @Test
     public void testAssertTablesEqualsColumnNamesCaseInsensitive() throws Exception {
         IDataSet dataSet = getDataSet();
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_LOWER_COLUMN_NAMES"));
     }
 
+    @Test
     public void testAssertTablesAndNamesNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_NAME"));
     }
 
+    @Test
     public void testAssertTablesAndColumnCountNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -103,6 +114,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesAndColumnSequenceNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -110,6 +122,7 @@ public class DbUnitAssertIT extends TestCase {
                 dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_COLUMN_SEQUENCE"));
     }
 
+    @Test
     public void testAssertTablesAndColumnNamesNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -125,6 +138,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesAndRowCountNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -139,6 +153,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesAndValuesNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -153,6 +168,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesWithColFilterAndValuesNotEqualExcluded() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -162,6 +178,7 @@ public class DbUnitAssertIT extends TestCase {
                 dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), allColumnsThatAreNotEqual);
     }
 
+    @Test
     public void testAssertTablesWithColFilterAndValuesNotEqualNotExcluded() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -180,6 +197,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesAndValuesNotEquals_AdditionalColumnInfo() throws Exception {
         IDataSet dataSet = getDataSet();
 
@@ -199,6 +217,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesEqualsAndIncompatibleDataType() throws Exception {
         String tableName = "TABLE_NAME";
 
@@ -224,11 +243,11 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualExcluded() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
-        IDatabaseConnection connection = env.getConnection();
+        IDatabaseConnection connection = environment.getConnection();
 
-        IDataSet dataSet = env.getInitDataSet();
+        IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");
 
         ITable table = dataSet.getTable("TEST_TABLE");
@@ -243,11 +262,11 @@ public class DbUnitAssertIT extends TestCase {
                 ignoreCols);
     }
 
+    @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualNotExcluded() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
-        IDatabaseConnection connection = env.getConnection();
+        IDatabaseConnection connection = environment.getConnection();
 
-        IDataSet dataSet = env.getInitDataSet();
+        IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");
 
         ITable table = dataSet.getTable("TEST_TABLE");
@@ -270,6 +289,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertTablesEqualsAndCompatibleDataType() throws Exception {
         String tableName = "TABLE_NAME";
         java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
@@ -291,6 +311,7 @@ public class DbUnitAssertIT extends TestCase {
         assertion.assertEquals(expectedTable, actualTable);
     }
 
+    @Test
     public void testAssertDataSetsEquals() throws Exception {
         IDataSet dataSet1 = getDataSet();
 
@@ -302,6 +323,7 @@ public class DbUnitAssertIT extends TestCase {
         assertion.assertEquals(dataSet1, dataSet2);
     }
 
+    @Test
     public void testAssertDataSetsEqualsTableNamesCaseInsensitive() throws Exception {
         IDataSet dataSet1 = getDataSet();
 
@@ -316,6 +338,7 @@ public class DbUnitAssertIT extends TestCase {
         assertion.assertEquals(dataSet1, dataSet2);
     }
 
+    @Test
     public void testAssertDataSetsTableNamesCaseSensitiveNotEquals() throws Exception {
         IDataSet dataSet1 = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true)
                 .build(TestUtils.getFileReader("xml/assertion_table_name_case_sensitive_1.xml"));
@@ -333,6 +356,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertDataSetsTableNamesCaseSensitiveWithLowerCaseEquals() throws Exception {
         IDataSet dataSet1 = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true)
                 .build(TestUtils.getFileReader("xml/assertion_table_name_case_sensitive_with_lower_case.xml"));
@@ -342,6 +366,7 @@ public class DbUnitAssertIT extends TestCase {
         assertion.assertEquals(dataSet1, dataSet2);
     }
 
+    @Test
     public void testAssertDataSetsAndTableCountNotEquals() throws Exception {
         IDataSet dataSet1 = getDataSet();
 
@@ -361,6 +386,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertDataSetsAndTableNamesNotEquals() throws Exception {
         IDataSet dataSet1 = getDataSet();
 
@@ -383,6 +409,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertDataSetsAndTablesNotEquals() throws Exception {
         IDataSet dataSet1 = getDataSet();
 
@@ -402,6 +429,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testAssertDataSetsWithFailureHandler() throws Exception {
         DiffCollectingFailureHandler fh = new DiffCollectingFailureHandler();
 
@@ -419,6 +447,7 @@ public class DbUnitAssertIT extends TestCase {
         assertEquals(2, fh.getDiffList().size());
     }
 
+    @Test
     public void testGetComparisonDataType_ExpectedTypeUnknown() {
         Column expectedColumn = new Column("COL1", DataType.UNKNOWN);
         Column actualColumn = new Column("COL1", DataType.VARCHAR);
@@ -427,6 +456,7 @@ public class DbUnitAssertIT extends TestCase {
         assertEquals(DataType.VARCHAR, dataType);
     }
 
+    @Test
     public void testGetComparisonDataType_ActualTypeUnknown() {
         Column expectedColumn = new Column("COL1", DataType.VARCHAR);
         Column actualColumn = new Column("COL1", DataType.UNKNOWN);
@@ -435,6 +465,7 @@ public class DbUnitAssertIT extends TestCase {
         assertEquals(DataType.VARCHAR, dataType);
     }
 
+    @Test
     public void testGetComparisonDataType_BothTypesSetIncompatible() {
         Column expectedColumn = new Column("COL1", DataType.VARCHAR);
         Column actualColumn = new Column("COL1", DataType.NUMERIC);
@@ -450,6 +481,7 @@ public class DbUnitAssertIT extends TestCase {
         }
     }
 
+    @Test
     public void testGetComparisonDataType_BothTypesSetToSame() {
         Column expectedColumn = new Column("COL1", DataType.VARCHAR);
         Column actualColumn = new Column("COL1", DataType.VARCHAR);
@@ -458,6 +490,7 @@ public class DbUnitAssertIT extends TestCase {
         assertEquals(DataType.VARCHAR, dataType);
     }
 
+    @Test
     public void testGetComparisonDataType_BothTypesUnknown() {
         Column expectedColumn = new Column("COL1", DataType.UNKNOWN);
         Column actualColumn = new Column("COL1", DataType.UNKNOWN);
@@ -470,6 +503,7 @@ public class DbUnitAssertIT extends TestCase {
      * Test utility that modifies all values for a specific column arbitrarily
      */
     protected static class ModifyingTable implements ITable {
+
         private ITable _wrappedTable;
         private String _columnToModify;
 

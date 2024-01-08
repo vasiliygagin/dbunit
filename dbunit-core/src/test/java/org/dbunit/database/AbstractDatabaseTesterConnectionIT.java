@@ -21,16 +21,20 @@
 
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+
 import org.dbunit.AbstractDatabaseTesterIT;
+import org.junit.Test;
 
 /**
  * @author Andres Almiray
  */
 public abstract class AbstractDatabaseTesterConnectionIT extends AbstractDatabaseTesterIT {
-    public AbstractDatabaseTesterConnectionIT(String s) {
-        super(s);
+
+    public AbstractDatabaseTesterConnectionIT() throws Exception {
     }
 
+    @Test
     public final void testGetRowCount() throws Exception {
         assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE", null));
         assertEquals("EMPTY_TABLE", 0, _connection.getRowCount("EMPTY_TABLE"));

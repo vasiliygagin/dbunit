@@ -44,6 +44,9 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
     private String schema;
     private DatabaseProfile profile;
 
+    public AbstractDatabaseConnectionIT() throws Exception {
+    }
+
     public DatabaseProfile getProfile() {
         return profile;
     }

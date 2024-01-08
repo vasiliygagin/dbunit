@@ -1,22 +1,23 @@
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
-
 import org.dbunit.database.CachedResultSetTable;
 import org.dbunit.database.ForwardOnlyResultSetTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import junit.framework.TestCase;
+
 /**
  * This class only logs out the toString() results for review, does not test
  * anything. Currently only ITables that subclass AbstractTable.
- * 
+ *
  * @author Jeff Jensen jeffjensen AT users.sourceforge.net
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.8
  */
 public class ToStringViewTest extends TestCase {
+
     private final Logger LOG = LoggerFactory.getLogger(ToStringViewTest.class);
 
     public void testForwardOnlyResultSetTable() {
@@ -34,13 +35,13 @@ public class ToStringViewTest extends TestCase {
     }
 
     public void testCompositeTable() throws Exception {
-        CompositeTableTest test = new CompositeTableTest("the string");
+        CompositeTableTest test = new CompositeTableTest();
         ITable table = test.createTable();
         LOG.info("CompositeTable.toString()={}", table);
     }
 
     public void testDefaultTable() throws Exception {
-        DefaultTableTest test = new DefaultTableTest("the string");
+        DefaultTableTest test = new DefaultTableTest();
         ITable table = test.createTable();
         LOG.info("DefaultTable.toString()={}", table);
     }
@@ -58,7 +59,7 @@ public class ToStringViewTest extends TestCase {
     }
 
     public void testSortedTable() throws Exception {
-        SortedTableTest test = new SortedTableTest("the string");
+        SortedTableTest test = new SortedTableTest();
         ITable table = test.createTable();
         LOG.info("SortedTable.toString()={}", table);
     }

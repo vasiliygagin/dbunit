@@ -48,6 +48,9 @@ import org.junit.Test;
  */
 public class DeleteAllOperationIT extends AbstractDatabaseIT {
 
+    public DeleteAllOperationIT() throws Exception {
+    }
+
     @Before
     public final void setUp1() throws Exception {
         DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, getEnvironment().getInitDataSet());

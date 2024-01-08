@@ -47,6 +47,13 @@ import org.junit.Test;
  */
 public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
+    public TruncateTableOperationIT() throws Exception {
+    }
+
+    private boolean environmentHasTruncateFeature() {
+        return environment.support(TestFeature.TRUNCATE_TABLE);
+    }
+
     protected DatabaseOperation getDeleteAllOperation() {
         return new TruncateTableOperation();
     }
@@ -62,7 +69,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testMockExecute() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         String schemaName = "schema";
         String tableName = "table";
         String expected = getExpectedStament(schemaName + "." + tableName);
@@ -96,7 +103,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteWithEscapedNames() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         String schemaName = "schema";
         String tableName = "table";
         String expected = getExpectedStament("'" + schemaName + "'.'" + tableName + "'");
@@ -131,7 +138,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecute() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
@@ -140,7 +147,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteEmpty() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
@@ -149,7 +156,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteCaseInsentive() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(customizedConnection.createDataSet());
 
         testExecute(new LowerCaseDataSet(dataSet));
@@ -189,7 +196,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteWithEmptyDataset() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRUNCATE_TABLE));
+        assumeTrue(environmentHasTruncateFeature());
         getDeleteAllOperation().execute(customizedConnection, new DefaultDataSet(new ITable[0]));
     }
 }

@@ -50,9 +50,16 @@ import org.junit.Test;
  */
 public class TransactionOperationIT extends AbstractDatabaseIT {
 
+    public TransactionOperationIT() throws Exception {
+    }
+
+    private boolean environmentHasTransactionFeature() {
+        return environment.support(TestFeature.TRANSACTION);
+    }
+
     @Test
     public void testExecuteCommit() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRANSACTION));
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -75,7 +82,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExclusiveTransaction() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRANSACTION));
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -105,7 +112,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteRollback() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.TRANSACTION));
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);

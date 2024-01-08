@@ -40,6 +40,9 @@ import org.junit.Test;
  */
 public class CompositeOperationIT extends AbstractDatabaseIT {
 
+    public CompositeOperationIT() throws Exception {
+    }
+
     @Test
     public void testExecute() throws Exception {
         String tableName = "PK_TABLE";

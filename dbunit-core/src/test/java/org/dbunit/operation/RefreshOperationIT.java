@@ -53,6 +53,9 @@ import org.junit.Test;
  */
 public class RefreshOperationIT extends AbstractDatabaseIT {
 
+    public RefreshOperationIT() throws Exception {
+    }
+
     @Test
     public void testExecute() throws Exception {
         Reader reader = TestUtils.getFileReader("xml/refreshOperationTest.xml");

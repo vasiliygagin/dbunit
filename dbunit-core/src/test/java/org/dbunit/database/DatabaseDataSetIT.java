@@ -21,7 +21,9 @@
 
 package org.dbunit.database;
 
-import org.dbunit.DatabaseEnvironmentLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
@@ -30,6 +32,9 @@ import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilterSimple;
 import org.dbunit.util.QualifiedTableName;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -40,21 +45,20 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
     private AbstractDatabaseConnection _connection;
 
-    public DatabaseDataSetIT(String s) {
-        super(s);
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
-    @Override
-    protected final void setUp() throws Exception {
-        _connection = DatabaseEnvironmentLoader.getInstance().getConnection();
+    public DatabaseDataSetIT() throws Exception {
+        // TODO Auto-generated constructor stub
     }
 
-    @Override
-    protected final void tearDown() throws Exception {
-        super.tearDown();
+    @Before
+    public final void setUp() throws Exception {
+        _connection = environment.getConnection();
+    }
+
+    @After
+    public final void tearDown() throws Exception {
 
         _connection = null;
     }
@@ -64,7 +68,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
     @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance().convertString(str);
+        return environment.convertString(str);
     }
 
     @Override
@@ -90,6 +94,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
+    @Test
     public void testGetQualifiedTableNames() throws Exception {
         String[] expectedNames = getExpectedNames();
 
@@ -109,6 +114,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testGetColumnsAndQualifiedNamesEnabled() throws Exception {
         String tableName = new QualifiedTableName("TEST_TABLE", _connection.getSchema()).getQualifiedName();
         String[] expected = { "COLUMN0", "COLUMN1", "COLUMN2", "COLUMN3" };
@@ -127,6 +133,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testGetPrimaryKeysAndQualifiedNamesEnabled() throws Exception {
         String tableName = new QualifiedTableName("PK_TABLE", _connection.getSchema()).getQualifiedName();
         String[] expected = { "PK0", "PK1", "PK2" };
@@ -145,6 +152,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testGetPrimaryKeysWithColumnFilters() throws Exception {
 
         // TODO (felipeal): I don't know if PK_TABLE is a standard JDBC name or if
@@ -174,7 +182,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         }
     }
 
-//    public void testGetTableNamesAndCaseSensitive() throws Exception
+//        @Test public void testGetTableNamesAndCaseSensitive() throws Exception
 //    {
 //        DatabaseMetaData metaData = _connection.getConnection().getMetaData();
 //        metaData.
@@ -190,6 +198,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
         // Cannot test! Unsupported feature.
     }
 
+    @Test
     public void testGetTableThatIsFiltered() throws Exception {
         final String existingTableToFilter = convertString("TEST_TABLE");
         ITableFilterSimple tableFilter = tableName -> {

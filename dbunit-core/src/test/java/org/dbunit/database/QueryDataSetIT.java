@@ -21,13 +21,18 @@
 
 package org.dbunit.database;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.NoSuchColumnException;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,39 +40,37 @@ import org.dbunit.operation.DatabaseOperation;
  * @since Feb 18, 2002
  */
 public class QueryDataSetIT extends AbstractDataSetTest {
-    private IDatabaseConnection _connection;
 
-    public QueryDataSetIT(String s) {
-        super(s);
-    }
+    private IDatabaseConnection _connection;
 
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class
 
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
-        _connection = env.getConnection();
-
-        DatabaseOperation.CLEAN_INSERT.execute(_connection, env.getInitDataSet());
+    public QueryDataSetIT() throws Exception {
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @Before
+    public final void setUp() throws Exception {
 
+        _connection = environment.getConnection();
+
+        DatabaseOperation.CLEAN_INSERT.execute(_connection, environment.getInitDataSet());
+    }
+
+    @After
+    public final void tearDown() throws Exception {
         _connection = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSetTest class
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         String[] names = getExpectedNames();
 
         QueryDataSet dataSet = new QueryDataSet(_connection);
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
+        for (String name : names) {
             String query = "select * from " + name;
             dataSet.addTable(name, query);
             /*
@@ -78,6 +81,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
         return dataSet;
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         QueryDataSet dataSet = new QueryDataSet(_connection);
         String[] names = getExpectedDuplicateNames();
@@ -97,6 +101,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
         return dataSet;
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         QueryDataSet dataSet = new QueryDataSet(_connection);
         String[] names = getExpectedDuplicateNames();
@@ -119,6 +124,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
     ////////////////////////////////////////////////////////////////////////////
     // Test methods
 
+    @Test
     public void testGetSelectPartialData() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -130,6 +136,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
 
     }
 
+    @Test
     public void testGetAllColumnsWithStar() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -141,6 +148,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
 
     }
 
+    @Test
     public void testGetAllRowsSingleColumn() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -151,6 +159,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
         assertEquals("", "3", new String(table.getRowCount() + ""));
     }
 
+    @Test
     public void testOnlySpecifiedColumnsReturned() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -168,6 +177,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testGetSelectPartialData2() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -180,6 +190,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
 
     }
 
+    @Test
     public void testCombinedWhere() throws Exception {
 
         QueryDataSet ptds = new QueryDataSet(_connection);
@@ -193,6 +204,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
 
     }
 
+    @Test
     public void testMultipleTables() throws Exception {
         ITable table = null;
 
@@ -212,6 +224,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
 
     }
 
+    @Test
     public void testMultipleTablesWithMissingWhere() throws Exception {
         QueryDataSet ptds = new QueryDataSet(_connection);
         ptds.addTable("SECOND_TABLE",

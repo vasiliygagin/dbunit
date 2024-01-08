@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class ImportedKeysFilteredByPKsTest extends AbstractImportedKeysFilteredByPKsTestCase {
 
-    public ImportedKeysFilteredByPKsTest() {
+    public ImportedKeysFilteredByPKsTest() throws Exception {
         super("hypersonic_dataset.sql");
     }
 

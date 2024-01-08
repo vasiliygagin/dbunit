@@ -45,6 +45,9 @@ import org.junit.Test;
  */
 public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
 
+    public DatabaseConnectionIT() throws Exception {
+    }
+
     @Override
     protected String convertString(String str) throws Exception {
         return getEnvironment().convertString(str);

@@ -29,8 +29,9 @@ import java.sql.Connection;
 import java.util.HashSet;
 import java.util.TreeSet;
 
+import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -57,17 +58,25 @@ public class TablesDependencyHelperTest {
 
     private IDatabaseConnection connection;
 
+    private final DatabaseEnvironment environment;
+
+    public TablesDependencyHelperTest() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
     protected void setUp(String... sqlFiles) throws Exception {
         for (String element : sqlFiles) {
             File sql = TestUtils.getFile("sql/" + element);
-            DdlExecutor.executeDdlFile(sql, this.jdbcConnection);
+            final File ddlFile = sql;
+            final Connection connection = this.jdbcConnection;
+            DdlExecutor.executeDdlFile(environment, connection, ddlFile);
         }
     }
 
     @Before
     public void setUp() throws Exception {
         this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
     }
 

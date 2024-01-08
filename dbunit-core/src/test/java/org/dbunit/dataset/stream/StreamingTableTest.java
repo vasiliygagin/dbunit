@@ -20,6 +20,8 @@
  */
 package org.dbunit.dataset.stream;
 
+import java.io.FileReader;
+
 import org.dbunit.dataset.ForwardOnlyTableTest;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
@@ -27,20 +29,19 @@ import org.dbunit.dataset.xml.FlatXmlDataSetTest;
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.xml.sax.InputSource;
 
-import java.io.FileReader;
-
 /**
  * @author Manuel Laflamme
  * @since Apr 11, 2003
  * @version $Revision$
  */
 public class StreamingTableTest extends ForwardOnlyTableTest {
+
     private static final String TEST_TABLE = "TEST_TABLE";
 
-    public StreamingTableTest(String s) {
-        super(s);
+    public StreamingTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
 

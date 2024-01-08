@@ -20,6 +20,9 @@
  */
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.FileReader;
 
 import org.dbunit.dataset.xml.FlatXmlDataSetTest;
@@ -34,15 +37,17 @@ import org.xml.sax.InputSource;
  * @since 1.x (Apr 18, 2003)
  */
 public class CachedDataSetTest extends AbstractDataSetDecoratorTest {
-    public CachedDataSetTest(String s) {
-        super(s);
+
+    public CachedDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
         return new CachedDataSet(new FlatXmlProducer(new InputSource(reader)));
     }
 
+    @Override
     public void testGetTable() throws Exception {
         super.testGetTable();
     }

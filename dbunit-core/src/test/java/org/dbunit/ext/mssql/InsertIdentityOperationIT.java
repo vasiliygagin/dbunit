@@ -30,6 +30,8 @@ import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
+import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.ForwardOnlyDataSet;
@@ -51,9 +53,19 @@ import org.junit.Test;
  */
 public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
+    final DatabaseEnvironment environment;
+
+    public InsertIdentityOperationIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
+    private boolean environmentHasInsertIdentityFeature() {
+        return environment.support(TestFeature.INSERT_IDENTITY);
+    }
+
     @Test
     public void testExecuteXML() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTest.xml");
         IDataSet dataSet = new XmlDataSet(in);
 
@@ -62,7 +74,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteFlatXML() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(in);
 
@@ -71,7 +83,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteLowerCase() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
         IDataSet dataSet = new LowerCaseDataSet(new FlatXmlDataSetBuilder().build(in));
 
@@ -80,7 +92,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteForwardOnly() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestFlat.xml");
         IDataSet dataSet = new ForwardOnlyDataSet(new FlatXmlDataSetBuilder().build(in));
 
@@ -122,7 +134,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
      */
     @Test
     public void testIdentityInsertNoPK() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestNoPK.xml");
         IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
@@ -148,7 +160,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testSetCustomIdentityColumnFilter() throws Exception {
-        assumeTrue(environmentHasFeature(TestFeature.INSERT_IDENTITY));
+        assumeTrue(environmentHasInsertIdentityFeature());
         customizedConnection.getDatabaseConfig().setIdentityFilter(IDENTITY_FILTER_INVALID);
         try {
             IDataSet dataSet = customizedConnection.createDataSet();

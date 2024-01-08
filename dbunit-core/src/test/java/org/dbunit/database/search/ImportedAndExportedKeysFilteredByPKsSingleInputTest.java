@@ -10,7 +10,7 @@ import org.junit.Test;
 public class ImportedAndExportedKeysFilteredByPKsSingleInputTest
         extends AbstractImportedAndExportedKeysFilteredByPKsTestCase {
 
-    public ImportedAndExportedKeysFilteredByPKsSingleInputTest() {
+    public ImportedAndExportedKeysFilteredByPKsSingleInputTest() throws Exception {
         super("hypersonic_simple_input_dataset.sql");
     }
 

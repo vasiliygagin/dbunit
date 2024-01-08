@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
@@ -60,13 +58,16 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     public static final String TEST_TABLE = "TEST_TABLE";
 
+    public DatabaseTableMetaDataIT() throws Exception {
+    }
+
     protected IDataSet createDataSet() throws Exception {
         return customizedConnection.createDataSet();
     }
 
     @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance().convertString(str);
+        return environment.convertString(str);
     }
 
     @Test
@@ -178,7 +179,6 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         expectedTypes.add(DataType.NUMERIC);
         expectedTypes.add(DataType.TIMESTAMP);
 
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.VARBINARY)) {
             expectedNames.add("VARBINARY_COL");
             expectedTypes.add(DataType.VARBINARY);
@@ -265,7 +265,9 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
+        final Connection connection1 = jdbcConnection;
+        DdlExecutor.executeDdlFile(environment, connection1,
+                TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
@@ -293,7 +295,9 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     public void testCaseSensitive() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), jdbcConnection);
+        final Connection connection1 = jdbcConnection;
+        DdlExecutor.executeDdlFile(environment, connection1,
+                TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
@@ -333,7 +337,6 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testFullyQualifiedTableName() throws Exception {
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         String schema = environment.getProfile().getSchema();
 
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);

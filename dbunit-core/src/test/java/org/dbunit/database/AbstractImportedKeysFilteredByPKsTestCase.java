@@ -9,14 +9,13 @@ import org.dbunit.util.search.SearchException;
 
 public abstract class AbstractImportedKeysFilteredByPKsTestCase extends AbstractSearchCallbackFilteredByPKsTestCase {
 
-    public AbstractImportedKeysFilteredByPKsTestCase(String sqlFile) {
+    public AbstractImportedKeysFilteredByPKsTestCase(String sqlFile) throws Exception {
         super(sqlFile);
     }
 
     @Override
     protected IDataSet getDataset() throws SQLException, SearchException, DataSetException {
-        IDataSet dataset = TablesDependencyHelper.getDataset(getConnection(), getInput());
-        return dataset;
+        return TablesDependencyHelper.getDataset(getConnection(), getInput());
     }
 
 }

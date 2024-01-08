@@ -21,11 +21,16 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileReader;
 
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -33,10 +38,11 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 22, 2002
  */
 public class FilteredDataSetTest extends AbstractDataSetTest {
-    public FilteredDataSetTest(String s) {
-        super(s);
+
+    public FilteredDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
         IDataSet dataSet2 = new XmlDataSet(TestUtils.getFileReader("xml/filteredDataSetTest.xml"));
@@ -46,6 +52,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         return new FilteredDataSet(getExpectedNames(), dataSet);
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/xmlDataSetDuplicateTest.xml"));
         IDataSet dataSet2 = new XmlDataSet(TestUtils.getFileReader("xml/filteredDataSetTest.xml"));
@@ -58,6 +65,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         return new FilteredDataSet(getExpectedDuplicateNames(), dataSet);
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         String[] names = getExpectedDuplicateNames();
         names[0] = names[0].toLowerCase();
@@ -65,6 +73,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         return new FilteredDataSet(names, createDuplicateDataSet());
     }
 
+    @Test
     public void testGetFilteredTableNames() throws Exception {
         String[] originalNames = getExpectedNames();
         String expectedName = originalNames[0];
@@ -76,6 +85,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         assertEquals("filtered names", expectedName, filteredDataSet.getTableNames()[0]);
     }
 
+    @Test
     public void testGetFilteredTable() throws Exception {
         String[] originalNames = getExpectedNames();
         IDataSet filteredDataSet = new FilteredDataSet(new String[] { originalNames[0] }, createDataSet());
@@ -94,6 +104,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testGetFilteredTableMetaData() throws Exception {
         String[] originalNames = getExpectedNames();
         IDataSet filteredDataSet = new FilteredDataSet(new String[] { originalNames[0] }, createDataSet());
@@ -112,6 +123,7 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testCaseSensitivityInheritance() throws Exception {
         // Case sensitive check
         FileReader fileReader = TestUtils.getFileReader("xml/dataSetTest.xml");

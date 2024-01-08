@@ -21,15 +21,16 @@
 
 package org.dbunit.dataset.xml;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.FileReader;
+import java.io.Reader;
+
 import org.dbunit.dataset.AbstractTableTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 
 /**
  * @author Manuel Laflamme
@@ -37,10 +38,11 @@ import java.io.Reader;
  * @since Feb 17, 2002
  */
 public class XmlTableTest extends AbstractTableTest {
-    public XmlTableTest(String s) {
-        super(s);
+
+    public XmlTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         return createDataSet().getTable("TEST_TABLE");
     }
@@ -50,6 +52,7 @@ public class XmlTableTest extends AbstractTableTest {
         return new XmlDataSet(in);
     }
 
+    @Override
     public void testGetMissingValue() throws Exception {
         Object[] expected = { null, ITable.NO_VALUE, "value", "", "   ", ITable.NO_VALUE };
 

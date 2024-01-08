@@ -21,13 +21,14 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.FileReader;
+import java.io.Reader;
+
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.dataset.xml.XmlTableTest;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 
 /**
  * @author Manuel Laflamme
@@ -35,19 +36,22 @@ import java.io.Reader;
  * @since Mar 27, 2002
  */
 public class CaseInsensitiveTableTest extends XmlTableTest {
-    public CaseInsensitiveTableTest(String s) {
-        super(s);
+
+    public CaseInsensitiveTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         return new CaseInsensitiveTable(createDataSet().getTable("TEST_TABLE"));
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/caseInsensitiveTableTest.xml"));
         return new XmlDataSet(in);
     }
 
+    @Override
     public void testTableMetaData() throws Exception {
         Column[] columns = createTable().getTableMetaData().getColumns();
         assertEquals("column count", COLUMN_COUNT, columns.length);

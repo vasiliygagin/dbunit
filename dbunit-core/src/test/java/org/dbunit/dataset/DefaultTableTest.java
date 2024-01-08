@@ -21,6 +21,9 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.dbunit.dataset.datatype.DataType;
 
 /**
@@ -29,10 +32,11 @@ import org.dbunit.dataset.datatype.DataType;
  * @since Feb 17, 2002
  */
 public class DefaultTableTest extends AbstractTableTest {
-    public DefaultTableTest(String s) {
-        super(s);
+
+    public DefaultTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         return createTable(COLUMN_COUNT, ROW_COUNT, 0);
     }
@@ -58,6 +62,7 @@ public class DefaultTableTest extends AbstractTableTest {
         return new DefaultTableMetaData("myTable", columns);
     }
 
+    @Override
     public void testGetMissingValue() throws Exception {
         String columnName = "COLUMN0";
         Object expected = ITable.NO_VALUE;

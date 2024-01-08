@@ -29,8 +29,6 @@ import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
@@ -61,11 +59,13 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     ////////////////////////////////////////////////////////////////////////////
     //
 
+    public UpdateOperationIT() throws Exception {
+    }
+
     @Override
     protected IDataSet getDataSet() throws Exception {
         IDataSet dataSet = super.getDataSet();
 
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.BLOB)) {
             dataSet = new CompositeDataSet(
                     new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/blobInsertTest.xml")), dataSet);
@@ -321,7 +321,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     @Test
     public void testUpdateClob() throws Exception {
         // execute this test only if the target database support CLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.CLOB)) {
             String tableName = "CLOB_TABLE";
 
@@ -347,7 +346,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     @Test
     public void testUpdateBlob() throws Exception {
         // execute this test only if the target database support BLOB
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.BLOB)) {
             String tableName = "BLOB_TABLE";
 
@@ -379,7 +377,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     @Test
     public void testUpdateSdoGeometry() throws Exception {
         // execute this test only if the target database supports SDO_GEOMETRY
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.SDO_GEOMETRY)) {
             String tableName = "SDO_GEOMETRY_TABLE";
 
@@ -407,7 +404,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
     @Test
     public void testUpdateXmlType() throws Exception {
         // execute this test only if the target database support XML_TYPE
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.XML_TYPE)) {
             String tableName = "XML_TYPE_TABLE";
 

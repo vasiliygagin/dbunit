@@ -51,7 +51,7 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
     private ITable fTable; // fixture
     private IDataSet fDataSet; // fixture
 
-    public PrimaryKeyFilteredTableWrapperTest() {
+    public PrimaryKeyFilteredTableWrapperTest() throws Exception {
         super("hypersonic_dataset.sql");
     }
 

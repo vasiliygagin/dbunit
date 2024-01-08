@@ -31,6 +31,9 @@ import org.dbunit.database.IDatabaseConnection;
  */
 public class ImportAndExportNodesFilterSearchCallbackTest extends ImportNodesFilterSearchCallbackTest {
 
+    public ImportAndExportNodesFilterSearchCallbackTest() throws Exception {
+    }
+
     @Override
     protected String[][] getExpectedOutput() {
         int size = getInput().length;

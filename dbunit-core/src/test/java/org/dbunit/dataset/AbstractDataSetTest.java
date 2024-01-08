@@ -21,13 +21,17 @@
 
 package org.dbunit.dataset;
 
-import org.dbunit.database.AmbiguousTableNameException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.dbunit.database.AmbiguousTableNameException;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,8 +39,8 @@ import java.util.stream.Collectors;
  * @since Feb 22, 2002
  */
 public abstract class AbstractDataSetTest extends AbstractTest {
-    public AbstractDataSetTest(String s) {
-        super(s);
+
+    public AbstractDataSetTest() throws Exception {
     }
 
     protected int[] getExpectedDuplicateRows() {
@@ -84,7 +88,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         nameList.remove("DBUNIT.TEST_IDENTITY_NOT_PK");
         nameList.remove("TEST_IDENTITY_NOT_PK");
 
-        names = (String[]) nameList.toArray(new String[0]);
+        names = nameList.toArray(new String[0]);
 
         return new FilteredDataSet(names, dataSet);
     }
@@ -95,7 +99,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
 
     /**
      * Create a dataset with duplicate tables having different char case in name
-     * 
+     *
      * @return
      */
     protected abstract IDataSet createMultipleCaseDuplicateDataSet() throws Exception;
@@ -104,6 +108,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         assertEquals(mesage, expected, actual);
     }
 
+    @Test
     public void testGetTableNames() throws Exception {
         String[] expected = getExpectedNames();
         assertContainsIgnoreCase("minimal names subset", super.getExpectedNames(), expected);
@@ -117,11 +122,13 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetTableNamesDefensiveCopy() throws Exception {
         IDataSet dataSet = createDataSet();
         assertTrue("Should not be same intance", dataSet.getTableNames() != dataSet.getTableNames());
     }
 
+    @Test
     public void testGetTable() throws Exception {
         String[] expected = getExpectedNames();
 
@@ -132,6 +139,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetUnknownTable() throws Exception {
         IDataSet dataSet = createDataSet();
         try {
@@ -141,6 +149,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetTableMetaData() throws Exception {
         String[] expected = getExpectedNames();
 
@@ -151,6 +160,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetUnknownTableMetaData() throws Exception {
         IDataSet dataSet = createDataSet();
         try {
@@ -160,6 +170,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetTables() throws Exception {
         String[] expected = getExpectedNames();
         assertContainsIgnoreCase("minimal names subset", super.getExpectedNames(), expected);
@@ -173,11 +184,13 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetTablesDefensiveCopy() throws Exception {
         IDataSet dataSet = createDataSet();
         assertTrue("Should not be same instance", dataSet.getTables() != dataSet.getTables());
     }
 
+    @Test
     public void testCreateDuplicateDataSet() throws Exception {
         try {
             /* IDataSet dataSet = */createDuplicateDataSet();
@@ -187,6 +200,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
         try {
             /* IDataSet dataSet = */createMultipleCaseDuplicateDataSet();
@@ -196,6 +210,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetCaseInsensitiveTable() throws Exception {
         String[] expectedNames = getExpectedLowerNames();
 
@@ -211,6 +226,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetCaseInsensitiveTableMetaData() throws Exception {
         String[] expectedNames = getExpectedLowerNames();
         IDataSet dataSet = createDataSet();
@@ -226,6 +242,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testIterator() throws Exception {
         String[] expected = getExpectedNames();
         assertContainsIgnoreCase("minimal names subset", super.getExpectedNames(), expected);
@@ -240,6 +257,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         assertEquals("table count", expected.length, i);
     }
 
+    @Test
     public void testReverseIterator() throws Exception {
         String[] expected = DataSetUtils.reverseStringArray(getExpectedNames());
         assertContainsIgnoreCase("minimal names subset", super.getExpectedNames(), expected);
@@ -263,7 +281,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         } else {
             table3 = new DefaultTable("duplicate_TABLE");
         }
-        ITable[] tables = new ITable[] { table1, table2, table3 };
+        ITable[] tables = { table1, table2, table3 };
         return tables;
     }
 }

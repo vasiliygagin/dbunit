@@ -34,6 +34,9 @@ import org.junit.Test;
  */
 public class CloseConnectionOperationIT extends AbstractDatabaseIT {
 
+    public CloseConnectionOperationIT() throws Exception {
+    }
+
     @Test
     public void testMockExecute() throws Exception {
 

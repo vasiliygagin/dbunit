@@ -20,11 +20,16 @@
  */
 package org.dbunit.dataset.filter;
 
-import org.dbunit.dataset.*;
+import static org.junit.Assert.assertEquals;
+
+import org.dbunit.dataset.AbstractTest;
+import org.dbunit.dataset.CompositeDataSet;
+import org.dbunit.dataset.DefaultDataSet;
+import org.dbunit.dataset.DefaultTable;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.FileReader;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -33,8 +38,7 @@ import java.io.FileReader;
  */
 public abstract class AbstractTableFilterTest extends AbstractTest {
 
-    public AbstractTableFilterTest(String s) {
-        super(s);
+    public AbstractTableFilterTest() throws Exception {
     }
 
     protected IDataSet createDataSet() throws Exception {
@@ -55,25 +59,36 @@ public abstract class AbstractTableFilterTest extends AbstractTest {
         return dataSet;
     }
 
+    @Test
     public abstract void testAccept() throws Exception;
 
+    @Test
     public abstract void testIsCaseInsensitiveValidName() throws Exception;
 
+    @Test
     public abstract void testIsValidNameAndInvalid() throws Exception;
 
+    @Test
     public abstract void testGetTableNames() throws Exception;
 
+    @Test
     public abstract void testGetCaseInsensitiveTableNames() throws Exception;
 
+    @Test
     public abstract void testGetReverseTableNames() throws Exception;
 
+    @Test
     public abstract void testGetTableNamesAndTableNotInDecoratedDataSet() throws Exception;
 
+    @Test
     public abstract void testIterator() throws Exception;
 
+    @Test
     public abstract void testCaseInsensitiveIterator() throws Exception;
 
+    @Test
     public abstract void testReverseIterator() throws Exception;
 
+    @Test
     public abstract void testIteratorAndTableNotInDecoratedDataSet() throws Exception;
 }
