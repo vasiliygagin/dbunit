@@ -21,6 +21,9 @@
 
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -28,6 +31,8 @@ import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseProfile;
 import org.dbunit.DefaultDatabaseTester;
 import org.dbunit.IDatabaseTester;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,24 +40,21 @@ import org.dbunit.IDatabaseTester;
  * @since Mar 26, 2002
  */
 public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
+
     private String schema;
     private DatabaseProfile profile;
-
-    public AbstractDatabaseConnectionIT(String s) {
-        super(s);
-    }
 
     public DatabaseProfile getProfile() {
         return profile;
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public final void setUp1() throws Exception {
         this.profile = super.getEnvironment().getProfile();
         this.schema = this.profile.getSchema();
     }
 
+    @Test
     public final void testGetRowCount() throws Exception {
         assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE", null));
         assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE"));
@@ -63,6 +65,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         assertEquals("PK_TABLE", 1, customizedConnection.getRowCount("PK_TABLE", "where PK0 = 0"));
     }
 
+    @Test
     public final void testGetRowCount_NonexistingSchema() throws Exception {
         DatabaseProfile profile = super.getEnvironment().getProfile();
         String nonexistingSchema = profile.getSchema() + "_444_XYZ_TEST";
@@ -86,6 +89,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public final void testGetRowCount_NoSchemaSpecified() throws Exception {
         DatabaseProfile profile = super.getEnvironment().getProfile();
         this.schema = null;

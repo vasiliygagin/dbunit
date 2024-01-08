@@ -21,6 +21,9 @@
 
 package org.dbunit.operation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.FileReader;
 import java.io.Reader;
 
@@ -46,6 +49,7 @@ import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -53,9 +57,6 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 19, 2002
  */
 public class UpdateOperationIT extends AbstractDatabaseIT {
-    public UpdateOperationIT(String s) {
-        super(s);
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -90,7 +91,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
 
     ////////////////////////////////////////////////////////////////////////////
     //
-
+    @Test
     public void testMockExecute() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -130,6 +131,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithBlanksDisabledAndEmptyString() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -170,6 +172,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testExecuteWithBlanksDisabledAndNonEmptyStrings() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -209,6 +212,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithBlanksAllowed() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -250,6 +254,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithEscapedName() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -291,6 +296,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithEmptyTable() throws Exception {
         Column[] columns = { new Column("c1", DataType.VARCHAR) };
         ITable table = new DefaultTable(new DefaultTableMetaData("name", columns, columns));
@@ -312,6 +318,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testUpdateClob() throws Exception {
         // execute this test only if the target database support CLOB
         DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
@@ -337,6 +344,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testUpdateBlob() throws Exception {
         // execute this test only if the target database support BLOB
         DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
@@ -368,6 +376,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testUpdateSdoGeometry() throws Exception {
         // execute this test only if the target database supports SDO_GEOMETRY
         DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
@@ -395,6 +404,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testUpdateXmlType() throws Exception {
         // execute this test only if the target database support XML_TYPE
         DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
@@ -421,6 +431,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testExecute() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/updateOperationTest.xml"));
         IDataSet dataSet = new XmlDataSet(in);
@@ -429,6 +440,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
 
     }
 
+    @Test
     public void testExecuteCaseInsensitive() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/updateOperationTest.xml"));
         IDataSet dataSet = new XmlDataSet(in);
@@ -436,6 +448,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         testExecute(new LowerCaseDataSet(dataSet));
     }
 
+    @Test
     public void testExecuteForwardOnly() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/updateOperationTest.xml"));
         IDataSet dataSet = new XmlDataSet(in);
@@ -443,6 +456,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         testExecute(new ForwardOnlyDataSet(dataSet));
     }
 
+    @Test
     public void testExecuteAndNoPrimaryKeys() throws Exception {
         String tableName = "TEST_TABLE";
 

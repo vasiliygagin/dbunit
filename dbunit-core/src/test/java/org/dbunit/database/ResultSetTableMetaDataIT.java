@@ -1,5 +1,7 @@
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 
 import org.dbunit.AbstractDatabaseIT;
@@ -9,6 +11,7 @@ import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author gommma (gommma AT users.sourceforge.net)
@@ -17,10 +20,6 @@ import org.dbunit.testutil.TestUtils;
  * @since 2.4.0
  */
 public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
-
-    public ResultSetTableMetaDataIT(String s) {
-        super(s);
-    }
 
     protected IDataSet createDataSet() throws Exception {
         return customizedConnection.createDataSet();
@@ -32,6 +31,7 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
      *
      * @throws Exception
      */
+    @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");

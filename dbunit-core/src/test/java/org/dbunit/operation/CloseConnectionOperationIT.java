@@ -27,16 +27,14 @@ import static org.mockito.Mockito.verify;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.junit.Test;
 
 /**
  * @author Vasiliy Gagin
  */
 public class CloseConnectionOperationIT extends AbstractDatabaseIT {
 
-    public CloseConnectionOperationIT(String s) {
-        super(s);
-    }
-
+    @Test
     public void testMockExecute() throws Exception {
 
         DatabaseOperation operation = mock(DatabaseOperation.class);

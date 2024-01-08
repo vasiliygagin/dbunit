@@ -23,6 +23,11 @@
 
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -31,6 +36,7 @@ import java.util.Locale;
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.ITable;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -38,15 +44,13 @@ import org.dbunit.dataset.ITable;
  * @since Mar 26, 2002
  */
 public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
-    public DatabaseConnectionIT(String s) {
-        super(s);
-    }
 
     @Override
     protected String convertString(String str) throws Exception {
         return getEnvironment().convertString(str);
     }
 
+    @Test
     public void testCreateNullConnection() throws Exception {
         try {
             new DatabaseConnection(null, new DatabaseConfig());
@@ -56,6 +60,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         }
     }
 
+    @Test
     public void testCreateConnectionWithNonExistingSchemaAndStrictValidation() throws Exception {
         DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
@@ -71,6 +76,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         }
     }
 
+    @Test
     public void testCreateConnectionWithNonExistingSchemaAndLenientValidation() throws Exception {
         DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
@@ -82,6 +88,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         assertNotNull(dbConnection);
     }
 
+    @Test
     public void testCreateConnectionWithSchemaDbStoresUpperCaseIdentifiers() throws Exception {
         IDatabaseConnection validConnection = getConnection32();
         String schema = validConnection.getSchema();
@@ -100,6 +107,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         }
     }
 
+    @Test
     public void testCreateConnectionWithSchemaDbStoresLowerCaseIdentifiers() throws Exception {
         IDatabaseConnection validConnection = getConnection32();
         String schema = validConnection.getSchema();
@@ -118,6 +126,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         }
     }
 
+    @Test
     public void testCreateQueryWithPreparedStatement() throws Exception {
         IDatabaseConnection connection = getConnection32();
         PreparedStatement pstmt = connection.getConnection()

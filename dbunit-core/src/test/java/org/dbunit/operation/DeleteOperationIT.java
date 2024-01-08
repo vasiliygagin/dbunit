@@ -21,6 +21,9 @@
 
 package org.dbunit.operation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.FileReader;
 import java.io.Reader;
 
@@ -40,6 +43,7 @@ import org.dbunit.dataset.NoPrimaryKeyException;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -47,10 +51,8 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 19, 2002
  */
 public class DeleteOperationIT extends AbstractDatabaseIT {
-    public DeleteOperationIT(String s) {
-        super(s);
-    }
 
+    @Test
     public void testMockExecute() throws Exception {
         String schemaName = "schema";
         String tableName1 = "table1";
@@ -96,6 +98,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithEscapedNames() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -137,6 +140,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithEmptyTable() throws Exception {
         Column[] columns = { new Column("c1", DataType.VARCHAR) };
         ITable table = new DefaultTable(new DefaultTableMetaData("name", columns, columns));
@@ -158,6 +162,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteAndNoPrimaryKey() throws Exception {
         IDataSet dataSet = customizedConnection.createDataSet();
         ITableMetaData metaData = dataSet.getTableMetaData("TEST_TABLE");
@@ -168,6 +173,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testExecute() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/deleteOperationTest.xml"));
         IDataSet dataSet = new XmlDataSet(in);
@@ -176,6 +182,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
 
     }
 
+    @Test
     public void testExecuteCaseInsensitive() throws Exception {
         Reader in = new FileReader(TestUtils.getFile("xml/deleteOperationTest.xml"));
         IDataSet dataSet = new XmlDataSet(in);
