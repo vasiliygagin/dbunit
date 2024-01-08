@@ -21,24 +21,31 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  */
 public class SortedTableTest extends AbstractTableTest {
+
     private File sortedTableTestFile = TestUtils.getFile("xml/sortedTableTest.xml");
 
-    public SortedTableTest(String s) {
-        super(s);
+    public SortedTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         return createDataSet().getTable("TEST_TABLE");
     }
@@ -53,18 +60,18 @@ public class SortedTableTest extends AbstractTableTest {
 
     private ITable createNumericTable() throws Exception {
         // Create a table that has numeric values in the first column
-        Column[] columns = new Column[] { new Column("COLUMN0", DataType.NUMERIC),
-                new Column("COLUMN1", DataType.VARCHAR) };
+        Column[] columns = { new Column("COLUMN0", DataType.NUMERIC), new Column("COLUMN1", DataType.VARCHAR) };
         DefaultTable table = new DefaultTable("TEST_TABLE", columns);
-        Object[] row1 = new Object[] { new Integer(9), "row 9" };
-        Object[] row2 = new Object[] { new Integer(10), "row 10" };
-        Object[] row3 = new Object[] { new Integer(11), "row 11" };
+        Object[] row1 = { new Integer(9), "row 9" };
+        Object[] row2 = { new Integer(10), "row 10" };
+        Object[] row3 = { new Integer(11), "row 11" };
         table.addRow(row1);
         table.addRow(row2);
         table.addRow(row3);
         return table;
     }
 
+    @Test
     public void testSetUseComparableTooLate() throws Exception {
         ITable table = createTable();
         SortedTable sortedTable = new SortedTable(table);
@@ -80,6 +87,7 @@ public class SortedTableTest extends AbstractTableTest {
         }
     }
 
+    @Test
     public void testSortByComparable() throws Exception {
         // Sort by column0 which is a numeric column
         String columnName = "COLUMN0";
@@ -100,9 +108,10 @@ public class SortedTableTest extends AbstractTableTest {
 
     /**
      * Tests the sort by string which is the default behavior
-     * 
+     *
      * @throws Exception
      */
+    @Test
     public void testSortByString() throws Exception {
         // Sort by column0 which is a numeric column
         String columnName = "COLUMN0";
@@ -120,6 +129,7 @@ public class SortedTableTest extends AbstractTableTest {
         }
     }
 
+    @Override
     public void testGetMissingValue() throws Exception {
         String columnName = "COLUMN2";
         Object[] expected = { null, null, null, "0", "1" };
@@ -134,8 +144,9 @@ public class SortedTableTest extends AbstractTableTest {
         }
     }
 
+    @Test
     public void testCustomColumnsWithUnknownColumnName() throws Exception {
-        String[] sortColumnNames = new String[] { "COLUMN2", "COLUMNXY_UNDEFINED" };
+        String[] sortColumnNames = { "COLUMN2", "COLUMNXY_UNDEFINED" };
 
         ITable unsortedTable = createUnsortedDataSet().getTable("MISSING_VALUES");
         try {
@@ -146,8 +157,9 @@ public class SortedTableTest extends AbstractTableTest {
         }
     }
 
+    @Test
     public void testCustomColumnsWithUnknownColumn() throws Exception {
-        Column[] sortColumns = new Column[] { new Column("COLUMN2", DataType.UNKNOWN, Column.NULLABLE),
+        Column[] sortColumns = { new Column("COLUMN2", DataType.UNKNOWN, Column.NULLABLE),
                 new Column("COLUMNXY_UNDEFINED", DataType.UNKNOWN, Column.NULLABLE) };
 
         ITable unsortedTable = createUnsortedDataSet().getTable("MISSING_VALUES");
@@ -159,9 +171,10 @@ public class SortedTableTest extends AbstractTableTest {
         }
     }
 
+    @Test
     public void testCustomColumnsWithDifferentColumnTypesButSameName() throws Exception {
         Column sortColumn = new Column("COLUMN2", DataType.CHAR, Column.NO_NULLS);
-        Column[] sortColumns = new Column[] { sortColumn };
+        Column[] sortColumns = { sortColumn };
         // Use different columns (different datatype) in ITableMetaData that have valid
         // column names
         ITable unsortedTable = createUnsortedDataSet().getTable("MISSING_VALUES");

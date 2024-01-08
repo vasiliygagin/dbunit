@@ -21,8 +21,6 @@
 
 package org.dbunit.dataset;
 
-import java.io.FileReader;
-
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.testutil.TestUtils;
 
@@ -32,10 +30,11 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 19, 2003
  */
 public class SortedDataSetTest extends AbstractDataSetDecoratorTest {
-    public SortedDataSetTest(String s) {
-        super(s);
+
+    public SortedDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFileReader("xml/sortedDataSetTest.xml"));
 

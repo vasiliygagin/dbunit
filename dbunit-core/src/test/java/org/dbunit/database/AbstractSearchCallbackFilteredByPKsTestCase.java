@@ -28,7 +28,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
     private PkTableMap fInput = new PkTableMap();
     private PkTableMap fOutput = new PkTableMap();
 
-    public AbstractSearchCallbackFilteredByPKsTestCase(String sqlFile) {
+    public AbstractSearchCallbackFilteredByPKsTestCase(String sqlFile) throws Exception {
         super(sqlFile);
     }
 

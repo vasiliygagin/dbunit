@@ -1,11 +1,15 @@
 package org.dbunit.ext.postgresql;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.StringReader;
 import java.sql.Statement;
 import java.sql.Types;
 
+import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
@@ -15,11 +19,13 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 
-import junit.framework.TestCase;
+public class PostgresSQLOidIT {
 
-public class PostgresSQLOidIT extends TestCase {
     private IDatabaseConnection _connection;
 
  // @formatter:off
@@ -30,22 +36,27 @@ public class PostgresSQLOidIT extends TestCase {
             "</dataset>";
  // @formatter:on
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = DatabaseEnvironmentLoader.getInstance().getConnection();
+    private final DatabaseEnvironment environment;
+
+    public PostgresSQLOidIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @Before
+    public final void setUp() throws Exception {
+        // Load active postgreSQL profile and connection from Maven pom.xml.
+        _connection = environment.getConnection();
+    }
+
+    @After
+    public final void tearDown() throws Exception {
         if (_connection != null) {
             _connection.close();
             _connection = null;
         }
     }
 
+    @Test
     public void testOk() {
     }
 

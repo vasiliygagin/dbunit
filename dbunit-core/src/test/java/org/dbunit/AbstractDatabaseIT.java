@@ -29,32 +29,32 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
-import junit.framework.TestCase;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class AbstractDatabaseIT extends TestCase {
+public abstract class AbstractDatabaseIT {
 
     protected IDatabaseConnection customizedConnection;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private DatabaseEnvironment environment;
+    protected final DatabaseEnvironment environment;
 
-    public AbstractDatabaseIT(String s) {
-        super(s);
+    public AbstractDatabaseIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
+    @Before
+    public final void setUp() throws Exception {
 
         JdbcDatabaseTester databaseTester = environment.getDatabaseTester();
 
@@ -68,8 +68,8 @@ public abstract class AbstractDatabaseIT extends TestCase {
         customizedConnection = new DatabaseConnection(conn, config, databaseTester.getSchema());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public final void tearDown() throws Exception {
         final IDatabaseTester databaseTester = environment.getDatabaseTester();
 
         databaseTester.setTearDownOperation(getTearDownOperation());
@@ -120,29 +120,8 @@ public abstract class AbstractDatabaseIT extends TestCase {
      * @param testName name of the test to be checked
      * @return flag indicating if the test should be executed or not
      */
-    protected boolean runTest(String testName) {
+    public final boolean runTest(String testName) {
         return true;
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
-        if (runTest(getName())) {
-            super.runTest();
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Skipping test " + getClass().getName() + "." + getName());
-            }
-        }
-    }
-
-    public static boolean environmentHasFeature(TestFeature feature) {
-        try {
-            final DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
-            final boolean runIt = environment.support(feature);
-            return runIt;
-        } catch (Exception e) {
-            throw new DatabaseUnitRuntimeException(e);
-        }
     }
 
     /**

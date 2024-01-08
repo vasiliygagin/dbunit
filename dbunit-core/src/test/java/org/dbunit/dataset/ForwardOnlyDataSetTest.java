@@ -20,6 +20,10 @@
  */
 package org.dbunit.dataset;
 
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 /**
  * @author Manuel Laflamme
  * @author Last changed by: $Author$
@@ -27,22 +31,27 @@ package org.dbunit.dataset;
  * @since 1.x (Apr 11, 2003)
  */
 public class ForwardOnlyDataSetTest extends DefaultDataSetTest {
-    public ForwardOnlyDataSetTest(String s) {
-        super(s);
+
+    public ForwardOnlyDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         return new ForwardOnlyDataSet(super.createDataSet());
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    @Test
     public void testGetTableNames() throws Exception {
         try {
             createDataSet().getTableNames();
@@ -52,6 +61,8 @@ public class ForwardOnlyDataSetTest extends DefaultDataSetTest {
         }
     }
 
+    @Override
+    @Test
     public void testGetTable() throws Exception {
         String[] tableNames = getExpectedNames();
         try {
@@ -62,6 +73,8 @@ public class ForwardOnlyDataSetTest extends DefaultDataSetTest {
         }
     }
 
+    @Override
+    @Test
     public void testGetTableMetaData() throws Exception {
         String[] tableNames = getExpectedNames();
         try {
@@ -72,6 +85,8 @@ public class ForwardOnlyDataSetTest extends DefaultDataSetTest {
         }
     }
 
+    @Override
+    @Test
     public void testReverseIterator() throws Exception {
         try {
             createDataSet().reverseIterator();
@@ -81,35 +96,51 @@ public class ForwardOnlyDataSetTest extends DefaultDataSetTest {
         }
     }
 
+    @Override
+    @Test
     public void testGetTableNamesDefensiveCopy() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testGetUnknownTable() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testGetUnknownTableMetaData() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testGetTablesDefensiveCopy() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testGetCaseInsensitiveTable() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testGetCaseInsensitiveTableMetaData() throws Exception {
         // Cannot test! Unsupported feature.
     }
 
+    @Override
+    @Test
     public void testCreateDuplicateDataSet() throws Exception {
         // No op. This dataSet is only a wrapper for another dataSet which is why
         // duplicates cannot occur.
     }
 
+    @Override
+    @Test
     public void testCreateMultipleCaseDuplicateDataSet() throws Exception {
         // No op. This dataSet is only a wrapper for another dataSet which is why
         // duplicates cannot occur.

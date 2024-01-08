@@ -31,7 +31,7 @@ public class ImportAndExportKeysSearchCallbackOwnFileTest extends AbstractMetaDa
 
     public static final String SQL_FILE = "hypersonic_import_export.sql";
 
-    public ImportAndExportKeysSearchCallbackOwnFileTest() {
+    public ImportAndExportKeysSearchCallbackOwnFileTest() throws Exception {
         super(SQL_FILE);
     }
 

@@ -21,6 +21,9 @@
 
 package org.dbunit.operation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
@@ -33,6 +36,8 @@ import org.dbunit.dataset.EmptyTableDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -42,14 +47,12 @@ import org.dbunit.dataset.LowerCaseDataSet;
  * @since Feb 18, 2002
  */
 public class DeleteAllOperationIT extends AbstractDatabaseIT {
-    public DeleteAllOperationIT(String s) {
-        super(s);
+
+    public DeleteAllOperationIT() throws Exception {
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public final void setUp1() throws Exception {
         DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, getEnvironment().getInitDataSet());
     }
 
@@ -61,6 +64,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         return "delete from " + tableName;
     }
 
+    @Test
     public void testMockExecute() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -93,6 +97,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteWithEscapedNames() throws Exception {
         String schemaName = "schema";
         String tableName = "table";
@@ -126,6 +131,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecute() throws Exception {
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
@@ -133,6 +139,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         testExecute(dataSet);
     }
 
+    @Test
     public void testExecuteEmpty() throws Exception {
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
@@ -140,6 +147,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         testExecute(new EmptyTableDataSet(dataSet));
     }
 
+    @Test
     public void testExecuteCaseInsentive() throws Exception {
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(customizedConnection.createDataSet());
 
@@ -178,6 +186,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testExecuteWithEmptyDataset() throws Exception {
         getDeleteAllOperation().execute(customizedConnection, new DefaultDataSet(new ITable[0]));
     }

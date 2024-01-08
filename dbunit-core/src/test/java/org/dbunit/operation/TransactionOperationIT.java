@@ -21,6 +21,9 @@
 
 package org.dbunit.operation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -38,6 +41,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -46,16 +50,16 @@ import org.dbunit.testutil.TestUtils;
  */
 public class TransactionOperationIT extends AbstractDatabaseIT {
 
-    public TransactionOperationIT(String s) {
-        super(s);
+    public TransactionOperationIT() throws Exception {
     }
 
-    @Override
-    protected boolean runTest(String testName) {
-        return environmentHasFeature(TestFeature.TRANSACTION);
+    private boolean environmentHasTransactionFeature() {
+        return environment.support(TestFeature.TRANSACTION);
     }
 
+    @Test
     public void testExecuteCommit() throws Exception {
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -76,7 +80,9 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
         assertEquals("autocommit after", true, jdbcConnection.getAutoCommit());
     }
 
+    @Test
     public void testExclusiveTransaction() throws Exception {
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -104,7 +110,9 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
         assertEquals("after", 6, tableAfter.getRowCount());
     }
 
+    @Test
     public void testExecuteRollback() throws Exception {
+        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);

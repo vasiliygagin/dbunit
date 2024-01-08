@@ -21,9 +21,9 @@
  */
 package org.dbunit.database;
 
-import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.DatabaseProfile;
 import org.dbunit.IDatabaseTester;
+import org.dbunit.JdbcDatabaseTester;
 
 /**
  * @author Andres Almiray (aalmiray@users.sourceforge.net)
@@ -32,12 +32,13 @@ import org.dbunit.IDatabaseTester;
  * @since 2.2.0
  */
 public class JdbcDatabaseTesterConnectionIT extends AbstractDatabaseTesterConnectionIT {
+
     private JdbcDatabaseTester databaseTester;
 
-    public JdbcDatabaseTesterConnectionIT(String s) {
-        super(s);
+    public JdbcDatabaseTesterConnectionIT() throws Exception {
     }
 
+    @Override
     protected IDatabaseTester getDatabaseTester() throws Exception {
         if (databaseTester == null) {
             DatabaseProfile profile = getEnvironment().getProfile();

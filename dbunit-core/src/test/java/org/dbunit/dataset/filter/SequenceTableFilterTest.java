@@ -20,6 +20,9 @@
  */
 package org.dbunit.dataset.filter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -38,41 +42,45 @@ import org.dbunit.dataset.LowerCaseDataSet;
  */
 public class SequenceTableFilterTest extends AbstractTableFilterTest {
 
-    public SequenceTableFilterTest(String s) {
-        super(s);
+    public SequenceTableFilterTest() throws Exception {
     }
 
+    @Override
+    @Test
     public void testAccept() throws Exception {
         String[] validNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(validNames);
 
-        for (int i = 0; i < validNames.length; i++) {
-            String validName = validNames[i];
+        for (String validName : validNames) {
             assertEquals(validName, true, filter.accept(validName));
         }
     }
 
+    @Override
+    @Test
     public void testIsCaseInsensitiveValidName() throws Exception {
         String[] validNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(validNames);
 
-        for (int i = 0; i < validNames.length; i++) {
-            String validName = validNames[i];
+        for (String validName : validNames) {
             assertEquals(validName, true, filter.accept(validName));
         }
     }
 
+    @Override
+    @Test
     public void testIsValidNameAndInvalid() throws Exception {
-        String[] invalidNames = new String[] { "INVALID_TABLE", "UNKNOWN_TABLE", };
+        String[] invalidNames = { "INVALID_TABLE", "UNKNOWN_TABLE", };
         String[] validNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(validNames);
 
-        for (int i = 0; i < invalidNames.length; i++) {
-            String invalidName = invalidNames[i];
+        for (String invalidName : invalidNames) {
             assertEquals(invalidName, false, filter.accept(invalidName));
         }
     }
 
+    @Override
+    @Test
     public void testGetTableNames() throws Exception {
         String[] expectedNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(expectedNames);
@@ -85,6 +93,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testGetTableNamesAndTableNotInDecoratedDataSet() throws Exception {
         String[] expectedNames = getExpectedNames();
 
@@ -101,6 +111,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testGetCaseInsensitiveTableNames() throws Exception {
         String[] filterNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(filterNames);
@@ -114,6 +126,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testGetReverseTableNames() throws Exception {
         String[] expectedNames = DataSetUtils.reverseStringArray(getExpectedNames());
         ITableFilter filter = new SequenceTableFilter(expectedNames);
@@ -126,6 +140,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testIterator() throws Exception {
         String[] expectedNames = getExpectedNames();
         ITableFilter filter = new SequenceTableFilter(expectedNames);
@@ -139,6 +155,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("table names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testCaseInsensitiveIterator() throws Exception {
         ITableFilter filter = new SequenceTableFilter(getExpectedNames());
         String[] lowerNames = getExpectedLowerNames();
@@ -152,6 +170,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("table names", Arrays.asList(lowerNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testReverseIterator() throws Exception {
         String[] filterNames = getExpectedNames();
         String[] expectedNames = DataSetUtils.reverseStringArray(filterNames);
@@ -166,6 +186,8 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
         assertEquals("table names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
+    @Test
     public void testIteratorAndTableNotInDecoratedDataSet() throws Exception {
         String[] expectedNames = getExpectedNames();
 
@@ -185,6 +207,7 @@ public class SequenceTableFilterTest extends AbstractTableFilterTest {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    @Test
     public void testIteratorWithDifferentSequence() throws Exception {
         String[] expectedNames = DataSetUtils.reverseStringArray(getExpectedNames());
         ITableFilter filter = new SequenceTableFilter(expectedNames);

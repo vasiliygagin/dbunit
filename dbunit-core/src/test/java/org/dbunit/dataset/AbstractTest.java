@@ -20,24 +20,31 @@
  */
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 
 /**
  * @author Manuel Laflamme
  * @since Apr 6, 2003
  * @version $Revision$
  */
-public abstract class AbstractTest extends TestCase {
+public abstract class AbstractTest {
+
     private static final String[] TABLE_NAMES = { "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE",
             "ONLY_PK_TABLE", "EMPTY_MULTITYPE_TABLE", };
     private static final String[] DUPLICATE_TABLE_NAMES = { "DUPLICATE_TABLE", "EMPTY_TABLE", "DUPLICATE_TABLE", };
     private static final String EXTRA_TABLE_NAME = "EXTRA_TABLE";
 
-    public AbstractTest(String s) {
-        super(s);
+    protected final DatabaseEnvironment environment;
+
+    public AbstractTest() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     /**
@@ -45,7 +52,7 @@ public abstract class AbstractTest extends TestCase {
      * of the database environment. Most databases convert all metadata identifiers
      * to uppercase. PostgreSQL converts identifiers to lowercase. MySQL preserves
      * case.
-     * 
+     *
      * @param str The identifier.
      * @return The identifier converted according to database rules.
      */
@@ -54,11 +61,11 @@ public abstract class AbstractTest extends TestCase {
     }
 
     protected String[] getExpectedNames() throws Exception {
-        return (String[]) AbstractTest.TABLE_NAMES.clone();
+        return AbstractTest.TABLE_NAMES.clone();
     }
 
     protected String[] getExpectedLowerNames() throws Exception {
-        String[] names = (String[]) AbstractTest.TABLE_NAMES.clone();
+        String[] names = AbstractTest.TABLE_NAMES.clone();
         for (int i = 0; i < names.length; i++) {
             names[i] = names[i].toLowerCase();
         }
@@ -67,7 +74,7 @@ public abstract class AbstractTest extends TestCase {
     }
 
     protected String[] getExpectedDuplicateNames() {
-        return (String[]) AbstractTest.DUPLICATE_TABLE_NAMES.clone();
+        return AbstractTest.DUPLICATE_TABLE_NAMES.clone();
     }
 
     protected String getDuplicateTableName() {

@@ -20,14 +20,15 @@
  */
 package org.dbunit.database;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import static org.junit.Assert.assertEquals;
+
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ForwardOnlyTableTest;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.MockTableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,33 +36,36 @@ import org.dbunit.operation.DatabaseOperation;
  * @version $Revision$
  */
 public class ForwardOnlyResultSetTableIT extends ForwardOnlyTableTest {
-    public ForwardOnlyResultSetTableIT(String s) {
-        super(s);
+
+    public ForwardOnlyResultSetTableIT() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
-        DatabaseEnvironment env = DatabaseEnvironmentLoader.getInstance();
-        IDatabaseConnection connection = env.getConnection();
+        IDatabaseConnection connection = environment.getConnection();
 
-        DatabaseOperation.CLEAN_INSERT.execute(connection, env.getInitDataSet());
+        DatabaseOperation.CLEAN_INSERT.execute(connection, environment.getInitDataSet());
 
         String selectStatement = "select * from TEST_TABLE order by COLUMN0";
         return new ForwardOnlyResultSetTable("TEST_TABLE", selectStatement, connection);
     }
 
+    @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance().convertString(str);
+        return environment.convertString(str);
     }
 
+    @Override
     public void testGetMissingValue() throws Exception {
         // Do not test this!
     }
 
+    @Test
     public void testGetValueOnLastRowIsClosingResultSet() throws Exception {
         String tableName = "TABLE";
         String[] columnNames = { "C0" };
 //        String[] columnNames = {"C0", "C1", "C2"};
-        Object[][] expectedValues = new Object[][] { new Object[] { "1", "2", "3" }, new Object[] { "4", "5", "6" },
+        Object[][] expectedValues = { new Object[] { "1", "2", "3" }, new Object[] { "4", "5", "6" },
                 new Object[] { "7", "8", "9" }, };
 
         // Setup resultset

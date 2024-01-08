@@ -21,6 +21,9 @@
 
 package org.dbunit.dataset.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -41,8 +44,8 @@ import org.junit.Test;
  * @since Feb 17, 2002
  */
 public class XmlDataSetTest extends AbstractDataSetTest {
-    public XmlDataSetTest(String s) {
-        super(s);
+
+    public XmlDataSetTest() throws Exception {
     }
 
     @Override

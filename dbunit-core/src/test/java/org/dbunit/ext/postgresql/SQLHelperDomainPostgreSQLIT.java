@@ -1,9 +1,11 @@
 package org.dbunit.ext.postgresql;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.StringReader;
 import java.sql.Statement;
-
-import junit.framework.TestCase;
 
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
@@ -12,36 +14,46 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 
 /**
  * Testcase for Postgresql to check SQL CREATE DOMAIN with FlatXmlDataSetBuilder
  * to insert a dataset with SQL Domains (user-def-types).
- * 
+ *
  * @author Philipp S. (Unwissender2009)
  * @since Nov 23, 2009
  */
-public class SQLHelperDomainPostgreSQLIT extends TestCase {
+public class SQLHelperDomainPostgreSQLIT {
 
     private IDatabaseConnection _connection;
 
     private static final String xmlData = "<?xml version=\"1.0\"?>" + "<dataset>" + "<T1 PK=\"1\" STATE=\"is_blabla\"/>"
             + "</dataset>";
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = DatabaseEnvironmentLoader.getInstance().getConnection();
+    private final DatabaseEnvironment environment;
+
+    public SQLHelperDomainPostgreSQLIT() throws Exception {
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @Before
+    public final void setUp() throws Exception {
+        // Load active postgreSQL profile and connection from Maven pom.xml.
+        _connection = environment.getConnection();
+    }
+
+    @After
+    public final void tearDown() throws Exception {
         if (_connection != null) {
             _connection.close();
             _connection = null;
         }
     }
 
+    @Test
     public void testOk() {
     }
 

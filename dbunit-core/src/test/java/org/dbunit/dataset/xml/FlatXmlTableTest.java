@@ -21,13 +21,14 @@
 
 package org.dbunit.dataset.xml;
 
+import static org.junit.Assert.assertEquals;
+
 import org.dbunit.dataset.AbstractTableTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.File;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,10 +36,11 @@ import java.io.File;
  * @since Mar 12, 2002
  */
 public class FlatXmlTableTest extends AbstractTableTest {
-    public FlatXmlTableTest(String s) {
-        super(s);
+
+    public FlatXmlTableTest() throws Exception {
     }
 
+    @Override
     protected ITable createTable() throws Exception {
         return createDataSet(true).getTable("TEST_TABLE");
     }
@@ -47,6 +49,7 @@ public class FlatXmlTableTest extends AbstractTableTest {
         return new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/flatXmlTableTest.xml"));
     }
 
+    @Override
     public void testGetMissingValue() throws Exception {
         int row = 0;
         Object[] expected = { "row 1 col 0", null, "row 1 col 2" };
@@ -61,6 +64,7 @@ public class FlatXmlTableTest extends AbstractTableTest {
         }
     }
 
+    @Test
     public void testLoadCRLF() throws Exception {
         int row = 0;
         Object[] expected = { "row 0 \n col 0 \r" }; // in the expected result the &#xA; and &#xD; should be replaced by

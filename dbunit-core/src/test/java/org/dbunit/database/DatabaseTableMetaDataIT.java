@@ -21,6 +21,11 @@
 
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -28,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
@@ -44,6 +47,7 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -54,8 +58,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     public static final String TEST_TABLE = "TEST_TABLE";
 
-    public DatabaseTableMetaDataIT(String s) {
-        super(s);
+    public DatabaseTableMetaDataIT() throws Exception {
     }
 
     protected IDataSet createDataSet() throws Exception {
@@ -64,9 +67,10 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Override
     protected String convertString(String str) throws Exception {
-        return DatabaseEnvironmentLoader.getInstance().convertString(str);
+        return environment.convertString(str);
     }
 
+    @Test
     public void testGetPrimaryKeys() throws Exception {
         String tableName = "PK_TABLE";
 //        String[] expected = {"PK0"};
@@ -82,6 +86,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testGetNoPrimaryKeys() throws Exception {
         String tableName = TEST_TABLE;
 
@@ -91,6 +96,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertEquals("pk count", 0, columns.length);
     }
 
+    @Test
     public void testCreation_UnknownTable() throws Exception {
         String tableName = "UNKNOWN_TABLE";
         IDatabaseConnection connection = getEnvironment().getConnection();
@@ -104,6 +110,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testGetNoColumns() throws Exception {
         // Since the "unknown_table" does not exist it also does not have any columns
         String tableName = "UNKNOWN_TABLE";
@@ -115,6 +122,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertEquals(0, columns.length);
     }
 
+    @Test
     public void testColumnIsNullable() throws Exception {
         String tableName = "PK_TABLE";
         String[] notNullable = { "PK0", "PK1", "PK2" };
@@ -138,6 +146,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testUnsupportedColumnDataType() throws Exception {
         IDataTypeFactory dataTypeFactory = new DefaultDataTypeFactory() {
 
@@ -156,6 +165,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertEquals("Should be an empty column array", 0, columns.length);
     }
 
+    @Test
     public void testColumnDataType() throws Exception {
         String tableName = "EMPTY_MULTITYPE_TABLE";
 
@@ -169,7 +179,6 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         expectedTypes.add(DataType.NUMERIC);
         expectedTypes.add(DataType.TIMESTAMP);
 
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         if (environment.support(TestFeature.VARBINARY)) {
             expectedNames.add("VARBINARY_COL");
             expectedTypes.add(DataType.VARBINARY);
@@ -214,6 +223,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      *
      * @throws Exception
      */
+    @Test
     public void testCaseInsensitiveAndI18n() throws Exception {
         // To test bug report #1537894 where the user has a turkish locale set on his
         // box
@@ -251,10 +261,13 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      *
      * @throws Exception
      */
+    @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"), jdbcConnection);
+        final Connection connection1 = jdbcConnection;
+        DdlExecutor.executeDdlFile(environment, connection1,
+                TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
@@ -278,10 +291,13 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testCaseSensitive() throws Exception {
         Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"), jdbcConnection);
+        final Connection connection1 = jdbcConnection;
+        DdlExecutor.executeDdlFile(environment, connection1,
+                TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
         try {
@@ -319,8 +335,8 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      *
      * @throws Exception
      */
+    @Test
     public void testFullyQualifiedTableName() throws Exception {
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         String schema = environment.getProfile().getSchema();
 
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);
@@ -330,6 +346,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertEquals(schema + "." + convertString(TEST_TABLE), metaData.getTableName());
     }
 
+    @Test
     public void testDbStoresUpperCaseTableNames() throws Exception {
         IDatabaseConnection connection = getEnvironment().getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
@@ -344,6 +361,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         }
     }
 
+    @Test
     public void testDbStoresLowerCaseTableNames() throws Exception {
         IDatabaseConnection connection = getEnvironment().getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();

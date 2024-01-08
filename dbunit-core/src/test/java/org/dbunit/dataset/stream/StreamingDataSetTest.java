@@ -20,6 +20,8 @@
  */
 package org.dbunit.dataset.stream;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileReader;
 
 import org.dbunit.dataset.DataSetException;
@@ -27,6 +29,7 @@ import org.dbunit.dataset.ForwardOnlyDataSetTest;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetTest;
 import org.dbunit.dataset.xml.FlatXmlProducer;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 
 /**
@@ -36,19 +39,22 @@ import org.xml.sax.InputSource;
  * @since 1.x (Apr 18, 2003)
  */
 public class StreamingDataSetTest extends ForwardOnlyDataSetTest {
-    public StreamingDataSetTest(String s) {
-        super(s);
+
+    public StreamingDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSetProducer source = new FlatXmlProducer(new InputSource(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
         return new StreamingDataSet(source);
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         return new StreamingDataSet(new DataSetProducerAdapter(super.createDuplicateDataSet()));
     }
 
+    @Test
     public void testReturnsOnException() throws Exception {
         RuntimeException exceptionToThrow = new IllegalArgumentException(
                 "For this test case we throw something that we normally would never do");
@@ -64,17 +70,19 @@ public class StreamingDataSetTest extends ForwardOnlyDataSetTest {
     }
 
     private static class ExceptionThrowingProducer implements IDataSetProducer {
+
         private RuntimeException exceptionToThrow;
 
         public ExceptionThrowingProducer(RuntimeException exceptionToThrow) {
-            super();
             this.exceptionToThrow = exceptionToThrow;
         }
 
+        @Override
         public void produce() throws DataSetException {
             throw exceptionToThrow;
         }
 
+        @Override
         public void setConsumer(IDataSetConsumer consumer) throws DataSetException {
             // Ignore for this test
         }

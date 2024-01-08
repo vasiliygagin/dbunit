@@ -20,20 +20,26 @@
  */
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 /**
  * @author Manuel Laflamme
  * @since Apr 6, 2003
  * @version $Revision$
  */
 public abstract class AbstractTableIteratorTest extends AbstractTest {
-    public AbstractTableIteratorTest(String s) {
-        super(s);
+
+    public AbstractTableIteratorTest() throws Exception {
     }
 
     protected abstract ITableIterator getIterator() throws Exception;
 
     protected abstract ITableIterator getEmptyIterator() throws Exception;
 
+    @Test
     public void testNext() throws Exception {
         int count = 0;
         String[] names = getExpectedNames();
@@ -45,6 +51,7 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
         assertEquals("count", names.length, count);
     }
 
+    @Test
     public void testNextAndEmpty() throws Exception {
         int count = 0;
         ITableIterator iterator = getEmptyIterator();
@@ -55,6 +62,7 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
         assertEquals("count", 0, count);
     }
 
+    @Test
     public void testGetTableMetaData() throws Exception {
         int i = 0;
         String[] names = getExpectedNames();
@@ -67,6 +75,7 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
         assertEquals("count", names.length, i);
     }
 
+    @Test
     public void testGetTableMetaDataBeforeNext() throws Exception {
         ITableIterator iterator = getIterator();
         try {
@@ -86,6 +95,7 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
         assertEquals("count", names.length, i);
     }
 
+    @Test
     public void testGetTableMetaDataAfterLastNext() throws Exception {
         int count = 0;
         String[] names = getExpectedNames();
@@ -103,6 +113,7 @@ public abstract class AbstractTableIteratorTest extends AbstractTest {
         }
     }
 
+    @Test
     public void testGetTable() throws Exception {
         int i = 0;
         String[] names = getExpectedNames();

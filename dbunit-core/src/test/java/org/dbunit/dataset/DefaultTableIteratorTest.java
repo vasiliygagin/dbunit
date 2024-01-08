@@ -29,14 +29,16 @@ import java.util.List;
  * @version $Revision$
  */
 public class DefaultTableIteratorTest extends AbstractTableIteratorTest {
-    public DefaultTableIteratorTest(String s) {
-        super(s);
+
+    public DefaultTableIteratorTest() throws Exception {
     }
 
+    @Override
     protected ITableIterator getIterator() throws Exception {
         return getIterator(false);
     }
 
+    @Override
     protected ITableIterator getEmptyIterator() {
         return new DefaultTableIterator(new ITable[0]);
     }
@@ -44,8 +46,7 @@ public class DefaultTableIteratorTest extends AbstractTableIteratorTest {
     protected ITableIterator getIterator(boolean reversed) throws Exception {
         List tableList = new ArrayList();
         String[] names = super.getExpectedNames();
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
+        for (String name : names) {
             tableList.add(new DefaultTable(name));
         }
 

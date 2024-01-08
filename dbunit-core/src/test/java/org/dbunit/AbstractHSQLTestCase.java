@@ -63,23 +63,26 @@ public abstract class AbstractHSQLTestCase {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public AbstractHSQLTestCase(String sqlFile) {
+    protected final DatabaseEnvironment environment;
+
+    public AbstractHSQLTestCase(String sqlFile) throws Exception {
         this.sqlFile = sqlFile;
+        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     @Before
-    public void setUp() throws Exception {
+    public final void setUp() throws Exception {
 
         this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-        "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(new File("src/test/resources/sql/" + sqlFile), jdbcConnection);
+                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
+        DdlExecutor.executeDdlFile(environment, jdbcConnection, new File("src/test/resources/sql/" + sqlFile));
         DatabaseConfig config = new DatabaseConfig();
         this.connection = new DatabaseConnection(jdbcConnection, config);
         config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
     @After
-    public void tearDown() throws Exception {
+    public final void tearDown() throws Exception {
         DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
         DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
         DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");

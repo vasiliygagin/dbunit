@@ -20,10 +20,6 @@
  */
 package org.dbunit;
 
-import org.dbunit.testutil.TestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,6 +30,10 @@ import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 import java.util.StringTokenizer;
 
+import org.dbunit.testutil.TestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Test Helper class for Executing DDL.
  *
@@ -42,6 +42,7 @@ import java.util.StringTokenizer;
  * @since DbUnit 2.6.0
  */
 public final class DdlExecutor {
+
     private static final Logger LOG = LoggerFactory.getLogger(DdlExecutor.class);
 
     private DdlExecutor() {
@@ -51,7 +52,7 @@ public final class DdlExecutor {
     /**
      * Execute DDL from the file (by name) against the given {@link Connection},
      * dispatches to executeDdlFile and passes false for ignoreErrors.
-     * 
+     *
      * @param ddlFileName      The name of the DDL file to execute.
      * @param connection       The {@link Connection} to execute the DDL against.
      * @param multiLineSupport If this DataSource supports passing in all the lines
@@ -66,7 +67,7 @@ public final class DdlExecutor {
     /**
      * Execute DDL from the file (by name) against the given {@link Connection},
      * dispatches to executeDdlFile.
-     * 
+     *
      * @param ddlFileName      The name of the DDL file to execute.
      * @param connection       The {@link Connection} to execute the DDL against.
      * @param multiLineSupport If this DataSource supports passing in all the lines
@@ -81,20 +82,9 @@ public final class DdlExecutor {
         executeDdlFile(ddlFile, connection, multiLineSupport, ignoreErrors);
     }
 
-    /**
-     * Executes DDL from the {@link File} against the given {@link Connection}.
-     * Retrieves the multiLineSupport parameter from the profile.
-     * 
-     * @param ddlFile    The {@link File} object of the DDL file to execute.
-     * @param connection The {@link Connection} to execute the DDL against.
-     * @throws Exception
-     */
-    public static void executeDdlFile(final File ddlFile, final Connection connection) throws Exception {
-        final boolean multiLineSupport = DatabaseEnvironmentLoader.getInstance().getProfile()
-                .getProfileMultilineSupport();
-
-        LOG.debug("Executing DDL from file={}, multiLineSupport={}", ddlFile, multiLineSupport);
-
+    public static void executeDdlFile(DatabaseEnvironment environment, final Connection connection, final File ddlFile)
+            throws Exception {
+        final boolean multiLineSupport = environment.getProfile().getProfileMultilineSupport();
         executeDdlFile(ddlFile, connection, multiLineSupport);
     }
 
@@ -102,7 +92,7 @@ public final class DdlExecutor {
      * Executes DDL from the {@link File} against the given {@link Connection}.
      * Retrieves the multiLineSupport parameter from the profile and passes false
      * for ignoreErrors.
-     * 
+     *
      * @param ddlFile          The {@link File} object of the DDL file to execute.
      * @param connection       The {@link Connection} to execute the DDL against.
      * @param multiLineSupport If this DataSource supports passing in all the lines
@@ -116,7 +106,7 @@ public final class DdlExecutor {
 
     /**
      * Execute DDL from the {@link File} against the given {@link Connection}.
-     * 
+     *
      * @param ddlFile          The {@link File} object of the DDL file to execute.
      * @param connection       The {@link Connection} to execute the DDL against.
      * @param multiLineSupport If this DataSource supports passing in all the lines

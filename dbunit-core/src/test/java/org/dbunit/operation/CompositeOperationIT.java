@@ -21,15 +21,17 @@
 
 package org.dbunit.operation;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.FileReader;
+import java.io.Reader;
+
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -37,10 +39,11 @@ import java.io.Reader;
  * @since Feb 19, 2002
  */
 public class CompositeOperationIT extends AbstractDatabaseIT {
-    public CompositeOperationIT(String s) {
-        super(s);
+
+    public CompositeOperationIT() throws Exception {
     }
 
+    @Test
     public void testExecute() throws Exception {
         String tableName = "PK_TABLE";
         String columnName = "PK0";

@@ -21,7 +21,9 @@
 
 package org.dbunit.operation;
 
-import java.io.FileReader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
@@ -42,6 +44,7 @@ import org.dbunit.dataset.NoSuchColumnException;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -49,10 +52,11 @@ import org.dbunit.testutil.TestUtils;
  * @since Feb 19, 2002
  */
 public class RefreshOperationIT extends AbstractDatabaseIT {
-    public RefreshOperationIT(String s) {
-        super(s);
+
+    public RefreshOperationIT() throws Exception {
     }
 
+    @Test
     public void testExecute() throws Exception {
         Reader reader = TestUtils.getFileReader("xml/refreshOperationTest.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
@@ -60,6 +64,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         testExecute(dataSet);
     }
 
+    @Test
     public void testExecuteCaseInsensitive() throws Exception {
         Reader reader = TestUtils.getFileReader("xml/refreshOperationTest.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
@@ -67,6 +72,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         testExecute(new LowerCaseDataSet(dataSet));
     }
 
+    @Test
     public void testExecuteForwardOnly() throws Exception {
         Reader reader = TestUtils.getFileReader("xml/refreshOperationTest.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
@@ -92,13 +98,14 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         IDataSet expectedDataSet = new FlatXmlDataSetBuilder()
                 .build(TestUtils.getFileReader("xml/refreshOperationTestExpected.xml"));
 
-        for (int i = 0; i < tableNames.length; i++) {
-            ITable expectedTable = expectedDataSet.getTable(tableNames[i]);
-            ITable tableAfter = createOrderedTable(tableNames[i], primaryKey);
+        for (String tableName : tableNames) {
+            ITable expectedTable = expectedDataSet.getTable(tableName);
+            ITable tableAfter = createOrderedTable(tableName, primaryKey);
             Assertion.assertEquals(expectedTable, tableAfter);
         }
     }
 
+    @Test
     public void testExecuteAndNoPrimaryKeys() throws Exception {
         String tableName = "TEST_TABLE";
 
@@ -119,6 +126,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
     }
 
+    @Test
     public void testExecuteWithEmptyTable() throws Exception {
         Column[] columns = { new Column("c1", DataType.VARCHAR) };
         ITable table = new DefaultTable(new DefaultTableMetaData("name", columns, columns));
@@ -140,11 +148,12 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
         connection.verify();
     }
 
+    @Test
     public void testExecuteUnknownColumn() throws Exception {
         String tableName = "table";
 
         // setup table
-        Column[] columns = new Column[] { new Column("unknown", DataType.VARCHAR), };
+        Column[] columns = { new Column("unknown", DataType.VARCHAR), };
         DefaultTable table = new DefaultTable(tableName, columns);
         table.addRow();
         table.setValue(0, columns[0].getColumnName(), "value");

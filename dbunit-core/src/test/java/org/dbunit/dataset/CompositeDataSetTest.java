@@ -21,13 +21,16 @@
 
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -36,10 +39,11 @@ import org.dbunit.testutil.TestUtils;
  * @since 1.0 (Feb 22, 2002)
  */
 public class CompositeDataSetTest extends AbstractDataSetTest {
-    public CompositeDataSetTest(String s) {
-        super(s);
+
+    public CompositeDataSetTest() throws Exception {
     }
 
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/compositeDataSetTest1.xml"));
         assertTrue("count before combine (1)", dataSet1.getTableNames().length < getExpectedNames().length);
@@ -50,14 +54,17 @@ public class CompositeDataSetTest extends AbstractDataSetTest {
         return new CompositeDataSet(dataSet1, dataSet2);
     }
 
+    @Override
     protected IDataSet createDuplicateDataSet() throws Exception {
         return createCompositeDataSet(false, false);
     }
 
+    @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         return createCompositeDataSet(false, true);
     }
 
+    @Test
     public void testCombineTables() throws Exception {
         CompositeDataSet combinedDataSet = createCompositeDataSet(true, false);
         String[] tableNames = combinedDataSet.getTableNames();

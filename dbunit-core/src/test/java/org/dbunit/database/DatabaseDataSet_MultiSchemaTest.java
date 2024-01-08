@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DdlExecutor;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -61,12 +63,13 @@ public class DatabaseDataSet_MultiSchemaTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         // create database and schemas for tests
+        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
         try ( //
                 Connection connection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
                         "jdbc:h2:mem:multischematest", "sa", ""); //
         ) {
-            DdlExecutor.executeDdlFile(new File("src/test/resources/sql/h2_multischema_permission_test.sql"),
-                    connection);
+            DdlExecutor.executeDdlFile(environment, connection,
+                    new File("src/test/resources/sql/h2_multischema_permission_test.sql"));
         }
     }
 

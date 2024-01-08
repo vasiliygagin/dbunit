@@ -21,6 +21,10 @@
 
 package org.dbunit.dataset.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
@@ -34,6 +38,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -41,6 +46,7 @@ import org.dbunit.testutil.TestUtils;
  * @since Mar 13, 2002
  */
 public class FlatXmlDataSetTest extends AbstractDataSetTest {
+
     public static final File DATASET_FILE = TestUtils.getFile("xml/flatXmlDataSetTest.xml");
     public static final File DUPLICATE_DATASET_FILE = TestUtils.getFile("xml/flatXmlDataSetDuplicateTest.xml");
     public static final File DUPLICATE_DATASET_MULTIPLE_CASE_FILE = TestUtils
@@ -51,8 +57,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
     private static final File FLAT_XML_DTD_DIFFERENT_CASE_FILE = TestUtils
             .getFile("xml/flatXmlDataSetDtdDifferentCaseTest.xml");
 
-    public FlatXmlDataSetTest(String s) {
-        super(s);
+    public FlatXmlDataSetTest() throws Exception {
     }
 
     @Override
@@ -70,6 +75,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         return new FlatXmlDataSetBuilder().build(DUPLICATE_DATASET_MULTIPLE_CASE_FILE);
     }
 
+    @Test
     public void testMissingColumnAndEnableDtdMetadata() throws Exception {
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         builder.setDtdMetadata(true);
@@ -81,6 +87,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals("column count", 3, columns.length);
     }
 
+    @Test
     public void testMissingColumnAndDisableDtdMetadata() throws Exception {
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         builder.setDtdMetadata(false);
@@ -92,6 +99,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals("column count", 2, columns.length);
     }
 
+    @Test
     public void testMissingColumnAndDisableDtdMetadataEnableSensing() throws Exception {
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         builder.setDtdMetadata(false);
@@ -113,6 +121,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals("row 2 col 3", table.getValue(2, "COLUMN3"));
     }
 
+    @Test
     public void testWrite() throws Exception {
         IDataSet expectedDataSet = createDataSet();
         // load new dataset from temp file
@@ -137,6 +146,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         }
     }
 
+    @Test
     public void testReadFlatXmlWithDifferentCaseInDtd() throws Exception {
         // The creation of such a dataset should work
         IDataSet ds = new FlatXmlDataSetBuilder().build(FLAT_XML_DTD_DIFFERENT_CASE_FILE);
@@ -144,6 +154,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals("emp", ds.getTableNames()[0]);
     }
 
+    @Test
     public void testCreateMultipleCaseDuplicateDataSet_CaseSensitive() throws Exception {
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         builder.setDtdMetadata(false);
@@ -197,6 +208,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals(0, tables[1].getRowCount());
     }
 
+    @Test
     public void testCreateDuplicateDataSetWithVaryingColumnsAndColumnSensing() throws Exception {
         String xmlString = "<dataset>" + "<MISSING_VALUES_SENSING COLUMN0='row 0 col 0' COLUMN3='row 0 col 3'/>"
                 + "<MISSING_VALUES         COLUMN0='row 1 col 0' COLUMN2='row 1 col 2'/>"
@@ -227,6 +239,7 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
         assertEquals(1, tables[1].getRowCount());
     }
 
+    @Test
     public void testCreateDataSetWithVaryingColumnCasingAndColumnSensing() throws Exception {
         String xmlContent = "<dataset>" + "<CASED_COLUMNS COLUMN0='row 0 col 0' COLUMN1='row 0 col 1' />"
                 + "<CASED_COLUMNS column0='row 1 col 0' COLUMN1='row 1 col 1' />" + "</dataset>";

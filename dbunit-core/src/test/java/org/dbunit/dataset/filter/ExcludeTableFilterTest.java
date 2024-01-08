@@ -20,6 +20,9 @@
  */
 package org.dbunit.dataset.filter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.dbunit.dataset.DataSetUtils;
@@ -28,6 +31,7 @@ import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
@@ -35,46 +39,47 @@ import org.dbunit.dataset.LowerCaseDataSet;
  * @version $Revision$
  */
 public class ExcludeTableFilterTest extends AbstractTableFilterTest {
+
     static final String MATCHING_NAME = "aBcDe";
     static final String[] MATCHING_PATTERNS = IncludeTableFilterTest.MATCHING_PATTERNS;
     static final String[] NONMATCHING_PATTERNS = IncludeTableFilterTest.NONMATCHING_PATTERNS;
 
-    public ExcludeTableFilterTest(String s) {
-        super(s);
+    public ExcludeTableFilterTest() throws Exception {
     }
 
+    @Override
     public void testAccept() throws Exception {
         String[] validNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
         filter.excludeTable(getExtraTableName());
 
-        for (int i = 0; i < validNames.length; i++) {
-            String validName = validNames[i];
+        for (String validName : validNames) {
             assertEquals(validName, true, filter.accept(validName));
         }
     }
 
+    @Override
     public void testIsCaseInsensitiveValidName() throws Exception {
         String[] validNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
         filter.excludeTable(getExtraTableName());
 
-        for (int i = 0; i < validNames.length; i++) {
-            String validName = validNames[i];
+        for (String validName : validNames) {
             assertEquals(validName, true, filter.accept(validName));
         }
     }
 
+    @Override
     public void testIsValidNameAndInvalid() throws Exception {
-        String[] invalidNames = new String[] { "INVALID_TABLE", "UNKNOWN_TABLE", };
+        String[] invalidNames = { "INVALID_TABLE", "UNKNOWN_TABLE", };
         ITableFilter filter = new ExcludeTableFilter(invalidNames);
 
-        for (int i = 0; i < invalidNames.length; i++) {
-            String invalidName = invalidNames[i];
+        for (String invalidName : invalidNames) {
             assertEquals(invalidName, false, filter.accept(invalidName));
         }
     }
 
+    @Override
     public void testGetTableNames() throws Exception {
         String[] expectedNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
@@ -88,6 +93,7 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
     public void testGetTableNamesAndTableNotInDecoratedDataSet() throws Exception {
         String[] expectedNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
@@ -102,6 +108,7 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
     public void testGetCaseInsensitiveTableNames() throws Exception {
         ExcludeTableFilter filter = new ExcludeTableFilter();
         filter.excludeTable(getExtraTableName());
@@ -115,10 +122,12 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         assertEquals("names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
     public void testGetReverseTableNames() throws Exception {
         // Cannot test!
     }
 
+    @Override
     public void testIterator() throws Exception {
         String[] expectedNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
@@ -133,6 +142,7 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         assertEquals("table names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
     public void testCaseInsensitiveIterator() throws Exception {
         ExcludeTableFilter filter = new ExcludeTableFilter();
         filter.excludeTable(getExtraTableName());
@@ -147,10 +157,12 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         assertEquals("table names", Arrays.asList(expectedNames), Arrays.asList(actualNames));
     }
 
+    @Override
     public void testReverseIterator() throws Exception {
         // Cannot test!
     }
 
+    @Override
     public void testIteratorAndTableNotInDecoratedDataSet() throws Exception {
         String[] expectedNames = getExpectedNames();
         ExcludeTableFilter filter = new ExcludeTableFilter();
@@ -168,40 +180,40 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    @Test
     public void testIsValidNameWithPatterns() throws Exception {
         String validName = MATCHING_NAME;
 
         String[] patterns = NONMATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
             assertEquals(pattern, true, filter.accept(validName));
         }
     }
 
+    @Test
     public void testIsValidNameInvalidWithPatterns() throws Exception {
         String validName = MATCHING_NAME;
 
         String[] patterns = MATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
             assertEquals(pattern, false, filter.accept(validName));
         }
     }
 
+    @Test
     public void testGetTableNamesWithPatterns() throws Exception {
         String nonMatchingName = "toto titi tata";
-        String[] expectedNames = new String[] { nonMatchingName };
+        String[] expectedNames = { nonMatchingName };
         IDataSet dataSet = new DefaultDataSet(
                 new ITable[] { new DefaultTable(MATCHING_NAME), new DefaultTable(nonMatchingName), });
         assertTrue("dataset names count", dataSet.getTableNames().length > expectedNames.length);
 
         String[] patterns = MATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
 
@@ -217,13 +229,13 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         }
     }
 
+    @Test
     public void testGetTableNamesWithNonMatchingPatterns() throws Exception {
-        String[] expectedNames = new String[] { MATCHING_NAME };
+        String[] expectedNames = { MATCHING_NAME };
         IDataSet dataSet = new DefaultDataSet(new ITable[] { new DefaultTable(MATCHING_NAME), });
 
         String[] patterns = NONMATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
 
@@ -233,16 +245,16 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         }
     }
 
+    @Test
     public void testGetTablesWithPatterns() throws Exception {
         String nonMatchingName = "toto titi tata";
-        String[] expectedNames = new String[] { nonMatchingName };
+        String[] expectedNames = { nonMatchingName };
         IDataSet dataSet = new DefaultDataSet(
                 new ITable[] { new DefaultTable(MATCHING_NAME), new DefaultTable(nonMatchingName), });
         assertTrue("dataset names count", dataSet.getTableNames().length > expectedNames.length);
 
         String[] patterns = MATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
 
@@ -260,14 +272,14 @@ public class ExcludeTableFilterTest extends AbstractTableFilterTest {
         }
     }
 
+    @Test
     public void testGetTablesWithNonMatchingPatterns() throws Exception {
-        String[] expectedNames = new String[] { MATCHING_NAME };
+        String[] expectedNames = { MATCHING_NAME };
         IDataSet dataSet = new DefaultDataSet(new ITable[] { new DefaultTable(MATCHING_NAME), });
         assertTrue("dataset names count", dataSet.getTableNames().length > 0);
 
         String[] patterns = NONMATCHING_PATTERNS;
-        for (int i = 0; i < patterns.length; i++) {
-            String pattern = patterns[i];
+        for (String pattern : patterns) {
             ExcludeTableFilter filter = new ExcludeTableFilter();
             filter.excludeTable(pattern);
 
