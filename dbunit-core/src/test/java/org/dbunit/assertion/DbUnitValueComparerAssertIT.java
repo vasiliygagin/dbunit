@@ -1,6 +1,7 @@
 package org.dbunit.assertion;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Map;
 
 import org.dbunit.assertion.comparer.value.ValueComparer;
@@ -10,16 +11,14 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
 public class DbUnitValueComparerAssertIT {
-    public static final String FILE_PATH = "xml/assertionTest.xml";
 
     private final DbUnitValueComparerAssert sut = new DbUnitValueComparerAssert();
 
     private IDataSet getDataSet() throws DataSetException, FileNotFoundException {
-        return new FlatXmlDataSetBuilder().build(TestUtils.getFileReader(FILE_PATH));
+        return new FlatXmlDataSetBuilder().build(new FileReader("src/test/resources/xml/assertionTest.xml"));
     }
 
     @Test

@@ -36,7 +36,7 @@ public class HypersonicEnvironment extends DatabaseEnvironment {
     private static final String databaseName = ".";
 
     public HypersonicEnvironment() throws Exception {
-        super(new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
+        super(databaseName, new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
     }
 
     @Override

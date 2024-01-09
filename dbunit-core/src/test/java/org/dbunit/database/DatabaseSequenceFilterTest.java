@@ -23,21 +23,22 @@ package org.dbunit.database;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.sql.Connection;
 import java.util.Arrays;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
+import org.dbunit.H2Environment;
+import org.dbunit.HypersonicEnvironment;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -45,37 +46,30 @@ import org.junit.Test;
  * @since May 8, 2004
  * @version $Revision$
  */
-public class DatabaseSequenceFilterTest {
-
-    Connection _jdbcConnection;
-    private final DatabaseEnvironment environment;
+public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
 
     public DatabaseSequenceFilterTest() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
-    @Before
-    public final void setUp() throws Exception {
-        _jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
+    @Override
+    protected boolean checkEnvironment() {
+        return environment instanceof HypersonicEnvironment;
     }
 
-    @After
-    public final void tearDown() throws Exception {
-        DdlExecutor.executeSql(_jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(_jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(_jdbcConnection, "SET SCHEMA PUBLIC");
+    @Override
+    protected Database doOpenDatabase() throws Exception {
+        return environment.openDatabase("tempdb");
     }
 
     @Test
     public void testGetTableNames() throws Exception {
         final String[] expectedNoFilter = { "A", "B", "C", "D", "E", "F", "G", "H", };
         final String[] expectedFiltered = { "D", "A", "F", "C", "G", "E", "H", "B", };
-        final Connection connection1 = _jdbcConnection;
 
-        DdlExecutor.executeDdlFile(environment, connection1, TestUtils.getFile("sql/hypersonic_fk.sql"));
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());
+        final Connection jdbcConnection = database.getJdbcConnection();
+        DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/hypersonic_fk.sql"));
 
+        DatabaseConnection connection = database.getConnection();
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
         assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
@@ -90,13 +84,13 @@ public class DatabaseSequenceFilterTest {
     public void testGetTableNamesCyclic() throws Exception {
         final String[] expectedNoFilter = { "A", "B", "C", "D", "E", };
         final File ddlFile = new File("src/test/resources/sql/hypersonic_cyclic.sql");
-        final Connection connection1 = _jdbcConnection;
 
         final boolean multiLineSupport = environment.getProfileMultilineSupport();
 
-        DdlExecutor.executeDdlFile(ddlFile, connection1, multiLineSupport);
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());
+        final Connection jdbcConnection = database.getJdbcConnection();
+        DdlExecutor.executeDdlFile(ddlFile, jdbcConnection, multiLineSupport);
 
+        DatabaseConnection connection = database.getConnection();
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
         assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
@@ -118,13 +112,14 @@ public class DatabaseSequenceFilterTest {
     public void testCaseSensitiveTableNames() throws Exception {
         final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
         final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
-        final Connection connection1 = _jdbcConnection;
 
-        DdlExecutor.executeDdlFile(environment, connection1,
+        final Connection jdbcConnection = database.getJdbcConnection();
+        DdlExecutor.executeDdlFile(environment, jdbcConnection,
                 TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
-        DatabaseConfig config = new DatabaseConfig();
-        config.setCaseSensitiveTableNames(true);
-        final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, config);
+
+        DatabaseConnection connection = customizeConfig(config -> {
+            config.setCaseSensitiveTableNames(true);
+        });
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
@@ -144,6 +139,8 @@ public class DatabaseSequenceFilterTest {
      */
     @Test
     public void testMultiSchemaFks() throws Exception {
+        assumeTrue(environment instanceof H2Environment);
+        // TODO should be able to run this with hsqldb and others
         final Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
                 "jdbc:h2:mem:test", "sa", "");
         DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/h2_multischema_fk_test.sql"));

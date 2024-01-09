@@ -32,7 +32,7 @@ public class DatabaseEnvironmentLoader {
 
     public static DatabaseEnvironment getInstance() throws Exception {
         if (INSTANCE == null) {
-            String profileName = System.getProperty("dbunit.profile");
+            String profileName = System.getProperty("test.environment");
             if (profileName == null) {
                 profileName = "hsqldb";
             }

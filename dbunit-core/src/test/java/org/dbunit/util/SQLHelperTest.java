@@ -48,7 +48,7 @@ public class SQLHelperTest extends AbstractHSQLTestCase {
     @Test
     public void testGetPrimaryKeyColumn() throws SQLException {
         String[] tables = { "A", "B", "C", "D", "E", "F", "G", "H" };
-        Connection conn = getConnection().getConnection();
+        Connection conn = database.getJdbcConnection();
         assertNotNull("didn't get a connection", conn);
         for (String table : tables) {
             String expectedPK = "PK" + table;

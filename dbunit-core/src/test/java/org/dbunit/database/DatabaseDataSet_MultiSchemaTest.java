@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -14,9 +13,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
-import org.dbunit.DdlExecutor;
+import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.H2Environment;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -24,7 +22,6 @@ import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.junit.After;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -35,7 +32,7 @@ import org.junit.Test;
  * schemas / users.
  * </p>
  */
-public class DatabaseDataSet_MultiSchemaTest {
+public class DatabaseDataSet_MultiSchemaTest extends AbstractDatabaseTest {
 
     private static final String DATABASE = "multischematest";
     private static final String USERNAME_ADMIN = "sa";
@@ -60,18 +57,27 @@ public class DatabaseDataSet_MultiSchemaTest {
 
     private final TestMetadataHandler testMetadataHandler = new TestMetadataHandler();
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        // create database and schemas for tests
-        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
-        try ( //
-                Connection connection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
-                        "jdbc:h2:mem:multischematest", "sa", ""); //
-        ) {
-            DdlExecutor.executeDdlFile(environment, connection,
-                    new File("src/test/resources/sql/h2_multischema_permission_test.sql"));
-        }
+    public DatabaseDataSet_MultiSchemaTest() throws Exception {
     }
+
+    @Override
+    protected boolean checkEnvironment() {
+        // TODO: should be able to run it with hsqldb and others
+        return environment instanceof H2Environment;
+    }
+
+//    @BeforeClass
+//    public static void setUpClass() throws Exception {
+//        // create database and schemas for tests
+//        DatabaseEnvironment environment = DatabaseEnvironmentLoader.getInstance();
+//        try ( //
+//                Connection connection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+//                        "jdbc:h2:mem:multischematest", "sa", ""); //
+//        ) {
+//            DdlExecutor.executeDdlFile(environment, connection,
+//                    new File("src/test/resources/sql/h2_multischema_permission_test.sql"));
+//        }
+//    }
 
     @After
     public void tearDown() throws Exception {

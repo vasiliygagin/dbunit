@@ -12,9 +12,14 @@ import org.dbunit.database.DatabaseConnection;
  */
 public class Database {
 
+    public final DatabaseEnvironment environment;
     private Connection jdbcConnection;
     private DatabaseConnection connection;
     private JdbcDatabaseTester databaseTester;
+
+    public Database(DatabaseEnvironment environment) {
+        this.environment = environment;
+    }
 
     public Connection getJdbcConnection() {
         return jdbcConnection;

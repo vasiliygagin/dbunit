@@ -41,6 +41,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  */
 public abstract class DatabaseEnvironment {
 
+    private final String defaultDatabaseName;
     private final String schema;
     private final boolean multilineSupport;
     private final String[] unsupportedFeatures;
@@ -52,13 +53,9 @@ public abstract class DatabaseEnvironment {
     private Database openedDatabase;
     private DatabaseProfile profile;
 
-    protected DatabaseEnvironment(String databaseName, final DatabaseProfile profile, DatabaseConfig databaseConfig)
-            throws Exception {
-        this(profile, databaseConfig);
-        openedDatabase = openDatabase(databaseName);
-    }
-
-    protected DatabaseEnvironment(final DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
+    protected DatabaseEnvironment(String defaultDatabaseName, final DatabaseProfile profile,
+            DatabaseConfig databaseConfig) throws Exception {
+        this.defaultDatabaseName = defaultDatabaseName;
         this.databaseConfig = databaseConfig;
         this.profile = profile;
         schema = profile.getSchema();
@@ -75,7 +72,13 @@ public abstract class DatabaseEnvironment {
         return openedDatabase;
     }
 
-    public Database openDatabase(String databaseName) throws DatabaseUnitException, Exception {
+    public Database openDefaultDatabase() throws Exception {
+        Database database = openDatabase(defaultDatabaseName);
+        DdlExecutor.execute("sql/" + profile.getProfileDdl(), database.getJdbcConnection(), false, false);
+        return database;
+    }
+
+    public Database openDatabase(String databaseName) throws Exception {
         Connection jdbcConnection = buildJdbcConnection(databaseName);
 
         JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(jdbcConnection, schema);
@@ -91,9 +94,8 @@ public abstract class DatabaseEnvironment {
         });
 
         DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, schema);
-        DdlExecutor.execute("sql/" + profile.getProfileDdl(), jdbcConnection, false, false);
 
-        Database database = new Database();
+        Database database = new Database(this);
         database.setJdbcConnection(jdbcConnection);
         database.setConnection(connection);
         database.setDatabaseTester(databaseTester);
@@ -102,11 +104,10 @@ public abstract class DatabaseEnvironment {
 
     private Connection buildJdbcConnection(String databaseName) {
         String connectionUrl = buildConnectionUrl(databaseName);
-        String user = profile.getUser();
         Connection connection1;
         try {
             Class.forName(profile.getDriverClass());
-            connection1 = DriverManager.getConnection(connectionUrl, user, profile.getPassword());
+            connection1 = openConnection(connectionUrl);
             connection1.setAutoCommit(false);
         } catch (ClassNotFoundException | SQLException exc) {
             throw new AssertionError(" Unable to connect to [" + connectionUrl + "]", exc);
@@ -114,6 +115,10 @@ public abstract class DatabaseEnvironment {
 //        return DriverManagerConnectionsFactory.getIT().fetchConnection(profile.getDriverClass(), connectionUrl,
 //                profile.getUser(), profile.getPassword());
         return connection1;
+    }
+
+    protected Connection openConnection(String connectionUrl) throws SQLException {
+        return DriverManager.getConnection(connectionUrl, profile.getUser(), profile.getPassword());
     }
 
     public void closeDatabase(Database database) {

@@ -25,12 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 
-import org.dbunit.Database;
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
@@ -48,8 +47,6 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -57,31 +54,15 @@ import org.junit.Test;
  * @version $Revision$
  * @since Mar 22, 2002
  */
-public class DbUnitAssertIT {
-
-    public static final String FILE_PATH = "xml/assertionTest.xml";
+public class DbUnitAssertIT extends AbstractDatabaseTest {
 
     private DbUnitAssert assertion = new DbUnitAssert();
 
-    private final DatabaseEnvironment environment;
-    private Database database;
-
     public DbUnitAssertIT() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
-    }
-
-    @Before
-    public void openDatabase() throws Exception {
-        database = environment.openDatabase(".");
-    }
-
-    @After
-    public void closeDatabase() {
-        environment.closeDatabase(database);
     }
 
     private IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSetBuilder().build(TestUtils.getFileReader(FILE_PATH));
+        return new FlatXmlDataSetBuilder().build(new FileReader("src/test/resources/xml/assertionTest.xml"));
     }
 
     ////////////////////////////////////////////////////////////////////////////

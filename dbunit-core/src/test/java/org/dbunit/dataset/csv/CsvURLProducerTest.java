@@ -28,40 +28,44 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.DdlExecutor;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
-import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CsvURLProducerTest {
+public class CsvURLProducerTest extends AbstractDatabaseTest {
 
-    private Connection jdbcConnection;
-    private IDatabaseConnection connection;
     private static final int ORDERS_ROWS_NUMBER = 5;
     private static final int ORDERS_ROW_ROWS_NUMBER = 3;
     private static final String THE_DIRECTORY = "csv/orders";
 
+    public CsvURLProducerTest() throws Exception {
+    }
+
+    @Before
+    public final void setUp() throws Exception {
+
+        Statement statement = database.getJdbcConnection().createStatement();
+        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
+        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
+        statement.close();
+    }
+
     @Test
     public void testProduceFromFolder() throws DataSetException, MalformedURLException {
-        CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURL(),
+        CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURI().toURL(),
                 CsvDataSet.TABLE_ORDERING_FILE);
         doTestWithProducer(producer);
     }
@@ -69,7 +73,7 @@ public class CsvURLProducerTest {
     @Test
     public void testProduceFromJar() throws DataSetException, IOException {
         File file = TestUtils.getFile(THE_DIRECTORY + "/orders.jar");
-        URL jarFile = new URL("jar:" + file.toURL() + "!/");
+        URL jarFile = new URL("jar:" + file.toURI().toURL() + "!/");
         CsvURLProducer producer = new CsvURLProducer(jarFile, CsvDataSet.TABLE_ORDERING_FILE);
         doTestWithProducer(producer);
     }
@@ -98,7 +102,7 @@ public class CsvURLProducerTest {
     @Test
     public void testProduceAndInsertFromFolder() throws MalformedURLException, DatabaseUnitException, SQLException {
         produceAndInsertToDatabase();
-        Statement statement = jdbcConnection.createStatement();
+        Statement statement = database.getJdbcConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         int count = resultSet.getInt(1);
@@ -108,12 +112,11 @@ public class CsvURLProducerTest {
     }
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException, MalformedURLException {
-        CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURL(),
+        CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURI().toURL(),
                 CsvDataSet.TABLE_ORDERING_FILE);
         CachedDataSet consumer = new CachedDataSet();
         producer.produce(consumer);
-        DatabaseOperation operation = DatabaseOperation.INSERT;
-        operation.execute(connection, consumer);
+        DatabaseOperation.INSERT.execute(database.getConnection(), consumer);
     }
 
     @Test
@@ -121,45 +124,16 @@ public class CsvURLProducerTest {
         try {
             IDataSetProducer producer = new CsvProducer(TestUtils.getFile(THE_DIRECTORY));
             IDataSet dataset = new StreamingDataSet(producer);
-            DatabaseOperation.INSERT.execute(connection, dataset);
+            DatabaseOperation.INSERT.execute(database.getConnection(), dataset);
         } catch (SQLException e) {
             throw new DatabaseUnitException(e);
         }
-        Statement statement = jdbcConnection.createStatement();
+        Statement statement = database.getJdbcConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         final int count = resultSet.getInt(1);
         assertEquals("wrong number of row in orders table", ORDERS_ROWS_NUMBER, count);
         resultSet.close();
         statement.close();
-    }
-
-    @Before
-    public final void setUp() throws Exception {
-        jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:target/csv/orders-db/orders", "sa", "");
-
-        Statement statement = jdbcConnection.createStatement();
-        try {
-            statement.execute("DROP TABLE ORDERS");
-            statement.execute("DROP TABLE ORDERS_ROW");
-        } catch (Exception ignored) {
-        }
-        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
-        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
-        // statement.execute("delete from orders");
-        // statement.execute("delete from orders_row");
-        statement.close();
-
-        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
-        connection = new DatabaseConnection(jdbcConnection, config);
-    }
-
-    @After
-    public final void tearDown() throws Exception {
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
-        connection.close();
     }
 }

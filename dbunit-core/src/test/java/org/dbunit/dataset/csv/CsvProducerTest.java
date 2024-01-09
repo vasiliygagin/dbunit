@@ -25,35 +25,39 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.DdlExecutor;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
-import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CsvProducerTest {
+public class CsvProducerTest extends AbstractDatabaseTest {
 
-    private Connection jdbcConnection;
-    private IDatabaseConnection connection;
     private static final int ORDERS_ROWS_NUMBER = 5;
     private static final int ORDERS_ROW_ROWS_NUMBER = 3;
     private static final String THE_DIRECTORY = "src/test/resources/csv/orders";
+
+    public CsvProducerTest() throws Exception {
+    }
+
+    @Before
+    public final void setUp() throws Exception {
+
+        Statement statement = database.getJdbcConnection().createStatement();
+        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
+        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
+        statement.close();
+    }
 
     @Test
     public void testProduceFromFolder() throws DataSetException {
@@ -80,7 +84,7 @@ public class CsvProducerTest {
     @Test
     public void testProduceAndInsertFromFolder() throws DatabaseUnitException, SQLException {
         produceAndInsertToDatabase();
-        Statement statement = jdbcConnection.createStatement();
+        Statement statement = database.getJdbcConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         int count = resultSet.getInt(1);
@@ -93,7 +97,7 @@ public class CsvProducerTest {
         CsvProducer producer = new CsvProducer(THE_DIRECTORY);
         CachedDataSet consumer = new CachedDataSet();
         producer.produce(consumer);
-        DatabaseOperation.INSERT.execute(connection, consumer);
+        DatabaseOperation.INSERT.execute(database.getConnection(), consumer);
     }
 
     @Test
@@ -101,45 +105,16 @@ public class CsvProducerTest {
         try {
             IDataSetProducer producer = new CsvProducer(new File(THE_DIRECTORY));
             IDataSet dataset = new StreamingDataSet(producer);
-            DatabaseOperation.INSERT.execute(connection, dataset);
+            DatabaseOperation.INSERT.execute(database.getConnection(), dataset);
         } catch (SQLException e) {
             throw new DatabaseUnitException(e);
         }
-        Statement statement = jdbcConnection.createStatement();
+        Statement statement = database.getJdbcConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         final int count = resultSet.getInt(1);
         assertEquals("wrong number of row in orders table", ORDERS_ROWS_NUMBER, count);
         resultSet.close();
         statement.close();
-    }
-
-    @Before
-    public final void setUp() throws Exception {
-        jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:file:target/csv/orders-db/orders", "sa", "");
-
-        Statement statement = jdbcConnection.createStatement();
-        try {
-            statement.execute("DROP TABLE ORDERS");
-            statement.execute("DROP TABLE ORDERS_ROW");
-        } catch (Exception ignored) {
-        }
-        statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
-        statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
-        // statement.execute("delete from orders");
-        // statement.execute("delete from orders_row");
-        statement.close();
-
-        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
-        connection = new DatabaseConnection(jdbcConnection, config);
-    }
-
-    @After
-    public final void tearDown() throws Exception {
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
-        connection.close();
     }
 }

@@ -16,7 +16,7 @@ public abstract class AbstractImportedAndExportedKeysFilteredByPKsTestCase
 
     @Override
     protected IDataSet getDataset() throws SQLException, SearchException, DataSetException {
-        return TablesDependencyHelper.getAllDataset(getConnection(), getInput());
+        return TablesDependencyHelper.getAllDataset(database.getConnection(), getInput());
     }
 
 }
