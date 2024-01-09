@@ -52,7 +52,7 @@ public class ScrollableResultSetTableTest {
     }
 
     protected ITable createTable() throws Exception {
-        IDatabaseConnection connection = environment.getConnection();
+        IDatabaseConnection connection = environment.getOpenedDatabase().getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, environment.getInitDataSet());
 

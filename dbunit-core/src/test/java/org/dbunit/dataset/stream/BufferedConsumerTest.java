@@ -2,6 +2,7 @@ package org.dbunit.dataset.stream;
 
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.MockTableMetaData;
+
 import junit.framework.TestCase;
 
 public class BufferedConsumerTest extends TestCase {
@@ -15,7 +16,7 @@ public class BufferedConsumerTest extends TestCase {
                 new String[] { "COLUMN1", "COLUMN2", "COLUMN3" });
         IDataSetConsumer dataSetConsumer = new BufferedConsumer(wrappedConsumer);
 
-        Object[] testRow = new Object[] { "v1", "v2", "v3" };
+        Object[] testRow = { "v1", "v2", "v3" };
 
         // Expected result
         wrappedConsumer.addExpectedStartDataSet();

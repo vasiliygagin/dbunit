@@ -7,8 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.StringReader;
 import java.sql.Statement;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.PostgresqlEnvironment;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ReplacementDataSet;
@@ -26,23 +26,25 @@ import org.xml.sax.InputSource;
  * @author Philipp S. (Unwissender2009)
  * @since Nov 23, 2009
  */
-public class SQLHelperDomainPostgreSQLIT {
+public class SQLHelperDomainPostgreSQLIT extends AbstractDatabaseTest {
 
     private IDatabaseConnection _connection;
 
     private static final String xmlData = "<?xml version=\"1.0\"?>" + "<dataset>" + "<T1 PK=\"1\" STATE=\"is_blabla\"/>"
             + "</dataset>";
 
-    private final DatabaseEnvironment environment;
-
     public SQLHelperDomainPostgreSQLIT() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
+    @Override
+    protected boolean checkEnvironment() {
+        return environment instanceof PostgresqlEnvironment;
     }
 
     @Before
     public final void setUp() throws Exception {
         // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = environment.getConnection();
+        _connection = database.getConnection();
     }
 
     @After

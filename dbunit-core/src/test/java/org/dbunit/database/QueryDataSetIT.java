@@ -52,7 +52,7 @@ public class QueryDataSetIT extends AbstractDataSetTest {
     @Before
     public final void setUp() throws Exception {
 
-        _connection = environment.getConnection();
+        _connection = database.getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(_connection, environment.getInitDataSet());
     }

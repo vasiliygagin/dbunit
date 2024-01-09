@@ -99,8 +99,7 @@ public class DatabaseEnvironment {
 
     public boolean support(final TestFeature feature) {
         final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
-        for (int i = 0; i < unsupportedFeatures.length; i++) {
-            final String unsupportedFeature = unsupportedFeatures[i];
+        for (final String unsupportedFeature : unsupportedFeatures) {
             if (feature.toString().equals(unsupportedFeature)) {
                 return false;
             }

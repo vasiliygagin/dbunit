@@ -28,13 +28,12 @@ import java.io.FileOutputStream;
 import java.sql.Connection;
 
 import org.dbunit.DdlExecutor;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlWriter;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -60,9 +59,8 @@ public class CompositeDataSetIterationTest {
 
         DdlExecutor.executeDdlFile(ddlFile, jdbcConnection, false);
 
-        DatabaseConfig config = new DatabaseConfig();
+        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
         this.connection = new DatabaseConnection(jdbcConnection, config);
-        config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
     @After

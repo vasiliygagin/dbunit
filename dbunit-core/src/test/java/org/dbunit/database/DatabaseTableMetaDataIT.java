@@ -99,10 +99,10 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     @Test
     public void testCreation_UnknownTable() throws Exception {
         String tableName = "UNKNOWN_TABLE";
-        IDatabaseConnection connection = getEnvironment().getConnection();
+        IDatabaseConnection connection = database.getConnection();
         String schema = connection.getSchema();
         try {
-            new DatabaseTableMetaData(tableName, getEnvironment().getConnection());
+            new DatabaseTableMetaData(tableName, database.getConnection());
             fail("Should not be able to create a DatabaseTableMetaData for an unknown table");
         } catch (NoSuchTableException expected) {
             String msg = "Did not find table '" + convertString("UNKNOWN_TABLE") + "' in schema '" + schema + "'";
@@ -116,7 +116,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         String tableName = "UNKNOWN_TABLE";
         boolean validate = false;
 
-        ITableMetaData metaData = new DatabaseTableMetaData(tableName, getEnvironment().getConnection(), validate);
+        ITableMetaData metaData = new DatabaseTableMetaData(tableName, database.getConnection(), validate);
 
         Column[] columns = metaData.getColumns();
         assertEquals(0, columns.length);
@@ -156,10 +156,17 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
                 return DataType.UNKNOWN;
             }
         };
-        this.customizedConnection.getDatabaseConfig().setDataTypeFactory(dataTypeFactory);
+
+        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig newConfig = new io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig();
+        newConfig.apply(environment.getDatabaseConfig());
+        newConfig.setDataTypeFactory(dataTypeFactory);
+        newConfig.freese();
+
+        DatabaseConnection customizedConnection = new DatabaseConnection(this.customizedConnection.getConnection(),
+                newConfig, this.customizedConnection.getSchema());
 
         String tableName = "EMPTY_MULTITYPE_TABLE";
-        ITableMetaData metaData = createDataSet().getTableMetaData(tableName);
+        ITableMetaData metaData = customizedConnection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getColumns();
         // No columns recognized -> should not provide any columns here
         assertEquals("Should be an empty column array", 0, columns.length);
@@ -337,7 +344,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testFullyQualifiedTableName() throws Exception {
-        String schema = environment.getProfile().getSchema();
+        String schema = environment.getSchema();
 
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);
 //        Connection jdbcConn = _connection.getConnection();
@@ -348,7 +355,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Test
     public void testDbStoresUpperCaseTableNames() throws Exception {
-        IDatabaseConnection connection = getEnvironment().getConnection();
+        IDatabaseConnection connection = database.getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesUpperCaseIdentifiers()) {
             DatabaseTableMetaData dbTableMetaData = new DatabaseTableMetaData(TEST_TABLE.toLowerCase(Locale.ENGLISH),
@@ -363,7 +370,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Test
     public void testDbStoresLowerCaseTableNames() throws Exception {
-        IDatabaseConnection connection = getEnvironment().getConnection();
+        IDatabaseConnection connection = database.getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesLowerCaseIdentifiers()) {
             DatabaseTableMetaData dbTableMetaData = new DatabaseTableMetaData(TEST_TABLE.toUpperCase(Locale.ENGLISH),

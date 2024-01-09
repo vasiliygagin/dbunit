@@ -26,8 +26,17 @@ public class GenericEnvironment extends DatabaseEnvironment {
      * @throws Exception
      */
     protected GenericEnvironment(String profileName) throws Exception {
-        super(new GenericDatabaseProfile(profileName), new DatabaseConfig());
-        // TODO Auto-generated constructor stub
+        this(new GenericDatabaseProfile(profileName));
+    }
+
+    private GenericEnvironment(GenericDatabaseProfile profile) throws Exception {
+        // for generic profile, no clue why we even need it. using whole URL as databaseName
+        super(profile.getConnectionUrl(), profile, new DatabaseConfig());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return databaseName;
     }
 
     private static class GenericDatabaseProfile extends DatabaseProfile {

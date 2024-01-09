@@ -26,25 +26,21 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
 
 /**
  * @author Manuel Laflamme
  * @since Apr 6, 2003
  * @version $Revision$
  */
-public abstract class AbstractTest {
+public abstract class AbstractTest extends AbstractDatabaseTest {
 
     private static final String[] TABLE_NAMES = { "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE",
             "ONLY_PK_TABLE", "EMPTY_MULTITYPE_TABLE", };
     private static final String[] DUPLICATE_TABLE_NAMES = { "DUPLICATE_TABLE", "EMPTY_TABLE", "DUPLICATE_TABLE", };
     private static final String EXTRA_TABLE_NAME = "EXTRA_TABLE";
 
-    protected final DatabaseEnvironment environment;
-
     public AbstractTest() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     /**

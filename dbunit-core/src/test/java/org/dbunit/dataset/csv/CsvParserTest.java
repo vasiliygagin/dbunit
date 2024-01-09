@@ -29,11 +29,11 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.dbunit.dataset.common.handlers.IllegalInputCharacterException;
 import org.dbunit.dataset.common.handlers.PipelineException;
 import org.dbunit.testutil.TestUtils;
+
+import junit.framework.TestCase;
 
 public class CsvParserTest extends TestCase {
 
@@ -42,15 +42,15 @@ public class CsvParserTest extends TestCase {
     /*
      * public void testNewParserHasNotNullPipeline() {
      * assertNotNull(parser.getPipeline()); }
-     * 
+     *
      * public void testAfterEachParsingThePipelineIsEmpty() throws
      * PipelineException, IllegalInputCharacterException {
-     * 
+     *
      * class MockPipeline extends Pipeline { boolean setProductCalled = false;
-     * 
+     *
      * protected void setProducts(List products) { assertEquals(0, products.size());
      * super.setProducts(products); setProductCalled = true; } }
-     * 
+     *
      * MockPipeline mockPipeline = new MockPipeline();
      * parser.setPipeline(mockPipeline); parser.parse("");
      * assertTrue("the set product method should be called to prepare a new list of products"
@@ -141,6 +141,7 @@ public class CsvParserTest extends TestCase {
         assertEquals(" world ", parsed.get(1));
     }
 
+    @Override
     protected void setUp() throws Exception {
         parser = new CsvParserImpl();
     }

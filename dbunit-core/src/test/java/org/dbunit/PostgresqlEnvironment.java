@@ -28,8 +28,15 @@ package org.dbunit;
  */
 public class PostgresqlEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = "//localhost/dbunit";
+
     public PostgresqlEnvironment() throws Exception {
-        super(new PostgresqlDatabaseProfile(), new PostgresqlDatabaseConfig());
+        super(databaseName, new PostgresqlDatabaseProfile(), new PostgresqlDatabaseConfig());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:postgresql:" + databaseName;
     }
 
     @Override
@@ -40,7 +47,7 @@ public class PostgresqlEnvironment extends DatabaseEnvironment {
     private static class PostgresqlDatabaseProfile extends DatabaseProfile {
 
         public PostgresqlDatabaseProfile() {
-            super("org.postgresql.Driver", "jdbc:postgresql://localhost/dbunit", "public", "dbunit", "dbunit",
+            super("org.postgresql.Driver", "jdbc:postgresql:" + databaseName, "public", "dbunit", "dbunit",
                     "postgresql.sql", false, new String[] { "INSERT_IDENTITY", "CLOB", "BLOB", "SCROLLABLE_RESULTSET",
                             "SDO_GEOMETRY", "XML_TYPE" });
         }

@@ -44,6 +44,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @since 2.2.0
  */
 public abstract class AbstractDatabaseTester extends SimpleAssert implements IDatabaseTester {
+
     /**
      * Logger for this class
      */
@@ -53,6 +54,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
      * Enumeration of the valid {@link OperationType}s
      */
     static final class OperationType {
+
         public static final OperationType SET_UP = new OperationType("setUp");
         public static final OperationType TEAR_DOWN = new OperationType("tearDown");
 
@@ -86,6 +88,16 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     public AbstractDatabaseTester(String schema) {
         super(new DefaultFailureHandler());
         this.schema = schema;
+        this.operationListener = new DefaultOperationListener() {
+
+            @Override
+            public void operationSetUpFinished(IDatabaseConnection connection) {
+            }
+
+            @Override
+            public void operationTearDownFinished(IDatabaseConnection connection) {
+            }
+        };
     }
 
     public void setDatabaseConfig(DatabaseConfig databaseConfig) {
@@ -197,11 +209,6 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
         logger.debug("executeOperation(operation={}) - start", operation);
 
         if (operation != DatabaseOperation.NONE) {
-            // Ensure that the operationListener is set
-            if (operationListener == null) {
-                logger.debug("OperationListener is null and will be defaulted.");
-                operationListener = new DefaultOperationListener();
-            }
 
             IDatabaseConnection connection = getConnection();
             operationListener.connectionRetrieved(connection);

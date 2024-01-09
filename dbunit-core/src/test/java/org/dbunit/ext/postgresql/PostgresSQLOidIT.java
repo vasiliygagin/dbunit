@@ -9,8 +9,8 @@ import java.io.StringReader;
 import java.sql.Statement;
 import java.sql.Types;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.PostgresqlEnvironment;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
-public class PostgresSQLOidIT {
+public class PostgresSQLOidIT extends AbstractDatabaseTest {
 
     private IDatabaseConnection _connection;
 
@@ -36,16 +36,18 @@ public class PostgresSQLOidIT {
             "</dataset>";
  // @formatter:on
 
-    private final DatabaseEnvironment environment;
-
     public PostgresSQLOidIT() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
+    @Override
+    protected boolean checkEnvironment() {
+        return environment instanceof PostgresqlEnvironment;
     }
 
     @Before
     public final void setUp() throws Exception {
         // Load active postgreSQL profile and connection from Maven pom.xml.
-        _connection = environment.getConnection();
+        _connection = database.getConnection();
     }
 
     @After

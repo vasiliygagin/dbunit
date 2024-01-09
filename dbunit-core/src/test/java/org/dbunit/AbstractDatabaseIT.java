@@ -34,43 +34,41 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
-
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class AbstractDatabaseIT {
+public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
-    protected IDatabaseConnection customizedConnection;
+    @Deprecated
+    protected DatabaseConnection customizedConnection;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final DatabaseEnvironment environment;
-
     public AbstractDatabaseIT() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     @Before
     public final void setUp() throws Exception {
+        try {
+            JdbcDatabaseTester databaseTester = database.getDatabaseTester();
 
-        JdbcDatabaseTester databaseTester = environment.getDatabaseTester();
+            databaseTester.setSetUpOperation(getSetUpOperation());
+            databaseTester.setDataSet(getDataSet());
+            databaseTester.onSetup();
 
-        DatabaseConfig config = new DatabaseConfig();
-        databaseTester.setDatabaseConfig(config);
-        databaseTester.setSetUpOperation(getSetUpOperation());
-        databaseTester.setDataSet(getDataSet());
-        databaseTester.onSetup();
-
-        Connection conn = databaseTester.buildJdbcConnection();
-        customizedConnection = new DatabaseConnection(conn, config, databaseTester.getSchema());
+            Connection conn = database.getJdbcConnection();
+            customizedConnection = new DatabaseConnection(conn, environment.getDatabaseConfig(),
+                    databaseTester.getSchema());
+        } catch (Exception exc) {
+            throw exc;
+        }
     }
 
     @After
     public final void tearDown() throws Exception {
-        final IDatabaseTester databaseTester = environment.getDatabaseTester();
+        final IDatabaseTester databaseTester = database.getDatabaseTester();
 
         databaseTester.setTearDownOperation(getTearDownOperation());
         databaseTester.setDataSet(getDataSet());
@@ -78,12 +76,7 @@ public abstract class AbstractDatabaseIT {
 
         DatabaseOperation.DELETE_ALL.execute(customizedConnection, customizedConnection.createDataSet());
 
-        customizedConnection.close();
         customizedConnection = null;
-    }
-
-    protected DatabaseEnvironment getEnvironment() throws Exception {
-        return environment;
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
@@ -111,17 +104,6 @@ public abstract class AbstractDatabaseIT {
     }
 
     protected void closeConnection(IDatabaseConnection connection) throws Exception {
-    }
-
-    /**
-     * This method is used so sub-classes can disable the tests according to some
-     * characteristics of the environment
-     *
-     * @param testName name of the test to be checked
-     * @return flag indicating if the test should be executed or not
-     */
-    public final boolean runTest(String testName) {
-        return true;
     }
 
     /**

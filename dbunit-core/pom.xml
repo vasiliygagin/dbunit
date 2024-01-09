@@ -312,6 +312,8 @@
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <encoding>UTF-8</encoding>
+<!--                        <skipAfterFailureCount>1</skipAfterFailureCount>-->
+<!--                        <forkMode>never</forkMode>-->
                     </configuration>
                     <executions>
                         <execution>

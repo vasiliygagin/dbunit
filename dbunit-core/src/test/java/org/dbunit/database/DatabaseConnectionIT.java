@@ -28,12 +28,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.util.Locale;
 
-import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.ITable;
 import org.junit.Test;
@@ -50,7 +48,7 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
 
     @Override
     protected String convertString(String str) throws Exception {
-        return getEnvironment().convertString(str);
+        return environment.convertString(str);
     }
 
     @Test
@@ -65,7 +63,6 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
 
     @Test
     public void testCreateConnectionWithNonExistingSchemaAndStrictValidation() throws Exception {
-        DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
         IDatabaseConnection validConnection = getConnection32();
         // Try to create a database connection with an invalid schema
@@ -81,7 +78,6 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
 
     @Test
     public void testCreateConnectionWithNonExistingSchemaAndLenientValidation() throws Exception {
-        DatabaseEnvironment environment = getEnvironment();
         String schema = environment.convertString("XYZ_INVALID_SCHEMA_1642344539");
         IDatabaseConnection validConnection = getConnection32();
         // Try to create a database connection with an invalid schema
@@ -154,8 +150,6 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
     }
 
     private final IDatabaseConnection getConnection32() throws Exception {
-        Connection connection = getEnvironment().fetchJdbcConnection();
-        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config2 = new DatabaseConfig();
-        return new DatabaseConnection(connection, config2, getProfile().getSchema());
+        return database.getConnection();
     }
 }

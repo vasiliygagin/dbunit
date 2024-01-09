@@ -53,7 +53,7 @@ public class DeleteAllOperationIT extends AbstractDatabaseIT {
 
     @Before
     public final void setUp1() throws Exception {
-        DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, getEnvironment().getInitDataSet());
+        DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, environment.getInitDataSet());
     }
 
     protected DatabaseOperation getDeleteAllOperation() {
