@@ -38,21 +38,14 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.2.0
  */
-public abstract class AbstractDatabaseTesterIT {
+public abstract class AbstractDatabaseTesterIT extends AbstractDatabaseTest {
 
     protected IDatabaseConnection _connection;
     protected IDatabaseTester _databaseTester;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractDatabaseTesterIT.class);
 
-    protected final DatabaseEnvironment environment;
-
     public AbstractDatabaseTesterIT() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
-    }
-
-    protected DatabaseEnvironment getEnvironment() throws Exception {
-        return environment;
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
@@ -89,7 +82,7 @@ public abstract class AbstractDatabaseTesterIT {
     // //////////////////////////////////////////////////////////////////////////
 
     protected IDataSet getDataSet() throws Exception {
-        return getEnvironment().getInitDataSet();
+        return environment.getInitDataSet();
     }
 
     protected DatabaseOperation getSetUpOperation() {

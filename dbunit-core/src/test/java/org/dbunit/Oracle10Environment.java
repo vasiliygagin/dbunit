@@ -32,13 +32,10 @@ public class Oracle10Environment extends OracleEnvironment {
         super(new Oracle10DatabaseProfile(), new Oracle10DatabaseConfig());
     }
 
-    /**
-     *
-     */
     private static class Oracle10DatabaseProfile extends DatabaseProfile {
 
         public Oracle10DatabaseProfile() {
-            super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "DBUNIT", "dbunit", "dbunit",
+            super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:" + "@localhost:1521:XE", "DBUNIT", "dbunit", "dbunit",
                     "oracle.sql", false, new String[] { "INSERT_IDENTITY", "SCROLLABLE_RESULTSET" });
         }
     }

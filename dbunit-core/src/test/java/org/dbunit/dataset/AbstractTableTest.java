@@ -24,28 +24,20 @@ package org.dbunit.dataset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 17, 2002
  */
-public abstract class AbstractTableTest {
+public abstract class AbstractTableTest extends AbstractDatabaseTest {
 
     protected static final int ROW_COUNT = 6;
     protected static final int COLUMN_COUNT = 4;
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    protected final DatabaseEnvironment environment;
-
     public AbstractTableTest() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     /**
@@ -141,16 +133,5 @@ public abstract class AbstractTableTest {
             fail("Should throw a NoSuchColumnException!");
         } catch (NoSuchColumnException e) {
         }
-    }
-
-    /**
-     * This method is used so sub-classes can disable the tests according to some
-     * characteristics of the environment
-     *
-     * @param testName name of the test to be checked
-     * @return flag indicating if the test should be executed or not
-     */
-    protected final boolean runTest(String testName) {
-        return true;
     }
 }

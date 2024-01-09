@@ -22,8 +22,16 @@ package org.dbunit;
 
 public class MsSqlEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = "//localhost:1433";
+
     public MsSqlEnvironment() throws Exception {
-        super(new MsSqlDatabaseProfile(), new MsSqlDatabaseConfig());
+        super(databaseName, new MsSqlDatabaseProfile(), new MsSqlDatabaseConfig());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:sqlserver:" + databaseName
+                + ";user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor";
     }
 
     /**
@@ -40,7 +48,8 @@ public class MsSqlEnvironment extends DatabaseEnvironment {
 
         public MsSqlDatabaseProfile() {
             super("com.microsoft.sqlserver.jdbc.SQLServerDriver",
-                    "jdbc:sqlserver://localhost:1433;user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor",
+                    "jdbc:sqlserver:" + databaseName
+                            + ";user=sa;password=theSaPassword1234;Trusted_Connection=True;SelectMethod=cursor",
                     "dbo", "sa", "theSaPassword1234", "mssql.sql", false,
                     new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "SDO_GEOMETRY", "XML_TYPE" });
         }

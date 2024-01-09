@@ -28,8 +28,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.DatabaseProfile;
 import org.dbunit.DefaultDatabaseTester;
+import org.dbunit.DefaultOperationListener;
 import org.dbunit.IDatabaseTester;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,19 +42,13 @@ import org.junit.Test;
 public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
     private String schema;
-    private DatabaseProfile profile;
 
     public AbstractDatabaseConnectionIT() throws Exception {
     }
 
-    public DatabaseProfile getProfile() {
-        return profile;
-    }
-
     @Before
     public final void setUp1() throws Exception {
-        this.profile = super.getEnvironment().getProfile();
-        this.schema = this.profile.getSchema();
+        this.schema = environment.getSchema();
     }
 
     @Test
@@ -70,8 +64,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
     @Test
     public final void testGetRowCount_NonexistingSchema() throws Exception {
-        DatabaseProfile profile = super.getEnvironment().getProfile();
-        String nonexistingSchema = profile.getSchema() + "_444_XYZ_TEST";
+        String nonexistingSchema = environment.getSchema() + "_444_XYZ_TEST";
         this.schema = nonexistingSchema;
 
         IDatabaseTester dbTester = this.newDatabaseTester(nonexistingSchema);
@@ -88,13 +81,12 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         } finally {
             // Reset the testers schema for subsequent tests (environment.dbTester is a
             // singleton)
-            dbTester.setSchema(profile.getSchema());
+            dbTester.setSchema(environment.getSchema());
         }
     }
 
     @Test
     public final void testGetRowCount_NoSchemaSpecified() throws Exception {
-        DatabaseProfile profile = super.getEnvironment().getProfile();
         this.schema = null;
         IDatabaseTester dbTester = this.newDatabaseTester(this.schema);
         try {
@@ -105,21 +97,29 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
         } finally {
             // Reset the testers schema for subsequent tests (environment.dbTester is a
             // singleton)
-            dbTester.setSchema(profile.getSchema());
+            dbTester.setSchema(environment.getSchema());
         }
     }
 
     private DefaultDatabaseTester newDatabaseTester(String schema) throws Exception {
         logger.debug("newDatabaseTester() - start");
-        Connection connection1 = getEnvironment().fetchJdbcConnection();
+        Connection jdbcConnection = database.getJdbcConnection();
 
-        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config1 = new io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig();
-        customizedConnection = new DatabaseConnection(connection1, config1, profile.getSchema());
+        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig databaseConfig = environment.getDatabaseConfig();
+        customizedConnection = new DatabaseConnection(jdbcConnection, databaseConfig, environment.getSchema());
 
-        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig config2 = getEnvironment().getDatabaseConfig();
-
-        final DatabaseConnection connection = new DatabaseConnection(connection1, config2, this.schema);
+        final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, this.schema);
         DefaultDatabaseTester tester = new DefaultDatabaseTester(connection);
+        tester.setOperationListener(new DefaultOperationListener() {
+
+            @Override
+            public void operationSetUpFinished(IDatabaseConnection connection) {
+            }
+
+            @Override
+            public void operationTearDownFinished(IDatabaseConnection connection) {
+            }
+        });
         tester.setSchema(schema);
         return tester;
     }

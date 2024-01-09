@@ -24,11 +24,13 @@ package org.dbunit;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
@@ -37,77 +39,113 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class DatabaseEnvironment {
+public abstract class DatabaseEnvironment {
 
-    private final DatabaseProfile _profile;
-    private final Connection jdbcConnection;
-    private final IDataSet _dataSet;
-    private final JdbcDatabaseTester _databaseTester;
+    private final String schema;
+    private final boolean multilineSupport;
+    private final String[] unsupportedFeatures;
     private final DatabaseConfig databaseConfig;
 
-    private DatabaseConnection _connection = null;
+    private final IDataSet _dataSet;
+
+    // temp until things are cleaned
+    private Database openedDatabase;
+    private DatabaseProfile profile;
+
+    protected DatabaseEnvironment(String databaseName, final DatabaseProfile profile, DatabaseConfig databaseConfig)
+            throws Exception {
+        this(profile, databaseConfig);
+        openedDatabase = openDatabase(databaseName);
+    }
 
     protected DatabaseEnvironment(final DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
-        _profile = profile;
-        jdbcConnection = buildJdbcConnection();
-        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
-        _databaseTester = new JdbcDatabaseTester(_profile.getDriverClass(), _profile.getConnectionUrl(),
-                _profile.getUser(), _profile.getPassword(), _profile.getSchema());
         this.databaseConfig = databaseConfig;
-        _connection = getConnection();
-
-        DdlExecutor.execute("sql/" + _profile.getProfileDdl(), _connection.getConnection(),
-                profile.getProfileMultilineSupport(), true);
+        this.profile = profile;
+        schema = profile.getSchema();
+        multilineSupport = profile.getProfileMultilineSupport();
+        unsupportedFeatures = profile.getUnsupportedFeatures();
+        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
+        this.databaseConfig.freese();
     }
 
-    private Connection buildJdbcConnection() {
-        return DriverManagerConnectionsFactory.getIT().fetchConnection(_profile.getDriverClass(),
-                _profile.getConnectionUrl(), _profile.getUser(), _profile.getPassword());
+    protected abstract String buildConnectionUrl(String databaseName);
+
+    @Deprecated
+    public Database getOpenedDatabase() {
+        return openedDatabase;
     }
 
-    public DatabaseConfig getDatabaseConfig() {
+    public Database openDatabase(String databaseName) throws DatabaseUnitException, Exception {
+        Connection jdbcConnection = buildJdbcConnection(databaseName);
+
+        JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(jdbcConnection, schema);
+        databaseTester.setOperationListener(new DefaultOperationListener() {
+
+            @Override
+            public void operationSetUpFinished(IDatabaseConnection connection) {
+            }
+
+            @Override
+            public void operationTearDownFinished(IDatabaseConnection connection) {
+            }
+        });
+
+        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, schema);
+        DdlExecutor.execute("sql/" + profile.getProfileDdl(), jdbcConnection, false, false);
+
+        Database database = new Database();
+        database.setJdbcConnection(jdbcConnection);
+        database.setConnection(connection);
+        database.setDatabaseTester(databaseTester);
+        return database;
+    }
+
+    private Connection buildJdbcConnection(String databaseName) {
+        String connectionUrl = buildConnectionUrl(databaseName);
+        String user = profile.getUser();
+        Connection connection1;
+        try {
+            Class.forName(profile.getDriverClass());
+            connection1 = DriverManager.getConnection(connectionUrl, user, profile.getPassword());
+            connection1.setAutoCommit(false);
+        } catch (ClassNotFoundException | SQLException exc) {
+            throw new AssertionError(" Unable to connect to [" + connectionUrl + "]", exc);
+        }
+//        return DriverManagerConnectionsFactory.getIT().fetchConnection(profile.getDriverClass(), connectionUrl,
+//                profile.getUser(), profile.getPassword());
+        return connection1;
+    }
+
+    public void closeDatabase(Database database) {
+
+    }
+
+    public final DatabaseConfig getDatabaseConfig() {
         return databaseConfig;
     }
 
-    public DatabaseConnection getConnection() throws Exception {
-        // First check if the current connection is still valid and open
-        // The connection may have been closed by a consumer
-        if (_connection != null && _connection.getConnection().isClosed()) {
-            // Reset the member so that a new connection will be created
-            _connection = null;
-        }
-
-        if (_connection == null) {
-            _connection = new DatabaseConnection(jdbcConnection, databaseConfig, _profile.getSchema());
-        }
-        return _connection;
-    }
-
-    public final Connection fetchJdbcConnection() {
-        return jdbcConnection;
-    }
-
-    public final JdbcDatabaseTester getDatabaseTester() {
-        return _databaseTester;
-    }
-
+    @Deprecated
     public void closeConnection() throws Exception {
-        if (_connection != null) {
-            _connection.close();
-            _connection = null;
-        }
+        // ?? should closeDatabase be used instead?
+//        if (_connection != null) {
+//            _connection.close();
+//            _connection = null;
+//        }
     }
 
     public IDataSet getInitDataSet() throws Exception {
         return _dataSet;
     }
 
-    public DatabaseProfile getProfile() throws Exception {
-        return _profile;
+    public String getSchema() {
+        return schema;
+    }
+
+    public boolean getProfileMultilineSupport() {
+        return multilineSupport;
     }
 
     public boolean support(final TestFeature feature) {
-        final String[] unsupportedFeatures = _profile.getUnsupportedFeatures();
         for (final String unsupportedFeature : unsupportedFeatures) {
             if (feature.toString().equals(unsupportedFeature)) {
                 return false;

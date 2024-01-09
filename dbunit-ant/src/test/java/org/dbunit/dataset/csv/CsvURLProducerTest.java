@@ -33,12 +33,11 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
@@ -91,8 +90,7 @@ public class CsvURLProducerTest {
     }
 
     private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setDataTypeFactory(new HsqldbDataTypeFactory());
+        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
         Connection connection2 = DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), url,
                 user, password);
         return new DatabaseConnection(connection2, config);

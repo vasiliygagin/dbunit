@@ -41,6 +41,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -53,13 +54,13 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
     public TransactionOperationIT() throws Exception {
     }
 
-    private boolean environmentHasTransactionFeature() {
-        return environment.support(TestFeature.TRANSACTION);
+    @Before
+    public final void checkEnvironmentHasTransactionFeature() {
+        assumeTrue(environment.support(TestFeature.TRANSACTION));
     }
 
     @Test
     public void testExecuteCommit() throws Exception {
-        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -82,7 +83,6 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExclusiveTransaction() throws Exception {
-        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -112,12 +112,13 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteRollback() throws Exception {
-        assumeTrue(environmentHasTransactionFeature());
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
         Exception[] exceptions = { new SQLException(), new DatabaseUnitException(), new RuntimeException(), };
         Connection jdbcConnection = customizedConnection.getConnection();
+
+        jdbcConnection.setAutoCommit(true);
 
         for (Exception exception : exceptions) {
 

@@ -36,8 +36,10 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  */
 public class OracleEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = "@localhost:1521:XE";
+
     public OracleEnvironment() throws Exception {
-        super(new OracleDatabaseProfile(), new OracleDatabaseConfig());
+        super(databaseName, new OracleDatabaseProfile(), new OracleDatabaseConfig());
     }
 
     /**
@@ -45,8 +47,13 @@ public class OracleEnvironment extends DatabaseEnvironment {
      * @param oracle10DatabaseConfig
      * @throws Exception
      */
-    public OracleEnvironment(DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
-        super(profile, databaseConfig);
+    protected OracleEnvironment(DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
+        super(databaseName, profile, databaseConfig);
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:oracle:thin:" + databaseName;
     }
 
     @Override
@@ -63,7 +70,7 @@ public class OracleEnvironment extends DatabaseEnvironment {
     private static class OracleDatabaseProfile extends DatabaseProfile {
 
         public OracleDatabaseProfile() {
-            super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "DBUNIT", "dbunit", "dbunit",
+            super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:" + databaseName, "DBUNIT", "dbunit", "dbunit",
                     "oracle.sql", false, new String[] { "INSERT_IDENTITY", "SCROLLABLE_RESULTSET" });
         }
     }

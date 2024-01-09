@@ -36,7 +36,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.util.CollectionsHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +57,6 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
     @Before
     public void setUp1() throws Exception {
         IDatabaseConnection connection = super.getConnection();
-        connection.getDatabaseConfig().setDataTypeFactory(new HsqldbDataTypeFactory());
         this.fDataSet = connection.createDataSet();
         this.fTable = this.fDataSet.getTable(E);
     }

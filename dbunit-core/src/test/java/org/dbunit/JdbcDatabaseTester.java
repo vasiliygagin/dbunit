@@ -23,8 +23,6 @@ package org.dbunit;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
-
 /**
  * DatabaseTester that uses JDBC's Driver Manager to create connections.<br>
  *
@@ -35,67 +33,15 @@ import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
  */
 public class JdbcDatabaseTester extends AbstractDatabaseTester {
 
-    private String connectionUrl;
-    private String password;
-    private String username;
+    private final Connection jdbcConnection;
 
-    /**
-     * Creates a new JdbcDatabaseTester with the specified properties.<br>
-     * Username and Password are set to null.
-     *
-     * @param driverClass   the classname of the JDBC driver to use
-     * @param connectionUrl the connection url
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
-     *                                found
-     */
-    public JdbcDatabaseTester(String driverClass, String connectionUrl) throws ClassNotFoundException {
-        this(driverClass, connectionUrl, null, null);
-    }
-
-    /**
-     * Creates a new JdbcDatabaseTester with the specified properties.
-     *
-     * @param driverClass   the classname of the JDBC driver to use
-     * @param connectionUrl the connection url
-     * @param username      a username that can has access to the database
-     * @param password      the user's password
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
-     *                                found
-     */
-    public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password)
-            throws ClassNotFoundException {
-        this(driverClass, connectionUrl, username, password, null);
-    }
-
-    /**
-     * Creates a new JdbcDatabaseTester with the specified properties.
-     *
-     * @param driverClass   the classname of the JDBC driver to use
-     * @param connectionUrl the connection url
-     * @param username      a username that can has access to the database - can be
-     *                      <code>null</code>
-     * @param password      the user's password - can be <code>null</code>
-     * @param schema        the database schema to be tested - can be
-     *                      <code>null</code>
-     * @throws ClassNotFoundException If the given <code>driverClass</code> was not
-     *                                found
-     * @since 2.4.3
-     */
-    public JdbcDatabaseTester(String driverClass, String connectionUrl, String username, String password, String schema)
-            throws ClassNotFoundException {
+    public JdbcDatabaseTester(Connection jdbcConnection, String schema) {
         super(schema);
-        this.connectionUrl = connectionUrl;
-        this.username = username;
-        this.password = password;
-
-        assertNotNullNorEmpty("driverClass", driverClass);
-        Class.forName(driverClass);
+        this.jdbcConnection = jdbcConnection;
     }
 
     @Override
     protected Connection buildJdbcConnection() throws SQLException {
-        assertNotNullNorEmpty("connectionUrl", connectionUrl);
-        return DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), connectionUrl, username,
-                password);
+        return jdbcConnection;
     }
 }

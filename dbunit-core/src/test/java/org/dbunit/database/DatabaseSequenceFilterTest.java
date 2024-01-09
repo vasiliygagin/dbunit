@@ -92,7 +92,7 @@ public class DatabaseSequenceFilterTest {
         final File ddlFile = new File("src/test/resources/sql/hypersonic_cyclic.sql");
         final Connection connection1 = _jdbcConnection;
 
-        final boolean multiLineSupport = environment.getProfile().getProfileMultilineSupport();
+        final boolean multiLineSupport = environment.getProfileMultilineSupport();
 
         DdlExecutor.executeDdlFile(ddlFile, connection1, multiLineSupport);
         final IDatabaseConnection connection = new DatabaseConnection(_jdbcConnection, new DatabaseConfig());

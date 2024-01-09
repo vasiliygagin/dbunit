@@ -26,13 +26,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Dbunit's own small assertion utility, independent from the testing framework
  * that is used.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
 public class SimpleAssert {
+
     /**
      * Logger for this class
      */
@@ -64,7 +65,7 @@ public class SimpleAssert {
 
     /**
      * Evaluate if the given condition is <code>true</code> or not.
-     * 
+     *
      * @param message   message displayed if assertion is false
      * @param condition condition to be tested
      */

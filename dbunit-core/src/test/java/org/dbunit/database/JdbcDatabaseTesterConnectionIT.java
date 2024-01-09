@@ -21,7 +21,6 @@
  */
 package org.dbunit.database;
 
-import org.dbunit.DatabaseProfile;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
 
@@ -41,9 +40,7 @@ public class JdbcDatabaseTesterConnectionIT extends AbstractDatabaseTesterConnec
     @Override
     protected IDatabaseTester getDatabaseTester() throws Exception {
         if (databaseTester == null) {
-            DatabaseProfile profile = getEnvironment().getProfile();
-            databaseTester = new JdbcDatabaseTester(profile.getDriverClass(), profile.getConnectionUrl(),
-                    profile.getUser(), profile.getPassword(), profile.getSchema());
+            databaseTester = new JdbcDatabaseTester(database.getJdbcConnection(), environment.getSchema());
         }
         return databaseTester;
     }

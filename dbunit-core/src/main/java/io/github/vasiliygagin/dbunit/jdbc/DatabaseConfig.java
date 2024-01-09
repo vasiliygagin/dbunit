@@ -42,7 +42,22 @@ public class DatabaseConfig {
     private boolean skipOracleRecycleBinTables = false;
     private boolean allowEmptyFields = false;
 
+    /**
+     * Poor man's final
+     */
+    private boolean frozen = false;
+
     public DatabaseConfig() {
+    }
+
+    public final void freese() {
+        frozen = true;
+    }
+
+    private void checkFrozen() {
+        if (frozen) {
+            throw new IllegalStateException();
+        }
     }
 
     public IStatementFactory getStatementFactory() {
@@ -50,6 +65,7 @@ public class DatabaseConfig {
     }
 
     public void setStatementFactory(IStatementFactory statementFactory) {
+        checkFrozen();
         notNull(statementFactory, "statementFactory cannot be null");
         this.statementFactory = statementFactory;
     }
@@ -59,6 +75,7 @@ public class DatabaseConfig {
     }
 
     public void setResultSetTableFactory(IResultSetTableFactory resultSetTableFactory) {
+        checkFrozen();
         notNull(resultSetTableFactory, "resultSetTableFactory cannot be null");
         this.resultSetTableFactory = resultSetTableFactory;
     }
@@ -68,6 +85,7 @@ public class DatabaseConfig {
     }
 
     public void setDataTypeFactory(IDataTypeFactory dataTypeFactory) {
+        checkFrozen();
         notNull(dataTypeFactory, "dataTypeFactory cannot be null");
         this.dataTypeFactory = dataTypeFactory;
     }
@@ -77,6 +95,7 @@ public class DatabaseConfig {
     }
 
     public void setEscapePattern(String escapePattern) {
+        checkFrozen();
         this.escapePattern = escapePattern;
     }
 
@@ -85,6 +104,7 @@ public class DatabaseConfig {
     }
 
     public void setTableTypes(String[] tableTypes) {
+        checkFrozen();
         notNull(tableTypes, "tableTypes cannot be null");
         this.tableTypes = tableTypes;
     }
@@ -94,6 +114,7 @@ public class DatabaseConfig {
     }
 
     public void setPrimaryKeysFilter(IColumnFilter primaryKeysFilter) {
+        checkFrozen();
         this.primaryKeysFilter = primaryKeysFilter;
     }
 
@@ -102,6 +123,7 @@ public class DatabaseConfig {
     }
 
     public void setBatchSize(int batchSize) {
+        checkFrozen();
         this.batchSize = batchSize;
     }
 
@@ -110,6 +132,7 @@ public class DatabaseConfig {
     }
 
     public void setFetchSize(int fetchSize) {
+        checkFrozen();
         this.fetchSize = fetchSize;
     }
 
@@ -118,6 +141,7 @@ public class DatabaseConfig {
     }
 
     public void setMetadataHandler(IMetadataHandler metadataHandler) {
+        checkFrozen();
         notNull(metadataHandler, "metadataHandler cannot be null");
         this.metadataHandler = metadataHandler;
     }
@@ -127,6 +151,7 @@ public class DatabaseConfig {
     }
 
     public void setIdentityFilter(IColumnFilter identityFilter) {
+        checkFrozen();
         this.identityFilter = identityFilter;
     }
 
@@ -135,6 +160,7 @@ public class DatabaseConfig {
     }
 
     public void setAllowCountMismatch(boolean allowCountMismatch) {
+        checkFrozen();
         this.allowCountMismatch = allowCountMismatch;
     }
 
@@ -143,6 +169,7 @@ public class DatabaseConfig {
     }
 
     public void setCaseSensitiveTableNames(boolean caseSensitiveTableNames) {
+        checkFrozen();
         this.caseSensitiveTableNames = caseSensitiveTableNames;
     }
 
@@ -151,6 +178,7 @@ public class DatabaseConfig {
     }
 
     public void setQualifiedTableNames(boolean qualifiedTableNames) {
+        checkFrozen();
         this.qualifiedTableNames = qualifiedTableNames;
     }
 
@@ -159,6 +187,7 @@ public class DatabaseConfig {
     }
 
     public void setBatchedStatements(boolean batchedStatements) {
+        checkFrozen();
         this.batchedStatements = batchedStatements;
     }
 
@@ -167,6 +196,7 @@ public class DatabaseConfig {
     }
 
     public void setDatatypeWarning(boolean datatypeWarning) {
+        checkFrozen();
         this.datatypeWarning = datatypeWarning;
     }
 
@@ -175,6 +205,7 @@ public class DatabaseConfig {
     }
 
     public void setSkipOracleRecycleBinTables(boolean skipOracleRecycleBinTables) {
+        checkFrozen();
         this.skipOracleRecycleBinTables = skipOracleRecycleBinTables;
     }
 
@@ -183,6 +214,7 @@ public class DatabaseConfig {
     }
 
     public void setAllowEmptyFields(boolean allowEmptyFields) {
+        checkFrozen();
         this.allowEmptyFields = allowEmptyFields;
     }
 

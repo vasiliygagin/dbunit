@@ -4,10 +4,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.Set;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.util.CollectionsHelper;
 import org.junit.After;
@@ -76,9 +75,8 @@ public abstract class AbstractHSQLTestCase {
         this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
         DdlExecutor.executeDdlFile(environment, jdbcConnection, new File("src/test/resources/sql/" + sqlFile));
-        DatabaseConfig config = new DatabaseConfig();
+        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
         this.connection = new DatabaseConnection(jdbcConnection, config);
-        config.setDataTypeFactory(new HsqldbDataTypeFactory());
     }
 
     @After

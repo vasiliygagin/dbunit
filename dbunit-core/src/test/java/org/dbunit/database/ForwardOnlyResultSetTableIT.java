@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ForwardOnlyTableTest;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.MockTableMetaData;
 import org.dbunit.dataset.RowOutOfBoundsException;
@@ -42,9 +43,10 @@ public class ForwardOnlyResultSetTableIT extends ForwardOnlyTableTest {
 
     @Override
     protected ITable createTable() throws Exception {
-        IDatabaseConnection connection = environment.getConnection();
+        IDatabaseConnection connection = database.getConnection();
 
-        DatabaseOperation.CLEAN_INSERT.execute(connection, environment.getInitDataSet());
+        IDataSet initDataSet = environment.getInitDataSet();
+        DatabaseOperation.CLEAN_INSERT.execute(connection, initDataSet);
 
         String selectStatement = "select * from TEST_TABLE order by COLUMN0";
         return new ForwardOnlyResultSetTable("TEST_TABLE", selectStatement, connection);

@@ -21,9 +21,10 @@
 
 package org.dbunit;
 
-import org.dbunit.operation.DatabaseOperation;
+import java.sql.SQLException;
 
-import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
+import org.dbunit.operation.DatabaseOperation;
 
 /**
  * @author Manuel Laflamme
@@ -32,21 +33,38 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  */
 public class HypersonicEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = ".";
+
     public HypersonicEnvironment() throws Exception {
-        super(new HypersonicDatabaseProfile(), new DatabaseConfig());
+        super(new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
     }
 
     @Override
     public void closeConnection() throws Exception {
-        DatabaseOperation.DELETE_ALL.execute(getConnection(), getInitDataSet());
+        DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:hsqldb:mem:" + databaseName;
     }
 
     private static class HypersonicDatabaseProfile extends DatabaseProfile {
 
         public HypersonicDatabaseProfile() {
-            super("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "PUBLIC", "sa", "", "hypersonic.sql", false,
-                    new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE",
+            super("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:" + databaseName, "PUBLIC", "sa", "", "hypersonic.sql",
+                    false, new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE",
                             "SDO_GEOMETRY", "XML_TYPE" });
+        }
+    }
+
+    @Override
+    public void closeDatabase(Database database) {
+        try {
+            DdlExecutor.executeSql(database.getJdbcConnection(), "SHUTDOWN IMMEDIATELY");
+        } catch (SQLException exc) {
+            // TODO Auto-generated catch block
+            exc.printStackTrace();
         }
     }
 }

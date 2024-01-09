@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.io.StringReader;
 import java.math.BigDecimal;
 
+import org.dbunit.Database;
 import org.dbunit.DatabaseEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.database.IDatabaseConnection;
@@ -47,6 +48,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -61,9 +64,20 @@ public class DbUnitAssertIT {
     private DbUnitAssert assertion = new DbUnitAssert();
 
     private final DatabaseEnvironment environment;
+    private Database database;
 
     public DbUnitAssertIT() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
+    @Before
+    public void openDatabase() throws Exception {
+        database = environment.openDatabase(".");
+    }
+
+    @After
+    public void closeDatabase() {
+        environment.closeDatabase(database);
     }
 
     private IDataSet getDataSet() throws Exception {
@@ -245,7 +259,7 @@ public class DbUnitAssertIT {
 
     @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualExcluded() throws Exception {
-        IDatabaseConnection connection = environment.getConnection();
+        IDatabaseConnection connection = database.getConnection();
 
         IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");
@@ -264,7 +278,7 @@ public class DbUnitAssertIT {
 
     @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualNotExcluded() throws Exception {
-        IDatabaseConnection connection = environment.getConnection();
+        IDatabaseConnection connection = database.getConnection();
 
         IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");

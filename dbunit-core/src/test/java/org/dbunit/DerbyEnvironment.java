@@ -29,8 +29,10 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class DerbyEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = "target/derby_db";
+
     public DerbyEnvironment() throws Exception {
-        super(prepare(new DerbyDatabaseProfile()), new DatabaseConfig());
+        super(databaseName, prepare(new DerbyDatabaseProfile()), new DatabaseConfig());
     }
 
     private static DatabaseProfile prepare(DatabaseProfile profile) {
@@ -38,11 +40,20 @@ public class DerbyEnvironment extends DatabaseEnvironment {
         return profile;
     }
 
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:derby:" + databaseName + ";create=true";
+    }
+
     private static class DerbyDatabaseProfile extends DatabaseProfile {
 
+        /**
+         *
+         */
+
         public DerbyDatabaseProfile() {
-            super("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:target/derby_db;create=true", "APP", "APP", "APP",
-                    "derby.sql", false, new String[] { "VARBINARY", "BLOB", "CLOB", "TRANSACTION",
+            super("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:" + databaseName + ";create=true", "APP", "APP",
+                    "APP", "derby.sql", false, new String[] { "VARBINARY", "BLOB", "CLOB", "TRANSACTION",
                             "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE", "SDO_GEOMETRY", "XML_TYPE" });
         }
     }

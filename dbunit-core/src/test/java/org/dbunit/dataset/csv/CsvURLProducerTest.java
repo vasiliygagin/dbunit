@@ -21,8 +21,10 @@
 
 package org.dbunit.dataset.csv;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,12 +32,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CachedDataSet;
@@ -44,30 +43,30 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.stream.IDataSetProducer;
 import org.dbunit.dataset.stream.StreamingDataSet;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.testutil.TestUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class CsvURLProducerTest {
 
-public class CsvURLProducerTest extends TestCase {
-
-    private String driverClass;
-    private String url;
-    private String user;
-    private String password;
+    private Connection jdbcConnection;
     private IDatabaseConnection connection;
     private static final int ORDERS_ROWS_NUMBER = 5;
     private static final int ORDERS_ROW_ROWS_NUMBER = 3;
     private static final String THE_DIRECTORY = "csv/orders";
 
+    @Test
     public void testProduceFromFolder() throws DataSetException, MalformedURLException {
         CsvURLProducer producer = new CsvURLProducer(TestUtils.getFile(THE_DIRECTORY).toURL(),
                 CsvDataSet.TABLE_ORDERING_FILE);
         doTestWithProducer(producer);
     }
 
+    @Test
     public void testProduceFromJar() throws DataSetException, IOException {
         File file = TestUtils.getFile(THE_DIRECTORY + "/orders.jar");
         URL jarFile = new URL("jar:" + file.toURL() + "!/");
@@ -96,10 +95,10 @@ public class CsvURLProducerTest extends TestCase {
 
     }
 
-    public void testProduceAndInsertFromFolder()
-            throws ClassNotFoundException, MalformedURLException, DatabaseUnitException, SQLException {
+    @Test
+    public void testProduceAndInsertFromFolder() throws MalformedURLException, DatabaseUnitException, SQLException {
         produceAndInsertToDatabase();
-        Statement statement = connection.getConnection().createStatement();
+        Statement statement = jdbcConnection.createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         int count = resultSet.getInt(1);
@@ -117,6 +116,7 @@ public class CsvURLProducerTest extends TestCase {
         operation.execute(connection, consumer);
     }
 
+    @Test
     public void testInsertOperationWithCsvFormat() throws SQLException, DatabaseUnitException {
         try {
             IDataSetProducer producer = new CsvProducer(TestUtils.getFile(THE_DIRECTORY));
@@ -125,7 +125,7 @@ public class CsvURLProducerTest extends TestCase {
         } catch (SQLException e) {
             throw new DatabaseUnitException(e);
         }
-        Statement statement = connection.getConnection().createStatement();
+        Statement statement = jdbcConnection.createStatement();
         ResultSet resultSet = statement.executeQuery("select count(*) from orders");
         resultSet.next();
         final int count = resultSet.getInt(1);
@@ -134,30 +134,12 @@ public class CsvURLProducerTest extends TestCase {
         statement.close();
     }
 
-    private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
-        DatabaseConfig config = new DatabaseConfig();
-        config.setDataTypeFactory(new HsqldbDataTypeFactory());
-        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), url,
-                user, password);
-        return new DatabaseConnection(jdbcConnection, config);
-    }
+    @Before
+    public final void setUp() throws Exception {
+        jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+                "jdbc:hsqldb:target/csv/orders-db/orders", "sa", "");
 
-    @Override
-    protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
-        properties.load(inStream);
-        inStream.close();
-        driverClass = properties.getProperty("cvs-tests.driver.class");
-        url = properties.getProperty("cvs-tests.url");
-        user = properties.getProperty("cvs-tests.user");
-        password = properties.getProperty("cvs-tests.password");
-        assertFalse("".equals(driverClass));
-        assertFalse("".equals(url));
-        assertFalse("".equals(user));
-        Class.forName(driverClass);
-        connection = getConnection();
-        Statement statement = connection.getConnection().createStatement();
+        Statement statement = jdbcConnection.createStatement();
         try {
             statement.execute("DROP TABLE ORDERS");
             statement.execute("DROP TABLE ORDERS_ROW");
@@ -168,14 +150,16 @@ public class CsvURLProducerTest extends TestCase {
         // statement.execute("delete from orders");
         // statement.execute("delete from orders_row");
         statement.close();
+
+        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
+        connection = new DatabaseConnection(jdbcConnection, config);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        Connection connection1 = connection.getConnection();
-        DdlExecutor.executeSql(connection1, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(connection1, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(connection1, "SET SCHEMA PUBLIC");
+    @After
+    public final void tearDown() throws Exception {
+        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+        DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
         connection.close();
     }
 }

@@ -27,19 +27,26 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class H2Environment extends DatabaseEnvironment {
 
+    private static final String databaseName = "target/h2/test";
+
     public H2Environment() throws Exception {
-        super(new H2DatabaseProfile(), new DatabaseConfig());
+        super(databaseName, new H2DatabaseProfile(), new DatabaseConfig());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:h2:" + databaseName;
     }
 
     @Override
     public void closeConnection() throws Exception {
-        DatabaseOperation.DELETE_ALL.execute(getConnection(), getInitDataSet());
+        DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
     }
 
     private static class H2DatabaseProfile extends DatabaseProfile {
 
         public H2DatabaseProfile() {
-            super("org.h2.Driver", "jdbc:h2:target/h2/test", "PUBLIC", "sa", "", "hypersonic.sql", true,
+            super("org.h2.Driver", "jdbc:h2:" + databaseName, "PUBLIC", "sa", "", "hypersonic.sql", true,
                     new String[] { "BLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE",
                             "SDO_GEOMETRY", "XML_TYPE" });
         }

@@ -54,7 +54,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
     @Before
     public final void setUp() throws Exception {
-        _connection = environment.getConnection();
+        _connection = database.getConnection();
     }
 
     @After

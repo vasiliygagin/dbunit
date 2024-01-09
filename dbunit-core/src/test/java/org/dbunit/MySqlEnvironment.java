@@ -28,8 +28,15 @@ package org.dbunit;
  */
 public class MySqlEnvironment extends DatabaseEnvironment {
 
+    private static final String databaseName = "//localhost:3306/dbunit";
+
     public MySqlEnvironment() throws Exception {
-        super(new MySqlDatabaseProfile(), new MySqlDatabaseConfig());
+        super(databaseName, new MySqlDatabaseProfile(), new MySqlDatabaseConfig());
+    }
+
+    @Override
+    protected String buildConnectionUrl(String databaseName) {
+        return "jdbc:mysql:" + databaseName;
     }
 
     /**
@@ -45,8 +52,7 @@ public class MySqlEnvironment extends DatabaseEnvironment {
     private static class MySqlDatabaseProfile extends DatabaseProfile {
 
         public MySqlDatabaseProfile() {
-            super("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/dbunit", "", "dbunit", "dbunit", "mysql.sql",
-                    false,
+            super("com.mysql.jdbc.Driver", "jdbc:mysql:" + databaseName, "", "dbunit", "dbunit", "mysql.sql", false,
                     new String[] { "BLOB", "CLOB,SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "SDO_GEOMETRY",
                             "XML_TYPEBLOB", "CLOB", "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "SDO_GEOMETRY",
                             "XML_TYPE" });
