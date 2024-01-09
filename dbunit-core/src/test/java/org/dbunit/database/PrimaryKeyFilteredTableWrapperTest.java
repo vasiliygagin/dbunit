@@ -56,8 +56,7 @@ public class PrimaryKeyFilteredTableWrapperTest extends AbstractHSQLTestCase {
 
     @Before
     public void setUp1() throws Exception {
-        IDatabaseConnection connection = super.getConnection();
-        this.fDataSet = connection.createDataSet();
+        this.fDataSet = database.getConnection().createDataSet();
         this.fTable = this.fDataSet.getTable(E);
     }
 

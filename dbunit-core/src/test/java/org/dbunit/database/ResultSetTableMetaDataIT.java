@@ -2,14 +2,11 @@ package org.dbunit.database;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.Connection;
-
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DdlExecutor;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
@@ -36,33 +33,24 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(environment, jdbcConnection,
+        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
                 TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
-        try {
-            String tableName = "PATTERN_LIKE_TABLE_X_";
-            String[] columnNames = { "VARCHAR_COL_XUNDERSCORE" };
+        String tableName = "PATTERN_LIKE_TABLE_X_";
+        String[] columnNames = { "VARCHAR_COL_XUNDERSCORE" };
 
-            String sql = "select * from " + tableName;
-            ForwardOnlyResultSetTable resultSetTable = new ForwardOnlyResultSetTable(tableName, sql, connection);
-            ResultSetTableMetaData metaData = (ResultSetTableMetaData) resultSetTable.getTableMetaData();
+        String sql = "select * from " + tableName;
+        ForwardOnlyResultSetTable resultSetTable = new ForwardOnlyResultSetTable(tableName, sql,
+                database.getConnection());
+        ResultSetTableMetaData metaData = (ResultSetTableMetaData) resultSetTable.getTableMetaData();
 
-            Column[] columns = metaData.getColumns();
+        Column[] columns = metaData.getColumns();
 
-            assertEquals("column count", columnNames.length, columns.length);
+        assertEquals("column count", columnNames.length, columns.length);
 
-            for (String columnName : columnNames) {
-                Column column = Columns.getColumn(columnName, columns);
-                assertEquals(columnName, columnName, column.getColumnName());
-            }
-        } finally {
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
-            jdbcConnection.close();
+        for (String columnName : columnNames) {
+            Column column = Columns.getColumn(columnName, columns);
+            assertEquals(columnName, columnName, column.getColumnName());
         }
     }
 

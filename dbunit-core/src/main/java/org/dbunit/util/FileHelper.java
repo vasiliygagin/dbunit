@@ -39,12 +39,13 @@ import org.xml.sax.InputSource;
 /**
  * Utility that provides some general methods for working with {@link File}
  * objects.
- * 
+ *
  * @author gommma
  * @version $Revision$
  * @since 2.3.0
  */
 public class FileHelper {
+
     private static Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
     private FileHelper() {
@@ -52,7 +53,7 @@ public class FileHelper {
 
     /**
      * Recursively deletes the given directory
-     * 
+     *
      * @param directory   The directory to delete
      * @param failOnError If an exception should be thrown in case the deletion did
      *                    not work.
@@ -66,20 +67,18 @@ public class FileHelper {
 
     /**
      * Recursively deletes the given directory
-     * 
+     *
      * @param directory The directory to delete
      * @return <code>true</code> if the deletion was successfully.
      */
     public static boolean deleteDirectory(File directory) {
         if (!directory.isDirectory()) {
-            logger.warn("The directory '" + directory + "' does not exist. Will return without delete.");
             return false;
         }
 
         // First we must delete all files in the directory
         File[] containedFiles = directory.listFiles();
-        for (int i = 0; i < containedFiles.length; i++) {
-            File currentFile = containedFiles[i];
+        for (File currentFile : containedFiles) {
             if (currentFile.isDirectory()) {
                 // First delete children recursively
                 deleteDirectory(currentFile);
@@ -107,7 +106,7 @@ public class FileHelper {
 
     /**
      * Copy file.
-     * 
+     *
      * @param srcFile  the src file
      * @param destFile the dest file
      * @throws IOException
@@ -134,7 +133,7 @@ public class FileHelper {
     /**
      * Get a list of Strings from a given file. Uses the default encoding of the
      * current platform.
-     * 
+     *
      * @param theFile the file to be read
      * @return a list of Strings, each one representing one line from the given file
      * @throws IOException
@@ -142,8 +141,7 @@ public class FileHelper {
     public static List readLines(File theFile) throws IOException {
         logger.debug("readLines(theFile={}) - start", theFile);
 
-        InputStream tableListStream = new FileInputStream(theFile);
-        try {
+        try (InputStream tableListStream = new FileInputStream(theFile)) {
             List orderedNames = new ArrayList();
             BufferedReader reader = new BufferedReader(new InputStreamReader(tableListStream));
             String line = null;
@@ -154,8 +152,6 @@ public class FileHelper {
                 }
             }
             return orderedNames;
-        } finally {
-            tableListStream.close();
         }
     }
 

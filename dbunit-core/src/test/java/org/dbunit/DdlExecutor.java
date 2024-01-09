@@ -82,10 +82,16 @@ public final class DdlExecutor {
         executeDdlFile(ddlFile, connection, multiLineSupport, ignoreErrors);
     }
 
+    @Deprecated
     public static void executeDdlFile(DatabaseEnvironment environment, final Connection connection, final File ddlFile)
             throws Exception {
         final boolean multiLineSupport = environment.getProfileMultilineSupport();
         executeDdlFile(ddlFile, connection, multiLineSupport);
+    }
+
+    public static void executeDdlFile(Database database, final File ddlFile) throws Exception {
+        final boolean multiLineSupport = database.environment.getProfileMultilineSupport();
+        executeDdlFile(ddlFile, database.getJdbcConnection(), multiLineSupport);
     }
 
     /**

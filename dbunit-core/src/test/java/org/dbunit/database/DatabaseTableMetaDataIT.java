@@ -25,15 +25,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.dbunit.AbstractDatabaseIT;
+import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
+import org.dbunit.HypersonicEnvironment;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
@@ -45,7 +47,6 @@ import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
@@ -270,69 +271,55 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        final Connection connection1 = jdbcConnection;
-        DdlExecutor.executeDdlFile(environment, connection1,
+        assumeTrue(environment instanceof HypersonicEnvironment);
+        Database database = environment.openDatabase("tempdb");
+        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
                 TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
-        try {
-            String tableName = "PATTERN_LIKE_TABLE_X_";
-            String[] columnNames = { "VARCHAR_COL_XUNDERSCORE" };
+        String tableName = "PATTERN_LIKE_TABLE_X_";
+        String[] columnNames = { "VARCHAR_COL_XUNDERSCORE" };
 
-            ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
-            Column[] columns = metaData.getColumns();
+        ITableMetaData metaData = database.getConnection().createDataSet().getTableMetaData(tableName);
+        Column[] columns = metaData.getColumns();
 
-            assertEquals("column count", columnNames.length, columns.length);
+        assertEquals("column count", columnNames.length, columns.length);
 
-            for (String columnName : columnNames) {
-                Column column = Columns.getColumn(columnName, columns);
-                assertEquals(columnName, columnName, column.getColumnName());
-            }
-        } finally {
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
-            jdbcConnection.close();
+        for (String columnName : columnNames) {
+            Column column = Columns.getColumn(columnName, columns);
+            assertEquals(columnName, columnName, column.getColumnName());
         }
+        environment.closeDatabase(database);
     }
 
     @Test
     public void testCaseSensitive() throws Exception {
-        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        final Connection connection1 = jdbcConnection;
-        DdlExecutor.executeDdlFile(environment, connection1,
+        assumeTrue(environment instanceof HypersonicEnvironment);
+        // TODO: make it work with derby and other databases
+        Database database = environment.openDatabase("tempdb");
+        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
                 TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
 
+        String tableName = "MixedCaseTable";
+        String tableNameWrongCase = "MIXEDCASETABLE";
+        boolean validate = true;
+        boolean caseSensitive = true;
+
+        ITableMetaData metaData = new DatabaseTableMetaData(tableName, database.getConnection(), validate,
+                caseSensitive);
+        Column[] columns = metaData.getColumns();
+        assertEquals(1, columns.length);
+        assertEquals("COL1", columns[0].getColumnName());
+
+        // Now test with same table name but wrong case
         try {
-            String tableName = "MixedCaseTable";
-            String tableNameWrongCase = "MIXEDCASETABLE";
-            boolean validate = true;
-            boolean caseSensitive = true;
-
-            ITableMetaData metaData = new DatabaseTableMetaData(tableName, connection, validate, caseSensitive);
-            Column[] columns = metaData.getColumns();
-            assertEquals(1, columns.length);
-            assertEquals("COL1", columns[0].getColumnName());
-
-            // Now test with same table name but wrong case
-            try {
-                ITableMetaData metaDataWrongCase = new DatabaseTableMetaData(tableNameWrongCase, connection, validate,
-                        caseSensitive);
-                fail("Should not be able to create DatabaseTableMetaData with non-existing table name "
-                        + tableNameWrongCase + ". Created " + metaDataWrongCase);
-            } catch (NoSuchTableException expected) {
-                assertTrue(expected.getMessage().indexOf(tableNameWrongCase) != -1);
-            }
-        } finally {
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-            DdlExecutor.executeSql(jdbcConnection, "SET SCHEMA PUBLIC");
-            jdbcConnection.close();
+            ITableMetaData metaDataWrongCase = new DatabaseTableMetaData(tableNameWrongCase, database.getConnection(),
+                    validate, caseSensitive);
+            fail("Should not be able to create DatabaseTableMetaData with non-existing table name " + tableNameWrongCase
+                    + ". Created " + metaDataWrongCase);
+        } catch (NoSuchTableException expected) {
+            assertTrue(expected.getMessage().indexOf(tableNameWrongCase) != -1);
         }
+        environment.closeDatabase(database);
     }
 
     /**

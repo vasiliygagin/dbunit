@@ -21,14 +21,13 @@
 
 package org.dbunit.ext.oracle;
 
-import org.dbunit.database.ExtendedMockSingleRowResultSet;
+import java.math.BigDecimal;
+import java.sql.Types;
+
+import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.AbstractDataTypeTest;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.TypeCastException;
-import org.dbunit.dataset.ITable;
-
-import java.math.BigDecimal;
-import java.sql.Types;
 
 /**
  * @author
@@ -36,6 +35,7 @@ import java.sql.Types;
  */
 
 public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
+
     private final static DataType THIS_TYPE = OracleDataTypeFactory.ORACLE_SDO_GEOMETRY_TYPE;
 
     public OracleSdoGeometryDataTypeTest(String name) {
@@ -45,6 +45,7 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
     /**
      *
      */
+    @Override
     public void testToString() throws Exception {
         assertEquals("name", "SDO_GEOMETRY", THIS_TYPE.toString());
     }
@@ -52,6 +53,7 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
     /**
      *
      */
+    @Override
     public void testGetTypeClass() throws Exception {
         assertEquals("class", org.dbunit.ext.oracle.OracleSdoGeometry.class, THIS_TYPE.getTypeClass());
     }
@@ -59,14 +61,17 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
     /**
      *
      */
+    @Override
     public void testIsNumber() throws Exception {
         assertEquals("is number", false, THIS_TYPE.isNumber());
     }
 
+    @Override
     public void testIsDateTime() throws Exception {
         assertEquals("is date/time", false, THIS_TYPE.isDateTime());
     }
 
+    @Override
     public void testTypeCast() throws Exception {
         Object[] values = { null, new OracleSdoGeometry(null, null, null, null, null),
                 new OracleSdoGeometry(new BigDecimal(123), null, null, null, null),
@@ -154,10 +159,12 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
         }
     }
 
+    @Override
     public void testTypeCastNone() throws Exception {
         assertEquals("typecast", null, THIS_TYPE.typeCast(ITable.NO_VALUE));
     }
 
+    @Override
     public void testTypeCastInvalid() throws Exception {
         Object[] values = { new Object(), "bla", new java.util.Date(), "sdo_geometry(12xya3, null, null, null, null)",
                 "sdo_geometry(, null, null, null, null)", "sdo_geometry(1,2, X, null, null)",
@@ -170,15 +177,16 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
                 "mDSys.sdo_geometry(123, 45.6, mdsYS.sdo_point_type ( 56.3 , 3 ) , sdo_elem_info_array(1,null,2,null,3,null),null)",
                 " sdo_geometry(123, 45.6, mdsys.sdo_point_type (null,null,null) , mdsys.sdo_elem_info_array( 1 , 4 ) , MDSYS.sdo_ordinate_array( 4,5 , null , 6 ) , ) ", };
 
-        for (int i = 0; i < values.length; i++) {
+        for (Object value : values) {
             try {
-                THIS_TYPE.typeCast(values[i]);
+                THIS_TYPE.typeCast(value);
                 fail("Should throw TypeCastException");
             } catch (TypeCastException e) {
             }
         }
     }
 
+    @Override
     public void testCompareEquals() throws Exception {
         Object[] values1 = { null, new OracleSdoGeometry(null, null, null, null, null),
                 new OracleSdoGeometry(new BigDecimal(123), null, null, null, null),
@@ -267,6 +275,7 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
         }
     }
 
+    @Override
     public void testCompareInvalid() throws Exception {
         Object[] values1 = { new Object(), "bla", new java.util.Date() };
         Object[] values2 = { null, null, null };
@@ -288,6 +297,7 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
         }
     }
 
+    @Override
     public void testCompareDifferent() throws Exception {
         Object[] less = { new OracleSdoGeometry(null, null, null, null, null), };
 
@@ -305,15 +315,18 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
         }
     }
 
+    @Override
     public void testSqlType() throws Exception {
         assertEquals(Types.STRUCT, THIS_TYPE.getSqlType());
     }
 
+    @Override
     public void testForObject() throws Exception {
         DataType actual = DataType.forObject(new OracleSdoGeometry());
         assertEquals(DataType.UNKNOWN, actual);
     }
 
+    @Override
     public void testAsString() throws Exception {
         // not supported until there is some way to render OracleSdoGeometry
         // as strings
@@ -329,6 +342,7 @@ public class OracleSdoGeometryDataTypeTest extends AbstractDataTypeTest {
 
     }
 
+    @Override
     public void testGetSqlValue() throws Exception {
     }
 }

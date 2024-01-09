@@ -25,23 +25,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import org.dbunit.DatabaseEnvironment;
-import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.DdlExecutor;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
-import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.search.SearchException;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,44 +46,28 @@ import org.junit.Test;
  * @version $Revision$ $Date$
  * @since Aug 28, 2005
  */
-public class TablesDependencyHelperTest {
-
-    private Connection jdbcConnection;
+public class TablesDependencyHelperTest extends AbstractDatabaseTest {
 
     private IDatabaseConnection connection;
 
-    private final DatabaseEnvironment environment;
-
     public TablesDependencyHelperTest() throws Exception {
-        environment = DatabaseEnvironmentLoader.getInstance();
     }
 
     protected void setUp(String... sqlFiles) throws Exception {
         for (String element : sqlFiles) {
-            File sql = TestUtils.getFile("sql/" + element);
+            File sql = new File("src/test/resources/sql/" + element);
             final File ddlFile = sql;
-            final Connection connection = this.jdbcConnection;
-            DdlExecutor.executeDdlFile(environment, connection, ddlFile);
+            DdlExecutor.executeDdlFile(database, ddlFile);
         }
     }
 
     @Before
     public void setUp() throws Exception {
-        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        this.connection = new DatabaseConnection(jdbcConnection, new DatabaseConfig());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");
+        this.connection = new DatabaseConnection(database.getJdbcConnection(), environment.getDatabaseConfig());
     }
 
     @Test
     public void testGetDependentTablesFromOneTable() throws Exception {
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
         setUp("hypersonic_import.sql");
         String[][] allInput = ImportNodesFilterSearchCallbackTest.SINGLE_INPUT;
         String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.SINGLE_OUTPUT;
@@ -118,7 +96,6 @@ public class TablesDependencyHelperTest {
 
     @Test
     public void testGetDependentTablesFromManyTables() throws Exception {
-        DdlExecutor.executeSql(jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
         setUp("hypersonic_import.sql");
         String[][] allInput = ImportNodesFilterSearchCallbackTest.COMPOUND_INPUT;
         String[][] allExpectedOutput = ImportNodesFilterSearchCallbackTest.COMPOUND_OUTPUT;

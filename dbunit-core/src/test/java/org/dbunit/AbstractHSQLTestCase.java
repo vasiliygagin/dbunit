@@ -1,20 +1,15 @@
 package org.dbunit;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.Set;
 
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.util.CollectionsHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractHSQLTestCase {
+public abstract class AbstractHSQLTestCase extends AbstractDatabaseTest {
 
     public static final String A = "A";
     public static final String B = "B";
@@ -56,39 +51,36 @@ public abstract class AbstractHSQLTestCase {
     public static final String B7 = "B7";
     public static final String B8 = "B8";
 
-    private Connection jdbcConnection;
     private final String sqlFile;
-    private IDatabaseConnection connection;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final DatabaseEnvironment environment;
-
     public AbstractHSQLTestCase(String sqlFile) throws Exception {
         this.sqlFile = sqlFile;
-        environment = DatabaseEnvironmentLoader.getInstance();
+    }
+
+    @Override
+    protected boolean checkEnvironment() {
+        return environment instanceof HypersonicEnvironment;
     }
 
     @Before
     public final void setUp() throws Exception {
 
-        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(environment, jdbcConnection, new File("src/test/resources/sql/" + sqlFile));
-        HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
-        this.connection = new DatabaseConnection(jdbcConnection, config);
+        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
+                new File("src/test/resources/sql/" + sqlFile));
     }
 
     @After
     public final void tearDown() throws Exception {
-        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
-        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
-        DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");
+//        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA PUBLIC IF EXISTS CASCADE");
+//        DdlExecutor.executeSql(this.jdbcConnection, "DROP SCHEMA TEST_SCHEMA IF EXISTS CASCADE");
+//        DdlExecutor.executeSql(this.jdbcConnection, "SET SCHEMA PUBLIC");
     }
-
-    protected IDatabaseConnection getConnection() {
-        return this.connection;
-    }
+//
+//    protected IDatabaseConnection getConnection() {
+//        return this.connection;
+//    }
 
     protected static String dump(String[] parent) {
         StringBuffer buffer = new StringBuffer("[ " + parent[0]);

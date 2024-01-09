@@ -35,9 +35,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
     protected abstract int[] setupTablesSizeFixture();
 
     protected IDataSet setupTablesDataSetFixture() throws SQLException {
-        IDatabaseConnection connection = getConnection();
-        IDataSet allDataSet = connection.createDataSet();
-        return allDataSet;
+        return database.getConnection().createDataSet();
     }
 
     protected void addInput(String tableName, String[] ids) {

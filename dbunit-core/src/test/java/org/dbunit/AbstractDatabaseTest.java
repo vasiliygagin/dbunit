@@ -5,8 +5,13 @@ package org.dbunit;
 
 import static org.junit.Assume.assumeTrue;
 
+import java.util.function.Consumer;
+
+import org.dbunit.database.DatabaseConnection;
 import org.junit.After;
 import org.junit.Before;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class AbstractDatabaseTest {
 
@@ -22,7 +27,7 @@ public class AbstractDatabaseTest {
     public final void openDatabase() throws Exception {
         environmentOk = checkEnvironment();
         assumeTrue(environmentOk);
-        database = environment.openDatabase(".");
+        database = doOpenDatabase();
     }
 
     /**
@@ -30,6 +35,13 @@ public class AbstractDatabaseTest {
      */
     protected boolean checkEnvironment() {
         return true;
+    }
+
+    /**
+     * Chance to overwrite db
+     */
+    protected Database doOpenDatabase() throws Exception {
+        return environment.openDefaultDatabase();
     }
 
     /**
@@ -46,5 +58,15 @@ public class AbstractDatabaseTest {
         if (environmentOk) {
             environment.closeDatabase(database);
         }
+    }
+
+    protected final DatabaseConnection customizeConfig(Consumer<DatabaseConfig> customizer)
+            throws DatabaseUnitException {
+        DatabaseConfig newConfig = new DatabaseConfig();
+        newConfig.apply(environment.getDatabaseConfig());
+        customizer.accept(newConfig);
+        newConfig.setCaseSensitiveTableNames(true);
+        newConfig.freese();
+        return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema());
     }
 }

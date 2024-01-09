@@ -21,28 +21,27 @@
 
 package org.dbunit;
 
-import java.io.File;
-
-import org.dbunit.util.FileHelper;
+import java.sql.SQLException;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class DerbyEnvironment extends DatabaseEnvironment {
 
-    private static final String databaseName = "target/derby_db";
+    private static final String databaseName = ".";
+    private static final String url = "jdbc:derby:memory:" + databaseName;
 
     public DerbyEnvironment() throws Exception {
         super(databaseName, prepare(new DerbyDatabaseProfile()), new DatabaseConfig());
     }
 
     private static DatabaseProfile prepare(DatabaseProfile profile) {
-        FileHelper.deleteDirectory(new File("./target/derby_db"));
+        // FileHelper.deleteDirectory(new File("./target/derby_db"));
         return profile;
     }
 
     @Override
     protected String buildConnectionUrl(String databaseName) {
-        return "jdbc:derby:" + databaseName + ";create=true";
+        return url + ";create=true";
     }
 
     private static class DerbyDatabaseProfile extends DatabaseProfile {
@@ -52,9 +51,18 @@ public class DerbyEnvironment extends DatabaseEnvironment {
          */
 
         public DerbyDatabaseProfile() {
-            super("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:" + databaseName + ";create=true", "APP", "APP",
-                    "APP", "derby.sql", false, new String[] { "VARBINARY", "BLOB", "CLOB", "TRANSACTION",
-                            "SCROLLABLE_RESULTSET", "INSERT_IDENTITY", "TRUNCATE_TABLE", "SDO_GEOMETRY", "XML_TYPE" });
+            super("org.apache.derby.jdbc.EmbeddedDriver", url + ";create=true", "APP", "APP", "APP", "derby.sql", false,
+                    new String[] { "VARBINARY", "BLOB", "CLOB", "TRANSACTION", "SCROLLABLE_RESULTSET",
+                            "INSERT_IDENTITY", "TRUNCATE_TABLE", "SDO_GEOMETRY", "XML_TYPE" });
+        }
+    }
+
+    @Override
+    public void closeDatabase(Database database) {
+        try {
+            openConnection(url + ";shutdown=true;");
+        } catch (SQLException exc) {
+            // expecting ERROR 08006
         }
     }
 }

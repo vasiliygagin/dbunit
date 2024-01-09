@@ -20,13 +20,15 @@
  */
 package org.dbunit.assertion;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.FileReader;
+import java.util.List;
 
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.testutil.TestUtils;
+import org.junit.Test;
 
 /**
  * @author gommma (gommma AT users.sourceforge.net)
@@ -34,19 +36,16 @@ import org.dbunit.testutil.TestUtils;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DiffCollectingFailureHandlerTest extends TestCase {
+public class DiffCollectingFailureHandlerTest {
+
     private DbUnitAssert assertion = new DbUnitAssert();
 
-    public DiffCollectingFailureHandlerTest(String s) {
-        super(s);
-    }
-
-    private IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSet(TestUtils.getFileReader(DbUnitAssertIT.FILE_PATH));
-    }
-
+    @Test
     public void testAssertTablesWithDifferentValues() throws Exception {
-        IDataSet dataSet = getDataSet();
+        System.out.println("== " + new File("src/test/resources/xml/assertionTest.xml").getAbsolutePath());
+        System.out.println("== " + new File("src/test/resources/xml/assertionTest.xml").isFile());
+        IDataSet dataSet = new FlatXmlDataSet(new FileReader("src/test/resources/xml/assertionTest.xml"));
+//        IDataSet dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
 
         DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
 
@@ -60,5 +59,4 @@ public class DiffCollectingFailureHandlerTest extends TestCase {
         assertEquals("row 1 col 2", diff.getExpectedValue());
         assertEquals("wrong value", diff.getActualValue());
     }
-
 }
