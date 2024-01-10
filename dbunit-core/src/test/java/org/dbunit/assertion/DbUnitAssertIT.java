@@ -626,7 +626,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         assertion.assertEquals(dataSet1, dataSet2, fh);
         // We expect that no failure was thrown even if the dataSets were not equal.
         // This is because our custom failureHandler
-        assertEquals(2, fh.getDiffList().size());
+        assertEquals(2, fh.getErrors().size());
     }
 
     @Test

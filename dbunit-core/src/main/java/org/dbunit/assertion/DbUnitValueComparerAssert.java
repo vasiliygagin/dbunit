@@ -160,7 +160,14 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
             throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler();
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers, c->false);
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        }else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers,
+                c->false, messageBuilder);
     }
 
     /**
@@ -198,6 +205,13 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler(additionalColumnInfo);
 
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers, c->false);
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        }else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers,
+                c->false, messageBuilder);
     }
 }

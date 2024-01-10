@@ -27,7 +27,9 @@ import java.util.function.Predicate;
 
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.DbUnitValueComparerAssert;
+import org.dbunit.assertion.DefaultFailureHandler;
 import org.dbunit.assertion.FailureHandler;
+import org.dbunit.assertion.MessageBuilder;
 import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
@@ -48,6 +50,7 @@ import org.dbunit.dataset.ITable;
  * @since 1.3 (Mar 22, 2002)
  */
 public class Assertion {
+
     /** Assert using equals comparisons. */
     private static final DbUnitAssert EQUALS_INSTANCE = new DbUnitAssert();
 
@@ -133,7 +136,7 @@ public class Assertion {
      */
     public static void assertEquals(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler) throws DatabaseUnitException {
-        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, failureHandler, c->false);
+        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, failureHandler, c -> false);
     }
 
     /**
@@ -192,9 +195,16 @@ public class Assertion {
      */
     public static void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers, Predicate<Column> excludedColumn) throws DatabaseUnitException {
+            final Map<String, ValueComparer> columnValueComparers, Predicate<Column> excludedColumn)
+            throws DatabaseUnitException {
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        } else {
+            messageBuilder = new MessageBuilder(null);
+        }
         VALUE_COMPARE_INSTANCE.assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer,
-                columnValueComparers, c->false);
+                columnValueComparers, excludedColumn, messageBuilder);
     }
 
     public static DbUnitAssert getEqualsInstance() {

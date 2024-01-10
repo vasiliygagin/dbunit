@@ -3,12 +3,9 @@
  */
 package org.dbunit.dataset;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 import org.dbunit.assertion.FailureHandler;
 import org.dbunit.dataset.datatype.DataType;
@@ -60,16 +57,10 @@ public class ColumnsComparerTest {
 
         // Create the difference
         FailureHandler failureHandler = mock(FailureHandler.class);
-        AssertionError assertionError = new AssertionError();
-        when(failureHandler.createFailure(any(), any(), any())).thenReturn(assertionError);
 
-        try {
-            tested.compareColumns(metaDataExpected, metaDataActual, c -> false, failureHandler);
-        } catch (AssertionError exc) {
-            assertEquals(assertionError, exc);
-        }
+        tested.compareColumns(metaDataExpected, metaDataActual, c -> false, failureHandler);
 
-        verify(failureHandler).createFailure("column count (table=MY_TABLE, expectedColCount=3, actualColCount=2)",
+        verify(failureHandler).handleFailure("column count (table=MY_TABLE, expectedColCount=3, actualColCount=2)",
                 "[c0, c2, c1]", "[d0, c2]");
     }
 

@@ -29,7 +29,7 @@ public class ColumnsComparer {
             } else {
                 message = "column mismatch (table=" + expectedTableName + ")";
             }
-            throw failureHandler.createFailure(message, Columns.getColumnNamesAsString(expectedColumns),
+            failureHandler.handleFailure(message, Columns.getColumnNamesAsString(expectedColumns),
                     Columns.getColumnNamesAsString(actualColumns));
         }
     }

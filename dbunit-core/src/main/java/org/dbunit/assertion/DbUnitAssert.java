@@ -250,8 +250,14 @@ public class DbUnitAssert extends DbUnitAssertBase {
      */
     public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler,
             Predicate<Column> excludedColumn) throws DatabaseUnitException {
-        assertWithValueComparer(expectedTable, actualTable, failureHandler,
-                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null, excludedColumn);
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        }else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null,
+                excludedColumn, messageBuilder);
     }
 
     /**
@@ -337,8 +343,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
                 // Impossible to determine which data type to use
                 final String msg = "Incompatible data types: (table=" + tableName + ", col="
                         + expectedColumn.getColumnName() + ")";
-                throw failureHandler.createFailure(msg, String.valueOf(expectedDataType),
-                        String.valueOf(actualDataType));
+                failureHandler.handleFailure(msg, String.valueOf(expectedDataType), String.valueOf(actualDataType));
             }
 
             // Both columns have same data type, return any one of them

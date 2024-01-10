@@ -3,16 +3,17 @@
  */
 package org.dbunit.assertion;
 
-public class JUnitFailureFactory implements FailureFactory {
+public class JUnitFailureFactory implements FailureHandler {
+
     @Override
-    public Error createFailure(String message, String expected, String actual) {
+    public void handleFailure(String message, String expected, String actual) {
         // Return the junit.framework.ComparisonFailure object
-        return new ComparisonFailure(message, expected, actual);
+        throw new ComparisonFailure(message, expected, actual);
     }
 
     @Override
-    public Error createFailure(String message) {
+    public void handleFailure(String message) {
         // Return the junit.framework.AssertionFailedError object
-        return new AssertionFailedError(message);
+        throw new AssertionFailedError(message);
     }
 }
