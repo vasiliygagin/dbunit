@@ -160,7 +160,7 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
             throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler();
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers, c->false);
     }
 
     /**
@@ -198,6 +198,6 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler(additionalColumnInfo);
 
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers, c->false);
     }
 }

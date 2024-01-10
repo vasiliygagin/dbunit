@@ -27,6 +27,7 @@ import java.sql.SQLException;
 
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.IResultSetTable;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultDataSet;
@@ -123,7 +124,7 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
     }
 
     @Override
-    public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
+    public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         throw new UnsupportedOperationException();
     }
 

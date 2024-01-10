@@ -16,6 +16,8 @@
 
 package com.github.springtestdbunit;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;
@@ -37,8 +39,9 @@ public class TransactionAwareConnectionHelper {
      *
      * @param dataSource The data source
      * @return A {@link DatabaseDataSourceConnection}
+     * @throws SQLException
      */
-    public static DatabaseDataSourceConnection newConnection(DataSource dataSource) {
+    public static DatabaseDataSourceConnection newConnection(DataSource dataSource) throws SQLException {
         return new DatabaseDataSourceConnection(makeTransactionAware(dataSource), new DatabaseConfig(), null, null,
                 null);
     }

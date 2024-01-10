@@ -23,6 +23,7 @@ package org.dbunit;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.DbUnitValueComparerAssert;
@@ -115,7 +116,7 @@ public class Assertion {
      * @see DbUnitAssert#assertEquals(ITable, ITable)
      */
     public static void assertEquals(final ITable expectedTable, final ITable actualTable) throws DatabaseUnitException {
-        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable);
+        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, (Predicate<Column>) c -> false);
     }
 
     /**
@@ -123,7 +124,7 @@ public class Assertion {
      */
     public static void assertEquals(final ITable expectedTable, final ITable actualTable,
             final Column[] additionalColumnInfo) throws DatabaseUnitException {
-        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, additionalColumnInfo);
+        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, additionalColumnInfo, (Predicate<Column>) c -> false);
     }
 
     /**
@@ -132,7 +133,7 @@ public class Assertion {
      */
     public static void assertEquals(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler) throws DatabaseUnitException {
-        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, failureHandler);
+        EQUALS_INSTANCE.assertEquals(expectedTable, actualTable, failureHandler, c->false);
     }
 
     /**
@@ -184,15 +185,16 @@ public class Assertion {
     }
 
     /**
+     * @param excludedColumn TODO
      * @see DbUnitValueComparerAssert#assertWithValueComparer(ITable, ITable,
-     *      FailureHandler, ValueComparer, Map)
+     *      FailureHandler, ValueComparer, Map, Predicate)
      * @since 2.6.0
      */
     public static void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
+            final Map<String, ValueComparer> columnValueComparers, Predicate<Column> excludedColumn) throws DatabaseUnitException {
         VALUE_COMPARE_INSTANCE.assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer,
-                columnValueComparers);
+                columnValueComparers, c->false);
     }
 
     public static DbUnitAssert getEqualsInstance() {

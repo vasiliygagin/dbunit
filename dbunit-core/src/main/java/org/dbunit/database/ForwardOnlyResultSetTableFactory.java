@@ -46,8 +46,8 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
     private static final Logger logger = LoggerFactory.getLogger(ForwardOnlyResultSetTableFactory.class);
 
     @Override
-    public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
-            throws SQLException, DataSetException {
+    public ForwardOnlyResultSetTable createTable(String tableName, String selectStatement,
+            IDatabaseConnection connection) throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
             logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start", tableName,
                     selectStatement, connection);

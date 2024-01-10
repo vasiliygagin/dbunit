@@ -3,12 +3,10 @@
  */
 package org.dbunit.ext.hsqldb;
 
-import org.dbunit.database.DatabaseConfig;
-
 /**
  *
  */
-public class HsqldbDatabaseConfig extends DatabaseConfig {
+public class HsqldbDatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig {
 
     public HsqldbDatabaseConfig() {
         setDataTypeFactory(new HsqldbDataTypeFactory());

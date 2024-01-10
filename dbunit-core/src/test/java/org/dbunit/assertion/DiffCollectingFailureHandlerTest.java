@@ -48,9 +48,9 @@ public class DiffCollectingFailureHandlerTest {
 //        IDataSet dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
 
         DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
+        final FailureHandler failureHandler = myHandler;
 
-        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
-                myHandler);
+        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), failureHandler, c->false);
 
         List diffList = myHandler.getDiffList();
         assertEquals(1, diffList.size());

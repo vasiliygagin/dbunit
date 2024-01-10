@@ -27,7 +27,7 @@ import java.sql.SQLException;
 /**
  * Handler to specify the behavior for a lookup of column metadata using
  * database metadata.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -38,7 +38,7 @@ public interface IMetadataHandler {
     /**
      * Returns the result set for an invocation of
      * {@link DatabaseMetaData#getColumns(String, String, String, String)}.
-     * 
+     *
      * @param databaseMetaData The database metadata to be used for retrieving the
      *                         columns
      * @param schemaName       The schema name
@@ -52,7 +52,7 @@ public interface IMetadataHandler {
     /**
      * Checks if the given <code>resultSet</code> matches the given schema and table
      * name. The comparison is <b>case sensitive</b>.
-     * 
+     *
      * @param resultSet     A result set produced via
      *                      {@link DatabaseMetaData#getColumns(String, String, String, String)}
      * @param schema
@@ -69,7 +69,7 @@ public interface IMetadataHandler {
     /**
      * Checks if the given <code>resultSet</code> matches the given schema and table
      * name. The comparison is <b>case sensitive</b>.
-     * 
+     *
      * @param resultSet     A result set produced via
      *                      {@link DatabaseMetaData#getColumns(String, String, String, String)}
      * @param catalog       The name of the catalog to check. If <code>null</code>
@@ -92,7 +92,7 @@ public interface IMetadataHandler {
     /**
      * Returns the schema name to which the table of the current result set index
      * belongs.
-     * 
+     *
      * @param resultSet The result set pointing to a valid record in the database
      *                  that was returned by
      *                  {@link DatabaseMetaData#getTables(String, String, String, String[])}.
@@ -103,7 +103,7 @@ public interface IMetadataHandler {
 
     /**
      * Checks if the given table exists.
-     * 
+     *
      * @param databaseMetaData The database meta data
      * @param schemaName       The schema in which the table should be searched. If
      *                         <code>null</code> the schema is not used to narrow
@@ -115,22 +115,6 @@ public interface IMetadataHandler {
      * @since 2.4.5
      */
     boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName) throws SQLException;
-
-    /**
-     * Returns the tables in the given schema that matches one of the given
-     * tableTypes.
-     * 
-     * @param databaseMetaData The database meta data
-     * @param schemaName       schema for which the tables should be retrieved;
-     *                         <code>null</code> returns all schemas
-     * @param tableTypes       a list of table types to include; <code>null</code>
-     *                         returns all types
-     * @return The ResultSet which is retrieved using
-     *         {@link DatabaseMetaData#getTables(String, String, String, String[])}
-     * @throws SQLException
-     * @since 2.4.5
-     */
-    ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes) throws SQLException;
 
     /**
      * @param databaseMetaData The database meta data
@@ -145,4 +129,7 @@ public interface IMetadataHandler {
     public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
             throws SQLException;
 
+    public abstract String toCatalog(String schemaCatalog);
+
+    public abstract String toSchema(String schemaCatalog);
 }

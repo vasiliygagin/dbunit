@@ -28,8 +28,10 @@ import static org.junit.Assert.fail;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.function.Predicate;
 
 import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
@@ -72,7 +74,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
     public void testAssertTablesEquals() throws Exception {
         IDataSet dataSet = getDataSet();
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_SAME_VALUE"),
-                new Column[] { new Column("COLUMN0", DataType.VARCHAR) });
+                new Column[] { new Column("COLUMN0", DataType.VARCHAR) }, (Predicate<Column>) c -> false);
     }
 
     @Test
@@ -85,13 +87,15 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
     @Test
     public void testAssertTablesEqualsColumnNamesCaseInsensitive() throws Exception {
         IDataSet dataSet = getDataSet();
-        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_LOWER_COLUMN_NAMES"));
+        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_LOWER_COLUMN_NAMES"),
+                (Predicate<Column>) c -> false);
     }
 
     @Test
     public void testAssertTablesAndNamesNotEquals() throws Exception {
         IDataSet dataSet = getDataSet();
-        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_NAME"));
+        assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_NAME"),
+                (Predicate<Column>) c -> false);
     }
 
     @Test
@@ -99,7 +103,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         IDataSet dataSet = getDataSet();
 
         try {
-            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_3_COLUMNS"));
+            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_3_COLUMNS"),
+                    (Predicate<Column>) c -> false);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
             assertEquals("[COLUMN0, COLUMN1, COLUMN2, COLUMN3]", expected.getExpected());
@@ -114,7 +119,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         IDataSet dataSet = getDataSet();
 
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"),
-                dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_COLUMN_SEQUENCE"));
+                dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_COLUMN_SEQUENCE"), (Predicate<Column>) c -> false);
     }
 
     @Test
@@ -123,7 +128,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
         try {
             assertion.assertEquals(dataSet.getTable("TEST_TABLE"),
-                    dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_COLUMN_NAMES"));
+                    dataSet.getTable("TEST_TABLE_WITH_DIFFERENT_COLUMN_NAMES"), (Predicate<Column>) c -> false);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
             assertEquals("[COLUMN0, COLUMN1, COLUMN2, COLUMN3]", expected.getExpected());
@@ -138,7 +143,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         IDataSet dataSet = getDataSet();
 
         try {
-            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_ONE_ROW"));
+            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_ONE_ROW"),
+                    (Predicate<Column>) c -> false);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
             assertEquals("2", expected.getExpected());
@@ -153,7 +159,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         IDataSet dataSet = getDataSet();
 
         try {
-            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"));
+            assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
+                    (Predicate<Column>) c -> false);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
             assertEquals("row 1 col 2", expected.getExpected());
@@ -164,13 +171,188 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
     }
 
     @Test
+    public void assertEqualsIgnoreCols_tables_matching() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        expectedTable.addRow("4", "5", "6");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+        actualTable.addRow("4", "5", "6");
+
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_differentTableName() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        TestTable actualTable = new TestTable("TABLE2", "A", "B", "C");
+
+        // TODO tables names currently not compared
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_extraColumn() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B");
+        expectedTable.addRow("1", "2");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("[A, B]", exc.getExpected());
+            assertEquals("[A, B, C]", exc.getActual());
+            assertEquals(
+                    "column count (table=TABLE1, expectedColCount=2, actualColCount=3) expected:<[A, B[]]> but was:<[A, B[, C]]>",
+                    exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_extraColumn_filtered() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B");
+        expectedTable.addRow("1", "2");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] { "C" });
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_missingColumn() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B");
+        actualTable.addRow("1", "2");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("[A, B, C]", exc.getExpected());
+            assertEquals("[A, B]", exc.getActual());
+            assertEquals(
+                    "column count (table=TABLE1, expectedColCount=3, actualColCount=2) expected:<[A, B[, C]]> but was:<[A, B[]]>",
+                    exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_missingColumn_filtered() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B");
+        actualTable.addRow("1", "2");
+
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] { "C" });
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_mismatchedColumn() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "D");
+        actualTable.addRow("1", "2");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("[A, B, C]", exc.getExpected());
+            assertEquals("[A, B, D]", exc.getActual());
+            assertEquals("column mismatch (table=TABLE1) expected:<[A, B, [C]]> but was:<[A, B, [D]]>",
+                    exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_mismatchedColumn_filtered() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "D");
+        actualTable.addRow("1", "2");
+
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] { "C", "D" });
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_extraRow() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+        actualTable.addRow("4", "5", "6");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("1", exc.getExpected());
+            assertEquals("2", exc.getActual());
+            assertEquals("row count (table=TABLE1) expected:<[1]> but was:<[2]>", exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_missingRow() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        expectedTable.addRow("4", "5", "6");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("2", exc.getExpected());
+            assertEquals("1", exc.getActual());
+            assertEquals("row count (table=TABLE1) expected:<[2]> but was:<[1]>", exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_mismatchedRow() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        expectedTable.addRow("4", "5", "6");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+        actualTable.addRow("4", "5", "9");
+
+        try {
+            assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] {});
+            fail();
+        } catch (ComparisonFailure exc) {
+            assertEquals("6", exc.getExpected());
+            assertEquals("9", exc.getActual());
+            assertEquals("value (table=TABLE1, row=1, col=C) expected:<[6]> but was:<[9]>", exc.getMessage());
+        }
+    }
+
+    @Test
+    public void assertEqualsIgnoreCols_tables_mismatchedRow_filtered() throws DatabaseUnitException {
+        TestTable expectedTable = new TestTable("TABLE1", "A", "B", "C");
+        expectedTable.addRow("1", "2", "3");
+        expectedTable.addRow("4", "5", "6");
+        TestTable actualTable = new TestTable("TABLE1", "A", "B", "C");
+        actualTable.addRow("1", "2", "3");
+        actualTable.addRow("4", "5", "9");
+
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, new String[] { "C" });
+    }
+
+    @Test
     public void testAssertTablesWithColFilterAndValuesNotEqualExcluded() throws Exception {
         IDataSet dataSet = getDataSet();
+        ITable expectedTable = dataSet.getTable("TEST_TABLE");
+        ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE");
 
         // Column2 has the wrong value, so exclude -> test should run successfully
         String[] allColumnsThatAreNotEqual = { "COLUMN2" };
-        assertion.assertEqualsIgnoreCols(dataSet.getTable("TEST_TABLE"),
-                dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"), allColumnsThatAreNotEqual);
+        assertion.assertEqualsIgnoreCols(expectedTable, actualTable, allColumnsThatAreNotEqual);
     }
 
     @Test
@@ -198,8 +380,9 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
         try {
             Column[] additionalColInfo = { new Column("COLUMN0", DataType.VARCHAR) };
+            final Column[] additionalColumnInfo = additionalColInfo;
             assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
-                    additionalColInfo);
+                    additionalColumnInfo, (Predicate<Column>) c -> false);
             throw new IllegalStateException("Should throw an AssertionFailedError");
         } catch (ComparisonFailure expected) {
             String expectedMsg = "org.dbunit.assertion.ComparisonFailure: value (table=TEST_TABLE, row=1, col=COLUMN2, "
@@ -229,7 +412,9 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         expectedTable.addRow(expectedRow);
 
         try {
-            assertion.assertEquals(expectedTable, actualTable);
+            final ITable expectedTable1 = expectedTable;
+            final ITable actualTable1 = actualTable;
+            assertion.assertEquals(expectedTable1, actualTable1, (Predicate<Column>) c -> false);
         } catch (ComparisonFailure expected) {
             assertEquals("VARCHAR", expected.getExpected());
             assertEquals("BOOLEAN", expected.getActual());
@@ -302,8 +487,10 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         Object[] expectedRow = { "1", new Long(now.getTime()), new Integer("0"), "123.4000", };
         DefaultTable expectedTable = new DefaultTable(tableName, expectedColumns);
         expectedTable.addRow(expectedRow);
+        final ITable expectedTable1 = expectedTable;
+        final ITable actualTable1 = actualTable;
 
-        assertion.assertEquals(expectedTable, actualTable);
+        assertion.assertEquals(expectedTable1, actualTable1, (Predicate<Column>) c -> false);
     }
 
     @Test

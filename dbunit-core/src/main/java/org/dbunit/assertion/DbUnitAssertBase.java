@@ -1,7 +1,12 @@
 package org.dbunit.assertion;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.DbUnitAssert.ComparisonColumn;
@@ -10,6 +15,7 @@ import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.assertion.comparer.value.ValueComparerDefaults;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
+import org.dbunit.dataset.ColumnsComparer;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -25,11 +31,13 @@ import org.slf4j.LoggerFactory;
  * @since 2.6.0
  */
 public class DbUnitAssertBase {
-    private final Logger log = LoggerFactory.getLogger(DbUnitAssertBase.class);
+
+    public final Logger log = LoggerFactory.getLogger(DbUnitAssertBase.class);
 
     private FailureFactory junitFailureFactory = getJUnitFailureFactory();
 
     protected ValueComparerDefaults valueComparerDefaults = new DefaultValueComparerDefaults();
+    protected final ColumnsComparer columnComparer = new ColumnsComparer();
 
     /**
      * @return The default failure handler
@@ -155,19 +163,6 @@ public class DbUnitAssertBase {
         return isTablesEmpty;
     }
 
-    protected void compareColumns(final Column[] expectedColumns, final Column[] actualColumns,
-            final ITableMetaData expectedMetaData, final ITableMetaData actualMetaData,
-            final FailureHandler failureHandler) throws DataSetException, Error {
-        final Columns.ColumnDiff columnDiff = Columns.getColumnDiff(expectedMetaData, actualMetaData);
-        if (columnDiff.hasDifference()) {
-            final String message = columnDiff.getMessage();
-            final Error error = failureHandler.createFailure(message, Columns.getColumnNamesAsString(expectedColumns),
-                    Columns.getColumnNamesAsString(actualColumns));
-            log.error(error.toString());
-            throw error;
-        }
-    }
-
     protected void compareTableCounts(final String[] expectedNames, final String[] actualNames,
             final FailureHandler failureHandler) throws Error {
         if (expectedNames.length != actualNames.length) {
@@ -268,15 +263,13 @@ public class DbUnitAssertBase {
         final Map<String, Map<String, ValueComparer>> validTableColumnValueComparers = determineValidTableColumnValueComparers(
                 tableColumnValueComparers);
 
-        for (int i = 0; i < expectedNames.length; i++) {
-            final String tableName = expectedNames[i];
-
+        for (final String tableName : expectedNames) {
             final ITable expectedTable = expectedDataSet.getTable(tableName);
             final ITable actualTable = actualDataSet.getTable(tableName);
             final Map<String, ValueComparer> columnValueComparers = validTableColumnValueComparers.get(tableName);
 
             assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer,
-                    columnValueComparers);
+                    columnValueComparers, c -> false);
         }
     }
 
@@ -308,11 +301,13 @@ public class DbUnitAssertBase {
      *                             {@link #getDefaultColumnValueComparerMapForTable(String)}
      *                             or, if that is empty, defaultValueComparer for
      *                             all columns in the table.
+     * @param excludedColumn TODO
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
+            final Map<String, ValueComparer> columnValueComparers, Predicate<Column> excludedColumn)
+            throws DatabaseUnitException {
         log.trace("assertWithValueComparer(expectedTable, actualTable," + " failureHandler, defaultValueComparer,"
                 + " columnValueComparers) - start");
         log.debug("assertWithValueComparer: expectedTable={}", expectedTable);
@@ -339,13 +334,12 @@ public class DbUnitAssertBase {
             return;
         }
 
-        // Put the columns into the same order
-        final Column[] expectedColumns = Columns.getSortedColumns(expectedMetaData);
-        final Column[] actualColumns = Columns.getSortedColumns(actualMetaData);
-
         // Verify columns
-        compareColumns(expectedColumns, actualColumns, expectedMetaData, actualMetaData, validFailureHandler);
+        columnComparer.compareColumns(expectedMetaData, actualMetaData, excludedColumn, validFailureHandler);
 
+        // Put the columns into the same order
+        final Column[] expectedColumns = filter(Columns.getSortedColumns(expectedMetaData), excludedColumn);
+        final Column[] actualColumns = filter(Columns.getSortedColumns(actualMetaData), excludedColumn);
         // Get the datatypes to be used for comparing the sorted columns
         final ComparisonColumn[] comparisonCols = getComparisonColumns(expectedTableName, expectedColumns,
                 actualColumns, validFailureHandler);
@@ -353,6 +347,17 @@ public class DbUnitAssertBase {
         // Finally compare the data
         compareData(expectedTable, actualTable, comparisonCols, validFailureHandler, defaultValueComparer,
                 columnValueComparers);
+    }
+
+    /**
+     * @param sortedColumns
+     * @param excludedColumn
+     * @return
+     */
+    private Column[] filter(Column[] sortedColumns, Predicate<Column> excludedColumn) {
+        List<Column> result = new ArrayList<>(asList(sortedColumns));
+        result.removeIf(excludedColumn);
+        return result.toArray(new Column[result.size()]);
     }
 
     /**

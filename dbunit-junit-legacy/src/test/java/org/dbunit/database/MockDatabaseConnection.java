@@ -121,7 +121,7 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
     }
 
     @Override
-    public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
+    public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         throw new UnsupportedOperationException();
     }
 

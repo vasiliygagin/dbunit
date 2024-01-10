@@ -80,7 +80,7 @@ public interface IDatabaseConnection extends DbConnection {
      * @throws DataSetException
      * @throws SQLException
      */
-    public ITable createQueryTable(String tableName, String sql) throws DataSetException, SQLException;
+    public IResultSetTable createQueryTable(String tableName, String sql) throws DataSetException, SQLException;
 
     /**
      * Creates a table using the given PreparedStatement to retrieve a ResultSet.

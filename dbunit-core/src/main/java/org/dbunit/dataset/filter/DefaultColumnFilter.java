@@ -49,7 +49,7 @@ public class DefaultColumnFilter implements IColumnFilter {
      * Add a new accepted column name pattern for all tables. The following wildcard
      * characters are supported: '*' matches zero or more characters, '?' matches
      * one character.
-     * 
+     *
      * @param columnPattern The column pattern to be supported
      */
     public void includeColumn(String columnPattern) {
@@ -64,8 +64,8 @@ public class DefaultColumnFilter implements IColumnFilter {
     public void includeColumns(Column[] columns) {
         logger.debug("includeColumns(columns={}) - start", columns);
 
-        for (int i = 0; i < columns.length; i++) {
-            _includeMatcher.addPattern(columns[i].getColumnName());
+        for (Column column : columns) {
+            _includeMatcher.addPattern(column.getColumnName());
         }
     }
 
@@ -86,8 +86,8 @@ public class DefaultColumnFilter implements IColumnFilter {
     public void excludeColumns(Column[] columns) {
         logger.debug("excludeColumns(columns={} - start", columns);
 
-        for (int i = 0; i < columns.length; i++) {
-            _excludeMatcher.addPattern(columns[i].getColumnName());
+        for (Column column : columns) {
+            _excludeMatcher.addPattern(column.getColumnName());
         }
     }
 
@@ -99,8 +99,7 @@ public class DefaultColumnFilter implements IColumnFilter {
         logger.debug("includedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
 
         DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-        for (int i = 0; i < columnNames.length; i++) {
-            String columnName = columnNames[i];
+        for (String columnName : columnNames) {
             columnFilter.includeColumn(columnName);
         }
 
@@ -128,23 +127,9 @@ public class DefaultColumnFilter implements IColumnFilter {
         logger.debug("excludedColumnsTable(table={}, columnNames={}) - start", table, columnNames);
 
         DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-        for (int i = 0; i < columnNames.length; i++) {
-            String columnName = columnNames[i];
+        for (String columnName : columnNames) {
             columnFilter.excludeColumn(columnName);
         }
-
-        return new ColumnFilterTable(table, columnFilter);
-    }
-
-    /**
-     * Returns a table backed by the specified table but with specified columns
-     * excluded.
-     */
-    public static ITable excludedColumnsTable(ITable table, Column[] columns) throws DataSetException {
-        logger.debug("excludedColumnsTable(table={}, columns={}) - start", table, columns);
-
-        DefaultColumnFilter columnFilter = new DefaultColumnFilter();
-        columnFilter.excludeColumns(columns);
 
         return new ColumnFilterTable(table, columnFilter);
     }
@@ -152,6 +137,7 @@ public class DefaultColumnFilter implements IColumnFilter {
     ////////////////////////////////////////////////////////////////////////////
     // IColumnFilter interface
 
+    @Override
     public boolean accept(String tableName, Column column) {
         logger.debug("accept(tableName={}, column={}) - start", tableName, column);
 
@@ -161,6 +147,7 @@ public class DefaultColumnFilter implements IColumnFilter {
         return false;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

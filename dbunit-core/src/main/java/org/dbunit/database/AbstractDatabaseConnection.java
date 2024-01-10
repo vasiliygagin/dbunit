@@ -21,14 +21,14 @@
 
 package org.dbunit.database;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.sql.DataSource;
-
 import org.dbunit.DatabaseUnitRuntimeException;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
-import io.github.vasiliygagin.dbunit.jdbc.MetadataManager;
 
 /**
  * @author Manuel Laflamme
@@ -54,18 +53,27 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
      */
     private static final Logger logger = LoggerFactory.getLogger(AbstractDatabaseConnection.class);
 
+    protected final Connection jdbcConnection;
+    private final MetadataManager metadataManager;
     private IDataSet _dataSet = null;
     final DatabaseConfig _databaseConfig;
-    private final MetadataManager metadataManager;
 
-    public AbstractDatabaseConnection(DataSource dataSource, DatabaseConfig config, String defaultCatalog,
+    public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config, String defaultCatalog,
             String defaultSchema) {
+        if (jdbcConnection == null) {
+            throw new IllegalArgumentException("The parameter 'connection' must not be null");
+        }
+        this.jdbcConnection = jdbcConnection;
         _databaseConfig = config;
-        metadataManager = new MetadataManager(dataSource, defaultCatalog, defaultSchema);
+        metadataManager = new MetadataManager(jdbcConnection, config, defaultCatalog, defaultSchema);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection interface
+
+    public MetadataManager getMetadataManager() {
+        return metadataManager;
+    }
 
     @Override
     public IDataSet createDataSet() throws SQLException {
@@ -80,6 +88,11 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     }
 
     @Override
+    public final Connection getConnection() throws SQLException {
+        return jdbcConnection;
+    }
+
+    @Override
     public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
         logger.debug("createDataSet(tableNames={}) - start", tableNames);
 
@@ -87,7 +100,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     }
 
     @Override
-    public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
+    public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         logger.debug("createQueryTable(resultName={}, sql={}) - start", resultName, sql);
 
         IResultSetTableFactory tableFactory = _databaseConfig.getResultSetTableFactory();

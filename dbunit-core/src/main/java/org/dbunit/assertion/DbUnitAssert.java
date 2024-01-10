@@ -21,6 +21,7 @@
 package org.dbunit.assertion;
 
 import java.sql.SQLException;
+import java.util.function.Predicate;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.comparer.value.ValueComparers;
@@ -31,6 +32,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.UnknownDataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
+import org.dbunit.dataset.filter.PatternMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * @since 2.4.0
  */
 public class DbUnitAssert extends DbUnitAssertBase {
+
     private static final Logger logger = LoggerFactory.getLogger(DbUnitAssert.class);
 
     /**
@@ -79,9 +82,21 @@ public class DbUnitAssert extends DbUnitAssertBase {
         logger.debug("assertEqualsIgnoreCols(expectedTable={}, actualTable={}, ignoreCols={}) - start", expectedTable,
                 actualTable, ignoreCols);
 
-        final ITable expectedTableFiltered = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
-        final ITable actualTableFiltered = DefaultColumnFilter.excludedColumnsTable(actualTable, ignoreCols);
-        assertEquals(expectedTableFiltered, actualTableFiltered);
+        Predicate<Column> excludedColumn;
+        if (ignoreCols != null) {
+            excludedColumn = buildColumnMatcher(ignoreCols);
+        } else {
+            excludedColumn = (Predicate<Column>) c -> false;
+        }
+        assertEquals(expectedTable, actualTable, excludedColumn);
+    }
+
+    public static Predicate<Column> buildColumnMatcher(final String[] ignoreCols) {
+        final PatternMatcher _excludeMatcher = new PatternMatcher();
+        for (String columnName : ignoreCols) {
+            _excludeMatcher.addPattern(columnName);
+        }
+        return (Predicate<Column>) c -> _excludeMatcher.accept(c.getColumnName());
     }
 
     /**
@@ -131,7 +146,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
         final ITable expected = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
         final ITable queriedTable = connection.createQueryTable(tableName, sqlQuery);
         final ITable actual = DefaultColumnFilter.excludedColumnsTable(queriedTable, ignoreCols);
-        assertEquals(expected, actual);
+        assertEquals(expected, actual, (Predicate<Column>) c -> false);
     }
 
     /**
@@ -169,9 +184,10 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @param actualTable   Table containing all actual results.
      * @throws DatabaseUnitException
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable) throws DatabaseUnitException {
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, Predicate<Column> excludedColumn)
+            throws DatabaseUnitException {
         logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
-        assertEquals(expectedTable, actualTable, (Column[]) null);
+        assertEquals(expectedTable, actualTable, (Column[]) null, excludedColumn);
     }
 
     /**
@@ -196,8 +212,8 @@ public class DbUnitAssert extends DbUnitAssertBase {
      *                             column). Can be <code>null</code>.
      * @throws DatabaseUnitException
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable, final Column[] additionalColumnInfo)
-            throws DatabaseUnitException {
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, final Column[] additionalColumnInfo,
+            Predicate<Column> excludedColumn) throws DatabaseUnitException {
         logger.debug("assertEquals(expectedTable={}, actualTable={}, additionalColumnInfo={}) - start", expectedTable,
                 actualTable, additionalColumnInfo);
 
@@ -206,7 +222,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
             failureHandler = getDefaultFailureHandler(additionalColumnInfo);
         }
 
-        assertEquals(expectedTable, actualTable, failureHandler);
+        assertEquals(expectedTable, actualTable, failureHandler, excludedColumn);
     }
 
     /**
@@ -232,10 +248,10 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      * @since 2.4
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler)
-            throws DatabaseUnitException {
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler,
+            Predicate<Column> excludedColumn) throws DatabaseUnitException {
         assertWithValueComparer(expectedTable, actualTable, failureHandler,
-                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
+                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null, excludedColumn);
     }
 
     /**
@@ -250,6 +266,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @since 2.4.0
      */
     public static class ComparisonColumn {
+
         private static final Logger logger = LoggerFactory.getLogger(ComparisonColumn.class);
 
         private String columnName;
