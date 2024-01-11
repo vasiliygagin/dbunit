@@ -55,6 +55,7 @@ public class DataSetUtils {
      *
      * @deprecated Use Assertion.assertEquals
      */
+    @Deprecated
     public static void assertEquals(IDataSet expectedDataSet, IDataSet actualDataSet) throws Exception {
         logger.debug("assertEquals(expectedDataSet={}, actualDataSet={}) - start", expectedDataSet, actualDataSet);
 
@@ -67,6 +68,7 @@ public class DataSetUtils {
      *
      * @deprecated Use Assertion.assertEquals
      */
+    @Deprecated
     public static void assertEquals(ITable expectedTable, ITable actualTable) throws Exception {
         logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
 
@@ -94,6 +96,7 @@ public class DataSetUtils {
      *             {@link QualifiedTableName#getQualifiedName()} creating a new
      *             {@link QualifiedTableName} object
      */
+    @Deprecated
     public static String getQualifiedName(String prefix, String name) {
         logger.debug("getQualifiedName(prefix={}, name={}) - start", prefix, name);
 
@@ -112,10 +115,10 @@ public class DataSetUtils {
      *             {@link QualifiedTableName#getQualifiedName()} creating a new
      *             {@link QualifiedTableName} object
      */
+    @Deprecated
     public static String getQualifiedName(String prefix, String name, String escapePattern) {
         if (logger.isDebugEnabled())
-            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start",
-                    new String[] { prefix, name, escapePattern });
+            logger.debug("getQualifiedName(prefix={}, name={}, escapePattern={}) - start", prefix, name, escapePattern);
 
         return new QualifiedTableName(name, prefix, escapePattern).getQualifiedName();
     }
@@ -128,6 +131,7 @@ public class DataSetUtils {
      *             {@link QualifiedTableName#getQualifiedName()} creating a new
      *             {@link QualifiedTableName} object
      */
+    @Deprecated
     public static String getEscapedName(String name, String escapePattern) {
         logger.debug("getEscapedName(name={}, escapePattern={}) - start", name, escapePattern);
         return new QualifiedTableName(name, null, escapePattern).getQualifiedName();
@@ -198,28 +202,10 @@ public class DataSetUtils {
      * @deprecated since 2.3.0 - prefer usage of
      *             {@link Columns#getColumn(String, Column[])}
      */
+    @Deprecated
     public static Column getColumn(String columnName, Column[] columns) {
         logger.debug("getColumn(columnName={}, columns={}) - start", columnName, columns);
         return Columns.getColumn(columnName, columns);
-    }
-
-    /**
-     * Search and returns the specified tables from the specified dataSet.
-     *
-     * @param names   the names of the tables to search.
-     * @param dataSet the dataset from which the tables must be searched.
-     * @return the tables or an empty array if no tables are found.
-     */
-    public static ITable[] getTables(String[] names, IDataSet dataSet) throws DataSetException {
-        logger.debug("getTables(names={}, dataSet={}) - start", names, dataSet);
-
-        ITable[] tables = new ITable[names.length];
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
-            tables[i] = dataSet.getTable(name);
-        }
-
-        return tables;
     }
 
     /**
@@ -254,7 +240,7 @@ public class DataSetUtils {
 
     /**
      * reverses a String array.
-     * 
+     *
      * @param array
      * @return String[] - reversed array.
      */

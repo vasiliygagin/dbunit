@@ -47,71 +47,54 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSourceConnection.class);
 
     private final String _schema;
-    private final DataSource _dataSource;
-    private final String _user;
-    private final String _password;
-    private Connection _connection;
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema) throws NamingException {
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema)
+            throws NamingException, SQLException {
         this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, null, null);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema, String user,
-            String password) throws NamingException {
+            String password) throws NamingException, SQLException {
         this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, user, password);
     }
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName) throws NamingException {
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName) throws NamingException, SQLException {
         this(context, jndiName, null);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String user, String password)
-            throws NamingException {
+            throws NamingException, SQLException {
         this(context, jndiName, null, user, password);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource) {
+    public DatabaseDataSourceConnection(DataSource dataSource) throws SQLException {
         this(dataSource, new DatabaseConfig(), null, null, null);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource, String user, String password) {
+    public DatabaseDataSourceConnection(DataSource dataSource, String user, String password) throws SQLException {
         this(dataSource, new DatabaseConfig(), null, user, password);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource, String schema) {
+    public DatabaseDataSourceConnection(DataSource dataSource, String schema) throws SQLException {
         this(dataSource, new DatabaseConfig(), schema, null, null);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, DatabaseConfig config, String schema, String user,
-            String password) {
-        super(dataSource, config, null, schema);
-        _dataSource = dataSource;
+            String password) throws SQLException {
+        super(getConnection(dataSource, user, password), config, null, schema);
         _schema = schema;
-        _user = user;
-        _password = password;
+    }
+
+    private static Connection getConnection(DataSource dataSource, String user, String password) throws SQLException {
+        if (user != null) {
+            return dataSource.getConnection(user, password);
+        } else {
+            return dataSource.getConnection();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDatabaseConnection interface
-
-    @Override
-    public Connection getConnection() throws SQLException {
-        logger.debug("getConnection() - start");
-
-        if (_connection == null) {
-            try {
-                if (_user != null) {
-                    _connection = _dataSource.getConnection(_user, _password);
-                } else {
-                    _connection = _dataSource.getConnection();
-                }
-            } catch (SQLException e) {
-                logger.error("getConnection(): ", e);
-                throw e;
-            }
-        }
-        return _connection;
-    }
 
     @Override
     public String getSchema() {
@@ -120,11 +103,5 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
 
     @Override
     public void close() throws SQLException {
-        logger.debug("close() - start");
-
-        if (_connection != null) {
-            _connection.close();
-            _connection = null;
-        }
     }
 }

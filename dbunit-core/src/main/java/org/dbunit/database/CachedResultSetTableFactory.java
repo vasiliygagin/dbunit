@@ -41,15 +41,17 @@ public class CachedResultSetTableFactory implements IResultSetTableFactory {
      */
     private static final Logger logger = LoggerFactory.getLogger(CachedResultSetTableFactory.class);
 
-    public IResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
+    @Override
+    public CachedResultSetTable createTable(String tableName, String selectStatement, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start",
-                    new Object[] { tableName, selectStatement, connection });
+            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start", tableName,
+                    selectStatement, connection);
 
         return new CachedResultSetTable(new ForwardOnlyResultSetTable(tableName, selectStatement, connection));
     }
 
+    @Override
     public IResultSetTable createTable(ITableMetaData metaData, IDatabaseConnection connection)
             throws SQLException, DataSetException {
         logger.trace("createTable(metaData={}, connection={}) - start", metaData, connection);
@@ -57,11 +59,12 @@ public class CachedResultSetTableFactory implements IResultSetTableFactory {
         return new CachedResultSetTable(resultSetTable);
     }
 
+    @Override
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
             IDatabaseConnection connection) throws SQLException, DataSetException {
         if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start",
-                    new Object[] { tableName, preparedStatement, connection });
+            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start", tableName,
+                    preparedStatement, connection);
 
         // Reuse method from ForwardOnly factory
         ForwardOnlyResultSetTable table = new ForwardOnlyResultSetTableFactory()

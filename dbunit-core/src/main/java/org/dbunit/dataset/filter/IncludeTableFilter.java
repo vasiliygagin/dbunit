@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @since Mar 7, 2003
  * @version $Revision$
  */
-public class IncludeTableFilter extends AbstractTableFilter implements ITableFilter {
+public class IncludeTableFilter extends AbstractTableFilter {
 
     /**
      * Logger for this class
@@ -52,8 +52,7 @@ public class IncludeTableFilter extends AbstractTableFilter implements ITableFil
      * Create a new IncludeTableFilter which allow access to specified tables.
      */
     public IncludeTableFilter(String[] tableNames) {
-        for (int i = 0; i < tableNames.length; i++) {
-            String tableName = tableNames[i];
+        for (String tableName : tableNames) {
             includeTable(tableName);
         }
     }
@@ -77,7 +76,8 @@ public class IncludeTableFilter extends AbstractTableFilter implements ITableFil
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
-    public boolean isValidName(String tableName) {
+    @Override
+    public boolean accept(String tableName) {
         logger.debug("isValidName(tableName={}) - start", tableName);
 
         return _patternMatcher.accept(tableName);

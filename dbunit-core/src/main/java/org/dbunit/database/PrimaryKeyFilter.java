@@ -23,7 +23,16 @@ package org.dbunit.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.dbunit.database.search.ForeignKeyRelationshipEdge;
 import org.dbunit.dataset.DataSetException;
@@ -45,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * allowed rows.<br>
  * <strong>NOTE:</strong> multi-column primary keys are not supported at the
  * moment. TODO: test cases
- * 
+ *
  * @author Felipe Leme (dbunit@felipeal.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -76,7 +85,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
      * Default constructor, it takes as input a map with desired rows in a final
      * dataset; the filter will ensure that the rows necessary by these initial rows
      * are also allowed (and so on...).
-     * 
+     *
      * @param connection        database connection
      * @param allowedPKs        map of allowed rows, based on the primary keys (key
      *                          is the name of a table; value is a Set with allowed
@@ -135,12 +144,14 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
     /**
      * @see AbstractTableFilter
      */
-    public boolean isValidName(String tableName) throws DataSetException {
+    @Override
+    public boolean accept(String tableName) throws DataSetException {
         // boolean isValid = this.allowedIds.containsKey(tableName);
         // return isValid;
         return true;
     }
 
+    @Override
     public ITableIterator iterator(IDataSet dataSet, boolean reversed) throws DataSetException {
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Filter.iterator()");
@@ -199,8 +210,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         if (forcedAllowedPKs == null || forcedAllowedPKs.isEmpty()) {
             allowedPKsPerTable.addAll(table, newAllowedPKs);
         } else {
-            for (Iterator iterator = newAllowedPKs.iterator(); iterator.hasNext();) {
-                Object id = iterator.next();
+            for (Object id : newAllowedPKs) {
                 if (forcedAllowedPKs.contains(id)) {
                     allowedPKsPerTable.add(table, id);
                 } else {
@@ -215,8 +225,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
 
     private void scanPKs(String table, String pkColumn, Set allowedIds) throws SQLException {
         if (logger.isDebugEnabled()) {
-            logger.debug("scanPKs(table={}, pkColumn={}, allowedIds={}) - start",
-                    new Object[] { table, pkColumn, allowedIds });
+            logger.debug("scanPKs(table={}, pkColumn={}, allowedIds={}) - start", table, pkColumn, allowedIds);
         }
 
         Set fkEdges = (Set) this.fkEdgesPerTable.get(table);
@@ -248,8 +257,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         ResultSet rs = null;
         try {
             pstmt = this.connection.getConnection().prepareStatement(sql);
-            for (Iterator iterator = allowedIds.iterator(); iterator.hasNext();) {
-                Object pk = iterator.next(); // id being scanned
+            for (Object pk : allowedIds) {
                 if (this.logger.isDebugEnabled()) {
                     this.logger.debug("Executing sql for ? = " + pk);
                 }
@@ -311,8 +319,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
                 this.logger.debug("Preparing SQL query '" + sql + "'");
             }
             pstmt = this.connection.getConnection().prepareStatement(sql);
-            for (Iterator iterator = idsToScan.iterator(); iterator.hasNext();) {
-                Object pk = iterator.next();
+            for (Object pk : idsToScan) {
                 if (this.logger.isDebugEnabled()) {
                     this.logger.debug("executing query '" + sql + "' for ? = " + pk);
                 }
@@ -380,6 +387,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         this.pksToScanPerTable.add(table, pk);
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("tableNames=").append(tableNames);
@@ -406,6 +414,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         ////////////////////////////////////////////////////////////////////////////
         // ITableIterator interface
 
+        @Override
         public boolean next() throws DataSetException {
             if (logger.isDebugEnabled()) {
                 logger.debug("Iterator.next()");
@@ -418,6 +427,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
             return false;
         }
 
+        @Override
         public ITableMetaData getTableMetaData() throws DataSetException {
             if (logger.isDebugEnabled()) {
                 logger.debug("Iterator.getTableMetaData()");
@@ -425,6 +435,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
             return _iterator.getTableMetaData();
         }
 
+        @Override
         public ITable getTable() throws DataSetException {
             if (logger.isDebugEnabled()) {
                 logger.debug("Iterator.getTable()");
@@ -441,13 +452,14 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
 
     /**
      * Map that associates a table with a set of primary key objects.
-     * 
+     *
      * @author gommma (gommma AT users.sourceforge.net)
      * @author Last changed by: $Author$
      * @version $Revision$ $Date$
      * @since 2.3.0
      */
     public static class PkTableMap {
+
         private final LinkedHashMap pksPerTable;
         private final Logger logger = LoggerFactory.getLogger(PkTableMap.class);
 
@@ -457,7 +469,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
 
         /**
          * Copy constructor
-         * 
+         *
          * @param allowedPKs
          */
         public PkTableMap(PkTableMap allowedPKs) {
@@ -524,8 +536,8 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         public void retainOnly(List tableNames) {
 
             List tablesToRemove = new ArrayList();
-            for (Iterator iterator = this.pksPerTable.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
+            for (Object element : this.pksPerTable.entrySet()) {
+                Map.Entry entry = (Map.Entry) element;
                 String table = (String) entry.getKey();
                 SortedSet pksToScan = (SortedSet) entry.getValue();
                 boolean removeIt = pksToScan.isEmpty();
@@ -542,11 +554,12 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
                 }
             }
 
-            for (Iterator iterator = tablesToRemove.iterator(); iterator.hasNext();) {
-                this.remove((String) iterator.next());
+            for (Object element : tablesToRemove) {
+                this.remove((String) element);
             }
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("pKsPerTable=").append(pksPerTable);

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Special metadata handler for MySQL.<br/>
  * Was introduced to fix "[ 2545095 ] Mysql FEATURE_QUALIFIED_TABLE_NAMES column
  * SQLHelper.matches".
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -46,19 +46,22 @@ public class MySqlMetadataHandler implements IMetadataHandler {
      */
     private static final Logger logger = LoggerFactory.getLogger(MySqlMetadataHandler.class);
 
+    @Override
     public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
             throws SQLException {
         // Note that MySQL uses the catalogName instead of the schemaName, so
         // pass in the given schema name as catalog name (first argument).
-        ResultSet resultSet = databaseMetaData.getColumns(schemaName, null, tableName, "%");
+        ResultSet resultSet = databaseMetaData.getColumns(toCatalog(schemaName), toSchema(schemaName), tableName, "%");
         return resultSet;
     }
 
+    @Override
     public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
             throws SQLException {
         return matches(resultSet, null, schema, table, null, caseSensitive);
     }
 
+    @Override
     public boolean matches(ResultSet columnsResultSet, String catalog, String schema, String table, String column,
             boolean caseSensitive) throws SQLException {
         String catalogName = columnsResultSet.getString(1);
@@ -84,22 +87,21 @@ public class MySqlMetadataHandler implements IMetadataHandler {
         return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
     }
 
+    @Override
     public String getSchema(ResultSet resultSet) throws SQLException {
         String catalogName = resultSet.getString(1);
         String schemaName = resultSet.getString(2);
 
-        // Fix schema/catalog for mysql. Normally the schema is not set but only the
         // catalog is set
         if (schemaName == null && catalogName != null) {
-            logger.debug("Using catalogName '" + catalogName
-                    + "' as schema since the schema is null but the catalog is set (probably in a MySQL environment).");
             schemaName = catalogName;
         }
         return schemaName;
     }
 
-    public boolean tableExists(DatabaseMetaData metaData, String schema, String tableName) throws SQLException {
-        ResultSet tableRs = metaData.getTables(schema, null, tableName, null);
+    @Override
+    public boolean tableExists(DatabaseMetaData metaData, String schemaName, String tableName) throws SQLException {
+        ResultSet tableRs = metaData.getTables(toCatalog(schemaName), toSchema(schemaName), tableName, null);
         try {
             return tableRs.next();
         } finally {
@@ -107,22 +109,23 @@ public class MySqlMetadataHandler implements IMetadataHandler {
         }
     }
 
-    public ResultSet getTables(DatabaseMetaData metaData, String schemaName, String[] tableType) throws SQLException {
-        if (logger.isTraceEnabled())
-            logger.trace("tableExists(metaData={}, schemaName={}, tableType={}) - start",
-                    new Object[] { metaData, schemaName, tableType });
-
-        return metaData.getTables(schemaName, null, "%", tableType);
-    }
-
+    @Override
     public ResultSet getPrimaryKeys(DatabaseMetaData metaData, String schemaName, String tableName)
             throws SQLException {
         if (logger.isTraceEnabled())
-            logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start",
-                    new Object[] { metaData, schemaName, tableName });
-
-        ResultSet resultSet = metaData.getPrimaryKeys(schemaName, null, tableName);
+            logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start", metaData, schemaName,
+                    tableName);
+        ResultSet resultSet = metaData.getPrimaryKeys(toCatalog(schemaName), toSchema(schemaName), tableName);
         return resultSet;
     }
 
+    @Override
+    public String toCatalog(String schemaCatalog) {
+        return schemaCatalog;
+    }
+
+    @Override
+    public String toSchema(String schemaCatalog) {
+        return null;
+    }
 }

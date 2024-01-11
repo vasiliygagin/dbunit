@@ -23,8 +23,7 @@ public class IsActualNotEqualToExpectedValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("All null should not have been equal.", actual, equalTo(false));
     }
 
@@ -38,8 +37,7 @@ public class IsActualNotEqualToExpectedValueComparerTest {
         final Object expectedValue = 4;
         final Object actualValue = 8;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Unequal numbers should not have been equal.", actual, equalTo(true));
     }
 

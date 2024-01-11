@@ -21,6 +21,7 @@
 package org.dbunit.assertion;
 
 import java.sql.SQLException;
+import java.util.function.Predicate;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.comparer.value.ValueComparers;
@@ -31,6 +32,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.UnknownDataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
+import org.dbunit.dataset.filter.PatternMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,25 +48,8 @@ import org.slf4j.LoggerFactory;
  * @since 2.4.0
  */
 public class DbUnitAssert extends DbUnitAssertBase {
+
     private static final Logger logger = LoggerFactory.getLogger(DbUnitAssert.class);
-
-    /**
-     * Compare one table present in two datasets ignoring specified columns.
-     *
-     * @param expectedDataset First dataset.
-     * @param actualDataset   Second dataset.
-     * @param tableName       Table name of the table to be compared.
-     * @param ignoreCols      Columns to be ignored in comparison.
-     * @throws org.dbunit.DatabaseUnitException If an error occurs.
-     */
-    public void assertEqualsIgnoreCols(final IDataSet expectedDataset, final IDataSet actualDataset,
-            final String tableName, final String[] ignoreCols) throws DatabaseUnitException {
-        logger.debug(
-                "assertEqualsIgnoreCols(expectedDataset={}, actualDataset={}, tableName={}, ignoreCols={}) - start",
-                expectedDataset, actualDataset, tableName, ignoreCols);
-
-        assertEqualsIgnoreCols(expectedDataset.getTable(tableName), actualDataset.getTable(tableName), ignoreCols);
-    }
 
     /**
      * Compare the given tables ignoring specified columns.
@@ -79,33 +64,21 @@ public class DbUnitAssert extends DbUnitAssertBase {
         logger.debug("assertEqualsIgnoreCols(expectedTable={}, actualTable={}, ignoreCols={}) - start", expectedTable,
                 actualTable, ignoreCols);
 
-        final ITable expectedTableFiltered = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
-        final ITable actualTableFiltered = DefaultColumnFilter.excludedColumnsTable(actualTable, ignoreCols);
-        assertEquals(expectedTableFiltered, actualTableFiltered);
+        Predicate<Column> excludedColumn;
+        if (ignoreCols != null) {
+            excludedColumn = buildColumnMatcher(ignoreCols);
+        } else {
+            excludedColumn = (Predicate<Column>) c -> false;
+        }
+        assertEquals(expectedTable, actualTable, excludedColumn);
     }
 
-    /**
-     * Compare a table from a dataset with a table generated from an sql query.
-     *
-     * @param expectedDataset Dataset to retrieve the first table from.
-     * @param connection      Connection to use for the SQL statement.
-     * @param sqlQuery        SQL query that will build the data in returned second
-     *                        table rows.
-     * @param tableName       Table name of the table to compare.
-     * @param ignoreCols      Columns to be ignored in comparison.
-     * @throws DatabaseUnitException If an error occurs while performing the
-     *                               comparison.
-     * @throws java.sql.SQLException If an SQL error occurs.
-     */
-    public void assertEqualsByQuery(final IDataSet expectedDataset, final IDatabaseConnection connection,
-            final String sqlQuery, final String tableName, final String[] ignoreCols)
-            throws DatabaseUnitException, SQLException {
-        logger.debug(
-                "assertEqualsByQuery(expectedDataset={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
-                expectedDataset, connection, tableName, sqlQuery, ignoreCols);
-
-        final ITable expectedTable = expectedDataset.getTable(tableName);
-        assertEqualsByQuery(expectedTable, connection, tableName, sqlQuery, ignoreCols);
+    public static Predicate<Column> buildColumnMatcher(final String[] ignoreCols) {
+        final PatternMatcher _excludeMatcher = new PatternMatcher();
+        for (String columnName : ignoreCols) {
+            _excludeMatcher.addPattern(columnName);
+        }
+        return (Predicate<Column>) c -> _excludeMatcher.accept(c.getColumnName());
     }
 
     /**
@@ -131,7 +104,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
         final ITable expected = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
         final ITable queriedTable = connection.createQueryTable(tableName, sqlQuery);
         final ITable actual = DefaultColumnFilter.excludedColumnsTable(queriedTable, ignoreCols);
-        assertEquals(expected, actual);
+        assertEquals(expected, actual, (Predicate<Column>) c -> false);
     }
 
     /**
@@ -169,9 +142,10 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @param actualTable   Table containing all actual results.
      * @throws DatabaseUnitException
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable) throws DatabaseUnitException {
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, Predicate<Column> excludedColumn)
+            throws DatabaseUnitException {
         logger.debug("assertEquals(expectedTable={}, actualTable={}) - start", expectedTable, actualTable);
-        assertEquals(expectedTable, actualTable, (Column[]) null);
+        assertEquals(expectedTable, actualTable, (Column[]) null, excludedColumn);
     }
 
     /**
@@ -196,8 +170,8 @@ public class DbUnitAssert extends DbUnitAssertBase {
      *                             column). Can be <code>null</code>.
      * @throws DatabaseUnitException
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable, final Column[] additionalColumnInfo)
-            throws DatabaseUnitException {
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, final Column[] additionalColumnInfo,
+            Predicate<Column> excludedColumn) throws DatabaseUnitException {
         logger.debug("assertEquals(expectedTable={}, actualTable={}, additionalColumnInfo={}) - start", expectedTable,
                 actualTable, additionalColumnInfo);
 
@@ -206,7 +180,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
             failureHandler = getDefaultFailureHandler(additionalColumnInfo);
         }
 
-        assertEquals(expectedTable, actualTable, failureHandler);
+        assertEquals(expectedTable, actualTable, failureHandler, excludedColumn);
     }
 
     /**
@@ -232,10 +206,19 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @throws DatabaseUnitException
      * @since 2.4
      */
-    public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler)
-            throws DatabaseUnitException {
-        assertWithValueComparer(expectedTable, actualTable, failureHandler,
+    public void assertEquals(final ITable expectedTable, final ITable actualTable, final FailureHandler failureHandler,
+            Predicate<Column> excludedColumn) throws DatabaseUnitException {
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        } else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
                 ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
+
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, excludedColumn, messageBuilder,
+                tableValueComparerSource);
     }
 
     /**
@@ -250,6 +233,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
      * @since 2.4.0
      */
     public static class ComparisonColumn {
+
         private static final Logger logger = LoggerFactory.getLogger(ComparisonColumn.class);
 
         private String columnName;
@@ -296,9 +280,6 @@ public class DbUnitAssert extends DbUnitAssertBase {
          */
         private DataType getComparisonDataType(final String tableName, final Column expectedColumn,
                 final Column actualColumn, final FailureHandler failureHandler) {
-            logger.debug(
-                    "getComparisonDataType(tableName={}, expectedColumn={}, actualColumn={}, failureHandler={}) - start",
-                    tableName, expectedColumn, actualColumn, failureHandler);
 
             final DataType expectedDataType = expectedColumn.getDataType();
             final DataType actualDataType = actualColumn.getDataType();
@@ -320,8 +301,7 @@ public class DbUnitAssert extends DbUnitAssertBase {
                 // Impossible to determine which data type to use
                 final String msg = "Incompatible data types: (table=" + tableName + ", col="
                         + expectedColumn.getColumnName() + ")";
-                throw failureHandler.createFailure(msg, String.valueOf(expectedDataType),
-                        String.valueOf(actualDataType));
+                failureHandler.handleFailure(msg, String.valueOf(expectedDataType), String.valueOf(actualDataType));
             }
 
             // Both columns have same data type, return any one of them

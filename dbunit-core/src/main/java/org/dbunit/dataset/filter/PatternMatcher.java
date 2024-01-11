@@ -20,19 +20,18 @@
  */
 package org.dbunit.dataset.filter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * @author Manuel Laflamme
  * @since Apr 17, 2004
  * @version $Revision$
  */
-class PatternMatcher {
+public class PatternMatcher {
 
     /**
      * Logger for this class
@@ -74,8 +73,8 @@ class PatternMatcher {
         }
 
         if (_acceptedPatterns.size() > 0) {
-            for (Iterator it = _acceptedPatterns.iterator(); it.hasNext();) {
-                String pattern = (String) it.next();
+            for (Object _acceptedPattern : _acceptedPatterns) {
+                String pattern = (String) _acceptedPattern;
                 if (match(pattern, name, false)) {
                     return true;
                 }
@@ -98,8 +97,8 @@ class PatternMatcher {
      */
     private boolean match(String pattern, String str, boolean isCaseSensitive) {
         if (logger.isDebugEnabled())
-            logger.debug("match(pattern={}, str={}, isCaseSensitive={}) - start",
-                    new Object[] { pattern, str, String.valueOf(isCaseSensitive) });
+            logger.debug("match(pattern={}, str={}, isCaseSensitive={}) - start", pattern, str,
+                    String.valueOf(isCaseSensitive));
 
         /* Following pattern matching code taken from the Apache Ant project. */
 
@@ -112,8 +111,8 @@ class PatternMatcher {
         char ch;
 
         boolean containsStar = false;
-        for (int i = 0; i < patArr.length; i++) {
-            if (patArr[i] == '*') {
+        for (char element : patArr) {
+            if (element == '*') {
                 containsStar = true;
                 break;
             }
@@ -246,6 +245,7 @@ class PatternMatcher {
         return true;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

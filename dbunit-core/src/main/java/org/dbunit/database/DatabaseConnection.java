@@ -25,7 +25,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.internal.connections.SingleConnectionDataSource;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,6 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      */
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConnection.class);
 
-    private final Connection _connection;
     private final String _schema;
 
     /**
@@ -115,8 +113,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      */
     public DatabaseConnection(Connection connection, DatabaseConfig config, String schema, boolean validate)
             throws DatabaseUnitException {
-        super(new SingleConnectionDataSource(connection), config, null, schema);
-        _connection = connection;
+        super(connection, config, null, schema);
 
         if (schema != null) {
             _schema = SQLHelper.correctCase(schema, connection);
@@ -133,19 +130,12 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
     // IDatabaseConnection interface
 
     @Override
-    public Connection getConnection() throws SQLException {
-        return _connection;
-    }
-
-    @Override
     public String getSchema() {
         return _schema;
     }
 
     @Override
     public void close() throws SQLException {
-        logger.debug("close() - start");
-        _connection.close();
     }
 
     /**
@@ -154,7 +144,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
     private void printConnectionInfo() {
         if (logger.isDebugEnabled()) {
             try {
-                logger.debug("Database connection info: " + SQLHelper.getDatabaseInfo(_connection.getMetaData()));
+                logger.debug("Database connection info: " + SQLHelper.getDatabaseInfo(jdbcConnection.getMetaData()));
             } catch (SQLException e) {
                 logger.warn("Exception while trying to retrieve database info from connection", e);
             }
@@ -181,7 +171,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
         }
 
         try {
-            boolean schemaExists = SQLHelper.schemaExists(this._connection, this._schema);
+            boolean schemaExists = SQLHelper.schemaExists(jdbcConnection, this._schema);
             if (!schemaExists) {
                 // Under certain circumstances the cause might be that the JDBC driver
                 // implementation of 'DatabaseMetaData.getSchemas()' is not correct
@@ -197,16 +187,5 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
         } catch (SQLException e) {
             throw new DatabaseUnitException("Exception while checking the schema for validity", e);
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append("[");
-        sb.append("schema=").append(_schema);
-        sb.append(", connection=").append(_connection);
-        sb.append(", super=").append(super.toString());
-        sb.append("]");
-        return sb.toString();
     }
 }

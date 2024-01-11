@@ -21,13 +21,13 @@
 
 package org.dbunit.dataset;
 
-import org.dbunit.database.AmbiguousTableNameException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.dbunit.database.AmbiguousTableNameException;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 
 /**
  * @author Manuel Laflamme
@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  * @since Feb 22, 2002
  */
 public abstract class AbstractDataSetTest extends AbstractTest {
+
     public AbstractDataSetTest(String s) {
         super(s);
     }
@@ -84,9 +85,10 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         nameList.remove("DBUNIT.TEST_IDENTITY_NOT_PK");
         nameList.remove("TEST_IDENTITY_NOT_PK");
 
-        names = (String[]) nameList.toArray(new String[0]);
+        names = nameList.toArray(new String[0]);
 
-        return new FilteredDataSet(names, dataSet);
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     protected abstract IDataSet createDataSet() throws Exception;
@@ -95,7 +97,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
 
     /**
      * Create a dataset with duplicate tables having different char case in name
-     * 
+     *
      * @return
      */
     protected abstract IDataSet createMultipleCaseDuplicateDataSet() throws Exception;
@@ -263,7 +265,7 @@ public abstract class AbstractDataSetTest extends AbstractTest {
         } else {
             table3 = new DefaultTable("duplicate_TABLE");
         }
-        ITable[] tables = new ITable[] { table1, table2, table3 };
+        ITable[] tables = { table1, table2, table3 };
         return tables;
     }
 }

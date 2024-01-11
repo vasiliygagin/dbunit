@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implementation of {@link IMetadataHandler} which works for the most
  * databases.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -44,28 +44,31 @@ public class DefaultMetadataHandler implements IMetadataHandler {
      */
     private static final Logger logger = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
+    @Override
     public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
             throws SQLException {
         if (logger.isTraceEnabled())
-            logger.trace("getColumns(databaseMetaData={}, schemaName={}, tableName={}) - start",
-                    new Object[] { databaseMetaData, schemaName, tableName });
+            logger.trace("getColumns(databaseMetaData={}, schemaName={}, tableName={}) - start", databaseMetaData,
+                    schemaName, tableName);
 
-        ResultSet resultSet = databaseMetaData.getColumns(null, schemaName, tableName, "%");
+        ResultSet resultSet = databaseMetaData.getColumns(toCatalog(schemaName), toSchema(schemaName), tableName, "%");
         return resultSet;
     }
 
+    @Override
     public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
             throws SQLException {
         return matches(resultSet, null, schema, table, null, caseSensitive);
     }
 
+    @Override
     public boolean matches(ResultSet columnsResultSet, String catalog, String schema, String table, String column,
             boolean caseSensitive) throws SQLException {
         if (logger.isTraceEnabled())
             logger.trace(
                     "matches(columnsResultSet={}, catalog={}, schema={},"
                             + " table={}, column={}, caseSensitive={}) - start",
-                    new Object[] { columnsResultSet, catalog, schema, table, column, Boolean.valueOf(caseSensitive) });
+                    columnsResultSet, catalog, schema, table, column, Boolean.valueOf(caseSensitive));
 
         String catalogName = columnsResultSet.getString(1);
         String schemaName = columnsResultSet.getString(2);
@@ -76,8 +79,8 @@ public class DefaultMetadataHandler implements IMetadataHandler {
             logger.debug(
                     "Comparing the following values using caseSensitive={} (searched<=>actual): "
                             + "catalog: {}<=>{} schema: {}<=>{} table: {}<=>{} column: {}<=>{}",
-                    new Object[] { Boolean.valueOf(caseSensitive), catalog, catalogName, schema, schemaName, table,
-                            tableName, column, columnName });
+                    Boolean.valueOf(caseSensitive), catalog, catalogName, schema, schemaName, table, tableName, column,
+                    columnName);
         }
 
         boolean areEqual = areEqualIgnoreNull(catalog, catalogName, caseSensitive)
@@ -91,6 +94,7 @@ public class DefaultMetadataHandler implements IMetadataHandler {
         return SQLHelper.areEqualIgnoreNull(value1, value2, caseSensitive);
     }
 
+    @Override
     public String getSchema(ResultSet resultSet) throws SQLException {
         if (logger.isTraceEnabled())
             logger.trace("getColumns(resultSet={}) - start", resultSet);
@@ -99,12 +103,9 @@ public class DefaultMetadataHandler implements IMetadataHandler {
         return schemaName;
     }
 
+    @Override
     public boolean tableExists(DatabaseMetaData metaData, String schemaName, String tableName) throws SQLException {
-        if (logger.isTraceEnabled())
-            logger.trace("tableExists(metaData={}, schemaName={}, tableName={}) - start",
-                    new Object[] { metaData, schemaName, tableName });
-
-        ResultSet tableRs = metaData.getTables(null, schemaName, tableName, null);
+        ResultSet tableRs = metaData.getTables(toCatalog(schemaName), toSchema(schemaName), tableName, null);
         try {
             return tableRs.next();
         } finally {
@@ -112,22 +113,23 @@ public class DefaultMetadataHandler implements IMetadataHandler {
         }
     }
 
-    public ResultSet getTables(DatabaseMetaData metaData, String schemaName, String[] tableType) throws SQLException {
-        if (logger.isTraceEnabled())
-            logger.trace("getTables(metaData={}, schemaName={}, tableType={}) - start",
-                    new Object[] { metaData, schemaName, tableType });
-
-        return metaData.getTables(null, schemaName, "%", tableType);
-    }
-
+    @Override
     public ResultSet getPrimaryKeys(DatabaseMetaData metaData, String schemaName, String tableName)
             throws SQLException {
         if (logger.isTraceEnabled())
-            logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start",
-                    new Object[] { metaData, schemaName, tableName });
-
-        ResultSet resultSet = metaData.getPrimaryKeys(null, schemaName, tableName);
+            logger.trace("getPrimaryKeys(metaData={}, schemaName={}, tableName={}) - start", metaData, schemaName,
+                    tableName);
+        ResultSet resultSet = metaData.getPrimaryKeys(toCatalog(schemaName), toSchema(schemaName), tableName);
         return resultSet;
     }
 
+    @Override
+    public String toCatalog(String schemaCatalog) {
+        return null;
+    }
+
+    @Override
+    public String toSchema(String schemaCatalog) {
+        return schemaCatalog;
+    }
 }

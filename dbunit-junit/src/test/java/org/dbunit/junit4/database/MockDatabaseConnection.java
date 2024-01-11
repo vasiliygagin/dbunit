@@ -27,12 +27,14 @@ import java.sql.SQLException;
 
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.IResultSetTable;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 
 import com.mockobjects.ExpectationCounter;
 import com.mockobjects.Verifiable;
@@ -45,6 +47,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @since Mar 16, 2002
  */
 public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
+
     private ExpectationCounter _closeCalls = new ExpectationCounter("MockDatabaseConnection.close");
 
     private Connection _connection;
@@ -119,11 +122,13 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
 
     @Override
     public IDataSet createDataSet(String[] tableNames) throws SQLException, AmbiguousTableNameException {
-        return new FilteredDataSet(tableNames, createDataSet());
+        IDataSet dataSet = createDataSet();
+        SequenceTableFilter filter = new SequenceTableFilter(tableNames, dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     @Override
-    public ITable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
+    public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
         throw new UnsupportedOperationException();
     }
 

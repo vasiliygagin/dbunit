@@ -28,8 +28,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("All null should have been equal.", actual, equalTo(true));
     }
@@ -49,8 +48,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = "expected string";
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("Actual null, expected not null should not have been equal.", actual, equalTo(false));
     }
@@ -72,8 +70,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = new Timestamp(expectedMillis);
         final Object actualValue = new Timestamp(actualMillis);
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("Within tolerance, should have been equal.", actual, equalTo(true));
     }
@@ -98,8 +95,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = new Timestamp(expectedMillis);
         final Object actualValue = new Timestamp(actualMillis);
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("Diff matches low tolerance, should have been equal.", actual, equalTo(true));
     }
@@ -124,8 +120,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = new Timestamp(expectedMillis);
         final Object actualValue = new Timestamp(actualMillis);
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("Diff matches high tolerance, should have been equal.", actual, equalTo(true));
     }
@@ -199,8 +194,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparerTest {
         final Object expectedValue = new Timestamp(expectedMillis).toString();
         final Object actualValue = new Timestamp(actualMillis);
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
 
         assertThat("Should have been equal.", actual, equalTo(true));
     }

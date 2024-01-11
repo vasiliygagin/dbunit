@@ -23,8 +23,7 @@ public class IsActualGreaterThanExpectedValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("All null should have been true.", actual, equalTo(false));
     }
 
@@ -38,8 +37,7 @@ public class IsActualGreaterThanExpectedValueComparerTest {
         final Object expectedValue = 4;
         final Object actualValue = 4;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Actual is equal to expected, should not have been true.", actual, equalTo(false));
     }
 
@@ -53,8 +51,7 @@ public class IsActualGreaterThanExpectedValueComparerTest {
         final Object expectedValue = 4;
         final Object actualValue = 8;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Actual is greater than expected, should have been true.", actual, equalTo(true));
     }
 
@@ -68,8 +65,7 @@ public class IsActualGreaterThanExpectedValueComparerTest {
         final Object expectedValue = 4;
         final Object actualValue = 2;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Actual is less than expected, should not have been true.", actual, equalTo(false));
     }
 

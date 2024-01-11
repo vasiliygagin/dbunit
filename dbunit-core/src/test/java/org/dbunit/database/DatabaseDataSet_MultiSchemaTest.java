@@ -5,9 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -313,13 +310,6 @@ public class DatabaseDataSet_MultiSchemaTest extends AbstractDatabaseTest {
     private static class TestMetadataHandler extends DefaultMetadataHandler {
 
         private final Set<String> schemaSet = new HashSet<>();
-
-        @Override
-        public ResultSet getTables(final DatabaseMetaData metaData, final String schemaName, final String[] tableType)
-                throws SQLException {
-            schemaSet.add(schemaName);
-            return super.getTables(metaData, schemaName, tableType);
-        }
 
         public int getSchemaCount() {
             return schemaSet.size();

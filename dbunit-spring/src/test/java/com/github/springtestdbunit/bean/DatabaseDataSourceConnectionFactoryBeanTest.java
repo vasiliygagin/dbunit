@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
@@ -43,12 +42,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
  */
 public class DatabaseDataSourceConnectionFactoryBeanTest {
 
-    private DatabaseDataSourceConnectionFactoryBean factoryBean;
-
-    @Before
-    public void setup() {
-        this.factoryBean = new DatabaseDataSourceConnectionFactoryBean();
-    }
+    private DatabaseDataSourceConnectionFactoryBean factoryBean = new DatabaseDataSourceConnectionFactoryBean();
 
     @Test
     public void shouldNotAllowObjectWithoutDataSet() throws Exception {
@@ -78,8 +72,13 @@ public class DatabaseDataSourceConnectionFactoryBeanTest {
         this.factoryBean.setDataSource(dataSource);
         this.factoryBean.setUsername("username");
         this.factoryBean.setPassword("password");
+
+        Connection connection = mock(Connection.class);
+        when(dataSource.getConnection("username", "password")).thenReturn(connection);
+
         DatabaseDataSourceConnection bean = this.factoryBean.getObject();
         assertNotNull(bean);
+
         bean.getConnection();
         verify(dataSource).getConnection("username", "password");
     }

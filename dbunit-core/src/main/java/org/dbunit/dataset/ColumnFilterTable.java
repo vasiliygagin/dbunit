@@ -26,13 +26,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A table that filters some columns out from the original table.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
 public class ColumnFilterTable implements ITable {
+
     /**
      * logger
      */
@@ -65,16 +66,19 @@ public class ColumnFilterTable implements ITable {
         this.originalTable = table;
     }
 
+    @Override
     public int getRowCount() {
         logger.debug("getRowCount() - start");
         return this.originalTable.getRowCount();
     }
 
+    @Override
     public ITableMetaData getTableMetaData() {
         logger.debug("getTableMetaData() - start");
         return this.tableMetaData;
     }
 
+    @Override
     public Object getValue(int row, String column) throws DataSetException {
         if (logger.isDebugEnabled())
             logger.debug("getValue(row={}, columnName={}) - start", Integer.toString(row), column);
@@ -87,6 +91,7 @@ public class ColumnFilterTable implements ITable {
         return this.originalTable.getTableMetaData();
     }
 
+    @Override
     public String toString() {
         return this.originalTable.toString();
     }

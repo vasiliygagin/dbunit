@@ -1,58 +1,53 @@
 package org.dbunit.assertion.comparer.value;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Base class for {@link ValueComparer}s providing a template method and common
- * elements, mainly consistent log message and toString.
+ * Base class for {@link ValueComparer}s, providing template methods and common
+ * elements.
  *
  * @author Jeff Jensen
  * @since 2.6.0
  */
 public abstract class ValueComparerBase implements ValueComparer {
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
-     * Format String for consistent fail message; substitution strings are: actual,
-     * fail phrase, expected.
+     * Makes the fail message using {@link #getFailPhrase()}.
+     *
+     * @return the formatted fail message with the fail phrase.
      */
-    public static final String BASE_FAIL_MSG = "Actual value='%s' is %s expected value='%s'";
+    protected String makeFailMessage(final Object expectedValue, final Object actualValue) {
+        final String failPhrase = getFailPhrase();
+        return String.format("Actual value='%s' is %s expected value='%s'", actualValue, failPhrase, expectedValue);
+    }
+
+    /** @return true if comparing actual to expected is as expected. */
+    protected abstract boolean isExpected(final DataType dataType, final Object expectedValue, final Object actualValue)
+            throws DatabaseUnitException;
+
+    /** @return The text snippet for substitution in {@link #BASE_FAIL_MSG}. */
+    protected abstract String getFailPhrase();
 
     /**
      * {@inheritDoc}
      *
      * This implementation calls
-     * {@link #doCompare(ITable, ITable, int, String, DataType, Object, Object)}.
+     * {@link #doCompare(DataType, Object, Object)}.
      */
-    public String compare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+    @Override
+    public String compare(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException {
+
         final String failMessage;
 
-        failMessage = doCompare(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue, actualValue);
-
-        log.debug("compare: rowNum={}, columnName={}, expectedValue={}," + " actualValue={}, failMessage={}", rowNum,
-                columnName, expectedValue, actualValue, failMessage);
+        final boolean isExpected = isExpected(dataType, expectedValue, actualValue);
+        if (isExpected) {
+            failMessage = null;
+        } else {
+            failMessage = makeFailMessage(expectedValue, actualValue);
+        }
 
         return failMessage;
-    }
-
-    /**
-     * Do the comparison and return a fail message or null if comparison passes.
-     *
-     * @see ValueComparer#compare(ITable, ITable, int, String, DataType, Object,
-     *      Object)
-     */
-    protected abstract String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
-            throws DatabaseUnitException;
-
-    @Override
-    public String toString() {
-        return getClass().getName();
     }
 }

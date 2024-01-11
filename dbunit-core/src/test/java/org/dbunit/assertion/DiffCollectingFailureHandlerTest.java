@@ -22,7 +22,6 @@ package org.dbunit.assertion;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
@@ -42,21 +41,20 @@ public class DiffCollectingFailureHandlerTest {
 
     @Test
     public void testAssertTablesWithDifferentValues() throws Exception {
-        System.out.println("== " + new File("src/test/resources/xml/assertionTest.xml").getAbsolutePath());
-        System.out.println("== " + new File("src/test/resources/xml/assertionTest.xml").isFile());
         IDataSet dataSet = new FlatXmlDataSet(new FileReader("src/test/resources/xml/assertionTest.xml"));
 //        IDataSet dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
 
         DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();
+        final FailureHandler failureHandler = myHandler;
 
         assertion.assertEquals(dataSet.getTable("TEST_TABLE"), dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE"),
-                myHandler);
+                failureHandler, c -> false);
 
-        List diffList = myHandler.getDiffList();
+        List<DbComparisonFailure> diffList = myHandler.getErrors();
         assertEquals(1, diffList.size());
-        Difference diff = (Difference) diffList.get(0);
-        assertEquals("COLUMN2", diff.getColumnName());
-        assertEquals("row 1 col 2", diff.getExpectedValue());
-        assertEquals("wrong value", diff.getActualValue());
+        DbComparisonFailure diff = diffList.get(0);
+        assertEquals("value (table=TEST_TABLE, row=1, col=COLUMN2)", diff.getReason());
+        assertEquals("row 1 col 2", diff.getExpected());
+        assertEquals("wrong value", diff.getActual());
     }
 }

@@ -160,7 +160,17 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers)
             throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler();
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        }else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
+                defaultValueComparer, columnValueComparers);
+        
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, c->false, messageBuilder,
+                tableValueComparerSource);
     }
 
     /**
@@ -198,6 +208,16 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
             final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
         final FailureHandler failureHandler = getDefaultFailureHandler(additionalColumnInfo);
 
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers);
+        MessageBuilder messageBuilder;
+        if (failureHandler instanceof DefaultFailureHandler) {
+            messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
+        }else {
+            messageBuilder = new MessageBuilder(null);
+        }
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
+                defaultValueComparer, columnValueComparers);
+        
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, c->false, messageBuilder,
+                tableValueComparerSource);
     }
 }

@@ -84,7 +84,7 @@ public class SimpleAssert {
     }
 
     public void fail(String message) {
-        throw failureHandler.createFailure(message);
+        failureHandler.handleFailure(message);
     }
 
 }
