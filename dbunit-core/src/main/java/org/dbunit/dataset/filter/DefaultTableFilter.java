@@ -20,10 +20,9 @@
  */
 package org.dbunit.dataset.filter;
 
+import org.dbunit.dataset.DataSetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dbunit.dataset.DataSetException;
 
 /**
  * This filter exposes only tables matching include patterns and not matching
@@ -34,7 +33,7 @@ import org.dbunit.dataset.DataSetException;
  * @since Apr 17, 2004
  * @version $Revision$
  */
-public class DefaultTableFilter extends AbstractTableFilter implements ITableFilter {
+public class DefaultTableFilter extends AbstractTableFilter {
 
     /**
      * Logger for this class
@@ -67,9 +66,8 @@ public class DefaultTableFilter extends AbstractTableFilter implements ITableFil
     ////////////////////////////////////////////////////////////////////////////
     // AbstractTableFilter interface
 
-    public boolean isValidName(String tableName) throws DataSetException {
-        logger.debug("isValidName(tableName=" + tableName + ") - start");
-
+    @Override
+    public boolean accept(String tableName) throws DataSetException {
         if (_includeFilter.isEmpty() || _includeFilter.accept(tableName)) {
             return _excludeFilter.accept(tableName);
         }

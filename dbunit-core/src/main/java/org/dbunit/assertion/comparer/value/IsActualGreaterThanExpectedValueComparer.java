@@ -10,7 +10,7 @@ import org.dbunit.dataset.datatype.DataType;
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public class IsActualGreaterThanExpectedValueComparer extends ValueComparerTemplateBase {
+public class IsActualGreaterThanExpectedValueComparer extends ValueComparerBase {
     @Override
     protected boolean isExpected(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException {

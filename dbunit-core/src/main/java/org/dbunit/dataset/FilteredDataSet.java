@@ -21,12 +21,10 @@
 
 package org.dbunit.dataset;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.filter.SequenceTableFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorates a dataset and exposes only some tables from it. Can be used with
@@ -53,20 +51,6 @@ public class FilteredDataSet extends AbstractDataSet {
 
     /**
      * Creates a FilteredDataSet that decorates the specified dataset and exposes
-     * only the specified tables using {@link SequenceTableFilter} as filtering
-     * strategy.
-     * 
-     * @throws AmbiguousTableNameException If the given tableNames array contains
-     *                                     ambiguous names
-     */
-    public FilteredDataSet(String[] tableNames, IDataSet dataSet) throws AmbiguousTableNameException {
-        super(dataSet.isCaseSensitiveTableNames());
-        _filter = new SequenceTableFilter(tableNames, dataSet.isCaseSensitiveTableNames());
-        _dataSet = dataSet;
-    }
-
-    /**
-     * Creates a FilteredDataSet that decorates the specified dataset and exposes
      * only the tables allowed by the specified filter.
      *
      * @param dataSet the filtered dataset
@@ -81,20 +65,20 @@ public class FilteredDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
+    @Override
     protected ITableIterator createIterator(boolean reversed) throws DataSetException {
-        if (logger.isDebugEnabled())
-            logger.debug("createIterator(reversed={}) - start", String.valueOf(reversed));
-
         return _filter.iterator(_dataSet, reversed);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // IDataSet interface
 
+    @Override
     public String[] getTableNames() throws DataSetException {
         return _filter.getTableNames(_dataSet);
     }
 
+    @Override
     public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         if (!_filter.accept(tableName)) {
             throw new NoSuchTableException(tableName);
@@ -103,6 +87,7 @@ public class FilteredDataSet extends AbstractDataSet {
         return _dataSet.getTableMetaData(tableName);
     }
 
+    @Override
     public ITable getTable(String tableName) throws DataSetException {
         logger.debug("getTable(tableName={}) - start", tableName);
 

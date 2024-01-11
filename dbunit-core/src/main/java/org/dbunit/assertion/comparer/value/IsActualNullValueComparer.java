@@ -10,7 +10,7 @@ import org.dbunit.dataset.datatype.DataType;
  * @author Jeff Jensen
  * @since 2.7.3
  */
-public class IsActualNullValueComparer extends ValueComparerTemplateBase {
+public class IsActualNullValueComparer extends ValueComparerBase {
     private static final String ACTUAL_VALUE_IS_NOT_NULL = "Actual value is not null (ignores expected value)";
 
     @Override

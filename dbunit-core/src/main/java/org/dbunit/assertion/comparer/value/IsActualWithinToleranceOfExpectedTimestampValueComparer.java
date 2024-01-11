@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeff Jensen
  * @since 2.6.0
  */
-public class IsActualWithinToleranceOfExpectedTimestampValueComparer extends ValueComparerTemplateBase {
+public class IsActualWithinToleranceOfExpectedTimestampValueComparer extends ValueComparerBase {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public static final long ONE_SECOND_IN_MILLIS = 1000;

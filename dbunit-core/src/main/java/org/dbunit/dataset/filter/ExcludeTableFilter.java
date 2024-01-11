@@ -20,10 +20,9 @@
  */
 package org.dbunit.dataset.filter;
 
+import org.dbunit.dataset.DataSetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dbunit.dataset.DataSetException;
 
 /**
  * This filter hides specified tables from the filtered dataset. This
@@ -34,7 +33,7 @@ import org.dbunit.dataset.DataSetException;
  * @since Mar 7, 2003
  * @version $Revision$
  */
-public class ExcludeTableFilter extends AbstractTableFilter implements ITableFilter {
+public class ExcludeTableFilter extends AbstractTableFilter {
 
     /**
      * Logger for this class
@@ -54,8 +53,7 @@ public class ExcludeTableFilter extends AbstractTableFilter implements ITableFil
      * Create a new ExcludeTableFilter which prevent access to specified tables.
      */
     public ExcludeTableFilter(String[] tableNames) {
-        for (int i = 0; i < tableNames.length; i++) {
-            String tableName = tableNames[i];
+        for (String tableName : tableNames) {
             excludeTable(tableName);
         }
     }
@@ -79,7 +77,8 @@ public class ExcludeTableFilter extends AbstractTableFilter implements ITableFil
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
-    public boolean isValidName(String tableName) throws DataSetException {
+    @Override
+    public boolean accept(String tableName) throws DataSetException {
         logger.debug("isValidName(tableName=" + tableName + ") - start");
 
         return !_patternMatcher.accept(tableName);

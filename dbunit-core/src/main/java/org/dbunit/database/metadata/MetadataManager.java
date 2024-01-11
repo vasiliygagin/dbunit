@@ -3,9 +3,6 @@
  */
 package org.dbunit.database.metadata;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -37,10 +34,7 @@ public class MetadataManager {
     final String defaultCatalog;
     final String defaultSchema;
 
-    // TODO: this needs to be coming from DB config
-    private Set<SchemaMetadata> systemSchemas = new HashSet<>(
-            asList(new SchemaMetadata(null, "INFORMATION_SCHEMA"), new SchemaMetadata(null, "SYSTEM_LOBS")));
-    private Set<SchemaMetadata> allSchemas;
+    final SchemasManager schemasManager;
     private Map<SchemaMetadata, List<TableMetadata>> schemaTables = new HashMap<>();
 
     private String[] tableTypes;
@@ -58,6 +52,7 @@ public class MetadataManager {
         this.metadataHandler = config.getMetadataHandler();
         this.defaultCatalog = defaultCatalog;
         this.defaultSchema = defaultSchema;
+        schemasManager = new SchemasManager(jdbcConnectione);
 
         // TODO: should not load it here, instead once somewhere outside.
 //        this.tableTypes = loadTableTypes(jdbcConnectione);
@@ -102,27 +97,19 @@ public class MetadataManager {
     }
 
     // TODO: want to get catalog schema mess out of here?
-    public List<TableMetadata> getTables(String catalogSchema) throws SQLException {
-        String catalog = metadataHandler.toCatalog(catalogSchema);
-        String schema = metadataHandler.toSchema(catalogSchema);
-
-        return getTables(catalog, schema);
-    }
-
-    public List<TableMetadata> getTables(String catalog, String schema) throws SQLException {
-        if (catalog == null && schema == null) {
+    public List<TableMetadata> getTables(SchemaMetadata schemaMetadata) throws SQLException {
+        if (schemaMetadata == null) {
             LOGGER.warn("Whole database metadata requested, could be very expensive");
-            Set<SchemaMetadata> schemasToLoad = new HashSet<>(getAllSchemas());
+            Set<SchemaMetadata> schemasToLoad = new HashSet<>(schemasManager.getAllSchemas());
             schemasToLoad.removeAll(schemaTables.keySet());
 
             List<TableMetadata> result = new ArrayList<>();
-            for (SchemaMetadata schemaMetadata : schemasToLoad) {
-                result.addAll(loadSchemaTables(schemaMetadata));
+            for (SchemaMetadata schemaMetadata2 : schemasToLoad) {
+                result.addAll(loadSchemaTables(schemaMetadata2));
             }
             return result;
         }
 
-        SchemaMetadata schemaMetadata = new SchemaMetadata(catalog, schema);
         List<TableMetadata> tableMetadatas = schemaTables.get(schemaMetadata);
         if (tableMetadatas != null) {
             return tableMetadatas;
@@ -159,11 +146,7 @@ public class MetadataManager {
         List<TableMetadata> tableMetadatas = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                TableMetadata tableMetadata = toTableMetadata(resultSet);
-                if (systemSchemas.contains(tableMetadata.schemaMetadata)) {
-                    continue;
-                }
-                tableMetadatas.add(tableMetadata);
+                tableMetadatas.add(toTableMetadata(resultSet));
             }
         } finally {
             resultSet.close();
@@ -173,25 +156,11 @@ public class MetadataManager {
         return tableMetadatas;
     }
 
-    private Set<SchemaMetadata> getAllSchemas() {
-        if (allSchemas == null) {
-            Set<SchemaMetadata> schemas = new HashSet<>();
-            try {
-                DatabaseMetaData databaseMetaData = jdbcConnectione.getMetaData();
-                ResultSet rs = databaseMetaData.getSchemas();
-                while (rs.next()) {
-                    SchemaMetadata schema = new SchemaMetadata(rs.getString(2), rs.getString(1));
-                    if (systemSchemas.contains(schema)) {
-                        continue;
-                    }
-                    schemas.add(schema);
-                }
-                rs.close();
-            } catch (SQLException exc) {
-                throw new RuntimeException(exc);
-            }
-            allSchemas = unmodifiableSet(schemas);
-        }
-        return allSchemas;
+    /**
+     * @param schema
+     * @return
+     */
+    public SchemaMetadata findSchema(String schema) {
+        return schemasManager.findSchema(schema);
     }
 }

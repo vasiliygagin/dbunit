@@ -34,6 +34,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.util.QualifiedTableName;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
@@ -94,9 +95,9 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     @Override
     public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
-        logger.debug("createDataSet(tableNames={}) - start", tableNames);
-
-        return new FilteredDataSet(tableNames, createDataSet());
+        boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
+        SequenceTableFilter filter = new SequenceTableFilter(tableNames, caseSensitiveTableNames);
+        return new FilteredDataSet(filter, createDataSet());
     }
 
     @Override

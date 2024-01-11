@@ -21,11 +21,12 @@
 
 package org.dbunit.dataset;
 
-import junit.framework.TestCase;
-import org.dbunit.dataset.datatype.DataType;
-
 import java.sql.Time;
 import java.sql.Timestamp;
+
+import org.dbunit.dataset.datatype.DataType;
+
+import junit.framework.TestCase;
 
 /**
  * @author Manuel Laflamme
@@ -33,6 +34,7 @@ import java.sql.Timestamp;
  * @since Feb 19, 2002
  */
 public class DataSetUtilsTest extends TestCase {
+
     public DataSetUtilsTest(String s) {
         super(s);
     }
@@ -70,7 +72,7 @@ public class DataSetUtilsTest extends TestCase {
     }
 
     public void testGetColumn() throws Exception {
-        Column[] columns = new Column[] { new Column("c0", DataType.UNKNOWN), new Column("c1", DataType.UNKNOWN),
+        Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("c1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), new Column("c3", DataType.UNKNOWN),
                 new Column("c4", DataType.UNKNOWN), };
 
@@ -80,7 +82,7 @@ public class DataSetUtilsTest extends TestCase {
     }
 
     public void testGetColumnCaseInsensitive() throws Exception {
-        Column[] columns = new Column[] { new Column("c0", DataType.UNKNOWN), new Column("C1", DataType.UNKNOWN),
+        Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("C1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), new Column("C3", DataType.UNKNOWN),
                 new Column("c4", DataType.UNKNOWN), };
 
@@ -91,7 +93,7 @@ public class DataSetUtilsTest extends TestCase {
 
     public void testGetTables() throws Exception {
         String[] expected = { "t0", "t1", "t2", "t3" };
-        ITable[] testTables = new ITable[] { new DefaultTable("t0"), new DefaultTable("t1"), new DefaultTable("t2"),
+        ITable[] testTables = { new DefaultTable("t0"), new DefaultTable("t1"), new DefaultTable("t2"),
                 new DefaultTable("t3"), };
 
         ITable[] tables = DataSetUtils.getTables(new DefaultDataSet(testTables));
@@ -102,22 +104,9 @@ public class DataSetUtilsTest extends TestCase {
         }
     }
 
-    public void testGetTablesByNames() throws Exception {
-        String[] expected = { "t0", "t2" };
-        ITable[] testTables = new ITable[] { new DefaultTable("t0"), new DefaultTable("t1"), new DefaultTable("t2"),
-                new DefaultTable("t3"), };
-
-        ITable[] tables = DataSetUtils.getTables(expected, new DefaultDataSet(testTables));
-        assertEquals("table count", expected.length, tables.length);
-        for (int i = 0; i < tables.length; i++) {
-            String name = tables[i].getTableMetaData().getTableName();
-            assertEquals("table name", expected[i], name);
-        }
-    }
-
     public void testGetReserseNames() throws Exception {
         String[] expected = { "t3", "t2", "t1", "t0" };
-        ITable[] testTables = new ITable[] { new DefaultTable("t0"), new DefaultTable("t1"), new DefaultTable("t2"),
+        ITable[] testTables = { new DefaultTable("t0"), new DefaultTable("t1"), new DefaultTable("t2"),
                 new DefaultTable("t3"), };
 
         String[] names = DataSetUtils.getReverseTableNames(new DefaultDataSet(testTables));
@@ -128,7 +117,7 @@ public class DataSetUtilsTest extends TestCase {
     }
 
     public void testGetSqlValueString() throws Exception {
-        ValueStringData[] values = new ValueStringData[] { new ValueStringData(null, DataType.REAL, "NULL"),
+        ValueStringData[] values = { new ValueStringData(null, DataType.REAL, "NULL"),
                 new ValueStringData("1234", DataType.NUMERIC, "1234"),
                 new ValueStringData("1234", DataType.VARCHAR, "'1234'"),
                 new ValueStringData(new Float(1234.45), DataType.REAL, "1234.45"),
@@ -150,6 +139,7 @@ public class DataSetUtilsTest extends TestCase {
     }
 
     private class ValueStringData {
+
         private final Object _value;
         private final DataType _dataType;
         private final String _expected;

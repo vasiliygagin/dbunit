@@ -45,6 +45,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.datatype.DataType;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
@@ -499,7 +500,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
         // change table names order
         String[] names = DataSetUtils.getReverseTableNames(dataSet1);
-        IDataSet dataSet2 = new FilteredDataSet(names, dataSet1);
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet1.isCaseSensitiveTableNames());
+        IDataSet dataSet2 = new FilteredDataSet(filter, dataSet1);
 
         assertTrue("Datasets are the same instances.", dataSet1 != dataSet2);
         assertion.assertEquals(dataSet1, dataSet2);
@@ -514,7 +516,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
         for (int i = 0; i < names.length; i++) {
             names[i] = names[i].toLowerCase();
         }
-        IDataSet dataSet2 = new FilteredDataSet(names, dataSet1);
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet1.isCaseSensitiveTableNames());
+        IDataSet dataSet2 = new FilteredDataSet(filter, dataSet1);
 
         assertTrue("Datasets are the same instances.", dataSet1 != dataSet2);
         assertion.assertEquals(dataSet1, dataSet2);
@@ -554,7 +557,8 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
         // only one table
         String[] names = { dataSet1.getTableNames()[0] };
-        IDataSet dataSet2 = new FilteredDataSet(names, dataSet1);
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet1.isCaseSensitiveTableNames());
+        IDataSet dataSet2 = new FilteredDataSet(filter, dataSet1);
 
         assertTrue("Datasets are the same instances.", dataSet1 != dataSet2);
 

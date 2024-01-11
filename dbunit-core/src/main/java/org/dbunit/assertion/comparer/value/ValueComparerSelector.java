@@ -15,12 +15,12 @@ import org.dbunit.dataset.datatype.DataType;
  */
 @FunctionalInterface
 public interface ValueComparerSelector {
+
     /**
      * @return The selected {@link ValueComparer} from the specified valueComparers
      *         map.
      * @throws DatabaseUnitException
      */
     ValueComparer select(ITable expectedTable, ITable actualTable, int rowNum, String columnName, DataType dataType,
-            Object expectedValue, Object actualValue, Map<Object, ValueComparer> valueComparers)
-            throws DatabaseUnitException;
+            Object expectedValue, Object actualValue) throws DatabaseUnitException;
 }

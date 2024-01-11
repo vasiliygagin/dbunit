@@ -166,8 +166,11 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
         }else {
             messageBuilder = new MessageBuilder(null);
         }
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers,
-                c->false, messageBuilder);
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
+                defaultValueComparer, columnValueComparers);
+        
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, c->false, messageBuilder,
+                tableValueComparerSource);
     }
 
     /**
@@ -211,7 +214,10 @@ public class DbUnitValueComparerAssert extends DbUnitAssertBase {
         }else {
             messageBuilder = new MessageBuilder(null);
         }
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, defaultValueComparer, columnValueComparers,
-                c->false, messageBuilder);
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
+                defaultValueComparer, columnValueComparers);
+        
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, c->false, messageBuilder,
+                tableValueComparerSource);
     }
 }

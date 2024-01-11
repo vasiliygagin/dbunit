@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 import org.dbunit.AbstractDatabaseTest;
@@ -130,36 +129,6 @@ public class TablesDependencyHelperTest extends AbstractDatabaseTest {
             String[] expectedOutput = allExpectedOutput[i];
             String[] actualOutput = TablesDependencyHelper.getAllDependentTables(this.connection, input);
             Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutput);
-        }
-    }
-
-    @Test
-    public void testGetAllDatasetFromOneTable() throws Exception {
-        setUp(ImportAndExportKeysSearchCallbackOwnFileTest.SQL_FILE);
-        String[][] allInput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_INPUT;
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInput.length; i++) {
-            String[] input = allInput[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
-            String[] actualOutputTables = actualOutput.getTableNames();
-            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
-        }
-    }
-
-    @Test
-    public void testGetAllDatasetFromOneTable_SeparateSchema() throws Exception {
-        setUp("hypersonic_switch_schema.sql", "hypersonic_import_export.sql");
-
-        String[][] allInputWithSchema = ImportAndExportKeysSearchCallbackOwnFileTest
-                .getSingleInputWithSchema("TEST_SCHEMA");
-        String[][] allExpectedOutput = ImportAndExportKeysSearchCallbackOwnFileTest.SINGLE_OUTPUT;
-        for (int i = 0; i < allInputWithSchema.length; i++) {
-            String[] input = allInputWithSchema[i];
-            String[] expectedOutput = allExpectedOutput[i];
-            IDataSet actualOutput = TablesDependencyHelper.getAllDataset(this.connection, input[0], new HashSet());
-            String[] actualOutputTables = actualOutput.getTableNames();
-            Assert.assertArrayEquals("output didn't match for i=" + i, expectedOutput, actualOutputTables);
         }
     }
 

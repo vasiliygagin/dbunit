@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 
 import java.io.FileReader;
 
+import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
@@ -49,7 +50,8 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
 
         IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2);
         assertEquals("count before filter", getExpectedNames().length + 1, dataSet.getTableNames().length);
-        return new FilteredDataSet(getExpectedNames(), dataSet);
+        SequenceTableFilter filter = new SequenceTableFilter(getExpectedNames(), dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     @Override
@@ -62,15 +64,19 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
 
         IDataSet dataSet = new CompositeDataSet(dataSet1, dataSet2, false);
         assertEquals("count before filter", 3, dataSet.getTableNames().length);
-        return new FilteredDataSet(getExpectedDuplicateNames(), dataSet);
+        SequenceTableFilter filter = new SequenceTableFilter(getExpectedDuplicateNames(),
+                dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     @Override
     protected IDataSet createMultipleCaseDuplicateDataSet() throws Exception {
         String[] names = getExpectedDuplicateNames();
         names[0] = names[0].toLowerCase();
+        IDataSet dataSet = createDuplicateDataSet();
 
-        return new FilteredDataSet(names, createDuplicateDataSet());
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     @Test
@@ -79,8 +85,10 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         String expectedName = originalNames[0];
         IDataSet dataSet = createDataSet();
         assertTrue("original count", dataSet.getTableNames().length > 1);
+        SequenceTableFilter filter = new SequenceTableFilter(new String[] { expectedName },
+                dataSet.isCaseSensitiveTableNames());
 
-        IDataSet filteredDataSet = new FilteredDataSet(new String[] { expectedName }, dataSet);
+        IDataSet filteredDataSet = new FilteredDataSet(filter, dataSet);
         assertEquals("filtered count", 1, filteredDataSet.getTableNames().length);
         assertEquals("filtered names", expectedName, filteredDataSet.getTableNames()[0]);
     }
@@ -88,7 +96,10 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
     @Test
     public void testGetFilteredTable() throws Exception {
         String[] originalNames = getExpectedNames();
-        IDataSet filteredDataSet = new FilteredDataSet(new String[] { originalNames[0] }, createDataSet());
+        IDataSet dataSet = createDataSet();
+        SequenceTableFilter filter = new SequenceTableFilter(new String[] { originalNames[0] },
+                dataSet.isCaseSensitiveTableNames());
+        IDataSet filteredDataSet = new FilteredDataSet(filter, dataSet);
 
         for (int i = 0; i < originalNames.length; i++) {
             String name = originalNames[i];
@@ -107,7 +118,10 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
     @Test
     public void testGetFilteredTableMetaData() throws Exception {
         String[] originalNames = getExpectedNames();
-        IDataSet filteredDataSet = new FilteredDataSet(new String[] { originalNames[0] }, createDataSet());
+        IDataSet dataSet = createDataSet();
+        SequenceTableFilter filter = new SequenceTableFilter(new String[] { originalNames[0] },
+                dataSet.isCaseSensitiveTableNames());
+        IDataSet filteredDataSet = new FilteredDataSet(filter, dataSet);
 
         for (int i = 0; i < originalNames.length; i++) {
             String name = originalNames[i];
@@ -128,16 +142,20 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
         // Case sensitive check
         FileReader fileReader = TestUtils.getFileReader("xml/dataSetTest.xml");
         final IDataSet caseSensitive = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(true).build(fileReader);
+        SequenceTableFilter filter = new SequenceTableFilter(getExpectedNames(),
+                caseSensitive.isCaseSensitiveTableNames());
 
-        final FilteredDataSet caseSesitiveFilter = new FilteredDataSet(getExpectedNames(), caseSensitive);
+        final FilteredDataSet caseSesitiveFilter = new FilteredDataSet(filter, caseSensitive);
         assertEquals("case sensitive inheritance", true, caseSesitiveFilter.isCaseSensitiveTableNames());
 
         // Case insensitive check
         fileReader = TestUtils.getFileReader("xml/dataSetTest.xml");
         final IDataSet caseInsensitive = new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(false)
                 .build(fileReader);
+        SequenceTableFilter filter1 = new SequenceTableFilter(getExpectedNames(),
+                caseInsensitive.isCaseSensitiveTableNames());
 
-        final FilteredDataSet caseInsesitiveFilter = new FilteredDataSet(getExpectedNames(), caseInsensitive);
+        final FilteredDataSet caseInsesitiveFilter = new FilteredDataSet(filter1, caseInsensitive);
         assertEquals("case insensitive inheritance", false, caseInsesitiveFilter.isCaseSensitiveTableNames());
     }
 }

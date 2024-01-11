@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeff Jensen
  * @since 2.7.0
  */
-public class IsActualContainingExpectedStringValueComparer extends ValueComparerTemplateBase {
+public class IsActualContainingExpectedStringValueComparer extends ValueComparerBase {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override

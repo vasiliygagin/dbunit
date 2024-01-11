@@ -52,24 +52,6 @@ public class DbUnitAssert extends DbUnitAssertBase {
     private static final Logger logger = LoggerFactory.getLogger(DbUnitAssert.class);
 
     /**
-     * Compare one table present in two datasets ignoring specified columns.
-     *
-     * @param expectedDataset First dataset.
-     * @param actualDataset   Second dataset.
-     * @param tableName       Table name of the table to be compared.
-     * @param ignoreCols      Columns to be ignored in comparison.
-     * @throws org.dbunit.DatabaseUnitException If an error occurs.
-     */
-    public void assertEqualsIgnoreCols(final IDataSet expectedDataset, final IDataSet actualDataset,
-            final String tableName, final String[] ignoreCols) throws DatabaseUnitException {
-        logger.debug(
-                "assertEqualsIgnoreCols(expectedDataset={}, actualDataset={}, tableName={}, ignoreCols={}) - start",
-                expectedDataset, actualDataset, tableName, ignoreCols);
-
-        assertEqualsIgnoreCols(expectedDataset.getTable(tableName), actualDataset.getTable(tableName), ignoreCols);
-    }
-
-    /**
      * Compare the given tables ignoring specified columns.
      *
      * @param expectedTable First table.
@@ -97,30 +79,6 @@ public class DbUnitAssert extends DbUnitAssertBase {
             _excludeMatcher.addPattern(columnName);
         }
         return (Predicate<Column>) c -> _excludeMatcher.accept(c.getColumnName());
-    }
-
-    /**
-     * Compare a table from a dataset with a table generated from an sql query.
-     *
-     * @param expectedDataset Dataset to retrieve the first table from.
-     * @param connection      Connection to use for the SQL statement.
-     * @param sqlQuery        SQL query that will build the data in returned second
-     *                        table rows.
-     * @param tableName       Table name of the table to compare.
-     * @param ignoreCols      Columns to be ignored in comparison.
-     * @throws DatabaseUnitException If an error occurs while performing the
-     *                               comparison.
-     * @throws java.sql.SQLException If an SQL error occurs.
-     */
-    public void assertEqualsByQuery(final IDataSet expectedDataset, final IDatabaseConnection connection,
-            final String sqlQuery, final String tableName, final String[] ignoreCols)
-            throws DatabaseUnitException, SQLException {
-        logger.debug(
-                "assertEqualsByQuery(expectedDataset={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
-                expectedDataset, connection, tableName, sqlQuery, ignoreCols);
-
-        final ITable expectedTable = expectedDataset.getTable(tableName);
-        assertEqualsByQuery(expectedTable, connection, tableName, sqlQuery, ignoreCols);
     }
 
     /**
@@ -253,11 +211,14 @@ public class DbUnitAssert extends DbUnitAssertBase {
         MessageBuilder messageBuilder;
         if (failureHandler instanceof DefaultFailureHandler) {
             messageBuilder = ((DefaultFailureHandler) failureHandler).getMessageBuilder();
-        }else {
+        } else {
             messageBuilder = new MessageBuilder(null);
         }
-        assertWithValueComparer(expectedTable, actualTable, failureHandler, ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null,
-                excludedColumn, messageBuilder);
+        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
+                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
+
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, excludedColumn, messageBuilder,
+                tableValueComparerSource);
     }
 
     /**
@@ -319,9 +280,6 @@ public class DbUnitAssert extends DbUnitAssertBase {
          */
         private DataType getComparisonDataType(final String tableName, final Column expectedColumn,
                 final Column actualColumn, final FailureHandler failureHandler) {
-            logger.debug(
-                    "getComparisonDataType(tableName={}, expectedColumn={}, actualColumn={}, failureHandler={}) - start",
-                    tableName, expectedColumn, actualColumn, failureHandler);
 
             final DataType expectedDataType = expectedColumn.getDataType();
             final DataType actualDataType = actualColumn.getDataType();

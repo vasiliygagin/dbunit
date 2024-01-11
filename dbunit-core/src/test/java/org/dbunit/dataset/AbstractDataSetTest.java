@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.dbunit.database.AmbiguousTableNameException;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.junit.Test;
 
 /**
@@ -90,7 +91,8 @@ public abstract class AbstractDataSetTest extends AbstractTest {
 
         names = nameList.toArray(new String[0]);
 
-        return new FilteredDataSet(names, dataSet);
+        SequenceTableFilter filter = new SequenceTableFilter(names, dataSet.isCaseSensitiveTableNames());
+        return new FilteredDataSet(filter, dataSet);
     }
 
     protected abstract IDataSet createDataSet() throws Exception;

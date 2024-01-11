@@ -26,7 +26,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import org.dbunit.database.metadata.SchemaMetadata;
 import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DataSetUtils;
@@ -66,8 +68,9 @@ public class DatabaseDataSet implements IDataSet {
     private final String[] tableType;
     private final IMetadataHandler metadataHandler;
 
+    private boolean allSchemasLoaded = false;
     private OrderedTableNameMap<ITableMetaData> tableMetaDatas = null;
-    private final SchemaSet loadedSchemas;
+    private final Set<SchemaMetadata> loadedSchemas = new HashSet<>();
 
     private final ITableFilterSimple _tableFilter;
     private final ITableFilterSimple _oracleRecycleBinTableFilter;
@@ -118,7 +121,6 @@ public class DatabaseDataSet implements IDataSet {
         tableType = config.getTableTypes();
         _tableFilter = tableFilter;
         _oracleRecycleBinTableFilter = new OracleRecycleBinTableFilter(config);
-        loadedSchemas = new SchemaSet(caseSensitiveTableNames);
     }
 
     private String qualifiedNameIfEnabled(String schemaName, String tableName) {
@@ -127,13 +129,7 @@ public class DatabaseDataSet implements IDataSet {
     }
 
     private void loadAllSchemas() throws DataSetException {
-        String schema = defaultSchema;
-        if (!_caseSensitiveTableNames && schema != null) {
-            // TODO rethink
-            schema = schema.toUpperCase();
-        }
-
-        if (tableMetaDatas != null && loadedSchemas.contains(schema)) {
+        if (allSchemasLoaded) {
             return;
         }
 
@@ -141,8 +137,13 @@ public class DatabaseDataSet implements IDataSet {
             tableMetaDatas = new OrderedTableNameMap<>(this._caseSensitiveTableNames);
         }
 
+        SchemaMetadata schemaMetadata = null;
+        if (defaultSchema != null) {
+            schemaMetadata = _connection.getMetadataManager().findSchema(defaultSchema);
+        }
+
         try {
-            List<TableMetadata> tableMetadatas = _connection.getMetadataManager().getTables(null);
+            List<TableMetadata> tableMetadatas = _connection.getMetadataManager().getTables(schemaMetadata);
             for (TableMetadata tableMetadata : tableMetadatas) {
 
                 String schemaName = tableMetadata.schemaMetadata.schema;
@@ -155,26 +156,24 @@ public class DatabaseDataSet implements IDataSet {
                     logger.debug("Skipping oracle recycle bin table '{}'", tableName);
                     continue;
                 }
-                if (schema == null && !loadedSchemas.contains(schemaName)) {
-                    loadedSchemas.add(schemaName);
-                }
 
                 tableName = qualifiedNameIfEnabled(schemaName, tableName);
 
                 // Put the table into the table map
                 tableMetaDatas.add(tableName, null);
             }
-            loadedSchemas.add(schema);
+            loadedSchemas.add(schemaMetadata);
         } catch (SQLException e) {
             throw new DataSetException(e);
         }
+        allSchemasLoaded = true;
     }
 
     private void loadSchemaOfTable(String tableName1) throws DataSetException {
-        if (tableName1 == null) {
-            loadAllSchemas();
+        if (allSchemasLoaded) {
             return;
         }
+        // TODO: not sure if loading all schemas is too expensive. Or it might be so cheap that I should do all the time.
         QualifiedTableName2 tn = QualifiedTableName2.parseFullTableName2(tableName1, defaultSchema);
         String schema = tn.schema;
         if (schema == null || !qualifiedTableNamesActive) {
@@ -182,12 +181,9 @@ public class DatabaseDataSet implements IDataSet {
             return;
         }
 
-        if (!_caseSensitiveTableNames) {
-            // TODO rethink
-            schema = schema.toUpperCase();
-        }
+        SchemaMetadata schemaMetadata = _connection.getMetadataManager().findSchema(schema);
 
-        if (tableMetaDatas != null && loadedSchemas.contains(schema)) {
+        if (tableMetaDatas != null && loadedSchemas.contains(schemaMetadata)) {
             return;
         }
 
@@ -196,7 +192,7 @@ public class DatabaseDataSet implements IDataSet {
         }
 
         try {
-            List<TableMetadata> tableMetadatas = _connection.getMetadataManager().getTables(schema);
+            List<TableMetadata> tableMetadatas = _connection.getMetadataManager().getTables(schemaMetadata);
             for (TableMetadata tableMetadata : tableMetadatas) {
 
                 String schemaName = tableMetadata.schemaMetadata.schema;
@@ -209,16 +205,13 @@ public class DatabaseDataSet implements IDataSet {
                     logger.debug("Skipping oracle recycle bin table '{}'", tableName);
                     continue;
                 }
-                if (schema == null && !loadedSchemas.contains(schemaName)) {
-                    loadedSchemas.add(schemaName);
-                }
 
                 tableName = qualifiedNameIfEnabled(schemaName, tableName);
 
                 // Put the table into the table map
                 tableMetaDatas.add(tableName, null);
             }
-            loadedSchemas.add(schema);
+            loadedSchemas.add(schemaMetadata);
         } catch (SQLException e) {
             throw new DataSetException(e);
         }

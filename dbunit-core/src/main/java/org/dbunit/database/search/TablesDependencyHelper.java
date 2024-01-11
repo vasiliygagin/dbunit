@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper for the graph-search based classes used to calculate dependency among
  * tables.
- * 
+ *
  * @author Felipe Leme (dbunit@felipeal.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -58,7 +58,7 @@ public class TablesDependencyHelper {
     /**
      * Get the name of all tables that depend on the root tables (i.e, all tables
      * that have FKs pointing to the PK of the root table).
-     * 
+     *
      * @param connection database connection
      * @param rootTable  root table described above
      * @return name of all tables that depend on the root table (including the root
@@ -73,7 +73,7 @@ public class TablesDependencyHelper {
     /**
      * Get the name of all tables that depend on the root tables (i.e, all tables
      * that have FKs pointing to the PK of one of the root tables).
-     * 
+     *
      * @param connection database connection
      * @param rootTables array of root tables described above
      * @return name of all tables that depend on the root tables (including the root
@@ -93,7 +93,7 @@ public class TablesDependencyHelper {
     /**
      * Get the name of all tables that the given rootTable depends on (i.e, all
      * tables whose PK is a FK for the root table).
-     * 
+     *
      * @param connection database connection
      * @param rootTable  root table described above
      * @return name of all tables that the rootTable depends on (including the
@@ -114,7 +114,7 @@ public class TablesDependencyHelper {
      * Get the name of all tables that depend on a root table ( i.e, all tables
      * whose PK is a FK for the root table) and also the tables the root table
      * depends on (i.e., all tables which have a FK for the root table's PK).
-     * 
+     *
      * @param connection database connection
      * @param rootTable  root table described above
      * @return name of all tables that depend on the root table (including the root
@@ -132,7 +132,7 @@ public class TablesDependencyHelper {
      * whose PK is a FK for any of the root tables) and also the tables the root
      * tables depends on (i.e., all tables which have a FK for any of the root
      * table's PK).
-     * 
+     *
      * @param connection database connection
      * @param rootTables root tables described above
      * @return name of all tables that depend on the root tables (including the root
@@ -154,8 +154,8 @@ public class TablesDependencyHelper {
     public static IDataSet getDataset(IDatabaseConnection connection, String rootTable, Set allowedIds)
             throws SearchException, SQLException, DataSetException {
         if (logger.isDebugEnabled()) {
-            logger.debug("getDataset(connection={}, rootTable={}, allowedIds={}) - start",
-                    new Object[] { connection, rootTable, allowedIds });
+            logger.debug("getDataset(connection={}, rootTable={}, allowedIds={}) - start", connection, rootTable,
+                    allowedIds);
         }
 
         PkTableMap map = new PkTableMap();
@@ -179,18 +179,6 @@ public class TablesDependencyHelper {
         return dataset;
     }
 
-    public static IDataSet getAllDataset(IDatabaseConnection connection, String rootTable, Set allowedPKs)
-            throws SearchException, SQLException, DataSetException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getAllDataset(connection={}, rootTable={}, allowedPKs={}) - start",
-                    new Object[] { connection, rootTable, allowedPKs });
-        }
-
-        PkTableMap map = new PkTableMap();
-        map.addAll(rootTable, allowedPKs);
-        return getAllDataset(connection, map);
-    }
-
     public static IDataSet getAllDataset(IDatabaseConnection connection, PkTableMap rootTables)
             throws SearchException, SQLException, DataSetException {
         logger.debug("getAllDataset(connection={}, rootTables={}) - start", connection, rootTables);
@@ -209,7 +197,7 @@ public class TablesDependencyHelper {
 
     /**
      * Returns a set of tables on which the given table directly depends on.
-     * 
+     *
      * @param connection The connection to be used for the database lookup.
      * @param tableName
      * @return a set of tables on which the given table directly depends on.
@@ -229,7 +217,7 @@ public class TablesDependencyHelper {
 
     /**
      * Returns a set of tables which directly depend on the given table.
-     * 
+     *
      * @param connection The connection to be used for the database lookup.
      * @param tableName
      * @return a set of tables on which the given table directly depends on.
