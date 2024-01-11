@@ -373,8 +373,7 @@ public class DbUnitAssertBase {
 
             log.debug("compareData: comparing actualValue={}" + " to expectedValue={} with valueComparer={}",
                     actualValue, expectedValue, valueComparer);
-            final String failMessage = valueComparer.compare(expectedTable, actualTable, rowNum, columnName, dataType,
-                    expectedValue, actualValue);
+            final String failMessage = valueComparer.compare(dataType, expectedValue, actualValue);
 
             if (failMessage != null) {
                 final String msg = messageBuilder.buildMessage(expectedTable, actualTable, rowNum, columnName,

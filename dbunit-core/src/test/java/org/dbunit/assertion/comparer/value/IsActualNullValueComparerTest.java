@@ -23,8 +23,7 @@ public class IsActualNullValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Actual null should have been true.", actual, equalTo(true));
     }
 
@@ -38,8 +37,7 @@ public class IsActualNullValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = "not null string";
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Actual not null should have been false.", actual, equalTo(false));
     }
 

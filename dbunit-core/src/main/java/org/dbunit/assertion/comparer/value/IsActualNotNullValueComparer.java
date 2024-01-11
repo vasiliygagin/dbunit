@@ -1,7 +1,6 @@
 package org.dbunit.assertion.comparer.value;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 
 /**
@@ -15,8 +14,7 @@ public class IsActualNotNullValueComparer extends ValueComparerTemplateBase {
     private static final String ACTUAL_VALUE_IS_NULL = "Actual value is null (ignores expected value)";
 
     @Override
-    protected boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+    protected boolean isExpected(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException {
         return actualValue != null;
     }

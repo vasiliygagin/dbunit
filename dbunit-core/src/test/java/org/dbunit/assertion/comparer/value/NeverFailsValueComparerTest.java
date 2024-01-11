@@ -21,8 +21,7 @@ public class NeverFailsValueComparerTest {
         final Object expectedValue = null;
         final Object actualValue = null;
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("All null should have been equal.", actual, equalTo(true));
     }
 
@@ -36,8 +35,7 @@ public class NeverFailsValueComparerTest {
         final Object expectedValue = "expected value";
         final Object actualValue = "actual value";
 
-        final boolean actual = sut.isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean actual = sut.isExpected(dataType, expectedValue, actualValue);
         assertThat("Unequal values should have been equal.", actual, equalTo(true));
     }
 

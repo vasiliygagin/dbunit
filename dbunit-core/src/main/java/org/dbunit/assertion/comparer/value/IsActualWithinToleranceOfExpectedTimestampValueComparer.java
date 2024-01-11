@@ -5,7 +5,6 @@ import static org.dbunit.assertion.comparer.value.AssertNotNull.assertNotNull;
 import java.sql.Timestamp;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.TypeCastException;
 import org.slf4j.Logger;
@@ -54,8 +53,7 @@ public class IsActualWithinToleranceOfExpectedTimestampValueComparer extends Val
     }
 
     @Override
-    protected boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+    protected boolean isExpected(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException {
         final boolean isExpected;
 

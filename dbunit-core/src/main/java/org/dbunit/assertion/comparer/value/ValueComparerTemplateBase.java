@@ -1,7 +1,6 @@
 package org.dbunit.assertion.comparer.value;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 
 /**
@@ -16,19 +15,16 @@ public abstract class ValueComparerTemplateBase extends ValueComparerBase {
      * {@inheritDoc}
      *
      * This implementation calls
-     * {@link #isExpected(ITable, ITable, int, String, DataType, Object, Object)}.
+     * {@link #isExpected(DataType, Object, Object)}.
      *
-     * @see ValueComparer#compare(ITable, ITable, int, String, DataType, Object,
-     *      Object)
+     * @see ValueComparer#compare(DataType, Object, Object)
      */
     @Override
-    protected String doCompare(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+    protected String doCompare(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException {
         final String failMessage;
 
-        final boolean isExpected = isExpected(expectedTable, actualTable, rowNum, columnName, dataType, expectedValue,
-                actualValue);
+        final boolean isExpected = isExpected(dataType, expectedValue, actualValue);
         if (isExpected) {
             failMessage = null;
         } else {
@@ -49,8 +45,7 @@ public abstract class ValueComparerTemplateBase extends ValueComparerBase {
     }
 
     /** @return true if comparing actual to expected is as expected. */
-    protected abstract boolean isExpected(final ITable expectedTable, final ITable actualTable, final int rowNum,
-            final String columnName, final DataType dataType, final Object expectedValue, final Object actualValue)
+    protected abstract boolean isExpected(final DataType dataType, final Object expectedValue, final Object actualValue)
             throws DatabaseUnitException;
 
     /** @return The text snippet for substitution in {@link #BASE_FAIL_MSG}. */
