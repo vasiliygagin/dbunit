@@ -29,22 +29,15 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.junit.DriverManagerConnection;
 import org.dbunit.junit.internal.TestContext;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * @author Vasiliy Gagin
  */
-@RunWith(DbunitTestCaseTestRunner.class)
 @DriverManagerConnection(driver = "org.hsqldb.jdbcDriver", url = "jdbc:hsqldb:mem:.", user = "sa", password = "")
-public class DriverManagerConnectionIT {
-
-    @Rule
-    public final DbUnitFacade dbUnit = new DbUnitFacade();
+public class DriverManagerConnectionIT extends DatabaseInternalTestCase {
 
     @Test
     public void testConnectionLifecycle() throws Exception {

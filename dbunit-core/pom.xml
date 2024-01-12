@@ -163,7 +163,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -459,8 +459,8 @@ enable this to generate coverage report HTML files during build (same as site)
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <!--                    <skipAfterFailureCount>1</skipAfterFailureCount>-->
-                    <!--                    <forkMode>never</forkMode>-->
+                    <!--                                        <skipAfterFailureCount>1</skipAfterFailureCount>-->
+                    <!--                                        <forkMode>never</forkMode>-->
                 </configuration>
             </plugin>
             <plugin>

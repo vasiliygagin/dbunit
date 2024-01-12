@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -129,8 +131,8 @@
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-                <version>${hsqldbDriverVersion}</version>
-                <scope>test</scope>
+            <version>${hsqldbDriverVersion}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -177,32 +179,32 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${cleanPluginVersion}</version>
                 </plugin>
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
-<!--                    <version>${enforcerPluginVersion}</version>-->
-<!--                    <executions>-->
-<!--                        <execution>-->
-<!--                            <id>enforce-versions</id>-->
-<!--                            <goals>-->
-<!--                                <goal>enforce</goal>-->
-<!--                            </goals>-->
-<!--                        </execution>-->
-<!--                    </executions>-->
-<!--                    <configuration>-->
-<!--                        <rules>-->
-<!--                            <requireMavenVersion>-->
-<!--                                <version>${mavenVersion}</version>-->
-<!--                            </requireMavenVersion>-->
-<!--                            <requireJavaVersion>-->
-<!--                                <version>${compileSource}</version>-->
-<!--                            </requireJavaVersion>-->
-<!--                            <requirePluginVersions>-->
-<!--                                <phases>compile</phases>-->
-<!--                            </requirePluginVersions>-->
-<!--                        </rules>-->
-<!--                    </configuration>-->
-<!--                </plugin>-->
+                <!--                <plugin>-->
+                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
+                <!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
+                <!--                    <version>${enforcerPluginVersion}</version>-->
+                <!--                    <executions>-->
+                <!--                        <execution>-->
+                <!--                            <id>enforce-versions</id>-->
+                <!--                            <goals>-->
+                <!--                                <goal>enforce</goal>-->
+                <!--                            </goals>-->
+                <!--                        </execution>-->
+                <!--                    </executions>-->
+                <!--                    <configuration>-->
+                <!--                        <rules>-->
+                <!--                            <requireMavenVersion>-->
+                <!--                                <version>${mavenVersion}</version>-->
+                <!--                            </requireMavenVersion>-->
+                <!--                            <requireJavaVersion>-->
+                <!--                                <version>${compileSource}</version>-->
+                <!--                            </requireJavaVersion>-->
+                <!--                            <requirePluginVersions>-->
+                <!--                                <phases>compile</phases>-->
+                <!--                            </requirePluginVersions>-->
+                <!--                        </rules>-->
+                <!--                    </configuration>-->
+                <!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -358,6 +360,13 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.gaul</groupId>
                 <artifactId>modernizer-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <configuration>
+                    <skipStaging>true</skipStaging>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -41,7 +41,7 @@ public class DriverManagerConnectionsFactory {
         return connection;
     }
 
-    Connection buildConnection(String driver, String url, String user, String password) {
+    public Connection buildConnection(String driver, String url, String user, String password) {
         Connection connection;
         try {
             Class.forName(driver);

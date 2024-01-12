@@ -61,7 +61,7 @@ public abstract class DatabaseEnvironment {
         schema = profile.getSchema();
         multilineSupport = profile.getProfileMultilineSupport();
         unsupportedFeatures = profile.getUnsupportedFeatures();
-        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
+        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml").getAbsoluteFile()));
         this.databaseConfig.freese();
     }
 

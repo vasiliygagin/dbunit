@@ -37,11 +37,11 @@ public class TestUtils {
     }
 
     public static File getFile(String fileName) {
-        return new File(getFileName(fileName));
+        return new File(getFileName(fileName)).getAbsoluteFile();
     }
 
     public static FileReader getFileReader(String fileName) throws FileNotFoundException {
-        return new FileReader(getFileName(fileName));
+        return new FileReader(getFile(fileName));
     }
 
     public static FileInputStream getFileInputStream(String fileName) throws FileNotFoundException {

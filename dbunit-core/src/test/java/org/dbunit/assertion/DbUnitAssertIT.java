@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.function.Predicate;
@@ -65,7 +64,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
     }
 
     private IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSetBuilder().build(new FileReader("src/test/resources/xml/assertionTest.xml"));
+        return new FlatXmlDataSetBuilder().build(fileReader("src/test/resources/xml/assertionTest.xml"));
     }
 
     ////////////////////////////////////////////////////////////////////////////

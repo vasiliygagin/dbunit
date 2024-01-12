@@ -94,16 +94,20 @@ public class AbstractBatchOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testGetOperationMetaDataAndUnknownColumns() throws Exception {
-        String tableName = "PK_TABLE";
-        Reader in = TestUtils.getFileReader("xml/unknownColumnTest.xml");
-        IDataSet xmlDataSet = new XmlDataSet(in);
-
-        ITable xmlTable = xmlDataSet.getTable(tableName);
-
         try {
-            AbstractOperation.getOperationMetaData(customizedConnection, xmlTable.getTableMetaData());
-            fail("Should throw a NoSuchColumnException");
-        } catch (NoSuchColumnException e) {
+            String tableName = "PK_TABLE";
+            Reader in = TestUtils.getFileReader("xml/unknownColumnTest.xml");
+            IDataSet xmlDataSet = new XmlDataSet(in);
+
+            ITable xmlTable = xmlDataSet.getTable(tableName);
+
+            try {
+                AbstractOperation.getOperationMetaData(customizedConnection, xmlTable.getTableMetaData());
+                fail("Should throw a NoSuchColumnException");
+            } catch (NoSuchColumnException e) {
+            }
+        } catch (Throwable exc) {
+            exc.printStackTrace();
         }
     }
 

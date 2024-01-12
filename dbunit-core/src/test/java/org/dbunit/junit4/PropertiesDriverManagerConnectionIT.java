@@ -29,24 +29,17 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.junit.PropertiesDriverManagerConnection;
 import org.dbunit.junit.internal.TestContext;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * @author Vasiliy Gagin
  */
-@RunWith(DbunitTestCaseTestRunner.class)
 @PropertiesDriverManagerConnection
-public class PropertiesDriverManagerConnectionIT {
-
-    @Rule
-    public final DbUnitFacade dbUnit = new DbUnitFacade();
+public class PropertiesDriverManagerConnectionIT extends DatabaseInternalTestCase {
 
     @BeforeClass
     public static void setProperties() {

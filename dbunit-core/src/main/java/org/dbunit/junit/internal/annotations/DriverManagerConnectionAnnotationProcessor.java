@@ -33,7 +33,7 @@ class DriverManagerConnectionAnnotationProcessor {
 
         DriverManagerConnection[] annotations = klass.getAnnotationsByType(DriverManagerConnection.class);
         for (DriverManagerConnection annotation : annotations) {
-            Connection jdbcConnection = driverManagerConnectionsFactory.fetchConnection(annotation.driver(),
+            Connection jdbcConnection = driverManagerConnectionsFactory.buildConnection(annotation.driver(),
                     annotation.url(), annotation.user(), annotation.password());
             DataSource dataSource = new SingleConnectionDataSource(jdbcConnection);
             ConnectionSource connectionSource = dbConnectionManager.registerDataSourceInstance(dataSource);

@@ -29,7 +29,7 @@ class PropertiesDriverManagerConnectionAnnotationProcessor {
 
         PropertiesDriverManagerConnection annotation = klass.getAnnotation(PropertiesDriverManagerConnection.class);
         if (annotation != null) {
-            Connection jdbcConnection = driverManagerConnectionsFactory.fetchConnection(
+            Connection jdbcConnection = driverManagerConnectionsFactory.buildConnection(
                     System.getProperty(PropertiesDriverManagerConnection.DBUNIT_DRIVER_CLASS),
                     System.getProperty(PropertiesDriverManagerConnection.DBUNIT_CONNECTION_URL),
                     System.getProperty(PropertiesDriverManagerConnection.DBUNIT_USERNAME),

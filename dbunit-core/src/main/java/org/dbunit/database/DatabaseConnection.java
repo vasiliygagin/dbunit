@@ -188,4 +188,23 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
             throw new DatabaseUnitException("Exception while checking the schema for validity", e);
         }
     }
+
+    /**
+     * rolls back underlying connection
+     */
+    public void rollback() {
+        try {
+            jdbcConnection.rollback();
+        } catch (SQLException exc) {
+            logger.error("Connection rollback failed", exc);
+        }
+    }
+
+    /**
+     *
+     */
+    public void shutdown() {
+        // TODO Auto-generated method stub
+
+    }
 }

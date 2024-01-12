@@ -41,6 +41,22 @@ public abstract class AbstractTableFilterTest extends AbstractTest {
     public AbstractTableFilterTest() throws Exception {
     }
 
+    @Override
+    protected String[] getExpectedNames() throws Exception {
+        return new String[] { "PARENT", "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE", "ONLY_PK_TABLE",
+                "EMPTY_MULTITYPE_TABLE", };
+    }
+
+    @Override
+    protected String[] getExpectedLowerNames() throws Exception {
+        String[] names = getExpectedNames();
+        for (int i = 0; i < names.length; i++) {
+            names[i] = names[i].toLowerCase();
+        }
+
+        return names;
+    }
+
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
         IDataSet dataSet2 = new DefaultDataSet(new DefaultTable(getExtraTableName()));

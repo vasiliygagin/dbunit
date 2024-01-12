@@ -48,9 +48,7 @@ public class DataSourceConnectionSource implements ConnectionSource {
     @Override
     public void releaseConnection(DatabaseConnection connection) {
         try {
-            Connection jdbcConnection = connection.getConnection();
-            jdbcConnection.rollback();
-            jdbcConnection.close();
+            connection.getConnection().close();
         } catch (SQLException exc) {
             exc.printStackTrace();
         }
