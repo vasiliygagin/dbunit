@@ -26,9 +26,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.database.DatabaseDataSet;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
@@ -69,8 +72,6 @@ public class DeleteAllOperation extends AbstractOperation {
 
     @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
-        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
-
         IDataSet databaseDataSet = connection.createDataSet();
 
         IStatementFactory statementFactory = connection.getDatabaseConfig().getStatementFactory();
@@ -78,8 +79,8 @@ public class DeleteAllOperation extends AbstractOperation {
         try {
             int count = 0;
 
-            Stack tableNames = new Stack();
-            Set tablesSeen = new HashSet();
+            Stack<String> tableNames = new Stack<>();
+            Set<String> tablesSeen = new HashSet<>();
             ITableIterator iterator = dataSet.iterator();
             while (iterator.next()) {
                 String tableName = iterator.getTableMetaData().getTableName();
@@ -91,7 +92,7 @@ public class DeleteAllOperation extends AbstractOperation {
 
             // delete tables once each in reverse order of seeing them.
             while (!tableNames.isEmpty()) {
-                String tableName = (String) tableNames.pop();
+                String tableName = tableNames.pop();
 
                 // Use database table name. Required to support case sensitive database.
                 ITableMetaData databaseMetaData = databaseDataSet.getTableMetaData(tableName);
@@ -116,5 +117,13 @@ public class DeleteAllOperation extends AbstractOperation {
         } finally {
             statement.close();
         }
+    }
+
+    protected ITableMetaData getTableMetadata(IDatabaseConnection connection, String tableName)
+            throws DataSetException, SQLException {
+        boolean caseSensitiveTableNames = connection.getDatabaseConfig().isCaseSensitiveTableNames();
+        DatabaseDataSet dataSet = new DatabaseDataSet(((AbstractDatabaseConnection) connection),
+                caseSensitiveTableNames);
+        return dataSet.getTableMetaData(tableName);
     }
 }

@@ -31,6 +31,7 @@ import org.dbunit.DdlExecutor;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
@@ -60,7 +61,8 @@ public class CompositeDataSetIterationTest {
         DdlExecutor.executeDdlFile(ddlFile, jdbcConnection, false);
 
         HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
-        this.connection = new DatabaseConnection(jdbcConnection, config);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        this.connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
     }
 
     @After

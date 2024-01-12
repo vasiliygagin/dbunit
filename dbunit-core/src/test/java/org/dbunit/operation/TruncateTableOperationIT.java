@@ -26,6 +26,7 @@ import static org.junit.Assume.assumeTrue;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.TestFeature;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -64,6 +65,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
     @Before
     public final void setUp1() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, environment.getInitDataSet());
     }
 
@@ -139,6 +141,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
     @Test
     public void testExecute() throws Exception {
         assumeTrue(environmentHasTruncateFeature());
+        DatabaseConnection customizedConnection = database.getConnection();
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
@@ -148,6 +151,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
     @Test
     public void testExecuteEmpty() throws Exception {
         assumeTrue(environmentHasTruncateFeature());
+        DatabaseConnection customizedConnection = database.getConnection();
         IDataSet databaseDataSet = customizedConnection.createDataSet();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(databaseDataSet);
 
@@ -157,6 +161,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
     @Test
     public void testExecuteCaseInsentive() throws Exception {
         assumeTrue(environmentHasTruncateFeature());
+        DatabaseConnection customizedConnection = database.getConnection();
         IDataSet dataSet = AbstractDataSetTest.removeExtraTestTables(customizedConnection.createDataSet());
 
         testExecute(new LowerCaseDataSet(dataSet));
@@ -171,6 +176,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
      */
     private void testExecute(IDataSet dataSet) throws Exception {
         // dataSet = dataSet);
+        DatabaseConnection customizedConnection = database.getConnection();
         ITable[] tablesBefore = DataSetUtils
                 .getTables(AbstractDataSetTest.removeExtraTestTables(customizedConnection.createDataSet()));
         getDeleteAllOperation().execute(customizedConnection, dataSet);
@@ -197,6 +203,7 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
     @Test
     public void testExecuteWithEmptyDataset() throws Exception {
         assumeTrue(environmentHasTruncateFeature());
+        DatabaseConnection customizedConnection = database.getConnection();
         getDeleteAllOperation().execute(customizedConnection, new DefaultDataSet(new ITable[0]));
     }
 }

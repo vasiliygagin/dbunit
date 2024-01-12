@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.junit.ConnectionSource;
 import org.dbunit.junit.DatabaseException;
 
@@ -39,7 +40,9 @@ public class DataSourceConnectionSource implements ConnectionSource {
 
     private DatabaseConnection buildDatabaseConnection(Connection jdbcConnection) throws DatabaseException {
         try {
-            return new DatabaseConnection(jdbcConnection, new DatabaseConfig(), "PUBLIC");
+            DatabaseConfig config = new DatabaseConfig();
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+            return new DatabaseConnection(jdbcConnection, config, "PUBLIC", metadataManager);
         } catch (DatabaseUnitException exc) {
             throw new DatabaseException(exc);
         }

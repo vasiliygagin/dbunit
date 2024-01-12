@@ -29,6 +29,7 @@ import org.dbunit.assertion.DefaultFailureHandler;
 import org.dbunit.assertion.SimpleAssert;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
@@ -106,7 +107,8 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
 
     protected final DatabaseConnection buildConnection(DatabaseConfig config, Connection conn)
             throws DatabaseUnitException {
-        return new DatabaseConnection(conn, config, getSchema());
+        MetadataManager metadataManager = new MetadataManager(conn, config, null, getSchema());
+        return new DatabaseConnection(conn, config, getSchema(), metadataManager);
     }
 
     @Override

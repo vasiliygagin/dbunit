@@ -16,12 +16,14 @@
 
 package com.github.springtestdbunit;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 public class TransactionAwareConnectionHelper {
@@ -42,7 +44,10 @@ public class TransactionAwareConnectionHelper {
      * @throws SQLException
      */
     public static DatabaseDataSourceConnection newConnection(DataSource dataSource) throws SQLException {
-        return new DatabaseDataSourceConnection(makeTransactionAware(dataSource), new DatabaseConfig(), null, null,
-                null);
+        DatabaseConfig config = new DatabaseConfig();
+        Connection jdbcConnection = dataSource.getConnection();
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        return new DatabaseDataSourceConnection(makeTransactionAware(dataSource), config, null, null, null,
+                metadataManager);
     }
 }

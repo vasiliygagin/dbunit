@@ -24,6 +24,7 @@ package org.dbunit.database;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
@@ -100,8 +101,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+        MetadataManager metadataManager = new MetadataManager(_connection.getConnection(), config, null,
                 _connection.getSchema());
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema(), metadataManager);
 
         IDataSet dataSet = connection.createDataSet();
         String[] actualNames = dataSet.getTableNames();
@@ -121,8 +124,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+        MetadataManager metadataManager = new MetadataManager(_connection.getConnection(), config, null,
                 _connection.getSchema());
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema(), metadataManager);
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getColumns();
@@ -140,8 +145,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+        MetadataManager metadataManager = new MetadataManager(_connection.getConnection(), config, null,
                 _connection.getSchema());
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema(), metadataManager);
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getPrimaryKeys();
@@ -170,8 +177,10 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
 
         DatabaseConfig config = new DatabaseConfig();
         config.setPrimaryKeysFilter(filter);
-        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+        MetadataManager metadataManager = new MetadataManager(_connection.getConnection(), config, null,
                 _connection.getSchema());
+        IDatabaseConnection connection = new DatabaseConnection(_connection.getConnection(), config,
+                _connection.getSchema(), metadataManager);
 
         ITableMetaData metaData = connection.createDataSet().getTableMetaData(tableName);
         Column[] columns = metaData.getPrimaryKeys();

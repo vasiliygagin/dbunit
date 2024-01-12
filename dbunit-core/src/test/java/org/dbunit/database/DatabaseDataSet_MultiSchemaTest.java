@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.H2Environment;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -304,7 +305,8 @@ public class DatabaseDataSet_MultiSchemaTest extends AbstractDatabaseTest {
         config.setQualifiedTableNames(useQualifiedTableNames);
         config.setDataTypeFactory(new H2DataTypeFactory());
         config.setMetadataHandler(testMetadataHandler);
-        connectionTest = new DatabaseConnection(jdbcConnection, config, schema);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, schema);
+        connectionTest = new DatabaseConnection(jdbcConnection, config, schema, metadataManager);
     }
 
     private static class TestMetadataHandler extends DefaultMetadataHandler {

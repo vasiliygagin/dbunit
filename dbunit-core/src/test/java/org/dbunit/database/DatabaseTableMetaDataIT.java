@@ -37,6 +37,7 @@ import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.HsqldbEnvironment;
 import org.dbunit.TestFeature;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.IDataSet;
@@ -63,6 +64,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     }
 
     protected IDataSet createDataSet() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         return customizedConnection.createDataSet();
     }
 
@@ -163,8 +165,11 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         newConfig.setDataTypeFactory(dataTypeFactory);
         newConfig.freese();
 
-        DatabaseConnection customizedConnection = new DatabaseConnection(this.customizedConnection.getConnection(),
-                newConfig, this.customizedConnection.getSchema());
+        DatabaseConnection customizedConnection1 = database.getConnection();
+        MetadataManager metadataManager = new MetadataManager(customizedConnection1.getConnection(), newConfig, null,
+                customizedConnection1.getSchema());
+        DatabaseConnection customizedConnection = new DatabaseConnection(customizedConnection1.getConnection(),
+                newConfig, customizedConnection1.getSchema(), metadataManager);
 
         String tableName = "EMPTY_MULTITYPE_TABLE";
         ITableMetaData metaData = customizedConnection.createDataSet().getTableMetaData(tableName);
@@ -253,7 +258,8 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 //            String tableName = "empty_multitype_table";
             String tableName = "EMPTY_MULTITYPE_TABLE";
 
-            IDataSet dataSet = this.customizedConnection.createDataSet();
+            DatabaseConnection customizedConnection = database.getConnection();
+            IDataSet dataSet = customizedConnection.createDataSet();
             ITable table = dataSet.getTable(tableName);
             // Should now find the table, regardless that we gave the tableName in lowerCase
             assertNotNull("Table '" + tableName + "' was not found", table);
@@ -331,6 +337,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testFullyQualifiedTableName() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String schema = environment.getSchema();
 
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);
@@ -342,6 +349,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Test
     public void testDbStoresUpperCaseTableNames() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         IDatabaseConnection connection = database.getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesUpperCaseIdentifiers()) {
@@ -357,6 +365,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Test
     public void testDbStoresLowerCaseTableNames() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         IDatabaseConnection connection = database.getConnection();
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesLowerCaseIdentifiers()) {

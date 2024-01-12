@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -167,6 +168,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteAndNoPrimaryKey() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         IDataSet dataSet = customizedConnection.createDataSet();
         ITableMetaData metaData = dataSet.getTableMetaData("TEST_TABLE");
         try {
@@ -204,6 +206,7 @@ public class DeleteOperationIT extends AbstractDatabaseIT {
         assertEquals("before", "1", tableBefore.getValue(1, columnName).toString());
         assertEquals("before", "2", tableBefore.getValue(2, columnName).toString());
 
+        DatabaseConnection customizedConnection = database.getConnection();
         DatabaseOperation.DELETE.execute(customizedConnection, dataSet);
 
         ITable tableAfter = createOrderedTable(tableName, columnName);

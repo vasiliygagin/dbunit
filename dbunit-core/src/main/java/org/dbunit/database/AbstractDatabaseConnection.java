@@ -60,13 +60,13 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     final DatabaseConfig _databaseConfig;
 
     public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config, String defaultCatalog,
-            String defaultSchema) {
+            String defaultSchema, MetadataManager metadataManager) {
+        this.metadataManager = metadataManager;
         if (jdbcConnection == null) {
             throw new IllegalArgumentException("The parameter 'connection' must not be null");
         }
         this.jdbcConnection = jdbcConnection;
         _databaseConfig = config;
-        metadataManager = new MetadataManager(jdbcConnection, config, defaultCatalog, defaultSchema);
     }
 
     ////////////////////////////////////////////////////////////////////////////

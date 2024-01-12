@@ -34,6 +34,7 @@ import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.H2Environment;
 import org.dbunit.HsqldbEnvironment;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
@@ -146,7 +147,8 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/h2_multischema_fk_test.sql"));
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
-        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
 
         final IDataSet databaseDataset = connection.createDataSet();
         final ITableFilter filter = new DatabaseSequenceFilter(connection);

@@ -30,9 +30,10 @@ import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
-import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.TestFeature;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -100,6 +101,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
     }
 
     private void testExecute(IDataSet dataSet) throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         ITable[] tablesBefore = DataSetUtils.getTables(customizedConnection.createDataSet());
 //        InsertIdentityOperation.CLEAN_INSERT.execute(_connection, dataSet);
         InsertIdentityOperation.INSERT.execute(customizedConnection, dataSet);
@@ -134,6 +136,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
      */
     @Test
     public void testIdentityInsertNoPK() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         assumeTrue(environmentHasInsertIdentityFeature());
         Reader in = TestUtils.getFileReader("xml/insertIdentityOperationTestNoPK.xml");
         IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
@@ -160,6 +163,7 @@ public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testSetCustomIdentityColumnFilter() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         assumeTrue(environmentHasInsertIdentityFeature());
         customizedConnection.getDatabaseConfig().setIdentityFilter(IDENTITY_FILTER_INVALID);
         try {

@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
@@ -69,7 +70,9 @@ public class DatabaseEnvironment {
             Class.forName(name);
             final Connection connection = DriverManager.getConnection(_profile.getConnectionUrl(), _profile.getUser(),
                     _profile.getPassword());
-            _connection = new DatabaseConnection(connection, new DatabaseConfig(), _profile.getSchema());
+            DatabaseConfig config = new DatabaseConfig();
+            MetadataManager metadataManager = new MetadataManager(connection, config, null, _profile.getSchema());
+            _connection = new DatabaseConnection(connection, config, _profile.getSchema(), metadataManager);
         }
         return _connection;
     }

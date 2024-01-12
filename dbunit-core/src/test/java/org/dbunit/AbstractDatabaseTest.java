@@ -11,13 +11,19 @@ import java.io.FileReader;
 import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
+import org.dbunit.junit.DbUnitFacade;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 // TODO needs to be renamed to IT
 public abstract class AbstractDatabaseTest {
+
+    @Rule
+    public final DbUnitFacade dbUnit = new DbUnitFacade();
 
     protected final DatabaseTestingEnvironment environment;
     protected Database database;
@@ -45,7 +51,7 @@ public abstract class AbstractDatabaseTest {
      * Chance to overwrite db
      */
     protected Database doOpenDatabase() throws Exception {
-        return environment.openDefaultDatabase();
+        return environment.openPopulatedDatabase();
     }
 
     /**
@@ -71,7 +77,10 @@ public abstract class AbstractDatabaseTest {
         customizer.accept(newConfig);
         newConfig.setCaseSensitiveTableNames(true);
         newConfig.freese();
-        return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema());
+        MetadataManager metadataManager = new MetadataManager(database.getJdbcConnection(), newConfig, null,
+                environment.getSchema());
+        return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema(),
+                metadataManager);
     }
 
     protected FileReader fileReader(String fileName) throws FileNotFoundException {

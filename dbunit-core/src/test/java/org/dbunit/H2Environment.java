@@ -21,8 +21,6 @@
 
 package org.dbunit;
 
-import org.dbunit.operation.DatabaseOperation;
-
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class H2Environment extends DatabaseTestingEnvironment {
@@ -36,11 +34,6 @@ public class H2Environment extends DatabaseTestingEnvironment {
     @Override
     protected String buildConnectionUrl(String databaseName) {
         return "jdbc:h2:" + databaseName;
-    }
-
-    @Override
-    public void closeConnection() throws Exception {
-        DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
     }
 
     private static class H2DatabaseProfile extends DatabaseTestingProfile {

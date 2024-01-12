@@ -36,6 +36,7 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
@@ -93,7 +94,8 @@ public class CsvURLProducerTest {
         HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
         Connection connection2 = DriverManagerConnectionsFactory.getIT().fetchConnection(Object.class.getName(), url,
                 user, password);
-        return new DatabaseConnection(connection2, config);
+        MetadataManager metadataManager = new MetadataManager(connection2, config, null, null);
+        return new DatabaseConnection(connection2, config, metadataManager);
     }
 
     @Before

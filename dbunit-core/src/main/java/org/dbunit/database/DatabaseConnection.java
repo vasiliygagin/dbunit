@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,12 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *
      * @param connection the adapted JDBC connection
      * @param config TODO
+     * @param metadataManager
      * @throws DatabaseUnitException
      */
-    public DatabaseConnection(Connection connection, DatabaseConfig config) throws DatabaseUnitException {
-        this(connection, config, null);
+    public DatabaseConnection(Connection connection, DatabaseConfig config, MetadataManager metadataManager)
+            throws DatabaseUnitException {
+        this(connection, config, null, metadataManager);
     }
 
     /**
@@ -75,11 +78,12 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      * </code>        The first one creates the "default" user where everything
      *                   is interpreted by oracle in uppercase. The second one is
      *                   completely lowercase because of the quotes.
+     * @param metadataManager
      * @throws DatabaseUnitException
      */
-    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema)
-            throws DatabaseUnitException {
-        this(connection, config, schema, false);
+    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema,
+            MetadataManager metadataManager) throws DatabaseUnitException {
+        this(connection, config, schema, false, metadataManager);
     }
 
     /**
@@ -102,6 +106,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *                   schema does not exist according to the DatabaseMetaData. If
      *                   <code>false</code> the validation will only print a warning
      *                   if the schema was not found.
+     * @param metadataManager
      * @since 2.3.0
      * @throws DatabaseUnitException If the <code>validate</code> parameter is
      *                               <code>true</code> and the validation of the
@@ -111,9 +116,9 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      *                               driver does not implement the
      *                               metaData.getSchemas() method properly.
      */
-    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema, boolean validate)
-            throws DatabaseUnitException {
-        super(connection, config, null, schema);
+    public DatabaseConnection(Connection connection, DatabaseConfig config, String schema, boolean validate,
+            MetadataManager metadataManager) throws DatabaseUnitException {
+        super(connection, config, null, schema, metadataManager);
 
         if (schema != null) {
             _schema = SQLHelper.correctCase(schema, connection);

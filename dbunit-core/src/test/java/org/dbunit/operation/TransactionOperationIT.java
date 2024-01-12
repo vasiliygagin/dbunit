@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.TestFeature;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.XmlDataSet;
@@ -61,6 +62,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteCommit() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -83,6 +85,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExclusiveTransaction() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);
@@ -112,6 +115,7 @@ public class TransactionOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteRollback() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String tableName = "TEST_TABLE";
         Reader in = new FileReader(TestUtils.getFile("xml/transactionOperationTest.xml"));
         IDataSet xmlDataSet = new XmlDataSet(in);

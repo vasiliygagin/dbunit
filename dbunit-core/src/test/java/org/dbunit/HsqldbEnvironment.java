@@ -24,7 +24,6 @@ package org.dbunit;
 import java.sql.SQLException;
 
 import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.operation.DatabaseOperation;
 
 /**
  * @author Manuel Laflamme
@@ -37,11 +36,6 @@ public class HsqldbEnvironment extends DatabaseTestingEnvironment {
 
     public HsqldbEnvironment() throws Exception {
         super(databaseName, new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
-    }
-
-    @Override
-    public void closeConnection() throws Exception {
-        DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
     }
 
     @Override

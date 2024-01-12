@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
 import org.dbunit.TestFeature;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -438,6 +439,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
             Reader in = new FileReader(TestUtils.getFile("xml/clobInsertTest.xml"));
             IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
+            DatabaseConnection customizedConnection = database.getConnection();
             assertEquals("count before", 0, customizedConnection.getRowCount(tableName));
 
             DatabaseOperation.INSERT.execute(customizedConnection, xmlDataSet);
@@ -457,6 +459,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
             Reader in = new FileReader(TestUtils.getFile("xml/blobInsertTest.xml"));
             IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
+            DatabaseConnection customizedConnection = database.getConnection();
             assertEquals("count before", 0, customizedConnection.getRowCount(tableName));
 
             DatabaseOperation.INSERT.execute(customizedConnection, xmlDataSet);
@@ -476,6 +479,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
             Reader in = new FileReader(TestUtils.getFile("xml/sdoGeometryInsertTest.xml"));
             IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
+            DatabaseConnection customizedConnection = database.getConnection();
             assertEquals("count before", 0, customizedConnection.getRowCount(tableName));
 
             DatabaseOperation.INSERT.execute(customizedConnection, xmlDataSet);
@@ -495,6 +499,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
             Reader in = new FileReader(TestUtils.getFile("xml/xmlTypeInsertTest.xml"));
             IDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(in);
 
+            DatabaseConnection customizedConnection = database.getConnection();
             assertEquals("count before", 0, customizedConnection.getRowCount(tableName));
 
             DatabaseOperation.INSERT.execute(customizedConnection, xmlDataSet);
@@ -510,6 +515,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
         Reader in = TestUtils.getFileReader("xml/missingColumnTest.xml");
         IDataSet xmlDataSet = new XmlDataSet(in);
 
+        DatabaseConnection customizedConnection = database.getConnection();
         ITable[] tablesBefore = DataSetUtils.getTables(customizedConnection.createDataSet());
         DatabaseOperation.INSERT.execute(customizedConnection, xmlDataSet);
         ITable[] tablesAfter = DataSetUtils.getTables(customizedConnection.createDataSet());
@@ -622,6 +628,7 @@ public class InsertOperationIT extends AbstractDatabaseIT {
     }
 
     private void testExecute(IDataSet dataSet) throws Exception, SQLException {
+        DatabaseConnection customizedConnection = database.getConnection();
         ITable[] tablesBefore = DataSetUtils.getTables(customizedConnection.createDataSet());
         DatabaseOperation.INSERT.execute(customizedConnection, dataSet);
         ITable[] tablesAfter = DataSetUtils.getTables(customizedConnection.createDataSet());

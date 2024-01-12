@@ -25,6 +25,7 @@ import java.sql.Connection;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 
 /**
  *
@@ -35,8 +36,10 @@ import org.dbunit.database.DatabaseConnection;
  */
 @Deprecated
 public class MySqlConnection extends DatabaseConnection {
-    public MySqlConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, buildConfig(), schema);
+
+    public MySqlConnection(Connection connection, String schema, MetadataManager metadataManager)
+            throws DatabaseUnitException {
+        super(connection, buildConfig(), schema, metadataManager);
     }
 
     static DatabaseConfig buildConfig() {

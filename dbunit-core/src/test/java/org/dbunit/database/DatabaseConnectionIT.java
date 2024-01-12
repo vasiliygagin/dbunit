@@ -28,11 +28,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.util.Locale;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.ITable;
 import org.junit.Test;
 
@@ -53,8 +55,12 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
 
     @Test
     public void testCreateNullConnection() throws Exception {
+        IDatabaseConnection validConnection = getConnection32();
         try {
-            new DatabaseConnection(null, new DatabaseConfig());
+            Connection jdbcConnection = validConnection.getConnection();
+            DatabaseConfig config = new DatabaseConfig();
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+            new DatabaseConnection(null, config, metadataManager);
             fail("Should not be able to create a database connection without a JDBC connection");
         } catch (IllegalArgumentException expected) {
             // all right
@@ -68,7 +74,10 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         // Try to create a database connection with an invalid schema
         try {
             boolean validate = true;
-            new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(), schema, validate);
+            DatabaseConfig config = new DatabaseConfig();
+            Connection jdbcConnection = validConnection.getConnection();
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, schema);
+            new DatabaseConnection(jdbcConnection, config, schema, validate, metadataManager);
             fail("Should not be able to create a database connection object with an unknown schema.");
         } catch (DatabaseUnitException expected) {
             String expectedMsg = "The given schema '" + convertString(schema) + "' does not exist.";
@@ -82,8 +91,11 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         IDatabaseConnection validConnection = getConnection32();
         // Try to create a database connection with an invalid schema
         boolean validate = false;
-        DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(), new DatabaseConfig(),
-                schema, validate);
+        Connection jdbcConnection = validConnection.getConnection();
+        DatabaseConfig config = new DatabaseConfig();
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, schema);
+        DatabaseConnection dbConnection = new DatabaseConnection(jdbcConnection, config, schema, validate,
+                metadataManager);
         assertNotNull(dbConnection);
     }
 
@@ -96,8 +108,12 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         DatabaseMetaData metaData = validConnection.getConnection().getMetaData();
         if (metaData.storesUpperCaseIdentifiers()) {
             boolean validate = true;
-            DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(),
-                    new DatabaseConfig(), schema.toLowerCase(Locale.ENGLISH), validate);
+            Connection jdbcConnection = validConnection.getConnection();
+            DatabaseConfig config = new DatabaseConfig();
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null,
+                    schema.toLowerCase(Locale.ENGLISH));
+            DatabaseConnection dbConnection = new DatabaseConnection(jdbcConnection, config,
+                    schema.toLowerCase(Locale.ENGLISH), validate, metadataManager);
             assertNotNull(dbConnection);
             assertEquals(schema.toUpperCase(Locale.ENGLISH), dbConnection.getSchema());
         } else {
@@ -115,8 +131,12 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         DatabaseMetaData metaData = validConnection.getConnection().getMetaData();
         if (metaData.storesLowerCaseIdentifiers()) {
             boolean validate = true;
-            DatabaseConnection dbConnection = new DatabaseConnection(validConnection.getConnection(),
-                    new DatabaseConfig(), schema.toUpperCase(Locale.ENGLISH), validate);
+            Connection jdbcConnection = validConnection.getConnection();
+            DatabaseConfig config = new DatabaseConfig();
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null,
+                    schema.toUpperCase(Locale.ENGLISH));
+            DatabaseConnection dbConnection = new DatabaseConnection(jdbcConnection, config,
+                    schema.toUpperCase(Locale.ENGLISH), validate, metadataManager);
             assertNotNull(dbConnection);
             assertEquals(schema.toLowerCase(Locale.ENGLISH), dbConnection.getSchema());
         } else {
