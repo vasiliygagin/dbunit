@@ -58,13 +58,13 @@ public class SingleConnectionDataSourceTest {
     @Test
     public void getConnection() throws Exception {
         Connection result = tested.getConnection();
-        assertEquals(connection, ((UncloseableConnection) result).delegate);
+        assertEquals(connection, result);
     }
 
     @Test
     public void getConnectionWithcredentials() throws Exception {
         Connection result = tested.getConnection(null, null);
-        assertEquals(connection, ((UncloseableConnection) result).delegate);
+        assertEquals(connection, result);
     }
 
     @Test

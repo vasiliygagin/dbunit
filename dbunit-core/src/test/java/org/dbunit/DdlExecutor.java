@@ -121,8 +121,9 @@ public final class DdlExecutor {
      *                         ignored.
      * @throws Exception
      */
-    public static void executeDdlFile(final File ddlFile, final Connection connection, final boolean multiLineSupport,
+    public static void executeDdlFile(File ddlFile, final Connection connection, final boolean multiLineSupport,
             final boolean ignoreErrors) throws Exception {
+        ddlFile = ddlFile.getAbsoluteFile();
         final String sql = readSqlFromFile(ddlFile);
 
         if (!multiLineSupport) {

@@ -1,5 +1,14 @@
-<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Manuel Laflamme (Java development) -->
 <dataset>
+
+    <table name="PARENT">
+        <column>ID</column>
+        <column>DESC</column>
+        <row>
+            <value>3</value>
+            <value>PARENT 3</value>
+        </row>
+    </table>
+
 	<table name="TEST_TABLE">
 		<column>COLUMN0</column>
 		<column>COLUMN1</column>

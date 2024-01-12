@@ -58,6 +58,9 @@ public class TestContext {
      * @param connectionSource
      */
     public void addConnecionSource(String dataSourceName, ConnectionSource connectionSource) {
+        if (connectionSources.containsKey(dataSourceName)) {
+            throw new IllegalStateException("Datasource with name [" + dataSourceName + "] is already registered");
+        }
         connectionSources.put(dataSourceName, connectionSource);
 
     }
@@ -70,6 +73,18 @@ public class TestContext {
             return connectionSources.values().iterator().next();
         }
         throw new AssertionError("No connections registered for test case");
+    }
+
+    public void rollbackConnections() {
+        for (DatabaseConnection connection : connections.values()) {
+            connection.rollback();
+        }
+    }
+
+    public void shutdownConnections() {
+        for (DatabaseConnection connection : connections.values()) {
+            connection.shutdown();
+        }
     }
 
     public void releaseConnections() {

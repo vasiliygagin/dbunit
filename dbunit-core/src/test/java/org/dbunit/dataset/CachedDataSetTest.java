@@ -42,6 +42,22 @@ public class CachedDataSetTest extends AbstractDataSetDecoratorTest {
     }
 
     @Override
+    protected String[] getExpectedNames() throws Exception {
+        return new String[] { "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE", "ONLY_PK_TABLE",
+                "EMPTY_MULTITYPE_TABLE", };
+    }
+
+    @Override
+    protected String[] getExpectedLowerNames() throws Exception {
+        String[] names = getExpectedNames();
+        for (int i = 0; i < names.length; i++) {
+            names[i] = names[i].toLowerCase();
+        }
+
+        return names;
+    }
+
+    @Override
     protected IDataSet createDataSet() throws Exception {
         FileReader reader = new FileReader(FlatXmlDataSetTest.DATASET_FILE);
         return new CachedDataSet(new FlatXmlProducer(new InputSource(reader)));

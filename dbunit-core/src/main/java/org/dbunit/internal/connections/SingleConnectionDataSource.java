@@ -24,9 +24,9 @@ public class SingleConnectionDataSource implements DataSource {
         if (connection == null) {
             throw new IllegalArgumentException("The parameter 'connection' must not be null");
         }
-        if (!(connection instanceof UncloseableConnection)) {
-            connection = new UncloseableConnection(connection);
-        }
+//        if (!(connection instanceof UncloseableConnection)) {
+//            connection = new UncloseableConnection(connection);
+//        }
         this.connection = connection;
     }
 

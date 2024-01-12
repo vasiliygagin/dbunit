@@ -44,6 +44,12 @@ public class FilteredDataSetTest extends AbstractDataSetTest {
     }
 
     @Override
+    protected String[] getExpectedNames() throws Exception {
+        return new String[] { "PARENT", "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE", "ONLY_PK_TABLE",
+                "EMPTY_MULTITYPE_TABLE", };
+    }
+
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSet dataSet1 = new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
         IDataSet dataSet2 = new XmlDataSet(TestUtils.getFileReader("xml/filteredDataSetTest.xml"));

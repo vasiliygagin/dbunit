@@ -44,6 +44,12 @@ public class StreamingDataSetTest extends ForwardOnlyDataSetTest {
     }
 
     @Override
+    protected String[] getExpectedNames() throws Exception {
+        return new String[] { "TEST_TABLE", "SECOND_TABLE", "EMPTY_TABLE", "PK_TABLE", "ONLY_PK_TABLE",
+                "EMPTY_MULTITYPE_TABLE", };
+    }
+
+    @Override
     protected IDataSet createDataSet() throws Exception {
         IDataSetProducer source = new FlatXmlProducer(new InputSource(new FileReader(FlatXmlDataSetTest.DATASET_FILE)));
         return new StreamingDataSet(source);

@@ -42,7 +42,7 @@ public class DatabaseConnectionManager {
         ConnectionSource connectionSource = registeredConnectionSources.get(key);
         if (connectionSource == null) {
             connectionSource = new DataSourceConnectionSource(dataSource);
-            initDB(connectionSource);
+//            initDB(connectionSource);
             registeredConnectionSources.put(key, connectionSource);
         }
         return connectionSource;

@@ -24,8 +24,6 @@ import static org.dbunit.junit4.DbunitTestCaseTestRunner.assertAfter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -39,20 +37,18 @@ import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.junit.DriverManagerConnection;
 import org.dbunit.operation.DatabaseOperation;
+import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * @author Vasiliy Gagin
  */
-@RunWith(DbunitTestCaseTestRunner.class)
 @DriverManagerConnection(driver = "org.hsqldb.jdbcDriver", url = "jdbc:hsqldb:mem:.", user = "sa", password = "")
-public class DatabaseTestCase_DataSet_IT extends DatabaseTestCase {
+public class DatabaseTestCase_DataSet_IT extends DatabaseInternalTestCase {
 
     @Override
     protected IDataSet getDataSet() throws Exception {
-        final File file = new File("src/test/resources/xml/dataSetTest.xml");
-        return new XmlDataSet(new FileReader(file));
+        return new XmlDataSet(TestUtils.getFileReader("xml/dataSetTest.xml"));
     }
 
     @Test

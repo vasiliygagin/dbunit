@@ -5,6 +5,9 @@ package org.dbunit;
 
 import static org.junit.Assume.assumeTrue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
@@ -68,5 +71,9 @@ public class AbstractDatabaseTest {
         newConfig.setCaseSensitiveTableNames(true);
         newConfig.freese();
         return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema());
+    }
+
+    protected FileReader fileReader(String fileName) throws FileNotFoundException {
+        return new FileReader(new File(fileName).getAbsoluteFile());
     }
 }

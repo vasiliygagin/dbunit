@@ -26,8 +26,13 @@ public class DbUnitFacade extends DbUnitRule {
 
     @Override
     protected void after() {
+        rollbackConnections();
         releaseConnections();
         super.after();
+    }
+
+    protected void rollbackConnections() {
+        getTestContext().rollbackConnections();
     }
 
     protected void releaseConnections() {
