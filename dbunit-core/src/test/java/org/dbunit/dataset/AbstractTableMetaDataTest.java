@@ -20,13 +20,14 @@
  */
 package org.dbunit.dataset;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import junit.framework.TestCase;
-
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
+import org.junit.Test;
 
 import com.mockobjects.sql.MockDatabaseMetaData;
 
@@ -36,18 +37,23 @@ import com.mockobjects.sql.MockDatabaseMetaData;
  * @version $Revision: $ $Date: $
  * @since 2.4.6
  */
-public class AbstractTableMetaDataTest extends TestCase {
+public class AbstractTableMetaDataTest {
 
+    @Test
     public void testValidator() throws Exception {
         AbstractTableMetaData metaData = new AbstractTableMetaData() {
+
+            @Override
             public Column[] getColumns() throws DataSetException {
                 return null;
             }
 
+            @Override
             public Column[] getPrimaryKeys() throws DataSetException {
                 return null;
             }
 
+            @Override
             public String getTableName() {
                 return null;
             }
@@ -56,6 +62,8 @@ public class AbstractTableMetaDataTest extends TestCase {
 //        DataTypeFactoryValidator validator = new DataTypeFactoryValidator();
         IDataTypeFactory dataTypeFactory = new MsSqlDataTypeFactory();
         DatabaseMetaData databaseMetaData = new MockDatabaseMetaData() {
+
+            @Override
             public String getDatabaseProductName() throws SQLException {
                 return "Microsoft SQL Server";
             }
@@ -64,5 +72,4 @@ public class AbstractTableMetaDataTest extends TestCase {
         assertEquals("Validation message should be null because DB product should be supported", null,
                 validationMessage);
     }
-
 }

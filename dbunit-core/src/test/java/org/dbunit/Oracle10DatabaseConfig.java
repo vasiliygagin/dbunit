@@ -11,7 +11,9 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  *
  */
 public final class Oracle10DatabaseConfig extends DatabaseConfig {
+
     {
         setDataTypeFactory(new Oracle10DataTypeFactory());
+        setIgnoredTablePredicate(tm -> tm.tableName.startsWith("BIN$"));
     }
 }

@@ -59,7 +59,6 @@
         <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
         <pmdPluginVersion>3.8</pmdPluginVersion>
         <projectInfoReportsPluginVersion>2.9</projectInfoReportsPluginVersion>
-        <propertiesPluginVersion>1.0.0</propertiesPluginVersion>
         <releasePluginVersion>2.5.3</releasePluginVersion>
         <resourcesPluginVersion>3.0.2</resourcesPluginVersion>
         <sitePluginVersion>3.7.1</sitePluginVersion>
@@ -285,19 +284,6 @@ enable this to generate coverage report HTML files during build (same as site)
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>${pmdPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>properties-maven-plugin</artifactId>
-                    <version>${propertiesPluginVersion}</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>read-project-properties</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

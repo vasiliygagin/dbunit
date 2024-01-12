@@ -61,7 +61,7 @@ public abstract class AbstractHSQLTestCase extends AbstractDatabaseTest {
 
     @Override
     protected boolean checkEnvironment() {
-        return environment instanceof HypersonicEnvironment;
+        return environment instanceof HsqldbEnvironment;
     }
 
     @Before

@@ -26,7 +26,7 @@ package org.dbunit;
  * @version $Revision$
  * @since DbUnit 2.4.7
  */
-public class PostgresqlEnvironment extends DatabaseEnvironment {
+public class PostgresqlEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = "//localhost/dbunit";
 
@@ -44,7 +44,7 @@ public class PostgresqlEnvironment extends DatabaseEnvironment {
         return str == null ? null : str.toLowerCase();
     }
 
-    private static class PostgresqlDatabaseProfile extends DatabaseProfile {
+    private static class PostgresqlDatabaseProfile extends DatabaseTestingProfile {
 
         public PostgresqlDatabaseProfile() {
             super("org.postgresql.Driver", "jdbc:postgresql:" + databaseName, "public", "dbunit", "dbunit",

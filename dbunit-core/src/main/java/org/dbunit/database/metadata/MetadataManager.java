@@ -96,7 +96,6 @@ public class MetadataManager {
         return jdbcConnectione.getMetaData();
     }
 
-    // TODO: want to get catalog schema mess out of here?
     public List<TableMetadata> getTables(SchemaMetadata schemaMetadata) throws SQLException {
         if (schemaMetadata == null) {
             LOGGER.warn("Whole database metadata requested, could be very expensive");
@@ -141,12 +140,17 @@ public class MetadataManager {
     private List<TableMetadata> loadSchemaTables(SchemaMetadata schema) throws SQLException {
         DatabaseMetaData databaseMetaData = jdbcConnectione.getMetaData();
         String[] tableTypes = config.getTableTypes();
+        IgnoredTablePredicate ignoredTablePredicate = config.getIgnoredTablePredicate();
         ResultSet resultSet = databaseMetaData.getTables(schema.catalog, schema.schema, "%", tableTypes);
 
         List<TableMetadata> tableMetadatas = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                tableMetadatas.add(toTableMetadata(resultSet));
+                TableMetadata tableMetadata = toTableMetadata(resultSet);
+                if (ignoredTablePredicate.shouldIgnore(tableMetadata)) {
+                    continue;
+                }
+                tableMetadatas.add(tableMetadata);
             }
         } finally {
             resultSet.close();

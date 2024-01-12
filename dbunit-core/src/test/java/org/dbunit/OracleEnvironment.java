@@ -34,7 +34,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @version $Revision$
  * @since May 2, 2002
  */
-public class OracleEnvironment extends DatabaseEnvironment {
+public class OracleEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = "@localhost:1521:XE";
 
@@ -47,7 +47,7 @@ public class OracleEnvironment extends DatabaseEnvironment {
      * @param oracle10DatabaseConfig
      * @throws Exception
      */
-    protected OracleEnvironment(DatabaseProfile profile, DatabaseConfig databaseConfig) throws Exception {
+    protected OracleEnvironment(DatabaseTestingProfile profile, DatabaseConfig databaseConfig) throws Exception {
         super(databaseName, profile, databaseConfig);
     }
 
@@ -67,7 +67,7 @@ public class OracleEnvironment extends DatabaseEnvironment {
     /**
      *
      */
-    private static class OracleDatabaseProfile extends DatabaseProfile {
+    private static class OracleDatabaseProfile extends DatabaseTestingProfile {
 
         public OracleDatabaseProfile() {
             super("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:" + databaseName, "DBUNIT", "dbunit", "dbunit",

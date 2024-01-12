@@ -25,7 +25,7 @@ import java.sql.SQLException;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
-public class DerbyEnvironment extends DatabaseEnvironment {
+public class DerbyEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = ".";
     private static final String url = "jdbc:derby:memory:" + databaseName;
@@ -34,7 +34,7 @@ public class DerbyEnvironment extends DatabaseEnvironment {
         super(databaseName, prepare(new DerbyDatabaseProfile()), new DatabaseConfig());
     }
 
-    private static DatabaseProfile prepare(DatabaseProfile profile) {
+    private static DatabaseTestingProfile prepare(DatabaseTestingProfile profile) {
         // FileHelper.deleteDirectory(new File("./target/derby_db"));
         return profile;
     }
@@ -44,7 +44,7 @@ public class DerbyEnvironment extends DatabaseEnvironment {
         return url + ";create=true";
     }
 
-    private static class DerbyDatabaseProfile extends DatabaseProfile {
+    private static class DerbyDatabaseProfile extends DatabaseTestingProfile {
 
         /**
          *

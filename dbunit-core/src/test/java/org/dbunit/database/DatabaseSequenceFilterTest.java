@@ -33,7 +33,7 @@ import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.H2Environment;
-import org.dbunit.HypersonicEnvironment;
+import org.dbunit.HsqldbEnvironment;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
@@ -53,7 +53,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
 
     @Override
     protected boolean checkEnvironment() {
-        return environment instanceof HypersonicEnvironment;
+        return environment instanceof HsqldbEnvironment;
     }
 
     @Override

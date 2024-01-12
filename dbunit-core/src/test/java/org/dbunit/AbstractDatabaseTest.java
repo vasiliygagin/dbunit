@@ -16,9 +16,10 @@ import org.junit.Before;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
-public class AbstractDatabaseTest {
+// TODO needs to be renamed to IT
+public abstract class AbstractDatabaseTest {
 
-    protected final DatabaseEnvironment environment;
+    protected final DatabaseTestingEnvironment environment;
     protected Database database;
     private boolean environmentOk;
 

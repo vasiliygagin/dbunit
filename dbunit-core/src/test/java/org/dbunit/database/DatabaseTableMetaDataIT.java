@@ -35,7 +35,7 @@ import java.util.Locale;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
-import org.dbunit.HypersonicEnvironment;
+import org.dbunit.HsqldbEnvironment;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
@@ -271,7 +271,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        assumeTrue(environment instanceof HypersonicEnvironment);
+        assumeTrue(environment instanceof HsqldbEnvironment);
         Database database = environment.openDatabase("tempdb");
         DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
                 TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
@@ -293,7 +293,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
 
     @Test
     public void testCaseSensitive() throws Exception {
-        assumeTrue(environment instanceof HypersonicEnvironment);
+        assumeTrue(environment instanceof HsqldbEnvironment);
         // TODO: make it work with derby and other databases
         Database database = environment.openDatabase("tempdb");
         DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),

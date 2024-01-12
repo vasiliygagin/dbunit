@@ -61,7 +61,6 @@
         <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
         <pmdPluginVersion>3.8</pmdPluginVersion>
         <projectInfoReportsPluginVersion>2.9</projectInfoReportsPluginVersion>
-        <propertiesPluginVersion>1.0.0</propertiesPluginVersion>
         <releasePluginVersion>2.5.3</releasePluginVersion>
         <resourcesPluginVersion>3.0.2</resourcesPluginVersion>
         <sitePluginVersion>3.7.1</sitePluginVersion>
@@ -385,19 +384,6 @@ enable this to generate coverage report HTML files during build (same as site)
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>${pmdPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>properties-maven-plugin</artifactId>
-                    <version>${propertiesPluginVersion}</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>read-project-properties</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1039,20 +1025,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>h2</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/h2-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.h2database</groupId>
@@ -1081,20 +1053,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "original" OracleDataTypeFactory (NOT 10g) with Oracle 11 JDBC
             driver for Java 6-8 -->
             <id>oracle-ojdbc6</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle6-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1110,20 +1068,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "original" OracleDataTypeFactory (NOT 10g) with Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle-ojdbc8</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1139,20 +1083,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with current Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle10-ojdbc8</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1168,20 +1098,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with older Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle10-ojdbc8v12</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1199,20 +1115,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with current Oracle 11 JDBC
             driver for Java 10 -->
             <id>oracle10-ojdbc10</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1226,20 +1128,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>postgresql</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/postgresql-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
@@ -1253,20 +1141,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mysql</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mysql-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>mysql</groupId>
@@ -1280,20 +1154,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mssql41</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mssql41-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
@@ -1307,20 +1167,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mssql2019</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mssql2019-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
@@ -1334,20 +1180,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>db2</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/db2-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <!-- JH_TODO: db2 dependencies -->
             <dependencies>
                 <dependency>

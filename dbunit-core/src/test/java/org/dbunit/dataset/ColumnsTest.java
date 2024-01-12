@@ -20,17 +20,20 @@
  */
 package org.dbunit.dataset;
 
-import org.dbunit.dataset.datatype.DataType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import org.dbunit.dataset.datatype.DataType;
+import org.junit.Test;
 
 /**
  * @author gommma
  * @version $Revision$
  * @since 2.3.0
  */
-public class ColumnsTest extends TestCase {
+public class ColumnsTest {
 
+    @Test
     public void testGetColumn() throws Exception {
         Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("c1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), new Column("c3", DataType.UNKNOWN),
@@ -41,6 +44,7 @@ public class ColumnsTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetColumnCaseInsensitive() throws Exception {
         Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("C1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), new Column("C3", DataType.UNKNOWN),
@@ -51,6 +55,7 @@ public class ColumnsTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetColumnValidated() throws Exception {
         Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("C1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), };
@@ -59,6 +64,7 @@ public class ColumnsTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetColumnValidatedColumnNotFound() throws Exception {
         Column[] columns = { new Column("c0", DataType.UNKNOWN), new Column("C1", DataType.UNKNOWN),
                 new Column("c2", DataType.UNKNOWN), };

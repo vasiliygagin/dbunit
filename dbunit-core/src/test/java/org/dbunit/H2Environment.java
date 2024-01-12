@@ -25,7 +25,7 @@ import org.dbunit.operation.DatabaseOperation;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
-public class H2Environment extends DatabaseEnvironment {
+public class H2Environment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = "target/h2/test";
 
@@ -43,7 +43,7 @@ public class H2Environment extends DatabaseEnvironment {
         DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
     }
 
-    private static class H2DatabaseProfile extends DatabaseProfile {
+    private static class H2DatabaseProfile extends DatabaseTestingProfile {
 
         public H2DatabaseProfile() {
             super("org.h2.Driver", "jdbc:h2:" + databaseName, "PUBLIC", "sa", "", "hypersonic.sql", true,

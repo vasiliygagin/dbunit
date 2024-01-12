@@ -73,7 +73,6 @@ public class DatabaseDataSet implements IDataSet {
     private final Set<SchemaMetadata> loadedSchemas = new HashSet<>();
 
     private final ITableFilterSimple _tableFilter;
-    private final ITableFilterSimple _oracleRecycleBinTableFilter;
 
     private ITable[] cachedTables;
 
@@ -120,7 +119,6 @@ public class DatabaseDataSet implements IDataSet {
         qualifiedTableNamesActive = config.isQualifiedTableNames();
         tableType = config.getTableTypes();
         _tableFilter = tableFilter;
-        _oracleRecycleBinTableFilter = new OracleRecycleBinTableFilter(config);
     }
 
     private String qualifiedNameIfEnabled(String schemaName, String tableName) {
@@ -152,11 +150,6 @@ public class DatabaseDataSet implements IDataSet {
                 if (_tableFilter != null && !_tableFilter.accept(tableName)) {
                     continue;
                 }
-                if (!_oracleRecycleBinTableFilter.accept(tableName)) {
-                    logger.debug("Skipping oracle recycle bin table '{}'", tableName);
-                    continue;
-                }
-
                 tableName = qualifiedNameIfEnabled(schemaName, tableName);
 
                 // Put the table into the table map
@@ -199,10 +192,6 @@ public class DatabaseDataSet implements IDataSet {
                 String tableName = tableMetadata.tableName;
 
                 if (_tableFilter != null && !_tableFilter.accept(tableName)) {
-                    continue;
-                }
-                if (!_oracleRecycleBinTableFilter.accept(tableName)) {
-                    logger.debug("Skipping oracle recycle bin table '{}'", tableName);
                     continue;
                 }
 
@@ -302,31 +291,6 @@ public class DatabaseDataSet implements IDataSet {
                 return schema.toUpperCase(Locale.ENGLISH);
             }
             return schema;
-        }
-    }
-
-    private static class OracleRecycleBinTableFilter implements ITableFilterSimple {
-
-        private final DatabaseConfig _config;
-
-        public OracleRecycleBinTableFilter(DatabaseConfig config) {
-            this._config = config;
-        }
-
-        @Override
-        public boolean accept(String tableName) throws DataSetException {
-            // skip oracle 10g recycle bin system tables if enabled
-//            if (_config.isSkipOracleRecycleBinTables()) {
-            if (_config.isSkipOracleRecycleBinTables()) {
-                // Oracle 10g workaround
-                // don't process system tables (oracle recycle bin tables) which
-                // are reported to the application due a bug in the oracle JDBC driver
-                if (tableName.startsWith("BIN$")) {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 

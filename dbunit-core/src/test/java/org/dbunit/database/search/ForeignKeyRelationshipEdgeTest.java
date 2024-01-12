@@ -29,15 +29,14 @@ import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-import junit.framework.TestCase;
-
 /**
  * @author gommma
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class ForeignKeyRelationshipEdgeTest extends TestCase {
+public class ForeignKeyRelationshipEdgeTest {
+
     private final ForeignKeyRelationshipEdge e1 = new ForeignKeyRelationshipEdge("table1", "table2", "fk_col",
             "pk_col");
     private final ForeignKeyRelationshipEdge equal = new ForeignKeyRelationshipEdge("table1", "table2", "fk_col",
@@ -51,6 +50,7 @@ public class ForeignKeyRelationshipEdgeTest extends TestCase {
             "fk_col", "pk_col") {
     };
 
+    @Test
     public void testEqualsHashCode() {
         // Use gsbase "EqualsTester" library for this - easier and less code for
         // equals/hashCode test

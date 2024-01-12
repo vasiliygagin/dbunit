@@ -31,11 +31,11 @@ import org.dbunit.operation.DatabaseOperation;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class HypersonicEnvironment extends DatabaseEnvironment {
+public class HsqldbEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = ".";
 
-    public HypersonicEnvironment() throws Exception {
+    public HsqldbEnvironment() throws Exception {
         super(databaseName, new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
     }
 
@@ -49,7 +49,7 @@ public class HypersonicEnvironment extends DatabaseEnvironment {
         return "jdbc:hsqldb:mem:" + databaseName;
     }
 
-    private static class HypersonicDatabaseProfile extends DatabaseProfile {
+    private static class HypersonicDatabaseProfile extends DatabaseTestingProfile {
 
         public HypersonicDatabaseProfile() {
             super("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:" + databaseName, "PUBLIC", "sa", "", "hypersonic.sql",

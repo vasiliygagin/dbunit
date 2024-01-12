@@ -30,7 +30,7 @@ import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
-import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.DataSetUtils;
@@ -53,7 +53,7 @@ import org.junit.Test;
  */
 public class InsertIdentityOperationIT extends AbstractDatabaseIT {
 
-    final DatabaseEnvironment environment;
+    final DatabaseTestingEnvironment environment;
 
     public InsertIdentityOperationIT() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();

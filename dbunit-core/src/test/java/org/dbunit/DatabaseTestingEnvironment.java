@@ -39,7 +39,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class DatabaseEnvironment {
+public abstract class DatabaseTestingEnvironment {
 
     private final String defaultDatabaseName;
     private final String schema;
@@ -51,9 +51,9 @@ public abstract class DatabaseEnvironment {
 
     // temp until things are cleaned
     private Database openedDatabase;
-    private DatabaseProfile profile;
+    private DatabaseTestingProfile profile;
 
-    protected DatabaseEnvironment(String defaultDatabaseName, final DatabaseProfile profile,
+    protected DatabaseTestingEnvironment(String defaultDatabaseName, final DatabaseTestingProfile profile,
             DatabaseConfig databaseConfig) throws Exception {
         this.defaultDatabaseName = defaultDatabaseName;
         this.databaseConfig = databaseConfig;

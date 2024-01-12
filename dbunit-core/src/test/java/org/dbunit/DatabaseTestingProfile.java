@@ -24,25 +24,18 @@ package org.dbunit;
 /**
  * @author Vasiliy Gagin
  */
-public class DatabaseProfile {
+public class DatabaseTestingProfile {
 
-    private final String driverClass;
+    public final String driverClass;
+    public final String connectionUrl;
+    public final String schema;
+    public final String user;
+    public final String password;
+    public final String profileDdl;
+    public final boolean profileMultilineSupport;
+    public final String[] unsupportedFeatures;
 
-    private final String connectionUrl;
-
-    private final String schema;
-
-    private final String user;
-
-    private final String password;
-
-    private final String profileDdl;
-
-    private final boolean profileMultilineSupport;
-
-    private final String[] unsupportedFeatures;
-
-    public DatabaseProfile(String driverClass, String connectionUrl, String schema, String user, String password,
+    public DatabaseTestingProfile(String driverClass, String connectionUrl, String schema, String user, String password,
             String profileDdl, boolean profileMultilineSupport, String[] unsupportedFeatures) {
         this.driverClass = driverClass;
         this.connectionUrl = connectionUrl;

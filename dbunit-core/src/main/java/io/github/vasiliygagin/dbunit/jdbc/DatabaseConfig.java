@@ -7,6 +7,7 @@ import org.dbunit.database.CachedResultSetTableFactory;
 import org.dbunit.database.DefaultMetadataHandler;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.database.IResultSetTableFactory;
+import org.dbunit.database.metadata.IgnoredTablePredicate;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.database.statement.PreparedStatementFactory;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
@@ -41,6 +42,7 @@ public class DatabaseConfig {
     private boolean datatypeWarning = true;
     private boolean skipOracleRecycleBinTables = false;
     private boolean allowEmptyFields = false;
+    private IgnoredTablePredicate ignoredTablePredicate = IgnoredTablePredicate.ALLOW_ALL;
 
     /**
      * Poor man's final
@@ -209,6 +211,15 @@ public class DatabaseConfig {
         this.skipOracleRecycleBinTables = skipOracleRecycleBinTables;
     }
 
+    public IgnoredTablePredicate getIgnoredTablePredicate() {
+        return ignoredTablePredicate;
+    }
+
+    public void setIgnoredTablePredicate(IgnoredTablePredicate ignoredTablePredicate) {
+        checkFrozen();
+        this.ignoredTablePredicate = ignoredTablePredicate;
+    }
+
     public boolean isAllowEmptyFields() {
         return allowEmptyFields;
     }
@@ -240,6 +251,7 @@ public class DatabaseConfig {
         this.setBatchedStatements(source.isBatchedStatements());
         this.setDatatypeWarning(source.isDatatypeWarning());
         this.setSkipOracleRecycleBinTables(source.isSkipOracleRecycleBinTables());
+        this.setIgnoredTablePredicate(source.getIgnoredTablePredicate());
         this.setAllowEmptyFields(source.isAllowEmptyFields());
         this.setAllowCountMismatch(source.isAllowCountMismatch());
     }

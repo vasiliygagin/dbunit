@@ -21,23 +21,23 @@
 
 package org.dbunit.database.statement;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.dbunit.dataset.datatype.DataType;
+import org.junit.Test;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Mar 16, 2002
  */
-public class BatchStatementDecoratorTest extends TestCase {
-    public BatchStatementDecoratorTest(String s) {
-        super(s);
-    }
+public class BatchStatementDecoratorTest {
 
+    @Test
     public void testAddBatch() throws Exception {
         String template = "START VAL0 = ?, VAL1 = ?, VAL2 = ? END";
         String expected = "START VAL0 = NULL, VAL1 = 'value', VAL2 = 1234 END";
-        Object[] values = new Object[] { null, "value", new Integer(1234) };
+        Object[] values = { null, "value", new Integer(1234) };
 
         MockBatchStatement mockStatement = new MockBatchStatement();
         mockStatement.addExpectedBatchString(expected);
@@ -47,8 +47,7 @@ public class BatchStatementDecoratorTest extends TestCase {
 
         IPreparedBatchStatement preparedStatement = new BatchStatementDecorator(template, mockStatement);
 
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
+        for (Object value : values) {
             preparedStatement.addValue(value, DataType.forObject(value));
         }
         preparedStatement.addBatch();
@@ -58,6 +57,7 @@ public class BatchStatementDecoratorTest extends TestCase {
         mockStatement.verify();
     }
 
+    @Test
     public void testMultipleAddBatch() throws Exception {
         String template = "I am ?";
         String[] expected = { "I am 'Manuel'", "I am 'not here'", "I am 'fine'" };
@@ -71,8 +71,7 @@ public class BatchStatementDecoratorTest extends TestCase {
 
         IPreparedBatchStatement preparedStatement = new BatchStatementDecorator(template, mockStatement);
 
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
+        for (String value : values) {
             preparedStatement.addValue(value, DataType.VARCHAR);
             preparedStatement.addBatch();
         }
