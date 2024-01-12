@@ -4,7 +4,6 @@
 package org.dbunit.junit.internal;
 
 import org.dbunit.junit.internal.annotations.AnnotationProcessor;
-import org.dbunit.junit.internal.connections.DatabaseConnectionManager;
 
 /**
  * Shared dbUnit context. There is only one instance of it.
@@ -17,7 +16,6 @@ public class GlobalContext {
     {
         IT = this;
     }
-    private final DatabaseConnectionManager dbConnectionManager = new DatabaseConnectionManager();
     private final AnnotationProcessor annotationProcessor = new AnnotationProcessor();
 
     private GlobalContext() {
@@ -25,10 +23,6 @@ public class GlobalContext {
 
     public static GlobalContext getIt() {
         return IT;
-    }
-
-    public DatabaseConnectionManager getDbConnectionManager() {
-        return dbConnectionManager;
     }
 
     public AnnotationProcessor getAnnotationProcessor() {

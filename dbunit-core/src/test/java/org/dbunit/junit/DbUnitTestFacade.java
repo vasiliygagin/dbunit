@@ -3,7 +3,6 @@
  */
 package org.dbunit.junit;
 
-import org.dbunit.junit.internal.TestContext;
 import org.dbunit.junit4.DbunitTestCaseTestRunner;
 
 /**
@@ -11,13 +10,13 @@ import org.dbunit.junit4.DbunitTestCaseTestRunner;
  */
 public class DbUnitTestFacade extends DbUnitFacade {
 
+    // Need to delay releaseTestContext() so we can do assertAfter() in internal tests
     @Override
-    protected void after() {
-        // Need to delay releaseConnections() so we can do assertAfter() in internal tests
-        rollbackConnections();
-//        super.after();
-        TestContext testContext = getTestContext();
-        DbunitTestCaseTestRunner.assertAfter(() -> testContext.releaseConnections());
+    protected void releaseTestContext() {
+        // Need to delay releaseTestContext() so we can do assertAfter() in internal tests
+        // So creating fake assert to run last
+        DbunitTestCaseTestRunner.assertAfter(() -> {
+            super.releaseTestContext();
+        });
     }
-
 }

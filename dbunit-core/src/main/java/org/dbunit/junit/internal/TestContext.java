@@ -81,12 +81,6 @@ public class TestContext {
         }
     }
 
-    public void shutdownConnections() {
-        for (DatabaseConnection connection : connections.values()) {
-            connection.shutdown();
-        }
-    }
-
     public void releaseConnections() {
         for (Entry<String, DatabaseConnection> entry : connections.entrySet()) {
             String connectionName = entry.getKey();
@@ -94,6 +88,12 @@ public class TestContext {
             connectionSources.get(connectionName).releaseConnection(connection);
         }
         connections.clear();
+    }
+
+    public void shutdownConnections() {
+        for (DatabaseConnection connection : connections.values()) {
+            connection.shutdown();
+        }
     }
 
     public String getSchema() {

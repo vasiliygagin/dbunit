@@ -14,7 +14,7 @@ import org.junit.runners.model.Statement;
  * <pre>
  * </pre>
  */
-public class DbUnitRule implements MethodRule {
+public abstract class DbUnitRule implements MethodRule {
 
     protected final GlobalContext context = GlobalContext.getIt();
     private TestContext testContext;
@@ -39,7 +39,8 @@ public class DbUnitRule implements MethodRule {
                     base.evaluate();
                 } finally {
                     after();
-                    testContext = null;
+                    rollbackConnections();
+                    releaseTestContext();
                 }
             }
         };
@@ -61,8 +62,19 @@ public class DbUnitRule implements MethodRule {
     protected void after() {
     }
 
+    protected void rollbackConnections() {
+        testContext.rollbackConnections();
+    }
+
+    /**
+     * Only here to make testing of dbUnit itself easier
+     */
+    protected void releaseTestContext() {
+        testContext.releaseConnections();
+        testContext = null;
+    }
+
     public TestContext getTestContext() {
         return testContext;
     }
-
 }
