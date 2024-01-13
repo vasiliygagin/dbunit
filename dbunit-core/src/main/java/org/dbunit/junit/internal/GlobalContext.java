@@ -3,6 +3,9 @@
  */
 package org.dbunit.junit.internal;
 
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
+import org.dbunit.internal.connections.DriverManagerConnectionsCache;
+import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
 import org.dbunit.junit.internal.annotations.AnnotationProcessor;
 
 /**
@@ -16,13 +19,27 @@ public class GlobalContext {
     {
         IT = this;
     }
+    private final DriverManagerConnectionsFactory driverManagerConnectionsFactory;
+    private final DriverManagerConnectionsCache driverManagerConnectionsCache;
     private final AnnotationProcessor annotationProcessor = new AnnotationProcessor();
 
+    private boolean reuseDB = true;
+
     private GlobalContext() {
+        driverManagerConnectionsFactory = new DriverManagerConnectionsFactory();
+        driverManagerConnectionsCache = new DriverManagerConnectionsCache(driverManagerConnectionsFactory);
     }
 
     public static GlobalContext getIt() {
         return IT;
+    }
+
+    void setReuseDB(boolean reuseDB) {
+        this.reuseDB = reuseDB;
+    }
+
+    public DriverManagerConnectionSource getDriverManagerConnectionSource() {
+        return reuseDB ? driverManagerConnectionsCache : driverManagerConnectionsFactory;
     }
 
     public AnnotationProcessor getAnnotationProcessor() {

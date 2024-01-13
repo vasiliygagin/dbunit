@@ -24,16 +24,16 @@ public abstract class DbUnitRule implements MethodRule {
 
         this.testContext = new TestContext();
 
-        try {
-            context.getAnnotationProcessor().configureTest(target.getClass(), testContext);
-        } catch (DatabaseException exc) {
-            throw new AssertionError("Unable to configure test", exc);
-        }
-
         return new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
+                try {
+                    context.getAnnotationProcessor().configureTest(target.getClass(), testContext);
+                } catch (DatabaseException exc) {
+                    throw new AssertionError("Unable to configure test", exc);
+                }
+
                 before();
                 try {
                     base.evaluate();

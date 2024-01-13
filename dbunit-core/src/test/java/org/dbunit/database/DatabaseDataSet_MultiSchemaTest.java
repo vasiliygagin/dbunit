@@ -18,7 +18,8 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.ext.h2.H2DataTypeFactory;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
+import org.dbunit.junit.internal.GlobalContext;
 import org.junit.After;
 import org.junit.Test;
 
@@ -298,7 +299,9 @@ public class DatabaseDataSet_MultiSchemaTest extends AbstractDatabaseTest {
 
     private void makeDatabaseConnection(String databaseName, String username, String password, String schema,
             boolean useQualifiedTableNames) throws Exception {
-        Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+        DriverManagerConnectionSource driverManagerConnectionSource = GlobalContext.getIt()
+                .getDriverManagerConnectionSource();
+        Connection jdbcConnection = driverManagerConnectionSource.fetchConnection("org.h2.Driver",
                 "jdbc:h2:mem:" + databaseName, username, password);
 
         DatabaseConfig config = new DatabaseConfig();

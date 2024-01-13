@@ -38,7 +38,8 @@ import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
+import org.dbunit.junit.internal.GlobalContext;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
@@ -142,7 +143,9 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
     public void testMultiSchemaFks() throws Exception {
         assumeTrue(environment instanceof H2Environment);
         // TODO should be able to run this with hsqldb and others
-        final Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+        DriverManagerConnectionSource driverManagerConnectionSource = GlobalContext.getIt()
+                .getDriverManagerConnectionSource();
+        final Connection jdbcConnection = driverManagerConnectionSource.fetchConnection("org.h2.Driver",
                 "jdbc:h2:mem:test", "sa", "");
         DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/h2_multischema_fk_test.sql"));
         DatabaseConfig config = new DatabaseConfig();

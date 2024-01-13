@@ -22,9 +22,20 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 public class DataSourceConnectionSource implements ConnectionSource {
 
     private final DataSource dataSource;
+    private final DatabaseConfig config;
+    private final MetadataManager metadataManager;
 
-    public DataSourceConnectionSource(DataSource dataSource) {
+    public DataSourceConnectionSource(DataSource dataSource) throws DatabaseException {
         this.dataSource = dataSource;
+        this.config = new DatabaseConfig();
+
+        try ( //
+                Connection jdbcConnection = dataSource.getConnection(); //
+        ) {
+            this.metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        } catch (SQLException exc) {
+            throw new DatabaseException(exc);
+        }
     }
 
     @Override
@@ -40,8 +51,6 @@ public class DataSourceConnectionSource implements ConnectionSource {
 
     private DatabaseConnection buildDatabaseConnection(Connection jdbcConnection) throws DatabaseException {
         try {
-            DatabaseConfig config = new DatabaseConfig();
-            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
             return new DatabaseConnection(jdbcConnection, config, "PUBLIC", metadataManager);
         } catch (DatabaseUnitException exc) {
             throw new DatabaseException(exc);

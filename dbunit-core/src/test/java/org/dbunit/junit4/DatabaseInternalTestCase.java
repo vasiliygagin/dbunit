@@ -12,6 +12,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.junit.DbUnitTestFacade;
+import org.dbunit.junit.internal.DbunitTestCaseTestRunner;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
 import org.junit.Before;

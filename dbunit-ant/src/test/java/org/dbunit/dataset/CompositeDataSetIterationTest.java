@@ -35,7 +35,8 @@ import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
+import org.dbunit.junit.internal.GlobalContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,9 @@ public class CompositeDataSetIterationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
+        DriverManagerConnectionSource driverManagerConnectionSource = GlobalContext.getIt()
+                .getDriverManagerConnectionSource();
+        this.jdbcConnection = driverManagerConnectionSource.fetchConnection("org.hsqldb.jdbcDriver",
                 "jdbc:hsqldb:mem:tempdb", "sa", "");
         final File ddlFile = new File("src/test/resources/sql/hypersonic_simple_dataset.sql");
 

@@ -3,7 +3,7 @@
  */
 package org.dbunit.junit;
 
-import org.dbunit.junit4.DbunitTestCaseTestRunner;
+import org.dbunit.junit.internal.DbunitTestCaseTestRunner;
 
 /**
  *
