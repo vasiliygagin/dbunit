@@ -30,15 +30,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.dataset.AbstractTableMetaData;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITableMetaData;
-import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.filter.IColumnFilter;
-import org.dbunit.util.QualifiedTableName;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,54 +59,28 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
      */
     private static final Logger logger = LoggerFactory.getLogger(DatabaseTableMetaData.class);
 
-    /**
-     * Table name, potentially qualified
-     */
-    private final QualifiedTableName _qualifiedTableNameSupport;
-    private final String _originalTableName;
     private final IDatabaseConnection _connection;
+    private final boolean _caseSensitiveMetaData;
+    private final String _originalTableName;
+    private final TableMetadata tableMetadata;
+
     private Column[] _columns;
     private Column[] _primaryKeys;
-    private boolean _caseSensitiveMetaData;
     // added by hzhan032
     private IColumnFilter lastKeyFilter;
-
-    DatabaseTableMetaData(String tableName, IDatabaseConnection connection) throws DataSetException {
-        this(tableName, connection, true);
-    }
-
-    /**
-     * Creates a new database table metadata
-     *
-     * @param tableName  The name of the table - can be fully qualified
-     * @param connection The database connection
-     * @param validate   Whether or not to validate the given input data. It is not
-     *                   recommended to set the validation to <code>false</code>
-     *                   because it is then possible to create an instance of this
-     *                   object for a db table that does not exist.
-     * @throws DataSetException
-     */
-    DatabaseTableMetaData(String tableName, IDatabaseConnection connection, boolean validate) throws DataSetException {
-        this(tableName, connection, validate, false);
-    }
 
     /**
      * Creates a new database table metadata
      *
      * @param tableName             The name of the table - can be fully qualified
      * @param connection            The database connection
-     * @param validate              Whether or not to validate the given input data.
-     *                              It is not recommended to set the validation to
-     *                              <code>false</code> because it is then possible
-     *                              to create an instance of this object for a db
-     *                              table that does not exist.
      * @param caseSensitiveMetaData Whether or not the metadata looked up in a case
      *                              sensitive way
      * @throws DataSetException
      * @since 2.4.1
      */
-    DatabaseTableMetaData(final String tableName, IDatabaseConnection connection, boolean validate,
-            boolean caseSensitiveMetaData) throws DataSetException {
+    DatabaseTableMetaData(final String tableName, AbstractDatabaseConnection connection, boolean caseSensitiveMetaData)
+            throws DataSetException {
         if (tableName == null) {
             throw new NullPointerException("The parameter 'tableName' must not be null");
         }
@@ -119,41 +92,22 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         _caseSensitiveMetaData = caseSensitiveMetaData;
 
         try {
-            Connection jdbcConnection = connection.getConnection();
-            if (!caseSensitiveMetaData) {
-                _originalTableName = SQLHelper.correctCase(tableName, jdbcConnection);
-                SQLHelper.logDebugIfValueChanged(tableName, _originalTableName, "Corrected table name:",
-                        DatabaseTableMetaData.class);
-            } else {
-                _originalTableName = tableName;
-            }
+            _originalTableName = caseCorrect(connection, tableName);
 
-            // qualified names support - table name and schema is stored here
-            _qualifiedTableNameSupport = new QualifiedTableName(_originalTableName, _connection.getSchema());
-
-            if (validate) {
-                String schemaName = _qualifiedTableNameSupport.getSchema();
-                String plainTableName = _qualifiedTableNameSupport.getTable();
-                logger.debug("Validating if table '{}' exists in schema '{}' ...", plainTableName, schemaName);
-                try {
-                    IMetadataHandler metadataHandler = connection.getDatabaseConfig().getMetadataHandler();
-                    DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
-                    if (!metadataHandler.tableExists(databaseMetaData, schemaName, plainTableName)) {
-                        throw new NoSuchTableException(
-                                "Did not find table '" + plainTableName + "' in schema '" + schemaName + "'");
-                    }
-                } catch (SQLException e) {
-                    throw new DataSetException("Exception while validation existence of table '" + plainTableName + "'",
-                            e);
-                }
-            } else {
-                logger.debug("Validation switched off. Will not check if table exists.");
-            }
+            tableMetadata = connection.toTableMetadata(_originalTableName);
         } catch (SQLException e) {
             throw new DataSetException(
                     "Exception while retrieving JDBC connection from dbunit connection '" + connection + "'", e);
         }
 
+    }
+
+    protected String caseCorrect(AbstractDatabaseConnection connection, final String tableName) throws SQLException {
+        if (!connection.getDatabaseConfig().isCaseSensitiveTableNames()) {
+            return SQLHelper.correctCase(tableName, connection.getConnection());
+        } else {
+            return tableName;
+        }
     }
 
     /**
@@ -190,25 +144,18 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
     @Deprecated
     public static ITableMetaData createMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection)
             throws SQLException, DataSetException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("createMetaData(tableName={}, resultSet={}, connection={}) - start", tableName, resultSet,
-                    connection);
-        }
         return new ResultSetTableMetaData(tableName, resultSet, connection, false);
     }
 
     private String[] getPrimaryKeyNames() throws SQLException {
-        logger.debug("getPrimaryKeyNames() - start");
-
-        String schemaName = _qualifiedTableNameSupport.getSchema();
-        String tableName = _qualifiedTableNameSupport.getTable();
 
         Connection connection = _connection.getConnection();
         DatabaseMetaData databaseMetaData = connection.getMetaData();
 
         IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
 
-        ResultSet resultSet = metadataHandler.getPrimaryKeys(databaseMetaData, schemaName, tableName);
+        ResultSet resultSet = metadataHandler.getPrimaryKeys(databaseMetaData, tableMetadata.schemaMetadata.schema,
+                tableMetadata.tableName);
 
         List list = new ArrayList();
         try {
@@ -232,6 +179,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
     }
 
     private class PrimaryKeyData implements Comparable {
+
         private final String _name;
         private final int _index;
 
@@ -280,15 +228,12 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
 
         if (_columns == null) {
             try {
-                // qualified names support
-                String schemaName = _qualifiedTableNameSupport.getSchema();
-                String tableName = _qualifiedTableNameSupport.getTable();
-
                 Connection jdbcConnection = _connection.getConnection();
                 DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
 
                 IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
-                ResultSet resultSet = metadataHandler.getColumns(databaseMetaData, schemaName, tableName);
+                ResultSet resultSet = metadataHandler.getColumns(databaseMetaData, tableMetadata.schemaMetadata.schema,
+                        tableMetadata.tableName);
 
                 try {
                     IDataTypeFactory dataTypeFactory = super.getDataTypeFactory(_connection);
@@ -298,8 +243,8 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                     while (resultSet.next()) {
                         // Check for exact table/schema name match because
                         // databaseMetaData.getColumns() uses patterns for the lookup
-                        boolean match = metadataHandler.matches(resultSet, schemaName, tableName,
-                                _caseSensitiveMetaData);
+                        boolean match = metadataHandler.matches(resultSet, tableMetadata.schemaMetadata.schema,
+                                tableMetadata.tableName, _caseSensitiveMetaData);
                         if (match) {
                             Column column = SQLHelper.createColumn(resultSet, dataTypeFactory, datatypeWarning);
                             if (column != null) {
@@ -312,8 +257,8 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                     }
 
                     if (columnList.size() == 0) {
-                        logger.warn("No columns found for table '" + tableName + "' that are supported by dbunit. "
-                                + "Will return an empty column list");
+                        logger.warn("No columns found for table '" + tableMetadata.tableName
+                                + "' that are supported by dbunit. " + "Will return an empty column list");
                     }
 
                     _columns = (Column[]) columnList.toArray(new Column[0]);

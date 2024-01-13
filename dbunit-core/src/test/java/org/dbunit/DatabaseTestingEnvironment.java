@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -46,7 +47,8 @@ public abstract class DatabaseTestingEnvironment {
     private final String schema;
     private final boolean multilineSupport;
     private final String[] unsupportedFeatures;
-    private final DatabaseConfig databaseConfig;
+
+    private DatabaseConfig databaseConfig;
 
     // temp until things are cleaned
     private Database openedDatabase;
@@ -56,11 +58,15 @@ public abstract class DatabaseTestingEnvironment {
             DatabaseConfig databaseConfig) throws Exception {
         this.defaultDatabaseName = defaultDatabaseName;
         this.databaseConfig = databaseConfig;
+        this.databaseConfig.freese();
         this.profile = profile;
         schema = profile.getSchema();
         multilineSupport = profile.getProfileMultilineSupport();
         unsupportedFeatures = profile.getUnsupportedFeatures();
-        this.databaseConfig.freese();
+    }
+
+    public final void customizeConfig(Consumer<DatabaseConfig> customizer) {
+        customizer.accept(databaseConfig);
     }
 
     protected abstract String buildConnectionUrl(String databaseName);
@@ -70,13 +76,22 @@ public abstract class DatabaseTestingEnvironment {
         return openedDatabase;
     }
 
-    public Database openPopulatedDatabase() throws Exception {
-        Database database = openDatabase(defaultDatabaseName);
+    @SuppressWarnings("unchecked")
+    public Database openPopulatedDatabase(Consumer<DatabaseConfig>... configCustomizers) throws Exception {
+        Database database = openDatabase(defaultDatabaseName, configCustomizers);
         DdlExecutor.execute("sql/" + profile.getProfileDdl(), database.getJdbcConnection(), false, false);
         return database;
     }
 
-    public Database openDatabase(String databaseName) throws Exception {
+    @SuppressWarnings("unchecked")
+    public Database openDatabase(String databaseName, Consumer<DatabaseConfig>... configCustomizers) throws Exception {
+        DatabaseConfig newConfig = new DatabaseConfig();
+        newConfig.apply(databaseConfig);
+        for (Consumer<DatabaseConfig> configCustomizer : configCustomizers) {
+            configCustomizer.accept(newConfig);
+        }
+        newConfig.freese();
+
         Connection jdbcConnection = buildJdbcConnection(databaseName);
 
         JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(jdbcConnection, schema);
@@ -91,10 +106,10 @@ public abstract class DatabaseTestingEnvironment {
             }
         });
 
-        MetadataManager metadataManager = new MetadataManager(jdbcConnection, databaseConfig, null, schema);
-        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, schema, metadataManager);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, newConfig, null, schema);
+        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, newConfig, schema, metadataManager);
 
-        Database database = new Database(this);
+        Database database = new Database(this, newConfig);
         database.setJdbcConnection(jdbcConnection);
         database.setConnection(connection);
         database.setDatabaseTester(databaseTester);

@@ -47,10 +47,6 @@ public abstract class AbstractOperation extends DatabaseOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractOperation.class);
 
     protected String getQualifiedName(String prefix, String name, IDatabaseConnection connection) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getQualifiedName(prefix={}, name={}, connection={}) - start", prefix, name, connection);
-        }
-
         String escapePattern = connection.getDatabaseConfig().getEscapePattern();
         QualifiedTableName qualifiedTbleName = new QualifiedTableName(name, prefix, escapePattern);
         return qualifiedTbleName.getQualifiedName();

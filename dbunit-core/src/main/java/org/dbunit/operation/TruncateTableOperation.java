@@ -55,15 +55,12 @@ public class TruncateTableOperation extends DeleteAllOperation {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // DeleteAllOperation class
+    // DatabaseOperation class
 
     @Override
-    protected String getDeleteAllCommand() {
-        return "truncate table ";
+    protected String buildDeleteSql(IDatabaseConnection connection, String tableName) {
+        return "truncate table " + getQualifiedName(connection.getSchema(), tableName, connection);
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // DatabaseOperation class
 
     @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {

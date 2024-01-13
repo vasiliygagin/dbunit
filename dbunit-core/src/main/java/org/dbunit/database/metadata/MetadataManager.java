@@ -122,7 +122,7 @@ public class MetadataManager {
      * @return
      * @throws SQLException
      */
-    private TableMetadata toTableMetadata(ResultSet resultSet) throws SQLException {
+    public TableMetadata toTableMetadata(ResultSet resultSet) throws SQLException {
         String catalog = resultSet.getString(1);
         String schema = resultSet.getString(2);
         String tableName = resultSet.getString(3);

@@ -215,7 +215,7 @@ public class DatabaseDataSetIT extends AbstractDataSetTest {
                 return false;
             return true;
         };
-        IDataSet dataSet = new DatabaseDataSet(_connection, false, tableFilter);
+        IDataSet dataSet = new DatabaseDataSet(_connection, tableFilter);
         try {
             dataSet.getTable(existingTableToFilter);
             fail("Should not be able to retrieve table from dataset that has not been loaded - expected an exception");

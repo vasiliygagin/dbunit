@@ -80,38 +80,33 @@ public class DatabaseDataSet implements IDataSet {
      * Whether or not table names of this dataset are case sensitive. By default
      * case-sensitivity is set to false for datasets
      */
-    private boolean _caseSensitiveTableNames = false;
+    private final boolean _caseSensitiveTableNames;
 
     /**
      * Creates a new database data set
      *
      * @param connection              The database connection
-     * @param caseSensitiveTableNames Whether or not this dataset should use case
-     *                                sensitive table names
      * @throws SQLException
      * @since 2.4
      */
-    public DatabaseDataSet(AbstractDatabaseConnection connection, boolean caseSensitiveTableNames) throws SQLException {
-        this(connection, caseSensitiveTableNames, null);
+    public DatabaseDataSet(AbstractDatabaseConnection connection) throws SQLException {
+        this(connection, null);
     }
 
     /**
      * Creates a new database data set
      *
      * @param connection              The database connection
-     * @param caseSensitiveTableNames Whether or not this dataset should use case
-     *                                sensitive table names
      * @param tableFilter             Table filter to specify tables to be omitted
      *                                in this dataset. Can be <code>null</code>.
      * @throws SQLException
      * @since 2.4.3
      */
-    public DatabaseDataSet(AbstractDatabaseConnection connection, boolean caseSensitiveTableNames,
-            ITableFilterSimple tableFilter) throws SQLException {
-        _caseSensitiveTableNames = caseSensitiveTableNames;
+    public DatabaseDataSet(AbstractDatabaseConnection connection, ITableFilterSimple tableFilter) throws SQLException {
         if (connection == null) {
             throw new NullPointerException("The parameter 'connection' must not be null");
         }
+        _caseSensitiveTableNames = connection.getDatabaseConfig().isCaseSensitiveTableNames();
         _connection = connection;
         defaultSchema = _connection.getSchema();
         config = connection.getDatabaseConfig();
@@ -225,8 +220,12 @@ public class DatabaseDataSet implements IDataSet {
         return tableMetaDatas.getTableNames();
     }
 
+    public final ITableMetaData getDatabaseTableMetaData(String tableName) throws DataSetException {
+        return getTableMetaData(tableName);
+    }
+
     @Override
-    public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
+    public final ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         logger.debug("getTableMetaData(tableName={}) - start", tableName);
 
         loadSchemaOfTable(tableName);
@@ -239,15 +238,12 @@ public class DatabaseDataSet implements IDataSet {
 
         // Try to find cached metadata
         ITableMetaData metaData = tableMetaDatas.get(tableName);
-        if (metaData != null) {
-            return metaData;
+        if (metaData == null) {
+            // Create metadata and cache it
+            metaData = new DatabaseTableMetaData(tableName, _connection, isCaseSensitiveTableNames());
+            // Put the metadata object into the cache map
+            tableMetaDatas.update(tableName, metaData);
         }
-
-        // Create metadata and cache it
-        metaData = new DatabaseTableMetaData(tableName, _connection, true, isCaseSensitiveTableNames());
-        // Put the metadata object into the cache map
-        tableMetaDatas.update(tableName, metaData);
-
         return metaData;
     }
 

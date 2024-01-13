@@ -1,109 +1,61 @@
 /*
- *
- * The DbUnit Database Testing Framework
- * Copyright (C)2002-2004, DbUnit.org
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ * Copyright (C)2024, Vasiliy Gagin. All rights reserved.
  */
-
 package org.dbunit.operation;
 
-import org.dbunit.database.MockDatabaseConnection;
-import org.dbunit.database.statement.MockBatchStatement;
-import org.dbunit.database.statement.MockStatementFactory;
-import org.dbunit.dataset.DefaultDataSet;
-import org.dbunit.dataset.DefaultTable;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.dbunit.assertion.TestDataSet;
+import org.dbunit.assertion.TestTable;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.statement.IBatchStatement;
+import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITableMetaData;
 import org.junit.Test;
 
-/**
- * @author Manuel Laflamme
- * @author Eric Pugh TODO Refactor all the references to
- *         AbstractDataSetTest.removeExtraTestTables() to something better.
- * @version $Revision$
- * @since Feb 18, 2002
- */
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 public class DeleteAllOperationTest {
 
     private DeleteAllOperation tested = new DeleteAllOperation();
 
     @Test
     public void testMockExecute() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        String expected = "delete from " + schemaName + "." + tableName;
+        TestTable testTable1 = new TestTable("T1");
+        TestTable testTable2 = new TestTable("T2");
+        TestTable testTable3 = new TestTable("T1");
+        TestDataSet testDataSet = new TestDataSet(testTable1, testTable2, testTable3);
 
-        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
+        IDatabaseConnection connection = mock(IDatabaseConnection.class);
+        IStatementFactory statementFactory = mock(IStatementFactory.class);
+        IDataSet databaseDataSet = mock(IDataSet.class);
 
-        // setup mock objects
-        MockBatchStatement statement = new MockBatchStatement();
-        statement.addExpectedBatchString(expected);
-        statement.setExpectedExecuteBatchCalls(1);
-        statement.setExpectedClearBatchCalls(1);
-        statement.setExpectedCloseCalls(1);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(statementFactory);
 
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreateStatementCalls(1);
-        factory.setupStatement(statement);
+        when(connection.createDataSet()).thenReturn(databaseDataSet);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        IBatchStatement statement = mock(IBatchStatement.class);
+        when(statementFactory.createBatchStatement(connection)).thenReturn(statement);
 
-        // execute operation
-        tested.execute(connection, dataSet);
-
-        statement.verify();
-        factory.verify();
-        connection.verify();
-    }
-
-    @Test
-    public void testExecuteWithEscapedNames() throws Exception {
-        String schemaName = "schema";
-        String tableName = "table";
-        String expected = "delete from " + "'" + schemaName + "'.'" + tableName + "'";
-
-        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
-
-        // setup mock objects
-        MockBatchStatement statement = new MockBatchStatement();
-        statement.addExpectedBatchString(expected);
-        statement.setExpectedExecuteBatchCalls(1);
-        statement.setExpectedClearBatchCalls(1);
-        statement.setExpectedCloseCalls(1);
-
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreateStatementCalls(1);
-        factory.setupStatement(statement);
-
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        ITableMetaData tableMetaData1 = mock(ITableMetaData.class);
+        ITableMetaData tableMetaData2 = mock(ITableMetaData.class);
+        when(databaseDataSet.getTableMetaData("T1")).thenReturn(tableMetaData1);
+        when(databaseDataSet.getTableMetaData("T2")).thenReturn(tableMetaData2);
+        when(tableMetaData1.getTableName()).thenReturn("S.T1");
+        when(tableMetaData2.getTableName()).thenReturn("S.T2");
 
         // execute operation
-        connection.getDatabaseConfig().setEscapePattern("'?'");
-        new DeleteAllOperation().execute(connection, dataSet);
+        tested.execute(connection, testDataSet);
 
-        statement.verify();
-        factory.verify();
-        connection.verify();
+        verify(statement).addBatch("delete from S.T1");
+        verify(statement).addBatch("delete from S.T2");
+        verify(statement).executeBatch();
+        verify(statement).clearBatch();
+        verify(statement).close();
     }
 }

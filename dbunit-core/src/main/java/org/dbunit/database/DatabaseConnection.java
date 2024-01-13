@@ -118,7 +118,7 @@ public class DatabaseConnection extends AbstractDatabaseConnection {
      */
     public DatabaseConnection(Connection connection, DatabaseConfig config, String schema, boolean validate,
             MetadataManager metadataManager) throws DatabaseUnitException {
-        super(connection, config, null, schema, metadataManager);
+        super(connection, config, metadataManager);
 
         if (schema != null) {
             _schema = SQLHelper.correctCase(schema, connection);

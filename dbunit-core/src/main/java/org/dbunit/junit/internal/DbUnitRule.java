@@ -34,7 +34,7 @@ public abstract class DbUnitRule implements MethodRule {
                     throw new AssertionError("Unable to configure test", exc);
                 }
 
-                before();
+                before(target, method);
                 try {
                     base.evaluate();
                 } finally {
@@ -48,11 +48,13 @@ public abstract class DbUnitRule implements MethodRule {
 
     /**
      * Override to set up your specific external resource.
+     * @param target
+     * @param method
      * @param testContext
      *
      * @throws Throwable if setup fails (which will disable {@code after}
      */
-    protected void before() throws Throwable {
+    protected void before(Object target, FrameworkMethod method) throws Throwable {
     }
 
     /**

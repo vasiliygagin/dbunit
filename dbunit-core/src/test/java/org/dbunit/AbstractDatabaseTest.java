@@ -8,11 +8,11 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.metadata.MetadataManager;
-import org.dbunit.junit.DbUnitFacade;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,11 +23,13 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 public abstract class AbstractDatabaseTest {
 
     @Rule
-    public final DbUnitFacade dbUnit = new DbUnitFacade();
+    public final DbUnitEnvironmentFacade dbUnit = new DbUnitEnvironmentFacade();
 
     protected final DatabaseTestingEnvironment environment;
     protected Database database;
     private boolean environmentOk;
+
+    private final List<Consumer<DatabaseConfig>> configCustomizers = new ArrayList<>();
 
     public AbstractDatabaseTest() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();
@@ -51,7 +53,11 @@ public abstract class AbstractDatabaseTest {
      * Chance to overwrite db
      */
     protected Database doOpenDatabase() throws Exception {
-        return environment.openPopulatedDatabase();
+        return environment.openPopulatedDatabase(getconfigCustomizers());
+    }
+
+    protected Consumer[] getconfigCustomizers() {
+        return configCustomizers.toArray(new Consumer[configCustomizers.size()]);
     }
 
     /**
@@ -70,17 +76,23 @@ public abstract class AbstractDatabaseTest {
         }
     }
 
+    /**
+     * @param object
+     */
+    public void addCustomizer(Consumer<DatabaseConfig> configCustomizer) {
+        configCustomizers.add(configCustomizer);
+    }
+
+    @Deprecated
+    protected final void customizeEnvironment(Consumer<DatabaseConfig> customizer) {
+        environment.customizeConfig(customizer);
+    }
+
+    @Deprecated
     protected final DatabaseConnection customizeConfig(Consumer<DatabaseConfig> customizer)
             throws DatabaseUnitException {
-        DatabaseConfig newConfig = new DatabaseConfig();
-        newConfig.apply(environment.getDatabaseConfig());
-        customizer.accept(newConfig);
-        newConfig.setCaseSensitiveTableNames(true);
-        newConfig.freese();
-        MetadataManager metadataManager = new MetadataManager(database.getJdbcConnection(), newConfig, null,
-                environment.getSchema());
-        return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema(),
-                metadataManager);
+        environment.customizeConfig(customizer);
+        return database.getConnection();
     }
 
     protected FileReader fileReader(String fileName) throws FileNotFoundException {

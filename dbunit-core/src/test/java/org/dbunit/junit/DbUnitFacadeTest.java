@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  *
@@ -24,7 +25,7 @@ public class DbUnitFacadeTest {
     public DbUnitFacade dbUnit = new DbUnitFacade() {
 
         @Override
-        protected void before() throws Throwable {
+        protected void before(Object target, FrameworkMethod method) throws Throwable {
             events.add("Before");
         }
 

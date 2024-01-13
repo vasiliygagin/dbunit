@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.dbunit.AbstractDatabaseIT;
+import org.dbunit.CaseSensitive;
 import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.HsqldbEnvironment;
@@ -64,8 +65,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     }
 
     protected IDataSet createDataSet() throws Exception {
-        DatabaseConnection customizedConnection = database.getConnection();
-        return customizedConnection.createDataSet();
+        return database.getConnection().createDataSet();
     }
 
     @Override
@@ -105,24 +105,12 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         IDatabaseConnection connection = database.getConnection();
         String schema = connection.getSchema();
         try {
-            new DatabaseTableMetaData(tableName, database.getConnection());
+            new DatabaseTableMetaData(tableName, database.getConnection(), false);
             fail("Should not be able to create a DatabaseTableMetaData for an unknown table");
         } catch (NoSuchTableException expected) {
             String msg = "Did not find table '" + convertString("UNKNOWN_TABLE") + "' in schema '" + schema + "'";
             assertEquals(msg, expected.getMessage());
         }
-    }
-
-    @Test
-    public void testGetNoColumns() throws Exception {
-        // Since the "unknown_table" does not exist it also does not have any columns
-        String tableName = "UNKNOWN_TABLE";
-        boolean validate = false;
-
-        ITableMetaData metaData = new DatabaseTableMetaData(tableName, database.getConnection(), validate);
-
-        Column[] columns = metaData.getColumns();
-        assertEquals(0, columns.length);
     }
 
     @Test
@@ -298,34 +286,30 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
     }
 
     @Test
+    @CaseSensitive
     public void testCaseSensitive() throws Exception {
         assumeTrue(environment instanceof HsqldbEnvironment);
-        // TODO: make it work with derby and other databases
-        Database database = environment.openDatabase("tempdb");
-        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
+        DatabaseConnection connection = database.getConnection();
+
+        DdlExecutor.executeDdlFile(environment, connection.getConnection(),
                 TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
 
         String tableName = "MixedCaseTable";
         String tableNameWrongCase = "MIXEDCASETABLE";
-        boolean validate = true;
-        boolean caseSensitive = true;
 
-        ITableMetaData metaData = new DatabaseTableMetaData(tableName, database.getConnection(), validate,
-                caseSensitive);
+        ITableMetaData metaData = new DatabaseTableMetaData(tableName, connection, true);
         Column[] columns = metaData.getColumns();
         assertEquals(1, columns.length);
         assertEquals("COL1", columns[0].getColumnName());
 
         // Now test with same table name but wrong case
         try {
-            ITableMetaData metaDataWrongCase = new DatabaseTableMetaData(tableNameWrongCase, database.getConnection(),
-                    validate, caseSensitive);
+            ITableMetaData metaDataWrongCase = new DatabaseTableMetaData(tableNameWrongCase, connection, true);
             fail("Should not be able to create DatabaseTableMetaData with non-existing table name " + tableNameWrongCase
                     + ". Created " + metaDataWrongCase);
         } catch (NoSuchTableException expected) {
             assertTrue(expected.getMessage().indexOf(tableNameWrongCase) != -1);
         }
-        environment.closeDatabase(database);
     }
 
     /**
@@ -343,7 +327,8 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assertNotNull("Precondition: db environment 'schema' must not be null", schema);
 //        Connection jdbcConn = _connection.getConnection();
 //        String schema = SQLHelper.getSchema(jdbcConn);
-        DatabaseTableMetaData metaData = new DatabaseTableMetaData(schema + "." + TEST_TABLE, customizedConnection);
+        DatabaseTableMetaData metaData = new DatabaseTableMetaData(schema + "." + TEST_TABLE, customizedConnection,
+                false);
         assertEquals(schema + "." + convertString(TEST_TABLE), metaData.getTableName());
     }
 
@@ -354,7 +339,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesUpperCaseIdentifiers()) {
             DatabaseTableMetaData dbTableMetaData = new DatabaseTableMetaData(TEST_TABLE.toLowerCase(Locale.ENGLISH),
-                    customizedConnection);
+                    customizedConnection, false);
             // Table name should have been "toUpperCase'd"
             assertEquals(TEST_TABLE.toUpperCase(Locale.ENGLISH), dbTableMetaData.getTableName());
         } else {
@@ -370,7 +355,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         DatabaseMetaData metaData = connection.getConnection().getMetaData();
         if (metaData.storesLowerCaseIdentifiers()) {
             DatabaseTableMetaData dbTableMetaData = new DatabaseTableMetaData(TEST_TABLE.toUpperCase(Locale.ENGLISH),
-                    customizedConnection);
+                    customizedConnection, false);
             // Table name should have been "toUpperCase'd"
             assertEquals(TEST_TABLE.toLowerCase(Locale.ENGLISH), dbTableMetaData.getTableName());
         } else {

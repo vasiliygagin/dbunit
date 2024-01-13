@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.util.Arrays;
 
 import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.CaseSensitive;
 import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.H2Environment;
@@ -60,7 +61,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
 
     @Override
     protected Database doOpenDatabase() throws Exception {
-        return environment.openDatabase("tempdb");
+        return environment.openDatabase("tempdb", getconfigCustomizers());
     }
 
     @Test
@@ -111,6 +112,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @CaseSensitive(true)
     public void testCaseSensitiveTableNames() throws Exception {
         final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
         final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
@@ -119,9 +121,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         DdlExecutor.executeDdlFile(environment, jdbcConnection,
                 TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
 
-        DatabaseConnection connection = customizeConfig(config -> {
-            config.setCaseSensitiveTableNames(true);
-        });
+        DatabaseConnection connection = database.getConnection();
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();

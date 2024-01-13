@@ -22,6 +22,7 @@
 package org.dbunit.database;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,13 +30,16 @@ import java.sql.Statement;
 
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.metadata.MetadataManager;
+import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.util.QualifiedTableName;
+import org.dbunit.util.QualifiedTableName2;
 import org.dbunit.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +63,8 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     private IDataSet _dataSet = null;
     final DatabaseConfig _databaseConfig;
 
-    public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config, String defaultCatalog,
-            String defaultSchema, MetadataManager metadataManager) {
+    public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config,
+            MetadataManager metadataManager) {
         this.metadataManager = metadataManager;
         if (jdbcConnection == null) {
             throw new IllegalArgumentException("The parameter 'connection' must not be null");
@@ -81,8 +85,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         logger.debug("createDataSet() - start");
 
         if (_dataSet == null) {
-            boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
-            _dataSet = new DatabaseDataSet(this, caseSensitiveTableNames);
+            _dataSet = new DatabaseDataSet(this);
         }
 
         return _dataSet;
@@ -208,5 +211,35 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     public Object getMetadataStore() {
         return null;
+    }
+
+    protected TableMetadata toTableMetadata(String freeFormTableName) throws NoSuchTableException, DataSetException {
+        // qualified names support - table name and schema is stored here
+        QualifiedTableName2 tn = QualifiedTableName2.parseFullTableName2(freeFormTableName, getSchema());
+
+        try {
+            IMetadataHandler metadataHandler = getDatabaseConfig().getMetadataHandler();
+            DatabaseMetaData databaseMetaData = getConnection().getMetaData();
+
+            String catalog = metadataHandler.toCatalog(tn.schema);
+            String schema = metadataHandler.toSchema(tn.schema);
+
+            try ( //
+                    ResultSet rs = databaseMetaData.getTables(catalog, schema, tn.table, null); //
+            ) {
+                while (rs.next()) {
+
+                    TableMetadata tableMetadata = metadataManager.toTableMetadata(rs);
+                    if (tableMetadata.tableName.equals(tn.table)) {
+                        // JDBC uses underscore as a pattern character :-o. Wander whose smart idea that was.
+                        return tableMetadata;
+                    }
+                }
+                throw new NoSuchTableException("Did not find table '" + tn.table + "' in schema '" + tn.schema + "'");
+            }
+        } catch (SQLException e) {
+            throw new DataSetException("Exception while validation existence of table '" + tn.table + "'", e);
+        }
+
     }
 }

@@ -29,8 +29,8 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.dbunit.database.metadata.MetadataManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * This class adapts a JDBC <code>DataSource</code> to a
@@ -41,11 +41,6 @@ import org.slf4j.LoggerFactory;
  * @since Mar 8, 2002
  */
 public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
-
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSourceConnection.class);
 
     private final String _schema;
 
@@ -85,7 +80,7 @@ public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
 
     public DatabaseDataSourceConnection(DataSource dataSource, DatabaseConfig config, String schema, String user,
             String password, MetadataManager metadataManager) throws SQLException {
-        super(getConnection(dataSource, user, password), config, null, schema, metadataManager);
+        super(getConnection(dataSource, user, password), config, metadataManager);
         _schema = schema;
     }
 
