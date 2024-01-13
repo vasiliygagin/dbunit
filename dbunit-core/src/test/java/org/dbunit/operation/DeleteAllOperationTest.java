@@ -13,7 +13,6 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITableMetaData;
 import org.junit.Test;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
@@ -42,12 +41,8 @@ public class DeleteAllOperationTest {
         IBatchStatement statement = mock(IBatchStatement.class);
         when(statementFactory.createBatchStatement(connection)).thenReturn(statement);
 
-        ITableMetaData tableMetaData1 = mock(ITableMetaData.class);
-        ITableMetaData tableMetaData2 = mock(ITableMetaData.class);
-        when(databaseDataSet.getTableMetaData("T1")).thenReturn(tableMetaData1);
-        when(databaseDataSet.getTableMetaData("T2")).thenReturn(tableMetaData2);
-        when(tableMetaData1.getTableName()).thenReturn("S.T1");
-        when(tableMetaData2.getTableName()).thenReturn("S.T2");
+        when(connection.correctTableName("T1")).thenReturn("S.T1");
+        when(connection.correctTableName("T2")).thenReturn("S.T2");
 
         // execute operation
         tested.execute(connection, testDataSet);

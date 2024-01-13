@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.dbunit.database.metadata.SchemaMetadata;
@@ -65,8 +64,6 @@ public class DatabaseDataSet implements IDataSet {
     private final String defaultSchema;
     private final DatabaseConfig config;
     private final boolean qualifiedTableNamesActive;
-    private final String[] tableType;
-    private final IMetadataHandler metadataHandler;
 
     private boolean allSchemasLoaded = false;
     private OrderedTableNameMap<ITableMetaData> tableMetaDatas = null;
@@ -110,13 +107,11 @@ public class DatabaseDataSet implements IDataSet {
         _connection = connection;
         defaultSchema = _connection.getSchema();
         config = connection.getDatabaseConfig();
-        metadataHandler = config.getMetadataHandler();
         qualifiedTableNamesActive = config.isQualifiedTableNames();
-        tableType = config.getTableTypes();
         _tableFilter = tableFilter;
     }
 
-    private String qualifiedNameIfEnabled(String schemaName, String tableName) {
+    String qualifiedNameIfEnabled(String schemaName, String tableName) {
         QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, schemaName, null);
         return qualifiedTableName.getTableName(qualifiedTableNamesActive);
     }
@@ -260,33 +255,6 @@ public class DatabaseDataSet implements IDataSet {
             return factory.createTable(metaData, _connection);
         } catch (SQLException e) {
             throw new DataSetException(e);
-        }
-    }
-
-    private static class SchemaSet {
-
-        private final boolean isCaseSensitive;
-        private final HashSet<String> set = new HashSet<>();
-
-        private SchemaSet(boolean isCaseSensitive) {
-            this.isCaseSensitive = isCaseSensitive;
-        }
-
-        public boolean contains(String schema) {
-            return set.contains(normalizeSchema(schema));
-        }
-
-        public boolean add(String schema) {
-            return set.add(normalizeSchema(schema));
-        }
-
-        private String normalizeSchema(String schema) {
-            if (schema == null) {
-                return null;
-            } else if (!isCaseSensitive) {
-                return schema.toUpperCase(Locale.ENGLISH);
-            }
-            return schema;
         }
     }
 

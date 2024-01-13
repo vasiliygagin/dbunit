@@ -162,4 +162,9 @@ public class MockDatabaseConnection implements IDatabaseConnection, Verifiable {
     public DatabaseConfig getDatabaseConfig() {
         return _databaseConfig;
     }
+
+    @Override
+    public String correctTableName(String tableName) throws DataSetException {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -25,15 +25,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.AbstractDatabaseConnection;
-import org.dbunit.database.DatabaseDataSet;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableIterator;
-import org.dbunit.dataset.ITableMetaData;
 
 /**
  * Deletes all rows of tables present in the specified dataset. If the dataset
@@ -65,7 +62,7 @@ public class DeleteAllOperation extends AbstractOperation {
             for (String tableName : getAllTableNames(dataSet)) {
 
                 // Use database table name. Required to support case sensitive database.
-                String databaseTableName = fetchDatabaseTableName(connection, tableName);
+                String databaseTableName = connection.correctTableName(tableName);
 
                 String sql = buildDeleteSql(connection, databaseTableName);
                 statement.addBatch(sql);
@@ -82,12 +79,6 @@ public class DeleteAllOperation extends AbstractOperation {
         }
     }
 
-    protected String fetchDatabaseTableName(IDatabaseConnection connection, String tableName)
-            throws DataSetException, SQLException {
-        IDataSet dataSet = connection.createDataSet();
-        return dataSet.getTableMetaData(tableName).getTableName();
-    }
-
     protected String buildDeleteSql(IDatabaseConnection connection, String tableName) {
         return "delete from " + getQualifiedName(connection.getSchema(), tableName, connection);
     }
@@ -100,11 +91,5 @@ public class DeleteAllOperation extends AbstractOperation {
         }
 
         return tableNames;
-    }
-
-    protected ITableMetaData getTableMetadata(IDatabaseConnection connection, String tableName)
-            throws DataSetException, SQLException {
-        DatabaseDataSet dataSet = new DatabaseDataSet(((AbstractDatabaseConnection) connection));
-        return dataSet.getTableMetaData(tableName);
     }
 }

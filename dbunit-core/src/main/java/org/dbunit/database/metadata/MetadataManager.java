@@ -99,12 +99,17 @@ public class MetadataManager {
     public List<TableMetadata> getTables(SchemaMetadata schemaMetadata) throws SQLException {
         if (schemaMetadata == null) {
             LOGGER.warn("Whole database metadata requested, could be very expensive");
-            Set<SchemaMetadata> schemasToLoad = new HashSet<>(schemasManager.getAllSchemas());
+            Set<SchemaMetadata> allSchemas = schemasManager.getAllSchemas();
+            Set<SchemaMetadata> schemasToLoad = new HashSet<>(allSchemas);
             schemasToLoad.removeAll(schemaTables.keySet());
 
-            List<TableMetadata> result = new ArrayList<>();
             for (SchemaMetadata schemaMetadata2 : schemasToLoad) {
-                result.addAll(loadSchemaTables(schemaMetadata2));
+                loadSchemaTables(schemaMetadata2);
+            }
+
+            List<TableMetadata> result = new ArrayList<>();
+            for (List<TableMetadata> tables : schemaTables.values()) {
+                result.addAll(tables);
             }
             return result;
         }

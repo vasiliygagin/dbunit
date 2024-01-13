@@ -36,6 +36,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @since 2.3.0
  */
 public class QualifiedTableName {
+
     /**
      * Logger for this class
      */
@@ -146,11 +147,13 @@ public class QualifiedTableName {
     }
 
     public String getTableName(boolean useQualifiedTableNames) {
+        String qualifiedName;
         if (useQualifiedTableNames) {
-            return getQualifiedName(this.schema, this.table, this.escapePattern);
+            qualifiedName = getQualifiedName(this.schema, this.table, this.escapePattern);
         } else {
-            return getQualifiedName(null, this.table, this.escapePattern);
+            qualifiedName = getQualifiedName(null, this.table, this.escapePattern);
         }
+        return qualifiedName;
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.dbunit.database.DatabaseConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -81,18 +80,6 @@ public abstract class AbstractDatabaseTest {
      */
     public void addCustomizer(Consumer<DatabaseConfig> configCustomizer) {
         configCustomizers.add(configCustomizer);
-    }
-
-    @Deprecated
-    protected final void customizeEnvironment(Consumer<DatabaseConfig> customizer) {
-        environment.customizeConfig(customizer);
-    }
-
-    @Deprecated
-    protected final DatabaseConnection customizeConfig(Consumer<DatabaseConfig> customizer)
-            throws DatabaseUnitException {
-        environment.customizeConfig(customizer);
-        return database.getConnection();
     }
 
     protected FileReader fileReader(String fileName) throws FileNotFoundException {

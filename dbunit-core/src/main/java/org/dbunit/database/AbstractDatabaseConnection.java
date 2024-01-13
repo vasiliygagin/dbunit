@@ -27,6 +27,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Locale;
 
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.metadata.MetadataManager;
@@ -241,5 +243,61 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
             throw new DataSetException("Exception while validation existence of table '" + tn.table + "'", e);
         }
 
+    }
+
+    @Override
+    public String correctTableName(String tableName) throws DataSetException {
+        return oldWayCorrectTableName(tableName);
+    }
+
+    protected String oldWayCorrectTableName(String tableName) throws NoSuchTableException, DataSetException {
+        // olg algorithm of correcting table names
+        boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
+        boolean qualifiedTableNames = _databaseConfig.isQualifiedTableNames();
+
+        String result1 = tableName;
+        if (!caseSensitiveTableNames) {
+            // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
+            // locale like turkish. (for release 2.4.3)
+            result1 = tableName.toUpperCase(Locale.ENGLISH);
+        }
+        String correctedCaseTableName = result1;
+        try {
+            boolean containsTable = false;
+            List<TableMetadata> tableMetadatas = getMetadataManager().getTables(null);
+            for (TableMetadata tableMetadata : tableMetadatas) {
+                String qualifiedName;
+                if (qualifiedTableNames) {
+                    qualifiedName = tableMetadata.schemaMetadata.schema + "." + tableMetadata.tableName;
+                } else {
+                    qualifiedName = tableMetadata.tableName;
+                }
+
+                String result = qualifiedName;
+                if (!caseSensitiveTableNames) {
+                    // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
+                    // locale like turkish. (for release 2.4.3)
+                    result = qualifiedName.toUpperCase(Locale.ENGLISH);
+                }
+
+                if (result.equals(correctedCaseTableName)) {
+                    containsTable = true;
+                }
+            }
+
+            // Verify if table exist in the database
+            if (!containsTable) {
+                throw new NoSuchTableException(tableName);
+            }
+
+            if (!caseSensitiveTableNames) {
+                return SQLHelper.correctCase(tableName, jdbcConnection);
+            } else {
+                return tableName;
+            }
+        } catch (SQLException exc) {
+            throw new DataSetException(
+                    "Exception while retrieving JDBC connection from dbunit connection '" + this + "'", exc);
+        }
     }
 }
