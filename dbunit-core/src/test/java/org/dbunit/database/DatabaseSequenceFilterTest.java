@@ -30,14 +30,17 @@ import java.sql.Connection;
 import java.util.Arrays;
 
 import org.dbunit.AbstractDatabaseTest;
+import org.dbunit.CaseSensitive;
 import org.dbunit.Database;
 import org.dbunit.DdlExecutor;
 import org.dbunit.H2Environment;
-import org.dbunit.HypersonicEnvironment;
+import org.dbunit.HsqldbEnvironment;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
+import org.dbunit.junit.internal.GlobalContext;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
@@ -53,12 +56,12 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
 
     @Override
     protected boolean checkEnvironment() {
-        return environment instanceof HypersonicEnvironment;
+        return environment instanceof HsqldbEnvironment;
     }
 
     @Override
     protected Database doOpenDatabase() throws Exception {
-        return environment.openDatabase("tempdb");
+        return environment.openDatabase("tempdb", getconfigCustomizers());
     }
 
     @Test
@@ -109,6 +112,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @CaseSensitive(true)
     public void testCaseSensitiveTableNames() throws Exception {
         final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
         final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
@@ -117,9 +121,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         DdlExecutor.executeDdlFile(environment, jdbcConnection,
                 TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
 
-        DatabaseConnection connection = customizeConfig(config -> {
-            config.setCaseSensitiveTableNames(true);
-        });
+        DatabaseConnection connection = database.getConnection();
 
         final IDataSet databaseDataset = connection.createDataSet();
         final String[] actualNoFilter = databaseDataset.getTableNames();
@@ -141,12 +143,15 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
     public void testMultiSchemaFks() throws Exception {
         assumeTrue(environment instanceof H2Environment);
         // TODO should be able to run this with hsqldb and others
-        final Connection jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.h2.Driver",
+        DriverManagerConnectionSource driverManagerConnectionSource = GlobalContext.getIt()
+                .getDriverManagerConnectionSource();
+        final Connection jdbcConnection = driverManagerConnectionSource.fetchConnection("org.h2.Driver",
                 "jdbc:h2:mem:test", "sa", "");
         DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/h2_multischema_fk_test.sql"));
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
-        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
 
         final IDataSet databaseDataset = connection.createDataSet();
         final ITableFilter filter = new DatabaseSequenceFilter(connection);

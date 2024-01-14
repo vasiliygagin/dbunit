@@ -31,6 +31,7 @@ import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.DefaultDatabaseTester;
 import org.dbunit.DefaultOperationListener;
 import org.dbunit.IDatabaseTester;
+import org.dbunit.database.metadata.MetadataManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,6 +54,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
     @Test
     public final void testGetRowCount() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE", null));
         assertEquals("EMPTY_TABLE", 0, customizedConnection.getRowCount("EMPTY_TABLE"));
 
@@ -87,6 +89,7 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
     @Test
     public final void testGetRowCount_NoSchemaSpecified() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         this.schema = null;
         IDatabaseTester dbTester = this.newDatabaseTester(this.schema);
         try {
@@ -102,13 +105,17 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
     }
 
     private DefaultDatabaseTester newDatabaseTester(String schema) throws Exception {
-        logger.debug("newDatabaseTester() - start");
+        DatabaseConnection customizedConnection = database.getConnection();
         Connection jdbcConnection = database.getJdbcConnection();
 
         io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig databaseConfig = environment.getDatabaseConfig();
-        customizedConnection = new DatabaseConnection(jdbcConnection, databaseConfig, environment.getSchema());
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, databaseConfig, null,
+                environment.getSchema());
+        customizedConnection = new DatabaseConnection(jdbcConnection, databaseConfig, environment.getSchema(),
+                metadataManager);
 
-        final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, this.schema);
+        final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, this.schema,
+                metadataManager);
         DefaultDatabaseTester tester = new DefaultDatabaseTester(connection);
         tester.setOperationListener(new DefaultOperationListener() {
 

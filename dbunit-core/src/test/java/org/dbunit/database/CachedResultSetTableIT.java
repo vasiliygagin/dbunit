@@ -21,6 +21,7 @@
 package org.dbunit.database;
 
 import org.dbunit.dataset.AbstractTableTest;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.operation.DatabaseOperation;
 
@@ -37,8 +38,9 @@ public class CachedResultSetTableIT extends AbstractTableTest {
     @Override
     protected ITable createTable() throws Exception {
         IDatabaseConnection connection = database.getConnection();
-
-        DatabaseOperation.CLEAN_INSERT.execute(connection, environment.getInitDataSet());
+        IDataSet dataSet = environment.getInitDataSet();
+        DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
+        DatabaseOperation.INSERT.execute(connection, dataSet);
 
         String selectStatement = "select * from TEST_TABLE order by COLUMN0";
         return new CachedResultSetTable(new ForwardOnlyResultSetTable("TEST_TABLE", selectStatement, connection));

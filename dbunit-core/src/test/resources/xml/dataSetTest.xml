@@ -2,7 +2,7 @@
 
     <table name="PARENT">
         <column>ID</column>
-        <column>DESC</column>
+        <column>NAME</column>
         <row>
             <value>3</value>
             <value>PARENT 3</value>

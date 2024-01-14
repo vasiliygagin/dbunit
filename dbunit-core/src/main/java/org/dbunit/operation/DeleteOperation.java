@@ -21,9 +21,6 @@
 
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.BitSet;
 
 import org.dbunit.DatabaseUnitException;
@@ -34,6 +31,8 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.NoPrimaryKeyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Deletes only the dataset contents from the database. This operation does not
@@ -58,16 +57,18 @@ public class DeleteOperation extends AbstractBatchOperation {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractBatchOperation class
 
+    @Override
     protected ITableIterator iterator(IDataSet dataSet) throws DatabaseUnitException {
         logger.debug("iterator(dataSet={}) - start", dataSet);
         return dataSet.reverseIterator();
     }
 
+    @Override
     public OperationData getOperationData(ITableMetaData metaData, BitSet ignoreMapping, IDatabaseConnection connection)
             throws DataSetException {
         if (logger.isDebugEnabled()) {
-            logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start",
-                    new Object[] { metaData, ignoreMapping, connection });
+            logger.debug("getOperationData(metaData={}, ignoreMapping={}, connection={}) - start", metaData,
+                    ignoreMapping, connection);
         }
 
         // cannot construct where clause if no primary key

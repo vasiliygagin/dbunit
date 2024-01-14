@@ -20,19 +20,22 @@
  */
 package org.dbunit.assertion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author gommma (gommma AT users.sourceforge.net)
  * @since 2.4.0
  */
-public class DefaultFailureHandlerTest extends TestCase {
+public class DefaultFailureHandlerTest {
 
     private static final String MY_TABLE = "MY_TABLE";
 
@@ -42,6 +45,7 @@ public class DefaultFailureHandlerTest extends TestCase {
     private static final String COL_VALUE_1 = "value1";
     private static final String COL_VALUE_2 = "value2";
 
+    @Test
     public void testMakeAdditionalColumnInfoErrorMessage() {
         MessageBuilder messageBuilder = new MessageBuilder();
 
@@ -53,6 +57,7 @@ public class DefaultFailureHandlerTest extends TestCase {
         // manually review log for acceptable message content
     }
 
+    @Test
     public void testGetColumnValue_Found() throws DataSetException {
         Column[] cols = { new Column(COL_NAME_1, DataType.UNKNOWN), new Column(COL_NAME_2, DataType.UNKNOWN) };
         DefaultTable table = new DefaultTable(MY_TABLE, cols);
@@ -70,6 +75,7 @@ public class DefaultFailureHandlerTest extends TestCase {
         assertEquals("Wrong column value found.", expected, actual);
     }
 
+    @Test
     public void testGetColumnValue_NotFound() throws DataSetException {
         Column[] cols = { new Column(COL_NAME_1, DataType.UNKNOWN), new Column(COL_NAME_2, DataType.UNKNOWN) };
         DefaultTable table = new DefaultTable(MY_TABLE, cols);

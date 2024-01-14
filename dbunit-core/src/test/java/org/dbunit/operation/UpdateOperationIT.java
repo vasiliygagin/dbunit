@@ -30,6 +30,7 @@ import java.io.Reader;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
 import org.dbunit.TestFeature;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -323,6 +324,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         // execute this test only if the target database support CLOB
         if (environment.support(TestFeature.CLOB)) {
             String tableName = "CLOB_TABLE";
+            DatabaseConnection customizedConnection = database.getConnection();
 
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/clobInsertTest.xml"));
@@ -349,6 +351,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         if (environment.support(TestFeature.BLOB)) {
             String tableName = "BLOB_TABLE";
 
+            DatabaseConnection customizedConnection = database.getConnection();
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder().build(TestUtils.getFile("xml/blobInsertTest.xml"));
 
@@ -380,6 +383,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         if (environment.support(TestFeature.SDO_GEOMETRY)) {
             String tableName = "SDO_GEOMETRY_TABLE";
 
+            DatabaseConnection customizedConnection = database.getConnection();
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder()
                         .build(TestUtils.getFile("xml/sdoGeometryInsertTest.xml"));
@@ -407,6 +411,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         if (environment.support(TestFeature.XML_TYPE)) {
             String tableName = "XML_TYPE_TABLE";
 
+            DatabaseConnection customizedConnection = database.getConnection();
             {
                 IDataSet beforeDataSet = new FlatXmlDataSetBuilder()
                         .build(TestUtils.getFile("xml/xmlTypeInsertTest.xml"));
@@ -459,6 +464,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         Reader reader = TestUtils.getFileReader("xml/updateOperationNoPKTest.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(reader);
 
+        DatabaseConnection customizedConnection = database.getConnection();
         // verify table before
         assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
 
@@ -482,6 +488,7 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         ITable tableBefore = createOrderedTable(tableName, columnNames[0]);
         assertEquals("row count before", 3, tableBefore.getRowCount());
 
+        DatabaseConnection customizedConnection = database.getConnection();
         DatabaseOperation.UPDATE.execute(customizedConnection, dataSet);
 
         ITable tableAfter = createOrderedTable(tableName, columnNames[0]);

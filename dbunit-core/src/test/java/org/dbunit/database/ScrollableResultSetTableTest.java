@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import org.dbunit.DatabaseEnvironment;
+import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.TestFeature;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScrollableResultSetTableTest {
 
-    private DatabaseEnvironment environment;
+    private DatabaseTestingEnvironment environment;
 
     public ScrollableResultSetTableTest() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();

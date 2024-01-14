@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 /**
  * Used internally to support {@link SingleConnectionDataSource}
  */
-class UncloseableConnection implements Connection {
+public class UncloseableConnection implements Connection {
 
     final Connection delegate;
 

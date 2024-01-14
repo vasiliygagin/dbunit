@@ -24,24 +24,18 @@ package org.dbunit;
 import java.sql.SQLException;
 
 import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
-import org.dbunit.operation.DatabaseOperation;
 
 /**
  * @author Manuel Laflamme
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public class HypersonicEnvironment extends DatabaseEnvironment {
+public class HsqldbEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = ".";
 
-    public HypersonicEnvironment() throws Exception {
+    public HsqldbEnvironment() throws Exception {
         super(databaseName, new HypersonicDatabaseProfile(), new HsqldbDatabaseConfig());
-    }
-
-    @Override
-    public void closeConnection() throws Exception {
-        DatabaseOperation.DELETE_ALL.execute(getOpenedDatabase().getConnection(), getInitDataSet());
     }
 
     @Override
@@ -49,7 +43,7 @@ public class HypersonicEnvironment extends DatabaseEnvironment {
         return "jdbc:hsqldb:mem:" + databaseName;
     }
 
-    private static class HypersonicDatabaseProfile extends DatabaseProfile {
+    private static class HypersonicDatabaseProfile extends DatabaseTestingProfile {
 
         public HypersonicDatabaseProfile() {
             super("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:" + databaseName, "PUBLIC", "sa", "", "hypersonic.sql",

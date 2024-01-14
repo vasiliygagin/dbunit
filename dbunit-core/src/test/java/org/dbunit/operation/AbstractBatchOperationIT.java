@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.DataSetUtils;
@@ -52,6 +53,7 @@ public class AbstractBatchOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testGetOperationMetaDataAndMissingColumns() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         Reader in = TestUtils.getFileReader("xml/missingColumnTest.xml");
         IDataSet xmlDataSet = new XmlDataSet(in);
 
@@ -94,6 +96,7 @@ public class AbstractBatchOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testGetOperationMetaDataAndUnknownColumns() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         try {
             String tableName = "PK_TABLE";
             Reader in = TestUtils.getFileReader("xml/unknownColumnTest.xml");

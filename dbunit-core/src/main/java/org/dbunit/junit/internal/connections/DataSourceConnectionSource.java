@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.junit.ConnectionSource;
 import org.dbunit.junit.DatabaseException;
 
@@ -21,9 +22,20 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 public class DataSourceConnectionSource implements ConnectionSource {
 
     private final DataSource dataSource;
+    private final DatabaseConfig config;
+    private final MetadataManager metadataManager;
 
-    public DataSourceConnectionSource(DataSource dataSource) {
+    public DataSourceConnectionSource(DataSource dataSource) throws DatabaseException {
         this.dataSource = dataSource;
+        this.config = new DatabaseConfig();
+
+        try ( //
+                Connection jdbcConnection = dataSource.getConnection(); //
+        ) {
+            this.metadataManager = new MetadataManager(jdbcConnection, config, null, null);
+        } catch (SQLException exc) {
+            throw new DatabaseException(exc);
+        }
     }
 
     @Override
@@ -39,7 +51,7 @@ public class DataSourceConnectionSource implements ConnectionSource {
 
     private DatabaseConnection buildDatabaseConnection(Connection jdbcConnection) throws DatabaseException {
         try {
-            return new DatabaseConnection(jdbcConnection, new DatabaseConfig(), "PUBLIC");
+            return new DatabaseConnection(jdbcConnection, config, "PUBLIC", metadataManager);
         } catch (DatabaseUnitException exc) {
             throw new DatabaseException(exc);
         }

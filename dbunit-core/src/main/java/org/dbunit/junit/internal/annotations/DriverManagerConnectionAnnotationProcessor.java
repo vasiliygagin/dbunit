@@ -7,36 +7,38 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
-import org.dbunit.internal.connections.DriverManagerConnectionsFactory;
+import org.dbunit.internal.connections.DriverManagerConnectionSource;
 import org.dbunit.internal.connections.SingleConnectionDataSource;
+import org.dbunit.internal.connections.UncloseableConnection;
 import org.dbunit.junit.ConnectionSource;
+import org.dbunit.junit.DatabaseException;
 import org.dbunit.junit.DriverManagerConnection;
 import org.dbunit.junit.internal.GlobalContext;
 import org.dbunit.junit.internal.TestContext;
-import org.dbunit.junit.internal.connections.DatabaseConnectionManager;
+import org.dbunit.junit.internal.connections.DataSourceConnectionSource;
 
 /**
  *
  */
 class DriverManagerConnectionAnnotationProcessor {
 
-    private static final GlobalContext context = GlobalContext.getIt();
-    private static final DriverManagerConnectionsFactory driverManagerConnectionsFactory = DriverManagerConnectionsFactory
-            .getIT();
+    private static GlobalContext context = GlobalContext.getIt();
 
     /**
      * @param klass
      * @param testContext TODO
+     * @throws DatabaseException
      */
-    public void process(Class<? extends Object> klass, TestContext testContext) {
-        DatabaseConnectionManager dbConnectionManager = context.getDbConnectionManager();
+    public void process(Class<? extends Object> klass, TestContext testContext) throws DatabaseException {
+        DriverManagerConnectionSource driverManagerConnectionSource = context.getDriverManagerConnectionSource();
 
         DriverManagerConnection[] annotations = klass.getAnnotationsByType(DriverManagerConnection.class);
         for (DriverManagerConnection annotation : annotations) {
-            Connection jdbcConnection = driverManagerConnectionsFactory.buildConnection(annotation.driver(),
+            Connection jdbcConnection = driverManagerConnectionSource.fetchConnection(annotation.driver(),
                     annotation.url(), annotation.user(), annotation.password());
-            DataSource dataSource = new SingleConnectionDataSource(jdbcConnection);
-            ConnectionSource connectionSource = dbConnectionManager.registerDataSourceInstance(dataSource);
+            UncloseableConnection uncloseableConnection = new UncloseableConnection(jdbcConnection);
+            DataSource dataSource = new SingleConnectionDataSource(uncloseableConnection);
+            ConnectionSource connectionSource = new DataSourceConnectionSource(dataSource);
             testContext.addConnecionSource(annotation.name(), connectionSource);
         }
     }

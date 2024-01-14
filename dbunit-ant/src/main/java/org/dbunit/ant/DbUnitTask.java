@@ -38,6 +38,7 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -466,7 +467,8 @@ public class DbUnitTask extends Task {
         DatabaseConfig config = new DatabaseConfig();
         IDatabaseConnection connection = null;
         try {
-            connection = new DatabaseConnection(jdbcConnection, config, dbSchema);
+            MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, dbSchema);
+            connection = new DatabaseConnection(jdbcConnection, config, dbSchema, metadataManager);
         } catch (DatabaseUnitException e) {
             throw new BuildException("Could not create dbunit connection object", e);
         }

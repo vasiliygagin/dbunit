@@ -28,8 +28,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.dbunit.database.metadata.MetadataManager;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * This class adapts a JDBC <code>DataSource</code> to a
@@ -41,47 +42,45 @@ import org.slf4j.LoggerFactory;
  */
 public class DatabaseDataSourceConnection extends AbstractDatabaseConnection {
 
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSourceConnection.class);
-
     private final String _schema;
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema)
-            throws NamingException, SQLException {
-        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, null, null);
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema,
+            MetadataManager metadataManager) throws NamingException, SQLException {
+        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, null, null, metadataManager);
     }
 
     public DatabaseDataSourceConnection(InitialContext context, String jndiName, String schema, String user,
-            String password) throws NamingException, SQLException {
-        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, user, password);
+            String password, MetadataManager metadataManager) throws NamingException, SQLException {
+        this((DataSource) context.lookup(jndiName), new DatabaseConfig(), schema, user, password, metadataManager);
     }
 
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName) throws NamingException, SQLException {
-        this(context, jndiName, null);
-    }
-
-    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String user, String password)
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, MetadataManager metadataManager)
             throws NamingException, SQLException {
-        this(context, jndiName, null, user, password);
+        this(context, jndiName, null, metadataManager);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource) throws SQLException {
-        this(dataSource, new DatabaseConfig(), null, null, null);
+    public DatabaseDataSourceConnection(InitialContext context, String jndiName, String user, String password,
+            MetadataManager metadtaManager) throws NamingException, SQLException {
+        this(context, jndiName, null, user, password, metadtaManager);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource, String user, String password) throws SQLException {
-        this(dataSource, new DatabaseConfig(), null, user, password);
+    public DatabaseDataSourceConnection(DataSource dataSource, MetadataManager metadataManager) throws SQLException {
+        this(dataSource, new DatabaseConfig(), null, null, null, metadataManager);
     }
 
-    public DatabaseDataSourceConnection(DataSource dataSource, String schema) throws SQLException {
-        this(dataSource, new DatabaseConfig(), schema, null, null);
+    public DatabaseDataSourceConnection(DataSource dataSource, String user, String password,
+            MetadataManager metedataManager) throws SQLException {
+        this(dataSource, new DatabaseConfig(), null, user, password, metedataManager);
+    }
+
+    public DatabaseDataSourceConnection(DataSource dataSource, String schema, MetadataManager metadataManager)
+            throws SQLException {
+        this(dataSource, new DatabaseConfig(), schema, null, null, metadataManager);
     }
 
     public DatabaseDataSourceConnection(DataSource dataSource, DatabaseConfig config, String schema, String user,
-            String password) throws SQLException {
-        super(getConnection(dataSource, user, password), config, null, schema);
+            String password, MetadataManager metadataManager) throws SQLException {
+        super(getConnection(dataSource, user, password), config, metadataManager);
         _schema = schema;
     }
 

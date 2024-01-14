@@ -14,5 +14,6 @@ public class OracleDatabaseConfig extends DatabaseConfig {
 
     public OracleDatabaseConfig() {
         setDataTypeFactory(new OracleDataTypeFactory());
+        setIgnoredTablePredicate(tm -> tm.tableName.startsWith("BIN$"));
     }
 }

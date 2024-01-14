@@ -7,18 +7,22 @@ import java.sql.Connection;
 
 import org.dbunit.database.DatabaseConnection;
 
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
+
 /**
  *
  */
 public class Database {
 
-    public final DatabaseEnvironment environment;
+    public final DatabaseTestingEnvironment environment;
+    public final DatabaseConfig databaseConfig;
     private Connection jdbcConnection;
     private DatabaseConnection connection;
     private JdbcDatabaseTester databaseTester;
 
-    public Database(DatabaseEnvironment environment) {
+    public Database(DatabaseTestingEnvironment environment, DatabaseConfig databaseConfig) {
         this.environment = environment;
+        this.databaseConfig = databaseConfig;
     }
 
     public Connection getJdbcConnection() {

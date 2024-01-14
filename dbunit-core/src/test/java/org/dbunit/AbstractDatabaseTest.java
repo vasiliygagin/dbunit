@@ -8,19 +8,27 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
-import org.dbunit.database.DatabaseConnection;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 
 import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
-public class AbstractDatabaseTest {
+// TODO needs to be renamed to IT
+public abstract class AbstractDatabaseTest {
 
-    protected final DatabaseEnvironment environment;
+    @Rule
+    public final DbUnitEnvironmentFacade dbUnit = new DbUnitEnvironmentFacade();
+
+    protected final DatabaseTestingEnvironment environment;
     protected Database database;
     private boolean environmentOk;
+
+    private final List<Consumer<DatabaseConfig>> configCustomizers = new ArrayList<>();
 
     public AbstractDatabaseTest() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();
@@ -44,7 +52,11 @@ public class AbstractDatabaseTest {
      * Chance to overwrite db
      */
     protected Database doOpenDatabase() throws Exception {
-        return environment.openDefaultDatabase();
+        return environment.openPopulatedDatabase(getconfigCustomizers());
+    }
+
+    protected Consumer[] getconfigCustomizers() {
+        return configCustomizers.toArray(new Consumer[configCustomizers.size()]);
     }
 
     /**
@@ -63,14 +75,11 @@ public class AbstractDatabaseTest {
         }
     }
 
-    protected final DatabaseConnection customizeConfig(Consumer<DatabaseConfig> customizer)
-            throws DatabaseUnitException {
-        DatabaseConfig newConfig = new DatabaseConfig();
-        newConfig.apply(environment.getDatabaseConfig());
-        customizer.accept(newConfig);
-        newConfig.setCaseSensitiveTableNames(true);
-        newConfig.freese();
-        return new DatabaseConnection(database.getJdbcConnection(), newConfig, environment.getSchema());
+    /**
+     * @param object
+     */
+    public void addCustomizer(Consumer<DatabaseConfig> configCustomizer) {
+        configCustomizers.add(configCustomizer);
     }
 
     protected FileReader fileReader(String fileName) throws FileNotFoundException {

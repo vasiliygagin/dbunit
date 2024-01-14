@@ -21,11 +21,11 @@
 
 package org.dbunit.operation;
 
+import java.sql.SQLException;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
-
-import java.sql.SQLException;
 
 /**
  * Defines the interface contract for operations performed on the database.
@@ -35,6 +35,7 @@ import java.sql.SQLException;
  * @since Feb 18, 2002
  */
 public abstract class DatabaseOperation {
+
     /** @see DummyOperation */
     public static final DatabaseOperation NONE = new DummyOperation();
     /** @see UpdateOperation */
@@ -46,7 +47,7 @@ public abstract class DatabaseOperation {
     /** @see DeleteOperation */
     public static final DatabaseOperation DELETE = new DeleteOperation();
     /** @see DeleteAllOperation */
-    public static final DatabaseOperation DELETE_ALL = new DeleteAllOperation();
+    public static final DeleteAllOperation DELETE_ALL = new DeleteAllOperation();
     /** @see TruncateTableOperation */
     public static final DatabaseOperation TRUNCATE_TABLE = new TruncateTableOperation();
     /**
@@ -77,6 +78,7 @@ public abstract class DatabaseOperation {
             throws DatabaseUnitException, SQLException;
 
     private static class DummyOperation extends DatabaseOperation {
+
         @Override
         public void execute(IDatabaseConnection connection, IDataSet dataSet) {
         }

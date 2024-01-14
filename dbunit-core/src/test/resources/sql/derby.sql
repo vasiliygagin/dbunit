@@ -1,6 +1,11 @@
+-- NEW SETUP
+
+CREATE TABLE PARENT ( ID INTEGER, NAME VARCHAR(100) );
+
 -----------------------------------------------------------------------------
 -- TEST_TABLE
 -----------------------------------------------------------------------------
+
 CREATE TABLE TEST_TABLE
   (COLUMN0 VARCHAR(32),
    COLUMN1 VARCHAR(32),

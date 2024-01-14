@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +81,7 @@ public class DatabaseDataSourceConnectionFactoryBeanTest {
         assertNotNull(bean);
 
         bean.getConnection();
-        verify(dataSource).getConnection("username", "password");
+        verify(dataSource, times(2)).getConnection("username", "password");
     }
 
     @Test

@@ -20,7 +20,7 @@
  */
 package org.dbunit;
 
-public class MsSqlEnvironment extends DatabaseEnvironment {
+public class MsSqlEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = "//localhost:1433";
 
@@ -37,14 +37,14 @@ public class MsSqlEnvironment extends DatabaseEnvironment {
     /**
      * Preserve case for MS SQL
      *
-     * @see DatabaseEnvironment#convertString(String)
+     * @see DatabaseTestingEnvironment#convertString(String)
      */
     @Override
     public String convertString(final String str) {
         return str;
     }
 
-    private static class MsSqlDatabaseProfile extends DatabaseProfile {
+    private static class MsSqlDatabaseProfile extends DatabaseTestingProfile {
 
         public MsSqlDatabaseProfile() {
             super("com.microsoft.sqlserver.jdbc.SQLServerDriver",

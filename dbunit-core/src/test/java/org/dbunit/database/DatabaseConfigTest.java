@@ -20,11 +20,13 @@
  */
 package org.dbunit.database;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author gommma (gommma AT users.sourceforge.net)
@@ -32,7 +34,9 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 2.4.0
  */
-public class DatabaseConfigTest extends TestCase {
+public class DatabaseConfigTest {
+
+    @Test
     public void testSetProperty_InvalidType_Array() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         String simpleString = "TABLE";
@@ -45,6 +49,7 @@ public class DatabaseConfigTest extends TestCase {
         }
     }
 
+    @Test
     public void testSetProperty_CorrectType_Array() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         String[] stringArray = { "TABLE" };
@@ -52,6 +57,7 @@ public class DatabaseConfigTest extends TestCase {
         assertEquals(stringArray, config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE));
     }
 
+    @Test
     public void testSetProperty_Interface() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         IDataTypeFactory myFactory = new IDataTypeFactory() {
@@ -71,6 +77,7 @@ public class DatabaseConfigTest extends TestCase {
         assertEquals(myFactory, config.getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY));
     }
 
+    @Test
     public void testSetPropertyToNullWhereNotAllowed() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         try {
@@ -83,12 +90,14 @@ public class DatabaseConfigTest extends TestCase {
         }
     }
 
+    @Test
     public void testSetPropertyToNullWhereAllowed() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         config.setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, null);
         assertEquals(null, config.getProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER));
     }
 
+    @Test
     public void testSetFeatureViaSetPropertyMethod() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         config.setProperty(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, "true");
@@ -96,6 +105,7 @@ public class DatabaseConfigTest extends TestCase {
         assertEquals(true, config.getFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS));
     }
 
+    @Test
     public void testSetFeatureViaSetFeatureMethod() throws Exception {
         DatabaseConfig config = new DatabaseConfig();
         config.setFeature(DatabaseConfig.FEATURE_BATCHED_STATEMENTS, true);

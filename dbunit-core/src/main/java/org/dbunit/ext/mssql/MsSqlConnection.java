@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -53,10 +54,12 @@ public class MsSqlConnection extends DatabaseConnection {
      *
      * @param connection the adapted JDBC connection
      * @param schema     the database schema
+     * @param metadataManager
      * @throws DatabaseUnitException
      */
-    public MsSqlConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, buildConfig(), schema);
+    public MsSqlConnection(Connection connection, String schema, MetadataManager metadataManager)
+            throws DatabaseUnitException {
+        super(connection, buildConfig(), schema, metadataManager);
     }
 
     static DatabaseConfig buildConfig() {
@@ -69,10 +72,11 @@ public class MsSqlConnection extends DatabaseConnection {
      * Creates a new <code>MsSqlConnection</code>.
      *
      * @param connection the adapted JDBC connection
+     * @param metadataManager
      * @throws DatabaseUnitException
      */
-    public MsSqlConnection(Connection connection) throws DatabaseUnitException {
-        super(connection, buildConfig());
+    public MsSqlConnection(Connection connection, MetadataManager metadataManager) throws DatabaseUnitException {
+        super(connection, buildConfig(), metadataManager);
     }
 
     ////////////////////////////////////////////////////////////////////////////

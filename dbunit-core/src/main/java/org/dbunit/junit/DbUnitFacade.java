@@ -24,21 +24,6 @@ public class DbUnitFacade extends DbUnitRule {
         return getTestContext().getConnection();
     }
 
-    @Override
-    protected void after() {
-        rollbackConnections();
-        releaseConnections();
-        super.after();
-    }
-
-    protected void rollbackConnections() {
-        getTestContext().rollbackConnections();
-    }
-
-    protected void releaseConnections() {
-        getTestContext().releaseConnections();
-    }
-
     public Connection getJdbcConnection() throws Exception {
         return getConnection().getConnection();
     }

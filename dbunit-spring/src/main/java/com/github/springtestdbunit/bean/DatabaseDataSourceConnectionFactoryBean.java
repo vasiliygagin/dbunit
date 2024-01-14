@@ -18,11 +18,14 @@ package com.github.springtestdbunit.bean;
 
 import static com.github.springtestdbunit.TransactionAwareConnectionHelper.makeTransactionAware;
 
+import java.sql.Connection;
+
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
@@ -66,8 +69,10 @@ public class DatabaseDataSourceConnectionFactoryBean implements FactoryBean<Data
         } else {
             config = new DatabaseConfig();
         }
-        return new DatabaseDataSourceConnection(makeTransactionAwareIfNeeded(this.dataSource), config, this.schema,
-                this.username, this.password);
+        Connection jdbcConnection = dataSource.getConnection(this.username, this.password);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, this.schema);
+        return new DatabaseDataSourceConnection(makeTransactionAwareIfNeeded(this.dataSource), config, this.schema, this.username, this.password,
+                metadataManager);
     }
 
     private DataSource makeTransactionAwareIfNeeded(DataSource dataSource) {

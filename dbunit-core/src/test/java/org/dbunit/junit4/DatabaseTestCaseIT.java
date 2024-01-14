@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.junit.DriverManagerConnection;
+import org.dbunit.junit.internal.DbunitTestCaseTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

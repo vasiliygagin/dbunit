@@ -61,7 +61,6 @@
         <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
         <pmdPluginVersion>3.8</pmdPluginVersion>
         <projectInfoReportsPluginVersion>2.9</projectInfoReportsPluginVersion>
-        <propertiesPluginVersion>1.0.0</propertiesPluginVersion>
         <releasePluginVersion>2.5.3</releasePluginVersion>
         <resourcesPluginVersion>3.0.2</resourcesPluginVersion>
         <sitePluginVersion>3.7.1</sitePluginVersion>
@@ -216,11 +215,17 @@
         <!--            <artifactId>h2</artifactId>-->
         <!--            <scope>test</scope>-->
         <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.hsqldb</groupId>-->
-        <!--            <artifactId>hsqldb</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -276,49 +281,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${cleanPluginVersion}</version>
-                </plugin>
-                <!--                <plugin>-->
-                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
-                <!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
-                <!--                    <version>${enforcerPluginVersion}</version>-->
-                <!--                    <executions>-->
-                <!--                        <execution>-->
-                <!--                            <id>enforce-versions</id>-->
-                <!--                            <goals>-->
-                <!--                                <goal>enforce</goal>-->
-                <!--                            </goals>-->
-                <!--                        </execution>-->
-                <!--                    </executions>-->
-                <!--                    <configuration>-->
-                <!--                        <rules>-->
-                <!--                            <requireMavenVersion>-->
-                <!--                                <version>${mavenVersion}</version>-->
-                <!--                            </requireMavenVersion>-->
-                <!--                            <requireJavaVersion>-->
-                <!--                                <version>${compileSource}</version>-->
-                <!--                            </requireJavaVersion>-->
-                <!--                            <requirePluginVersions>-->
-                <!--                                <phases>compile</phases>-->
-                <!--                            </requirePluginVersions>-->
-                <!--                        </rules>-->
-                <!--                    </configuration>-->
-                <!--                </plugin>-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${failsafePluginVersion}</version>
-                    <configuration>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -387,19 +349,6 @@ enable this to generate coverage report HTML files during build (same as site)
                     <version>${pmdPluginVersion}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>properties-maven-plugin</artifactId>
-                    <version>${propertiesPluginVersion}</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>read-project-properties</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>${projectInfoReportsPluginVersion}</version>
@@ -458,10 +407,58 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafePluginVersion}</version>
                 <configuration>
+                    <!--
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>-->
+                    <!--                        <encoding>UTF-8</encoding>-->
                     <!--                                        <skipAfterFailureCount>1</skipAfterFailureCount>-->
                     <!--                                        <forkMode>never</forkMode>-->
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-tests-hsqldb</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>test.environment</name>
+                                    <value>hsqldb</value>
+                                </property>
+                            </systemProperties>
+                            <summaryFile>target/failsafe-reports/failsafe-summary-hsqldb.xml</summaryFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests-derby</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>test.environment</name>
+                                    <value>derby</value>
+                                </property>
+                            </systemProperties>
+                            <summaryFile>target/failsafe-reports/failsafe-summary-derby.xml</summaryFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <summaryFiles>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-hsqldb.xml</summaryFile>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-derby.xml</summaryFile>
+                            </summaryFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -960,111 +957,6 @@ enable this to generate coverage report HTML files during build (same as site)
             </build>
         </profile>
         <profile>
-            <id>default</id>
-            <activation>
-                <property>
-                    <name>!test.environment</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>test.environment</name>
-                                    <value>hsqldb</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>test.environment</name>
-                                    <value>hsqldb</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hsqldb</groupId>
-                    <artifactId>hsqldb</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>derby</id>
-            <activation>
-                <property>
-                    <name>test.environment</name>
-                    <value>derby</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                    <version>${derby.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <!--                <dependency>-->
-                <!--                    <groupId>com.oracle.database.jdbc</groupId>-->
-                <!--                    <artifactId>ojdbc8</artifactId>-->
-                <!--                </dependency>-->
-            </dependencies>
-        </profile>
-        <profile>
-            <id>hsqldb</id>
-            <activation>
-                <property>
-                    <name>test.environment</name>
-                    <value>hsqldb</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hsqldb</groupId>
-                    <artifactId>hsqldb</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>h2</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/h2-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.oracle.database.jdbc</groupId>
-                    <artifactId>ojdbc8</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <!-- FIXME needs driver and other properties set -->
             <id>oracle-default</id>
             <activation>
@@ -1081,20 +973,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "original" OracleDataTypeFactory (NOT 10g) with Oracle 11 JDBC
             driver for Java 6-8 -->
             <id>oracle-ojdbc6</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle6-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1110,20 +988,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "original" OracleDataTypeFactory (NOT 10g) with Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle-ojdbc8</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1139,20 +1003,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with current Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle10-ojdbc8</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1168,20 +1018,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with older Oracle 11 JDBC
             driver for Java 8 -->
             <id>oracle10-ojdbc8v12</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1199,20 +1035,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <!-- "newer" Oracle10DataTypeFactory with current Oracle 11 JDBC
             driver for Java 10 -->
             <id>oracle10-ojdbc10</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/oracle10-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
@@ -1226,20 +1048,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>postgresql</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/postgresql-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
@@ -1253,20 +1061,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mysql</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mysql-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>mysql</groupId>
@@ -1280,20 +1074,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mssql41</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mssql41-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
@@ -1307,20 +1087,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>mssql2019</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/mssql2019-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
@@ -1334,20 +1100,6 @@ enable this to generate coverage report HTML files during build (same as site)
         </profile>
         <profile>
             <id>db2</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <configuration>
-                            <urls>
-                                <url>
-                                    file:///${basedir}/src/test/resources/db2-dbunit.properties</url>
-                            </urls>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <!-- JH_TODO: db2 dependencies -->
             <dependencies>
                 <dependency>

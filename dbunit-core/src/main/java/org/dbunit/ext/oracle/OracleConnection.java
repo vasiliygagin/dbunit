@@ -25,6 +25,7 @@ import java.sql.Connection;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 
 /**
  *
@@ -35,16 +36,19 @@ import org.dbunit.database.DatabaseConnection;
  */
 @Deprecated
 public class OracleConnection extends DatabaseConnection {
+
     /**
      * Creates a oracle connection. Beware that the given schema is passed in to the
      * parent class as "upper case" string.
      *
      * @param connection
      * @param schema     The schema name
+     * @param metadataManager
      * @throws DatabaseUnitException
      */
-    public OracleConnection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, buildConfig(), schema != null ? schema.toUpperCase() : null);
+    public OracleConnection(Connection connection, String schema, MetadataManager metadataManager)
+            throws DatabaseUnitException {
+        super(connection, buildConfig(), schema != null ? schema.toUpperCase() : null, metadataManager);
     }
 
     static DatabaseConfig buildConfig() {

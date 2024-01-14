@@ -28,9 +28,9 @@ public class DatabaseEnvironmentLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseEnvironmentLoader.class);
 
-    private static DatabaseEnvironment INSTANCE = null;
+    private static DatabaseTestingEnvironment INSTANCE = null;
 
-    public static DatabaseEnvironment getInstance() throws Exception {
+    public static DatabaseTestingEnvironment getInstance() throws Exception {
         if (INSTANCE == null) {
             String profileName = System.getProperty("test.environment");
             if (profileName == null) {
@@ -38,7 +38,7 @@ public class DatabaseEnvironmentLoader {
             }
 
             if (profileName.equals("hsqldb")) {
-                INSTANCE = new HypersonicEnvironment();
+                INSTANCE = new HsqldbEnvironment();
             } else if (profileName.equals("oracle")) {
                 INSTANCE = new OracleEnvironment();
             } else if (profileName.equals("oracle10")) {

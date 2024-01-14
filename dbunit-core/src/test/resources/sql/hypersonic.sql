@@ -1,6 +1,6 @@
 -- NEW SETUP
 
-CREATE TABLE PARENT ( ID INTEGER, DESC VARCHAR(100) );
+CREATE TABLE PARENT ( ID INTEGER, NAME VARCHAR(100) );
 
 -----------------------------------------------------------------------------
 -- TEST_TABLE

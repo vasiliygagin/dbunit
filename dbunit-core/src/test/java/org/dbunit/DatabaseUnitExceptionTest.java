@@ -20,21 +20,25 @@
  */
 package org.dbunit;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * @author gommma
  * @version $Revision$
  * @since 2.3.0
  */
-public class DatabaseUnitExceptionTest extends TestCase {
+public class DatabaseUnitExceptionTest {
 
+    @Test
     public void testNestedException() {
         IllegalStateException nested = new IllegalStateException("bla bla");
         DatabaseUnitException ex = new DatabaseUnitException(nested);
         assertEquals(nested, ex.getCause());
     }
 
+    @Test
     public void testNestedExceptionWithMessage() {
         String msg = "a dbunit exception message";
         IllegalStateException nested = new IllegalStateException("bla bla");
@@ -42,5 +46,4 @@ public class DatabaseUnitExceptionTest extends TestCase {
         assertEquals(msg, ex.getMessage());
         assertEquals(nested, ex.getCause());
     }
-
 }

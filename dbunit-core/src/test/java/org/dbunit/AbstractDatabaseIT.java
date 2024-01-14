@@ -21,10 +21,6 @@
 
 package org.dbunit;
 
-import java.sql.Connection;
-
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.SortedTable;
@@ -41,9 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
-    @Deprecated
-    protected DatabaseConnection customizedConnection;
-
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractDatabaseIT() throws Exception {
@@ -51,19 +44,11 @@ public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
     @Before
     public final void setUp() throws Exception {
-        try {
-            JdbcDatabaseTester databaseTester = database.getDatabaseTester();
+        JdbcDatabaseTester databaseTester = database.getDatabaseTester();
 
-            databaseTester.setSetUpOperation(getSetUpOperation());
-            databaseTester.setDataSet(getDataSet());
-            databaseTester.onSetup();
-
-            Connection conn = database.getJdbcConnection();
-            customizedConnection = new DatabaseConnection(conn, environment.getDatabaseConfig(),
-                    databaseTester.getSchema());
-        } catch (Exception exc) {
-            throw exc;
-        }
+        databaseTester.setSetUpOperation(getSetUpOperation());
+        databaseTester.setDataSet(getDataSet());
+        databaseTester.onSetup();
     }
 
     @After
@@ -74,13 +59,11 @@ public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
         databaseTester.setDataSet(getDataSet());
         databaseTester.onTearDown();
 
-        DatabaseOperation.DELETE_ALL.execute(customizedConnection, customizedConnection.createDataSet());
-
-        customizedConnection = null;
+        DatabaseOperation.DELETE_ALL.execute(database.getConnection(), database.getConnection().createDataSet());
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
-        return new SortedTable(customizedConnection.createDataSet().getTable(tableName),
+        return new SortedTable(database.getConnection().createDataSet().getTable(tableName),
                 new String[] { orderByColumn });
 //        String sql = "select * from " + tableName + " order by " + orderByColumn;
 //        return _connection.createQueryTable(tableName, sql);
@@ -101,9 +84,6 @@ public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
     protected IDataSet getDataSet() throws Exception {
         return environment.getInitDataSet();
-    }
-
-    protected void closeConnection(IDatabaseConnection connection) throws Exception {
     }
 
     /**

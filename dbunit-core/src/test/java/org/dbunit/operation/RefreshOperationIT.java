@@ -28,6 +28,7 @@ import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
@@ -92,6 +93,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
             assertEquals("row count before", tableRowCount[i], tableBefore.getRowCount());
         }
 
+        DatabaseConnection customizedConnection = database.getConnection();
         DatabaseOperation.REFRESH.execute(customizedConnection, dataSet);
 
         // verify table after
@@ -107,6 +109,7 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecuteAndNoPrimaryKeys() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String tableName = "TEST_TABLE";
 
         Reader reader = TestUtils.getFileReader("xml/refreshOperationNoPKTest.xml");

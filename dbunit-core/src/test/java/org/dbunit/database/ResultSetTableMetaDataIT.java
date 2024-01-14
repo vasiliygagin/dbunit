@@ -22,6 +22,7 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
     }
 
     protected IDataSet createDataSet() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         return customizedConnection.createDataSet();
     }
 

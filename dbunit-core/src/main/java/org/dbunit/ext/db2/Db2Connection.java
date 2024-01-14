@@ -26,6 +26,7 @@ import java.sql.Connection;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 
 /**
  * Database connection for DB2 that pre-configures all properties required to
@@ -40,8 +41,9 @@ import org.dbunit.database.DatabaseConnection;
 @Deprecated
 public class Db2Connection extends DatabaseConnection {
 
-    public Db2Connection(Connection connection, String schema) throws DatabaseUnitException {
-        super(connection, buildConfig(), schema);
+    public Db2Connection(Connection connection, String schema, MetadataManager metadataManager)
+            throws DatabaseUnitException {
+        super(connection, buildConfig(), schema, metadataManager);
     }
 
     static DatabaseConfig buildConfig() {

@@ -23,17 +23,14 @@ package org.dbunit.operation;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITableIterator;
-import org.dbunit.dataset.ITableMetaData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Deletes all rows of tables present in the specified dataset. If the dataset
@@ -52,59 +49,24 @@ import org.slf4j.LoggerFactory;
  */
 public class DeleteAllOperation extends AbstractOperation {
 
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(DeleteAllOperation.class);
-
-    DeleteAllOperation() {
-    }
-
-    protected String getDeleteAllCommand() {
-        return "delete from ";
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
     @Override
     public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
-        logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
-
-        IDataSet databaseDataSet = connection.createDataSet();
-
         IStatementFactory statementFactory = connection.getDatabaseConfig().getStatementFactory();
         IBatchStatement statement = statementFactory.createBatchStatement(connection);
         try {
             int count = 0;
 
-            Stack tableNames = new Stack();
-            Set tablesSeen = new HashSet();
-            ITableIterator iterator = dataSet.iterator();
-            while (iterator.next()) {
-                String tableName = iterator.getTableMetaData().getTableName();
-                if (!tablesSeen.contains(tableName)) {
-                    tableNames.push(tableName);
-                    tablesSeen.add(tableName);
-                }
-            }
-
-            // delete tables once each in reverse order of seeing them.
-            while (!tableNames.isEmpty()) {
-                String tableName = (String) tableNames.pop();
+            Set<String> allTableNames = getAllTableNames(dataSet);
+            for (String tableName : allTableNames) {
 
                 // Use database table name. Required to support case sensitive database.
-                ITableMetaData databaseMetaData = databaseDataSet.getTableMetaData(tableName);
-                tableName = databaseMetaData.getTableName();
+                String databaseTableName = connection.correctTableName(tableName);
 
-                StringBuffer sqlBuffer = new StringBuffer(128);
-                sqlBuffer.append(getDeleteAllCommand());
-                sqlBuffer.append(getQualifiedName(connection.getSchema(), tableName, connection));
-                String sql = sqlBuffer.toString();
+                String sql = buildDeleteSql(databaseTableName);
                 statement.addBatch(sql);
-
-                if (logger.isDebugEnabled())
-                    logger.debug("Added SQL: {}", sql);
 
                 count++;
             }
@@ -116,5 +78,19 @@ public class DeleteAllOperation extends AbstractOperation {
         } finally {
             statement.close();
         }
+    }
+
+    protected String buildDeleteSql(String tableName) {
+        return "delete from " + tableName;
+    }
+
+    Set<String> getAllTableNames(IDataSet dataSet) throws DataSetException {
+        Set<String> tableNames = new HashSet<>();
+        ITableIterator iterator = dataSet.iterator();
+        while (iterator.next()) {
+            tableNames.add(iterator.getTableMetaData().getTableName());
+        }
+
+        return tableNames;
     }
 }

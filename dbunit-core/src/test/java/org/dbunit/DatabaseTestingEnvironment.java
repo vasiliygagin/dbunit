@@ -26,9 +26,11 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
 
@@ -39,30 +41,32 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
  * @version $Revision$
  * @since Feb 18, 2002
  */
-public abstract class DatabaseEnvironment {
+public abstract class DatabaseTestingEnvironment {
 
     private final String defaultDatabaseName;
     private final String schema;
     private final boolean multilineSupport;
     private final String[] unsupportedFeatures;
-    private final DatabaseConfig databaseConfig;
 
-    private final IDataSet _dataSet;
+    private DatabaseConfig databaseConfig;
 
     // temp until things are cleaned
     private Database openedDatabase;
-    private DatabaseProfile profile;
+    private DatabaseTestingProfile profile;
 
-    protected DatabaseEnvironment(String defaultDatabaseName, final DatabaseProfile profile,
+    protected DatabaseTestingEnvironment(String defaultDatabaseName, final DatabaseTestingProfile profile,
             DatabaseConfig databaseConfig) throws Exception {
         this.defaultDatabaseName = defaultDatabaseName;
         this.databaseConfig = databaseConfig;
+        this.databaseConfig.freese();
         this.profile = profile;
         schema = profile.getSchema();
         multilineSupport = profile.getProfileMultilineSupport();
         unsupportedFeatures = profile.getUnsupportedFeatures();
-        _dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml").getAbsoluteFile()));
-        this.databaseConfig.freese();
+    }
+
+    public final void customizeConfig(Consumer<DatabaseConfig> customizer) {
+        customizer.accept(databaseConfig);
     }
 
     protected abstract String buildConnectionUrl(String databaseName);
@@ -72,13 +76,22 @@ public abstract class DatabaseEnvironment {
         return openedDatabase;
     }
 
-    public Database openDefaultDatabase() throws Exception {
-        Database database = openDatabase(defaultDatabaseName);
+    @SuppressWarnings("unchecked")
+    public Database openPopulatedDatabase(Consumer<DatabaseConfig>... configCustomizers) throws Exception {
+        Database database = openDatabase(defaultDatabaseName, configCustomizers);
         DdlExecutor.execute("sql/" + profile.getProfileDdl(), database.getJdbcConnection(), false, false);
         return database;
     }
 
-    public Database openDatabase(String databaseName) throws Exception {
+    @SuppressWarnings("unchecked")
+    public Database openDatabase(String databaseName, Consumer<DatabaseConfig>... configCustomizers) throws Exception {
+        DatabaseConfig newConfig = new DatabaseConfig();
+        newConfig.apply(databaseConfig);
+        for (Consumer<DatabaseConfig> configCustomizer : configCustomizers) {
+            configCustomizer.accept(newConfig);
+        }
+        newConfig.freese();
+
         Connection jdbcConnection = buildJdbcConnection(databaseName);
 
         JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(jdbcConnection, schema);
@@ -93,9 +106,10 @@ public abstract class DatabaseEnvironment {
             }
         });
 
-        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, schema);
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, newConfig, null, schema);
+        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, newConfig, schema, metadataManager);
 
-        Database database = new Database(this);
+        Database database = new Database(this, newConfig);
         database.setJdbcConnection(jdbcConnection);
         database.setConnection(connection);
         database.setDatabaseTester(databaseTester);
@@ -129,17 +143,8 @@ public abstract class DatabaseEnvironment {
         return databaseConfig;
     }
 
-    @Deprecated
-    public void closeConnection() throws Exception {
-        // ?? should closeDatabase be used instead?
-//        if (_connection != null) {
-//            _connection.close();
-//            _connection = null;
-//        }
-    }
-
     public IDataSet getInitDataSet() throws Exception {
-        return _dataSet;
+        return new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml").getAbsoluteFile()));
     }
 
     public String getSchema() {

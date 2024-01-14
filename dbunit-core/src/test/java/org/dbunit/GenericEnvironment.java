@@ -18,7 +18,7 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 /**
  *
  */
-public class GenericEnvironment extends DatabaseEnvironment {
+public class GenericEnvironment extends DatabaseTestingEnvironment {
 
     /**
      * @param profile
@@ -39,7 +39,7 @@ public class GenericEnvironment extends DatabaseEnvironment {
         return databaseName;
     }
 
-    private static class GenericDatabaseProfile extends DatabaseProfile {
+    private static class GenericDatabaseProfile extends DatabaseTestingProfile {
 
         /**
          * @param profileName
@@ -86,7 +86,7 @@ public class GenericEnvironment extends DatabaseEnvironment {
 
             String fileName = profileName + "-dbunit.properties";
 
-            final InputStream inputStream = DatabaseEnvironment.class.getClassLoader().getResourceAsStream(fileName);
+            final InputStream inputStream = DatabaseTestingEnvironment.class.getClassLoader().getResourceAsStream(fileName);
             if (inputStream != null) {
                 properties.load(inputStream);
                 logger.info("Loaded properties from file '{}'", fileName);

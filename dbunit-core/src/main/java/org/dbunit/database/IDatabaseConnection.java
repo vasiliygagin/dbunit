@@ -141,4 +141,12 @@ public interface IDatabaseConnection extends DbConnection {
     default IStatementFactory getStatementFactory() {
         return getDatabaseConfig().getStatementFactory();
     }
+
+    /**
+     * temp
+     * @param tableName
+     * @return
+     * @throws DataSetException
+     */
+    String correctTableName(String tableName) throws DataSetException;
 }

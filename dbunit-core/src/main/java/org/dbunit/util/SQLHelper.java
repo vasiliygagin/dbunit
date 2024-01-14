@@ -42,11 +42,11 @@ import org.slf4j.LoggerFactory;
  * Helper for SQL-related stuff. <br>
  * TODO: testcases, also think about refactoring so that methods are not static
  * anymore (for better extensibility)
- * 
+ *
  * @author Felipe Leme (dbunit@felipeal.net)
  * @version $Revision$
  * @since Nov 5, 2005
- * 
+ *
  */
 public class SQLHelper {
 
@@ -66,7 +66,7 @@ public class SQLHelper {
 
     /**
      * Gets the primary column for a table.
-     * 
+     *
      * @param conn  connection with the database
      * @param table table name
      * @return name of primary column for a table (assuming it's just 1 column).
@@ -84,7 +84,7 @@ public class SQLHelper {
 
     /**
      * Close a result set and a prepared statement, checking for null references.
-     * 
+     *
      * @param rs   result set to be closed
      * @param stmt prepared statement to be closed
      * @throws SQLException exception raised in either close() method
@@ -101,7 +101,7 @@ public class SQLHelper {
 
     /**
      * Close a SQL statement, checking for null references.
-     * 
+     *
      * @param stmt statement to be closed
      * @throws SQLException exception raised while closing the statement
      */
@@ -115,7 +115,7 @@ public class SQLHelper {
 
     /**
      * Closes the given result set in a null-safe way
-     * 
+     *
      * @param resultSet
      * @throws SQLException
      */
@@ -130,7 +130,7 @@ public class SQLHelper {
     /**
      * Returns <code>true</code> if the given schema exists for the given
      * connection.
-     * 
+     *
      * @param connection The connection to a database
      * @param schema     The schema to be searched
      * @return Returns <code>true</code> if the given schema exists for the given
@@ -170,7 +170,7 @@ public class SQLHelper {
     /**
      * Checks via {@link DatabaseMetaData#getCatalogs()} whether or not the given
      * catalog exists.
-     * 
+     *
      * @param connection
      * @param catalog
      * @return
@@ -202,7 +202,7 @@ public class SQLHelper {
 
     /**
      * Checks if the given table exists.
-     * 
+     *
      * @param metaData  The database meta data
      * @param schema    The schema in which the table should be searched. If
      *                  <code>null</code> the schema is not used to narrow the table
@@ -215,6 +215,7 @@ public class SQLHelper {
      * @deprecated since 2.4.5 - use
      *             {@link IMetadataHandler#tableExists(DatabaseMetaData, String, String)}
      */
+    @Deprecated
     public static boolean tableExists(DatabaseMetaData metaData, String schema, String tableName) throws SQLException {
         ResultSet tableRs = metaData.getTables(null, schema, tableName, null);
         try {
@@ -227,7 +228,7 @@ public class SQLHelper {
     /**
      * Utility method for debugging to print all tables of the given metadata on the
      * given stream
-     * 
+     *
      * @param metaData
      * @param outputStream
      * @throws SQLException
@@ -257,7 +258,7 @@ public class SQLHelper {
 
     /**
      * Returns the database and JDBC driver information as pretty formatted string
-     * 
+     *
      * @param metaData The JDBC database metadata needed to retrieve database
      *                 information
      * @return The database information as formatted string
@@ -269,6 +270,8 @@ public class SQLHelper {
         String dbInfo = null;
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return metaData.getDatabaseProductName();
             }
@@ -276,6 +279,8 @@ public class SQLHelper {
         sb.append("\tdatabase product name=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return metaData.getDatabaseProductVersion();
             }
@@ -283,6 +288,8 @@ public class SQLHelper {
         sb.append("\tdatabase version=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return String.valueOf(metaData.getDatabaseMajorVersion());
             }
@@ -290,6 +297,8 @@ public class SQLHelper {
         sb.append("\tdatabase major version=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return String.valueOf(metaData.getDatabaseMinorVersion());
             }
@@ -297,6 +306,8 @@ public class SQLHelper {
         sb.append("\tdatabase minor version=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return metaData.getDriverName();
             }
@@ -304,6 +315,8 @@ public class SQLHelper {
         sb.append("\tjdbc driver name=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return metaData.getDriverVersion();
             }
@@ -311,6 +324,8 @@ public class SQLHelper {
         sb.append("\tjdbc driver version=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return String.valueOf(metaData.getDriverMajorVersion());
             }
@@ -318,6 +333,8 @@ public class SQLHelper {
         sb.append("\tjdbc driver major version=").append(dbInfo).append("\n");
 
         dbInfo = new ExceptionWrapper() {
+
+            @Override
             public String wrappedCall(DatabaseMetaData metaData) throws Exception {
                 return String.valueOf(metaData.getDriverMinorVersion());
             }
@@ -329,7 +346,7 @@ public class SQLHelper {
 
     /**
      * Prints the database and JDBC driver information to the given output stream
-     * 
+     *
      * @param metaData     The JDBC database metadata needed to retrieve database
      *                     information
      * @param outputStream The stream to which the information is printed
@@ -347,7 +364,7 @@ public class SQLHelper {
     /**
      * Detects whether or not the given metadata describes the connection to a
      * Sybase database or not.
-     * 
+     *
      * @param metaData The metadata to be checked whether it is a Sybase connection
      * @return <code>true</code> if and only if the given metadata belongs to a
      *         Sybase database.
@@ -362,7 +379,7 @@ public class SQLHelper {
     /**
      * Utility method to create a {@link Column} object from a SQL {@link ResultSet}
      * object.
-     * 
+     *
      * @param resultSet       A result set produced via
      *                        {@link DatabaseMetaData#getColumns(String, String, String, String)}
      * @param dataTypeFactory The factory used to lookup the {@link DataType} for
@@ -422,7 +439,7 @@ public class SQLHelper {
     /**
      * Checks if the given <code>resultSet</code> matches the given schema and table
      * name. The comparison is <b>case sensitive</b>.
-     * 
+     *
      * @param resultSet     A result set produced via
      *                      {@link DatabaseMetaData#getColumns(String, String, String, String)}
      * @param schema        The name of the schema to check. If <code>null</code> it
@@ -438,6 +455,7 @@ public class SQLHelper {
      * @deprecated since 2.4.4 - use
      *             {@link IMetadataHandler#matches(ResultSet, String, String, String, String, boolean)}
      */
+    @Deprecated
     public static boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
             throws SQLException {
         return matches(resultSet, null, schema, table, null, caseSensitive);
@@ -446,7 +464,7 @@ public class SQLHelper {
     /**
      * Checks if the given <code>resultSet</code> matches the given schema and table
      * name. The comparison is <b>case sensitive</b>.
-     * 
+     *
      * @param resultSet     A result set produced via
      *                      {@link DatabaseMetaData#getColumns(String, String, String, String)}
      * @param catalog       The name of the catalog to check. If <code>null</code>
@@ -466,6 +484,7 @@ public class SQLHelper {
      * @deprecated since 2.4.4 - use
      *             {@link IMetadataHandler#matches(ResultSet, String, String, String, String, boolean)}
      */
+    @Deprecated
     public static boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
             boolean caseSensitive) throws SQLException {
         String catalogName = resultSet.getString(1);
@@ -492,7 +511,7 @@ public class SQLHelper {
      * value is <code>null</code> or empty String it always returns
      * <code>true</code> which is the way of ignoring <code>null</code>s for this
      * specific case.
-     * 
+     *
      * @param value1 The first value to compare. Is ignored if null or empty String
      * @param value2 The second value to be compared
      * @return <code>true</code> if both values are equal or if the first value is
@@ -516,7 +535,7 @@ public class SQLHelper {
     /**
      * Corrects the case of the given String according to the way in which the
      * database stores metadata.
-     * 
+     *
      * @param databaseIdentifier A database identifier such as a table name or a
      *                           schema name for which the case should be corrected.
      * @param connection         The connection used to lookup the database
@@ -538,7 +557,7 @@ public class SQLHelper {
     /**
      * Corrects the case of the given String according to the way in which the
      * database stores metadata.
-     * 
+     *
      * @param databaseIdentifier A database identifier such as a table name or a
      *                           schema name for which the case should be corrected.
      * @param databaseMetaData   The database metadata needed to determine the way
@@ -581,7 +600,7 @@ public class SQLHelper {
     /**
      * Checks whether two given values are unequal and if so print a log message
      * (level DEBUG)
-     * 
+     *
      * @param oldValue The old value of a property
      * @param newValue The new value of a property
      * @param message  The message to be logged
@@ -592,25 +611,7 @@ public class SQLHelper {
     public static final void logInfoIfValueChanged(String oldValue, String newValue, String message, Class source) {
         if (logger.isInfoEnabled()) {
             if (oldValue != null && !oldValue.equals(newValue))
-                logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
-        }
-    }
-
-    /**
-     * Checks whether two given values are unequal and if so print a log message
-     * (level DEBUG)
-     * 
-     * @param oldValue The old value of a property
-     * @param newValue The new value of a property
-     * @param message  The message to be logged
-     * @param source   The class which invokes this method - used for enriching the
-     *                 log message
-     * @since 2.4.8
-     */
-    public static final void logDebugIfValueChanged(String oldValue, String newValue, String message, Class source) {
-        if (logger.isDebugEnabled()) {
-            if (oldValue != null && !oldValue.equals(newValue))
-                logger.debug("{}. {} oldValue={} newValue={}", new Object[] { source, message, oldValue, newValue });
+                logger.debug("{}. {} oldValue={} newValue={}", source, message, oldValue, newValue);
         }
     }
 
@@ -629,7 +630,7 @@ public class SQLHelper {
         boolean isEscaped = tableName != null && (tableName.startsWith(dbIdentifierQuoteString));
         if (logger.isDebugEnabled())
             logger.debug("isEscaped returns '{}' for tableName={} (dbIdentifierQuoteString={})",
-                    new Object[] { Boolean.valueOf(isEscaped), tableName, dbIdentifierQuoteString });
+                    Boolean.valueOf(isEscaped), tableName, dbIdentifierQuoteString);
         return isEscaped;
     }
 
@@ -637,7 +638,7 @@ public class SQLHelper {
      * Performs a method invocation and catches all exceptions that occur during the
      * invocation. Utility which works similar to a closure, just a bit less
      * elegant.
-     * 
+     *
      * @author gommma (gommma AT users.sourceforge.net)
      * @author Last changed by: $Author$
      * @version $Revision$ $Date$
@@ -655,7 +656,7 @@ public class SQLHelper {
 
         /**
          * Executes the call and catches all exception that might occur.
-         * 
+         *
          * @param metaData
          * @return The result of the call
          */
@@ -671,7 +672,7 @@ public class SQLHelper {
 
         /**
          * Calls the method that might throw an exception to be handled
-         * 
+         *
          * @param metaData
          * @return The result of the call as human readable string
          * @throws Exception Any exception that might occur during the method invocation

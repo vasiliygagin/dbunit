@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.XmlDataSet;
@@ -45,6 +46,7 @@ public class CompositeOperationIT extends AbstractDatabaseIT {
 
     @Test
     public void testExecute() throws Exception {
+        DatabaseConnection customizedConnection = database.getConnection();
         String tableName = "PK_TABLE";
         String columnName = "PK0";
         Reader in = new FileReader(TestUtils.getFile("xml/compositeOperationTest.xml"));

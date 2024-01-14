@@ -32,6 +32,7 @@ import org.dbunit.DdlExecutor;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
+import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.util.search.SearchException;
@@ -62,7 +63,10 @@ public class TablesDependencyHelperTest extends AbstractDatabaseTest {
 
     @Before
     public void setUp() throws Exception {
-        this.connection = new DatabaseConnection(database.getJdbcConnection(), environment.getDatabaseConfig());
+        MetadataManager metadataManager = new MetadataManager(database.getJdbcConnection(),
+                environment.getDatabaseConfig(), null, null);
+        this.connection = new DatabaseConnection(database.getJdbcConnection(), environment.getDatabaseConfig(),
+                metadataManager);
     }
 
     @Test

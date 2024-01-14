@@ -96,16 +96,20 @@ public class MetadataManager {
         return jdbcConnectione.getMetaData();
     }
 
-    // TODO: want to get catalog schema mess out of here?
     public List<TableMetadata> getTables(SchemaMetadata schemaMetadata) throws SQLException {
         if (schemaMetadata == null) {
             LOGGER.warn("Whole database metadata requested, could be very expensive");
-            Set<SchemaMetadata> schemasToLoad = new HashSet<>(schemasManager.getAllSchemas());
+            Set<SchemaMetadata> allSchemas = schemasManager.getAllSchemas();
+            Set<SchemaMetadata> schemasToLoad = new HashSet<>(allSchemas);
             schemasToLoad.removeAll(schemaTables.keySet());
 
-            List<TableMetadata> result = new ArrayList<>();
             for (SchemaMetadata schemaMetadata2 : schemasToLoad) {
-                result.addAll(loadSchemaTables(schemaMetadata2));
+                loadSchemaTables(schemaMetadata2);
+            }
+
+            List<TableMetadata> result = new ArrayList<>();
+            for (List<TableMetadata> tables : schemaTables.values()) {
+                result.addAll(tables);
             }
             return result;
         }
@@ -123,7 +127,7 @@ public class MetadataManager {
      * @return
      * @throws SQLException
      */
-    private TableMetadata toTableMetadata(ResultSet resultSet) throws SQLException {
+    public TableMetadata toTableMetadata(ResultSet resultSet) throws SQLException {
         String catalog = resultSet.getString(1);
         String schema = resultSet.getString(2);
         String tableName = resultSet.getString(3);
@@ -141,12 +145,17 @@ public class MetadataManager {
     private List<TableMetadata> loadSchemaTables(SchemaMetadata schema) throws SQLException {
         DatabaseMetaData databaseMetaData = jdbcConnectione.getMetaData();
         String[] tableTypes = config.getTableTypes();
+        IgnoredTablePredicate ignoredTablePredicate = config.getIgnoredTablePredicate();
         ResultSet resultSet = databaseMetaData.getTables(schema.catalog, schema.schema, "%", tableTypes);
 
         List<TableMetadata> tableMetadatas = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                tableMetadatas.add(toTableMetadata(resultSet));
+                TableMetadata tableMetadata = toTableMetadata(resultSet);
+                if (ignoredTablePredicate.shouldIgnore(tableMetadata)) {
+                    continue;
+                }
+                tableMetadatas.add(tableMetadata);
             }
         } finally {
             resultSet.close();

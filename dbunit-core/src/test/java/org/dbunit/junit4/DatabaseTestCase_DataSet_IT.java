@@ -20,7 +20,7 @@
  */
 package org.dbunit.junit4;
 
-import static org.dbunit.junit4.DbunitTestCaseTestRunner.assertAfter;
+import static org.dbunit.junit.internal.DbunitTestCaseTestRunner.assertAfter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -80,7 +80,7 @@ public class DatabaseTestCase_DataSet_IT extends DatabaseInternalTestCase {
 
         IDatabaseConnection connection = getConnection();
         DefaultTable table = new DefaultTable("PARENT",
-                new Column[] { new Column("ID", DataType.INTEGER), new Column("DESC", DataType.VARCHAR) });
+                new Column[] { new Column("ID", DataType.INTEGER), new Column("NAME", DataType.VARCHAR) });
         table.addRow(new Object[] { 2, "PARENT 2" });
         IDataSet dataSet = new DefaultDataSet(table);
 

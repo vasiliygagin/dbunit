@@ -19,6 +19,7 @@ package com.github.springtestdbunit;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.sql.Connection;
@@ -40,6 +41,6 @@ public class TransactionAwareConnectionHelperTest {
 
         assertNotNull(databaseConnection);
         databaseConnection.getConnection().createStatement();
-        verify(dataSource).getConnection();
+        verify(dataSource, times(2)).getConnection();
     }
 }

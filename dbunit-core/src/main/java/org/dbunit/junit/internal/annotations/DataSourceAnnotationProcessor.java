@@ -8,7 +8,7 @@ import org.dbunit.junit.DataSource;
 import org.dbunit.junit.DatabaseException;
 import org.dbunit.junit.internal.GlobalContext;
 import org.dbunit.junit.internal.TestContext;
-import org.dbunit.junit.internal.connections.DatabaseConnectionManager;
+import org.dbunit.junit.internal.connections.DataSourceConnectionSource;
 
 /**
  *
@@ -23,14 +23,13 @@ public class DataSourceAnnotationProcessor {
      * @throws DatabaseException
      */
     public void process(Class<? extends Object> klass, TestContext testContext) throws DatabaseException {
-        DatabaseConnectionManager dbConnectionManager = context.getDbConnectionManager();
 
         DataSource[] annotations = klass.getAnnotationsByType(DataSource.class);
         for (DataSource annotation : annotations) {
             String dataSourceName = annotation.name();
             Class<? extends javax.sql.DataSource> dataSourceClass = annotation.dataSource();
             javax.sql.DataSource dataSource = buildDataSource(dataSourceClass);
-            ConnectionSource connectionSource = dbConnectionManager.registerDataSourceByType(dataSource);
+            ConnectionSource connectionSource = new DataSourceConnectionSource(dataSource);
             testContext.addConnecionSource(dataSourceName, connectionSource);
         }
     }

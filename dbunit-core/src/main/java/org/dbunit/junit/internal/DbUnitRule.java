@@ -14,7 +14,7 @@ import org.junit.runners.model.Statement;
  * <pre>
  * </pre>
  */
-public class DbUnitRule implements MethodRule {
+public abstract class DbUnitRule implements MethodRule {
 
     protected final GlobalContext context = GlobalContext.getIt();
     private TestContext testContext;
@@ -24,22 +24,23 @@ public class DbUnitRule implements MethodRule {
 
         this.testContext = new TestContext();
 
-        try {
-            context.getAnnotationProcessor().configureTest(target.getClass(), testContext);
-        } catch (DatabaseException exc) {
-            throw new AssertionError("Unable to configure test", exc);
-        }
-
         return new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
-                before();
+                try {
+                    context.getAnnotationProcessor().configureTest(target.getClass(), testContext);
+                } catch (DatabaseException exc) {
+                    throw new AssertionError("Unable to configure test", exc);
+                }
+
+                before(target, method);
                 try {
                     base.evaluate();
                 } finally {
                     after();
-                    testContext = null;
+                    rollbackConnections();
+                    releaseTestContext();
                 }
             }
         };
@@ -47,11 +48,13 @@ public class DbUnitRule implements MethodRule {
 
     /**
      * Override to set up your specific external resource.
+     * @param target
+     * @param method
      * @param testContext
      *
      * @throws Throwable if setup fails (which will disable {@code after}
      */
-    protected void before() throws Throwable {
+    protected void before(Object target, FrameworkMethod method) throws Throwable {
     }
 
     /**
@@ -61,8 +64,19 @@ public class DbUnitRule implements MethodRule {
     protected void after() {
     }
 
+    protected void rollbackConnections() {
+        testContext.rollbackConnections();
+    }
+
+    /**
+     * Only here to make testing of dbUnit itself easier
+     */
+    protected void releaseTestContext() {
+        testContext.releaseConnections();
+        testContext = null;
+    }
+
     public TestContext getTestContext() {
         return testContext;
     }
-
 }

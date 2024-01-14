@@ -26,7 +26,7 @@ package org.dbunit;
  * @version $Revision$
  * @since DbUnit 2.4.7
  */
-public class MySqlEnvironment extends DatabaseEnvironment {
+public class MySqlEnvironment extends DatabaseTestingEnvironment {
 
     private static final String databaseName = "//localhost:3306/dbunit";
 
@@ -42,14 +42,14 @@ public class MySqlEnvironment extends DatabaseEnvironment {
     /**
      * Preserve case for MySQL
      *
-     * @see DatabaseEnvironment#convertString(String)
+     * @see DatabaseTestingEnvironment#convertString(String)
      */
     @Override
     public String convertString(String str) {
         return str;
     }
 
-    private static class MySqlDatabaseProfile extends DatabaseProfile {
+    private static class MySqlDatabaseProfile extends DatabaseTestingProfile {
 
         public MySqlDatabaseProfile() {
             super("com.mysql.jdbc.Driver", "jdbc:mysql:" + databaseName, "", "dbunit", "dbunit", "mysql.sql", false,
