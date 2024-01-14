@@ -14,8 +14,15 @@ public class SchemaMetadata {
     public final String schema;
 
     public SchemaMetadata(String catalog, String schema) {
-        this.catalog = catalog;
-        this.schema = schema;
+        this.catalog = emptyToNull(catalog);
+        this.schema = emptyToNull(schema);
+    }
+
+    private static String emptyToNull(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        return name;
     }
 
     @Override

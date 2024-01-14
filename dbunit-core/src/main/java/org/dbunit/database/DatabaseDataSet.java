@@ -39,7 +39,6 @@ import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.OrderedTableNameMap;
 import org.dbunit.dataset.filter.ITableFilterSimple;
 import org.dbunit.util.QualifiedTableName;
-import org.dbunit.util.QualifiedTableName2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,50 +151,6 @@ public class DatabaseDataSet implements IDataSet {
         allSchemasLoaded = true;
     }
 
-    private void loadSchemaOfTable(String tableName1) throws DataSetException {
-        if (allSchemasLoaded) {
-            return;
-        }
-        // TODO: not sure if loading all schemas is too expensive. Or it might be so cheap that I should do all the time.
-        QualifiedTableName2 tn = QualifiedTableName2.parseFullTableName2(tableName1, defaultSchema);
-        String schema = tn.schema;
-        if (schema == null || !qualifiedTableNamesActive) {
-            loadAllSchemas();
-            return;
-        }
-
-        SchemaMetadata schemaMetadata = _connection.getMetadataManager().findSchema(schema);
-
-        if (tableMetaDatas != null && loadedSchemas.contains(schemaMetadata)) {
-            return;
-        }
-
-        if (tableMetaDatas == null) {
-            tableMetaDatas = new OrderedTableNameMap<>(this._caseSensitiveTableNames);
-        }
-
-        try {
-            List<TableMetadata> tableMetadatas = _connection.getMetadataManager().getTables(schemaMetadata);
-            for (TableMetadata tableMetadata : tableMetadatas) {
-
-                String schemaName = tableMetadata.schemaMetadata.schema;
-                String tableName = tableMetadata.tableName;
-
-                if (_tableFilter != null && !_tableFilter.accept(tableName)) {
-                    continue;
-                }
-
-                tableName = qualifiedNameIfEnabled(schemaName, tableName);
-
-                // Put the table into the table map
-                tableMetaDatas.add(tableName, null);
-            }
-            loadedSchemas.add(schemaMetadata);
-        } catch (SQLException e) {
-            throw new DataSetException(e);
-        }
-    }
-
     private ITableIterator createIterator(boolean reversed) throws DataSetException {
         String[] names = getTableNames();
         if (reversed) {
@@ -221,9 +176,7 @@ public class DatabaseDataSet implements IDataSet {
 
     @Override
     public final ITableMetaData getTableMetaData(String tableName) throws DataSetException {
-        logger.debug("getTableMetaData(tableName={}) - start", tableName);
-
-        loadSchemaOfTable(tableName);
+        loadAllSchemas();
 
         // Verify if table exist in the database
         if (!tableMetaDatas.containsTable(tableName)) {
@@ -244,9 +197,7 @@ public class DatabaseDataSet implements IDataSet {
 
     @Override
     public ITable getTable(String tableName) throws DataSetException {
-        logger.debug("getTable(tableName={}) - start", tableName);
-
-        loadSchemaOfTable(tableName);
+        loadAllSchemas();
 
         try {
             ITableMetaData metaData = getTableMetaData(tableName);

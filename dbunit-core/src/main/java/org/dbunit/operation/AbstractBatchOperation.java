@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * @since Feb 19, 2002
  */
 public abstract class AbstractBatchOperation extends AbstractOperation {
+
     /**
      * Logger for this class
      */

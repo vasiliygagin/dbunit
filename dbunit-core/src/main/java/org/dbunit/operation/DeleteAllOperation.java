@@ -59,12 +59,13 @@ public class DeleteAllOperation extends AbstractOperation {
         try {
             int count = 0;
 
-            for (String tableName : getAllTableNames(dataSet)) {
+            Set<String> allTableNames = getAllTableNames(dataSet);
+            for (String tableName : allTableNames) {
 
                 // Use database table name. Required to support case sensitive database.
                 String databaseTableName = connection.correctTableName(tableName);
 
-                String sql = buildDeleteSql(connection, databaseTableName);
+                String sql = buildDeleteSql(databaseTableName);
                 statement.addBatch(sql);
 
                 count++;
@@ -79,8 +80,8 @@ public class DeleteAllOperation extends AbstractOperation {
         }
     }
 
-    protected String buildDeleteSql(IDatabaseConnection connection, String tableName) {
-        return "delete from " + getQualifiedName(connection.getSchema(), tableName, connection);
+    protected String buildDeleteSql(String tableName) {
+        return "delete from " + tableName;
     }
 
     Set<String> getAllTableNames(IDataSet dataSet) throws DataSetException {

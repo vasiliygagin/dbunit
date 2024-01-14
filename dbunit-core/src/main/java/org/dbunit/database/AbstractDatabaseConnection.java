@@ -27,11 +27,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.metadata.MetadataManager;
+import org.dbunit.database.metadata.SchemaMetadata;
 import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
@@ -247,7 +249,86 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     @Override
     public String correctTableName(String tableName) throws DataSetException {
-        return oldWayCorrectTableName(tableName);
+//        return oldWayCorrectTableName(tableName);
+        return newWayCorrectTableName(tableName);
+    }
+
+    protected String newWayCorrectTableName(String freeHandTableName) throws NoSuchTableException, DataSetException {
+        String[] parts = freeHandTableName.split("\\.");
+        if (parts.length > 3) {
+            throw new DataSetException("Invalid table name [" + freeHandTableName + "]");
+        }
+
+        List<TableMetadata> exactTableNameCandidates = new ArrayList<>();
+        List<TableMetadata> wrongCaseCandidates = new ArrayList<>();
+        try {
+            List<TableMetadata> tableMetadatas = getMetadataManager().getTables(null);
+            for (TableMetadata tableMetadata : tableMetadatas) {
+                if (parts[0].equals(tableMetadata.tableName)) {
+                    if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
+                        exactTableNameCandidates.add(tableMetadata);
+                    }
+                } else if (parts[0].equalsIgnoreCase(tableMetadata.tableName)) {
+                    if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
+                        wrongCaseCandidates.add(tableMetadata);
+                    }
+                }
+            }
+
+            List<TableMetadata> candidates = exactTableNameCandidates.isEmpty() ? wrongCaseCandidates
+                    : exactTableNameCandidates;
+            if (candidates.isEmpty()) {
+                throw new NoSuchTableException(freeHandTableName);
+            }
+
+            if (candidates.size() == 1) {
+                return toStringTableId(candidates.get(0));
+            }
+
+            throw new AmbiguousTableNameException(freeHandTableName); // add message about multiple candidates.
+        } catch (SQLException exc) {
+            throw new DataSetException(
+                    "Exception while retrieving JDBC connection from dbunit connection '" + this + "'", exc);
+        }
+    }
+
+    /**
+     * @param parts
+     * @param schemaMetadata
+     * @return
+     */
+    private boolean schemaMatches(String[] parts, SchemaMetadata schemaMetadata) {
+        if (parts.length == 1) {
+            return true;
+        }
+        if (parts.length == 3) {
+            return parts[1].equalsIgnoreCase(schemaMetadata.schema)
+                    && parts[2].equalsIgnoreCase(schemaMetadata.catalog);
+        }
+        // parts.length = 2
+        if (schemaMetadata.schema != null) {
+            return parts[1].equalsIgnoreCase(schemaMetadata.schema);
+        }
+        if (schemaMetadata.catalog != null) {
+            return parts[1].equalsIgnoreCase(schemaMetadata.catalog);
+        }
+        return false;
+    }
+
+    /**
+     * @param tableMetadata
+     * @return
+     */
+    private String toStringTableId(TableMetadata tableMetadata) {
+        StringBuilder sb = new StringBuilder(10);
+        if (tableMetadata.schemaMetadata.catalog != null) {
+            sb.append(tableMetadata.schemaMetadata.catalog).append('.');
+        }
+        if (tableMetadata.schemaMetadata.schema != null) {
+            sb.append(tableMetadata.schemaMetadata.schema).append('.');
+        }
+        sb.append('"').append(tableMetadata.tableName).append('"');
+        return sb.toString();
     }
 
     protected String oldWayCorrectTableName(String tableName) throws NoSuchTableException, DataSetException {

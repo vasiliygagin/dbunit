@@ -110,7 +110,7 @@ public class SchemasManager {
     }
 
     private String adjustName(String name) {
-        if (name == null) {
+        if (name == null || name.isEmpty()) {
             return null;
         }
         if (schemaNamesCase == NameCase.UPPER) {

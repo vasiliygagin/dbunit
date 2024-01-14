@@ -215,11 +215,17 @@
         <!--            <artifactId>h2</artifactId>-->
         <!--            <scope>test</scope>-->
         <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.hsqldb</groupId>-->
-        <!--            <artifactId>hsqldb</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -275,49 +281,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${cleanPluginVersion}</version>
-                </plugin>
-                <!--                <plugin>-->
-                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
-                <!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
-                <!--                    <version>${enforcerPluginVersion}</version>-->
-                <!--                    <executions>-->
-                <!--                        <execution>-->
-                <!--                            <id>enforce-versions</id>-->
-                <!--                            <goals>-->
-                <!--                                <goal>enforce</goal>-->
-                <!--                            </goals>-->
-                <!--                        </execution>-->
-                <!--                    </executions>-->
-                <!--                    <configuration>-->
-                <!--                        <rules>-->
-                <!--                            <requireMavenVersion>-->
-                <!--                                <version>${mavenVersion}</version>-->
-                <!--                            </requireMavenVersion>-->
-                <!--                            <requireJavaVersion>-->
-                <!--                                <version>${compileSource}</version>-->
-                <!--                            </requireJavaVersion>-->
-                <!--                            <requirePluginVersions>-->
-                <!--                                <phases>compile</phases>-->
-                <!--                            </requirePluginVersions>-->
-                <!--                        </rules>-->
-                <!--                    </configuration>-->
-                <!--                </plugin>-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${failsafePluginVersion}</version>
-                    <configuration>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -444,10 +407,58 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafePluginVersion}</version>
                 <configuration>
+                    <!--
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>-->
+                    <!--                        <encoding>UTF-8</encoding>-->
                     <!--                                        <skipAfterFailureCount>1</skipAfterFailureCount>-->
                     <!--                                        <forkMode>never</forkMode>-->
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-tests-hsqldb</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>test.environment</name>
+                                    <value>hsqldb</value>
+                                </property>
+                            </systemProperties>
+                            <summaryFile>target/failsafe-reports/failsafe-summary-hsqldb.xml</summaryFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests-derby</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>test.environment</name>
+                                    <value>derby</value>
+                                </property>
+                            </systemProperties>
+                            <summaryFile>target/failsafe-reports/failsafe-summary-derby.xml</summaryFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <summaryFiles>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-hsqldb.xml</summaryFile>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-derby.xml</summaryFile>
+                            </summaryFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -944,97 +955,6 @@ enable this to generate coverage report HTML files during build (same as site)
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>default</id>
-            <activation>
-                <property>
-                    <name>!test.environment</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>test.environment</name>
-                                    <value>hsqldb</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>test.environment</name>
-                                    <value>hsqldb</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hsqldb</groupId>
-                    <artifactId>hsqldb</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>derby</id>
-            <activation>
-                <property>
-                    <name>test.environment</name>
-                    <value>derby</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                    <version>${derby.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <!--                <dependency>-->
-                <!--                    <groupId>com.oracle.database.jdbc</groupId>-->
-                <!--                    <artifactId>ojdbc8</artifactId>-->
-                <!--                </dependency>-->
-            </dependencies>
-        </profile>
-        <profile>
-            <id>hsqldb</id>
-            <activation>
-                <property>
-                    <name>test.environment</name>
-                    <value>hsqldb</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hsqldb</groupId>
-                    <artifactId>hsqldb</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>h2</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.oracle.database.jdbc</groupId>
-                    <artifactId>ojdbc8</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <!-- FIXME needs driver and other properties set -->
