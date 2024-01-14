@@ -3,13 +3,27 @@
  */
 package org.dbunit;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.metadata.MetadataManager;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.junit.DbUnitFacade;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
  *
  */
 public class DbUnitEnvironmentFacade extends DbUnitFacade {
+
+    private final DatabaseTestingEnvironment environment;
+    private Database database;
+
+    public DbUnitEnvironmentFacade(DatabaseTestingEnvironment environment) {
+        this.environment = environment;
+    }
 
     @Override
     protected void before(Object target, FrameworkMethod method) throws Throwable {
@@ -24,5 +38,19 @@ public class DbUnitEnvironmentFacade extends DbUnitFacade {
                 config.setEscapePattern("\"");
             });
         }
+    }
+
+    public void setDatabase(Database database) {
+        this.database = database;
+    }
+
+    public void executeOperation(DatabaseOperation operation, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
+        Connection jdbcConnection = database.getJdbcConnection();
+        String schema = environment.getSchema();
+        MetadataManager metadataManager = new MetadataManager(jdbcConnection, database.databaseConfig, null, schema);
+        DatabaseConnection connection = new DatabaseConnection(jdbcConnection, database.databaseConfig, schema,
+                metadataManager);
+        operation.execute(connection, dataSet);
     }
 }

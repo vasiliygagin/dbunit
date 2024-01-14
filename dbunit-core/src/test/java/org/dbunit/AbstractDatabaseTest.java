@@ -21,17 +21,18 @@ import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 // TODO needs to be renamed to IT
 public abstract class AbstractDatabaseTest {
 
-    @Rule
-    public final DbUnitEnvironmentFacade dbUnit = new DbUnitEnvironmentFacade();
-
     protected final DatabaseTestingEnvironment environment;
     protected Database database;
     private boolean environmentOk;
+
+    @Rule
+    public final DbUnitEnvironmentFacade dbUnit;
 
     private final List<Consumer<DatabaseConfig>> configCustomizers = new ArrayList<>();
 
     public AbstractDatabaseTest() throws Exception {
         environment = DatabaseEnvironmentLoader.getInstance();
+        dbUnit = new DbUnitEnvironmentFacade(environment);
     }
 
     @Before
@@ -39,6 +40,7 @@ public abstract class AbstractDatabaseTest {
         environmentOk = checkEnvironment();
         assumeTrue(environmentOk);
         database = doOpenDatabase();
+        dbUnit.setDatabase(database);
     }
 
     /**
