@@ -20,8 +20,6 @@
  */
 package org.dbunit.junit4;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -79,11 +77,8 @@ public class DefaultPrepAndExpectedTestCase {
 
     private final Logger log = LoggerFactory.getLogger(DefaultPrepAndExpectedTestCase.class);
 
-    private static final String DATABASE_TESTER_IS_NULL_MSG = "databaseTester is null; must configure or set it first";
-
     public static final String TEST_ERROR_MSG = "DbUnit test error.";
 
-    private DefaultDatabaseTester databaseTester;
     private DataFileLoader dataFileLoader;
 
     // ?DatabaseSetp
@@ -99,8 +94,6 @@ public class DefaultPrepAndExpectedTestCase {
     @Rule
     public final DbUnitFacade dbUnit = new DbUnitFacade();
 
-    private DefaultDatabaseTester databaseTester2;
-
     /** Create new instance. */
     public DefaultPrepAndExpectedTestCase() {
     }
@@ -111,10 +104,8 @@ public class DefaultPrepAndExpectedTestCase {
      * @param dataFileLoader Load to use for loading the data files.
      * @param databaseConnection
      */
-    public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader,
-            IDatabaseConnection databaseConnection) {
+    public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader, IDatabaseConnection databaseConnection) {
         this.dataFileLoader = dataFileLoader;
-        this.databaseTester = new DefaultDatabaseTester(databaseConnection);
     }
 
     /**
@@ -155,9 +146,6 @@ public class DefaultPrepAndExpectedTestCase {
      */
 
     public void preTest() throws Exception {
-        if (databaseTester == null) {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
     }
 
     /**
@@ -218,69 +206,20 @@ public class DefaultPrepAndExpectedTestCase {
             // failures so user knows db is probably in unknown state (for
             // those not using an in-memory db or transaction rollback),
             // otherwise would mask probable cause of subsequent test failures
-            cleanupData();
-        }
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-
-    public void cleanupData() throws Exception {
-        try {
-            final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
-            log.info("cleanupData: using case sensitive table names={}", isCaseSensitiveTableNames);
-
-            final IDataSet[] dataSets = { prepDataSet, expectedDataSet };
-            final IDataSet dataset = new CompositeDataSet(dataSets, true, isCaseSensitiveTableNames);
-            final String[] tableNames = dataset.getTableNames();
-            final int count = tableNames.length;
-            log.info("cleanupData: about to clean up {} tables={}", count, tableNames);
-
-            if (databaseTester == null) {
-                throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-            }
-
-            databaseTester.setTearDownOperation(getTearDownOperation());
-            databaseTester.setDataSet(dataset);
-//            databaseTester.setOperationListener(getOperationListener());
-            databaseTester.onTearDown();
-            log.debug("cleanupData: Clean up done");
-        } catch (final Exception e) {
-            log.error("cleanupData: Exception:", e);
-            throw e;
         }
     }
 
     @Before
     public final void setUpDatabaseTester() throws Exception {
         DatabaseConnection connection = dbUnit.getConnection();
-        databaseTester2 = new DefaultDatabaseTester(connection);
-
-        databaseTester2.setSetUpOperation(getSetUpOperation());
-        databaseTester2.setDataSet(prepDataSet);
-
-        databaseTester2.onSetup();
+        DatabaseOperation.CLEAN_INSERT.execute(connection, prepDataSet);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public final void tearDown() throws Exception {
         // parent tearDown() only cleans up prep data
-        cleanupData();
-        databaseTester2.setTearDownOperation(getTearDownOperation());
-        databaseTester2.setDataSet(prepDataSet);
 
-        databaseTester2.onTearDown();
-    }
-
-    protected DatabaseOperation getSetUpOperation() throws Exception {
-        assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
-        return databaseTester.getSetUpOperation();
-    }
-
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
-        return databaseTester.getTearDownOperation();
     }
 
     /**
@@ -288,9 +227,6 @@ public class DefaultPrepAndExpectedTestCase {
      */
 
     public void verifyData() throws Exception {
-        if (databaseTester == null) {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
 
         final IDatabaseConnection connection = getConnection();
 
@@ -640,28 +576,6 @@ public class DefaultPrepAndExpectedTestCase {
     }
 
     /**
-     * Get the databaseTester.
-     *
-     * @see {@link #databaseTester}.
-     *
-     * @return The databaseTester.
-     */
-    public DefaultDatabaseTester getDatabaseTester() {
-        return databaseTester;
-    }
-
-    /**
-     * Set the databaseTester.
-     *
-     * @see {@link #databaseTester}.
-     *
-     * @param databaseTester The databaseTester to set.
-     */
-    public void setDatabaseTester(final DefaultDatabaseTester databaseTester) {
-        this.databaseTester = databaseTester;
-    }
-
-    /**
      * Get the dataFileLoader.
      *
      * @see {@link #dataFileLoader}.
@@ -742,7 +656,6 @@ public class DefaultPrepAndExpectedTestCase {
     }
 
     protected IDatabaseConnection getConnection() throws Exception {
-        DefaultDatabaseTester tester = getDatabaseTester();
-        return tester.getConnection();
+        return dbUnit.getConnection();
     }
 }

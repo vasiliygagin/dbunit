@@ -112,11 +112,6 @@ public class DefaultPrepAndExpectedTestCaseTest {
         tc.applyColumnFilters(table, excludeColumns, includeColumns);
     }
 
-    private DefaultDatabaseTester makeDatabaseTester() {
-        final IDatabaseConnection databaseConnection = makeDatabaseConnection();
-        return new DefaultDatabaseTester(databaseConnection);
-    }
-
     protected IDatabaseConnection makeDatabaseConnection() {
         final MockConnection mockConnection = new MockConnection();
 

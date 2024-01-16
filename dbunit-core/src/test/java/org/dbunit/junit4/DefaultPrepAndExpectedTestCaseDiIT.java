@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 import org.dbunit.VerifyTableDefinition;
 import org.dbunit.assertion.ComparisonFailure;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.junit.DatabaseException;
 import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.util.fileloader.DataFileLoader;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
@@ -47,7 +46,7 @@ public class DefaultPrepAndExpectedTestCaseDiIT {
         final String[] expectedDataFiles = { PREP_DATA_FILE_NAME };
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
-        DatabaseConnection connection = getConnection();
+        DatabaseConnection connection = dbUnit.getConnection();
 
         final DefaultPrepAndExpectedTestCase tc = new DefaultPrepAndExpectedTestCase(dataFileLoader, connection);
 
@@ -56,18 +55,12 @@ public class DefaultPrepAndExpectedTestCaseDiIT {
         // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
         // closes after it obtains feature setting
         // maybe we need a KeepConnectionOpenOperationListener class?!
-        final DefaultDatabaseTester databaseTesterNew1 = new DefaultDatabaseTester(connection);
-        tc.setDatabaseTester(databaseTesterNew1);
-
         tc.preTest();
 
         // skip modifying data and just verify the insert
 
         // reopen connection as DefaultOperationListener closes it after inserts
         // maybe we need a KeepConnectionOpenOperationListener class?!
-        final DefaultDatabaseTester databaseTesterNew2 = new DefaultDatabaseTester(connection);
-        tc.setDatabaseTester(databaseTesterNew2);
-
         tc.postTest();
     }
 
@@ -76,7 +69,7 @@ public class DefaultPrepAndExpectedTestCaseDiIT {
         final String[] expectedDataFiles = { EXP_DATA_FILE_NAME };
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
-        DatabaseConnection connection = getConnection();
+        DatabaseConnection connection = dbUnit.getConnection();
 
         final DefaultPrepAndExpectedTestCase tc = new DefaultPrepAndExpectedTestCase(dataFileLoader, connection);
 
@@ -85,27 +78,17 @@ public class DefaultPrepAndExpectedTestCaseDiIT {
         // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
         // closes after it obtains feature setting
         // maybe we need a KeepConnectionOpenOperationListener class?!
-        final DefaultDatabaseTester databaseTesterNew1 = new DefaultDatabaseTester(connection);
-        tc.setDatabaseTester(databaseTesterNew1);
         tc.preTest();
 
         // skip modifying data and just verify the insert
 
         // reopen connection as DefaultOperationListener closes it after inserts
         // maybe we need a KeepConnectionOpenOperationListener class?!
-        final DefaultDatabaseTester databaseTesterNew2 = new DefaultDatabaseTester(connection);
-        tc.setDatabaseTester(databaseTesterNew2);
-
         try {
             tc.postTest();
             fail("Did not catch expected exception:" + " junit.framework.ComparisonFailure");
         } catch (final ComparisonFailure e) {
             // test passes
         }
-    }
-
-    private DatabaseConnection getConnection() throws DatabaseException {
-        DatabaseConnection connection = dbUnit.getConnection();
-        return connection;
     }
 }
