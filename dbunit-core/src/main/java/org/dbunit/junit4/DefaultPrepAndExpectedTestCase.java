@@ -22,6 +22,8 @@ package org.dbunit.junit4;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +38,7 @@ import org.dbunit.ExpectedDataSetAndVerifyTableDefinitionVerifier;
 import org.dbunit.PrepAndExpectedTestCaseSteps;
 import org.dbunit.VerifyTableDefinition;
 import org.dbunit.assertion.comparer.value.ValueComparer;
-import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
@@ -48,11 +50,17 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
+import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.TableFormatter;
 import org.dbunit.util.fileloader.DataFileLoader;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Test case base class supporting prep data and expected data. Prep data is the
@@ -67,7 +75,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.8
  */
-public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements PrepAndExpectedTestCase {
+public class DefaultPrepAndExpectedTestCase {
 
     private final Logger log = LoggerFactory.getLogger(DefaultPrepAndExpectedTestCase.class);
 
@@ -75,17 +83,23 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
 
     public static final String TEST_ERROR_MSG = "DbUnit test error.";
 
-    private IDatabaseTester databaseTester;
+    private DefaultDatabaseTester databaseTester;
     private DataFileLoader dataFileLoader;
 
-    // per test data
+    // ?DatabaseSetp
     private IDataSet prepDataSet = new DefaultDataSet();
+    // ?ExpectedDatabase
     private IDataSet expectedDataSet = new DefaultDataSet();
     private VerifyTableDefinition[] verifyTableDefs = {};
 
     private ExpectedDataSetAndVerifyTableDefinitionVerifier expectedDataSetAndVerifyTableDefinitionVerifier = new DefaultExpectedDataSetAndVerifyTableDefinitionVerifier();
 
     final TableFormatter tableFormatter = new TableFormatter();
+
+    @Rule
+    public final DbUnitFacade dbUnit = new DbUnitFacade();
+
+    private DefaultDatabaseTester databaseTester2;
 
     /** Create new instance. */
     public DefaultPrepAndExpectedTestCase() {
@@ -95,25 +109,18 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
      * Create new instance with specified dataFileLoader and databaseTester.
      *
      * @param dataFileLoader Load to use for loading the data files.
-     * @param databaseTester Tester to use for database manipulation.
+     * @param databaseConnection
      */
-    public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader, final IDatabaseTester databaseTester) {
+    public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader,
+            IDatabaseConnection databaseConnection) {
         this.dataFileLoader = dataFileLoader;
-        this.databaseTester = databaseTester;
-    }
-
-    /**
-     * {@inheritDoc} Returns the prep dataset.
-     */
-    @Override
-    public IDataSet getDataSet() throws Exception {
-        return prepDataSet;
+        this.databaseTester = new DefaultDatabaseTester(databaseConnection);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void configureTest(final VerifyTableDefinition[] verifyTableDefinitions, final String[] prepDataFiles,
             final String[] expectedDataFiles) throws Exception {
         log.info("configureTest: saving instance variables");
@@ -146,15 +153,17 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void preTest() throws Exception {
-        setupData();
+        if (databaseTester == null) {
+            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void preTest(final VerifyTableDefinition[] tables, final String[] prepDataFiles,
             final String[] expectedDataFiles) throws Exception {
         configureTest(tables, prepDataFiles, expectedDataFiles);
@@ -164,7 +173,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public Object runTest(final VerifyTableDefinition[] verifyTables, final String[] prepDataFiles,
             final String[] expectedDataFiles, final PrepAndExpectedTestCaseSteps testSteps) throws Exception {
         final Object result;
@@ -190,7 +199,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void postTest() throws Exception {
         postTest(true);
     }
@@ -198,7 +207,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void postTest(final boolean verifyData) throws Exception {
         try {
             if (verifyData) {
@@ -216,7 +225,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void cleanupData() throws Exception {
         try {
             final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
@@ -243,33 +252,32 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
         }
     }
 
-    @Override
+    @Before
+    public final void setUpDatabaseTester() throws Exception {
+        DatabaseConnection connection = dbUnit.getConnection();
+        databaseTester2 = new DefaultDatabaseTester(connection);
+
+        databaseTester2.setSetUpOperation(getSetUpOperation());
+        databaseTester2.setDataSet(prepDataSet);
+
+        databaseTester2.onSetup();
+    }
+
+    @After
     public void tearDown() throws Exception {
         // parent tearDown() only cleans up prep data
         cleanupData();
-        super.tearDown();
+        databaseTester2.setTearDownOperation(getTearDownOperation());
+        databaseTester2.setDataSet(prepDataSet);
+
+        databaseTester2.onTearDown();
     }
 
-    /**
-     * Use the provided databaseTester to prep the database with the provided prep
-     * dataset. See {@link org.dbunit.IDatabaseTester#onSetup()}.
-     *
-     * @throws Exception
-     */
-    public void setupData() throws Exception {
-        log.info("setupData: setting prep dataset and inserting rows");
-        if (databaseTester == null) {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
-    }
-
-    @Override
     protected DatabaseOperation getSetUpOperation() throws Exception {
         assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
         return databaseTester.getSetUpOperation();
     }
 
-    @Override
     protected DatabaseOperation getTearDownOperation() throws Exception {
         assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
         return databaseTester.getTearDownOperation();
@@ -278,7 +286,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc} Uses the connection from the provided databaseTester.
      */
-    @Override
+
     public void verifyData() throws Exception {
         if (databaseTester == null) {
             throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
@@ -618,7 +626,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public IDataSet getPrepDataset() {
         return prepDataSet;
     }
@@ -626,7 +634,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public IDataSet getExpectedDataset() {
         return expectedDataSet;
     }
@@ -638,8 +646,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
      *
      * @return The databaseTester.
      */
-    @Override
-    public IDatabaseTester getDatabaseTester() {
+    public DefaultDatabaseTester getDatabaseTester() {
         return databaseTester;
     }
 
@@ -650,7 +657,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
      *
      * @param databaseTester The databaseTester to set.
      */
-    public void setDatabaseTester(final IDatabaseTester databaseTester) {
+    public void setDatabaseTester(final DefaultDatabaseTester databaseTester) {
         this.databaseTester = databaseTester;
     }
 
@@ -727,5 +734,15 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     public void setExpectedDataSetAndVerifyTableDefinitionVerifier(
             final ExpectedDataSetAndVerifyTableDefinitionVerifier expectedDataSetAndVerifyTableDefinitionVerifier) {
         this.expectedDataSetAndVerifyTableDefinitionVerifier = expectedDataSetAndVerifyTableDefinitionVerifier;
+    }
+
+    protected Connection getJdbcConnection() throws Exception, SQLException {
+        IDatabaseConnection connection = getConnection();
+        return connection.getConnection();
+    }
+
+    protected IDatabaseConnection getConnection() throws Exception {
+        DefaultDatabaseTester tester = getDatabaseTester();
+        return tester.getConnection();
     }
 }

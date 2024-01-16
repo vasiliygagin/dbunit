@@ -26,11 +26,15 @@ public class DefaultPrepAndExpectedTestCaseTest {
     private static final String EXP_DATA_FILE_NAME = "/xml/flatXmlDataSetTest.xml";
 
     private final DataFileLoader dataFileLoader = new FlatXmlDataFileLoader();
-    private final IDatabaseTester databaseTester = makeDatabaseTester();
-    private final DefaultPrepAndExpectedTestCase tc = new DefaultPrepAndExpectedTestCase(dataFileLoader,
-            databaseTester);
+    private final DefaultPrepAndExpectedTestCase tc;
+
+    public DefaultPrepAndExpectedTestCaseTest() {
+        final IDatabaseConnection onnection = makeDatabaseConnection();
+        tc = new DefaultPrepAndExpectedTestCase(dataFileLoader, onnection);
+    }
 
     public void testConfigureTest() throws Exception {
+
         final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
         final String[] expectedDataFiles = { EXP_DATA_FILE_NAME };
         final VerifyTableDefinition[] tables = {};
@@ -108,7 +112,7 @@ public class DefaultPrepAndExpectedTestCaseTest {
         tc.applyColumnFilters(table, excludeColumns, includeColumns);
     }
 
-    private IDatabaseTester makeDatabaseTester() {
+    private DefaultDatabaseTester makeDatabaseTester() {
         final IDatabaseConnection databaseConnection = makeDatabaseConnection();
         return new DefaultDatabaseTester(databaseConnection);
     }
