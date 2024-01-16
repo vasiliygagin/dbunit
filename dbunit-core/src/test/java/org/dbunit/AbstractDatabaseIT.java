@@ -25,7 +25,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,22 +43,7 @@ public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
     @Before
     public final void setUp() throws Exception {
-        JdbcDatabaseTester databaseTester = database.getDatabaseTester();
-
-        databaseTester.setSetUpOperation(getSetUpOperation());
-        databaseTester.setDataSet(getDataSet());
-        databaseTester.onSetup();
-    }
-
-    @After
-    public final void tearDown() throws Exception {
-        final IDatabaseTester databaseTester = database.getDatabaseTester();
-
-        databaseTester.setTearDownOperation(getTearDownOperation());
-        databaseTester.setDataSet(getDataSet());
-        databaseTester.onTearDown();
-
-        DatabaseOperation.DELETE_ALL.execute(database.getConnection(), database.getConnection().createDataSet());
+        dbUnit.executeOperation(DatabaseOperation.CLEAN_INSERT, getDataSet());
     }
 
     protected ITable createOrderedTable(String tableName, String orderByColumn) throws Exception {
@@ -84,19 +68,5 @@ public abstract class AbstractDatabaseIT extends AbstractDatabaseTest {
 
     protected IDataSet getDataSet() throws Exception {
         return environment.getInitDataSet();
-    }
-
-    /**
-     * Returns the database operation executed in test setup.
-     */
-    protected DatabaseOperation getSetUpOperation() throws Exception {
-        return DatabaseOperation.CLEAN_INSERT;
-    }
-
-    /**
-     * Returns the database operation executed in test cleanup.
-     */
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        return DatabaseOperation.NONE;
     }
 }

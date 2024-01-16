@@ -9,6 +9,7 @@ import java.util.List;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.RowOutOfBoundsException;
 
 /**
  * Column names are just numbers starting from "0", good enough for test.
@@ -39,6 +40,9 @@ public class TestTable implements ITable {
 
     @Override
     public Object getValue(int row, String column) throws DataSetException {
+        if (row >= rows.size()) {
+            throw new RowOutOfBoundsException();
+        }
         return rows.get(row)[tableMetaData.getColumnIndex(column)];
     }
 }

@@ -29,7 +29,6 @@ import java.sql.SQLException;
 import java.util.function.Consumer;
 
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.XmlDataSet;
@@ -94,25 +93,12 @@ public abstract class DatabaseTestingEnvironment {
 
         Connection jdbcConnection = buildJdbcConnection(databaseName);
 
-        JdbcDatabaseTester databaseTester = new JdbcDatabaseTester(jdbcConnection, schema);
-        databaseTester.setOperationListener(new DefaultOperationListener() {
-
-            @Override
-            public void operationSetUpFinished(IDatabaseConnection connection) {
-            }
-
-            @Override
-            public void operationTearDownFinished(IDatabaseConnection connection) {
-            }
-        });
-
         MetadataManager metadataManager = new MetadataManager(jdbcConnection, newConfig, null, schema);
         DatabaseConnection connection = new DatabaseConnection(jdbcConnection, newConfig, schema, metadataManager);
 
         Database database = new Database(this, newConfig);
         database.setJdbcConnection(jdbcConnection);
         database.setConnection(connection);
-        database.setDatabaseTester(databaseTester);
         return database;
     }
 

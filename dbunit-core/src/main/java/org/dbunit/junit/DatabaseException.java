@@ -14,10 +14,11 @@ public class DatabaseException extends Exception {
         super(message);
     }
 
-    /**
-     * @param exc
-     */
     public DatabaseException(Exception exc) {
         super(exc);
+    }
+
+    public DatabaseException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

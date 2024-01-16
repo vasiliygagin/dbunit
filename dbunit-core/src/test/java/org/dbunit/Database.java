@@ -18,7 +18,6 @@ public class Database {
     public final DatabaseConfig databaseConfig;
     private Connection jdbcConnection;
     private DatabaseConnection connection;
-    private JdbcDatabaseTester databaseTester;
 
     public Database(DatabaseTestingEnvironment environment, DatabaseConfig databaseConfig) {
         this.environment = environment;
@@ -40,13 +39,4 @@ public class Database {
     public void setConnection(DatabaseConnection connection) {
         this.connection = connection;
     }
-
-    public JdbcDatabaseTester getDatabaseTester() {
-        return databaseTester;
-    }
-
-    public void setDatabaseTester(JdbcDatabaseTester databaseTester) {
-        this.databaseTester = databaseTester;
-    }
-
 }

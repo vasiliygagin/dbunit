@@ -98,11 +98,13 @@ public class MetadataManager {
 
     public List<TableMetadata> getTables(SchemaMetadata schemaMetadata) throws SQLException {
         if (schemaMetadata == null) {
-            LOGGER.warn("Whole database metadata requested, could be very expensive");
             Set<SchemaMetadata> allSchemas = schemasManager.getAllSchemas();
             Set<SchemaMetadata> schemasToLoad = new HashSet<>(allSchemas);
             schemasToLoad.removeAll(schemaTables.keySet());
 
+            if (!schemasToLoad.isEmpty()) {
+                LOGGER.warn("Whole database metadata requested, could be very expensive");
+            }
             for (SchemaMetadata schemaMetadata2 : schemasToLoad) {
                 loadSchemaTables(schemaMetadata2);
             }
