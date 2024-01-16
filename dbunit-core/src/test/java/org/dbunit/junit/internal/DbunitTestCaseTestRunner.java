@@ -19,6 +19,8 @@ import org.junit.runners.model.Statement;
  */
 public class DbunitTestCaseTestRunner extends BlockJUnit4ClassRunner {
 
+    private static ThreadLocal<OuterStatement> TL = new ThreadLocal<>();
+
     /**
      * @param klass
      * @throws InitializationError
@@ -30,66 +32,75 @@ public class DbunitTestCaseTestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<TestRule> getTestRules(Object target) {
         List<TestRule> testRules = super.getTestRules(target);
-        testRules.add(new AssertRule());
+        testRules.add(new OuterStatementMakerRule(target));
         return testRules;
     }
 
     public static void assertAfter(DbunitAssert callable) {
-        AssertRule.addAssertAfter(callable);
+        TL.get().addAssertAfter(callable);
     }
 
-    private static class AssertRule implements TestRule {
+    private class OuterStatementMakerRule implements TestRule {
 
-        private static final ThreadLocal<AssertRule> TL = new ThreadLocal<>();
+        private Object testInstance;
 
-        private final List<DbunitAssert> assertAfters = new ArrayList<>();
-
-        private static void addAssertAfter(DbunitAssert callable) {
-            TL.get().assertAfters.add(callable);
+        public OuterStatementMakerRule(Object testInstance) {
+            this.testInstance = testInstance;
         }
 
         @Override
         public Statement apply(Statement base, Description description) {
-            return statement(base);
+            return new OuterStatement(base, testInstance);
+        }
+    }
+
+    private class OuterStatement extends Statement {
+
+        private final Object testInstance;
+        private final Statement innerStataement;
+        private final List<DbunitAssert> assertAfters = new ArrayList<>();
+
+        public OuterStatement(Statement innerStataement, Object testInstance) {
+            this.testInstance = testInstance;
+            this.innerStataement = innerStataement;
         }
 
-        private Statement statement(final Statement base) {
-            return new Statement() {
-
-                @Override
-                public void evaluate() throws Throwable {
-                    TL.set(AssertRule.this);
-                    GlobalContext.getIt().setReuseDB(false);
-
-                    try {
-                        before();
-                        base.evaluate();
-                        after();
-                    } finally {
-                        TL.remove();
-                        GlobalContext.getIt().setReuseDB(true);
-
-                        runAssertAfters();
-                    }
-                }
-            };
+        private void addAssertAfter(DbunitAssert callable) {
+            assertAfters.add(callable);
         }
 
-        /**
-         * Override to set up your specific external resource.
-         *
-         * @throws Throwable if setup fails (which will disable {@code after}
-         */
-        protected void before() throws Throwable {
+        @Override
+        public void evaluate() throws Throwable {
+            TL.set(this);
+            GlobalContext.getIt().setReuseDB(false);
+
+            try {
+                beforeTest();
+
+                innerStataement.evaluate();
+
+                afterTest();
+            } finally {
+                TL.remove();
+                GlobalContext.getIt().setReuseDB(true);
+
+                runAssertAfters();
+            }
         }
 
-        /**
-         * Override to tear down your specific external resource.
-         */
-        protected void after() {
+        private void beforeTest() throws Exception {
+            if (testInstance instanceof InternalTestCase) {
+                ((InternalTestCase) testInstance).beforeTestCase();
+            }
         }
 
-        void runAssertAfters() throws AssertionError {
+        private void afterTest() throws Exception {
+            if (testInstance instanceof InternalTestCase) {
+                ((InternalTestCase) testInstance).afterTestCase();
+            }
+        }
+
+        private void runAssertAfters() throws AssertionError {
             for (DbunitAssert assertAfter : assertAfters) {
                 try {
                     assertAfter.execute();

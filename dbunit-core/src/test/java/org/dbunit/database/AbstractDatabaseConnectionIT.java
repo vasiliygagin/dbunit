@@ -28,12 +28,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.DefaultDatabaseTester;
-import org.dbunit.DefaultOperationListener;
-import org.dbunit.IDatabaseTester;
 import org.dbunit.database.metadata.MetadataManager;
 import org.junit.Before;
 import org.junit.Test;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -42,14 +41,11 @@ import org.junit.Test;
  */
 public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
 
-    private String schema;
-
     public AbstractDatabaseConnectionIT() throws Exception {
     }
 
     @Before
     public final void setUp1() throws Exception {
-        this.schema = environment.getSchema();
     }
 
     @Test
@@ -67,67 +63,34 @@ public abstract class AbstractDatabaseConnectionIT extends AbstractDatabaseIT {
     @Test
     public final void testGetRowCount_NonexistingSchema() throws Exception {
         String nonexistingSchema = environment.getSchema() + "_444_XYZ_TEST";
-        this.schema = nonexistingSchema;
 
-        IDatabaseTester dbTester = this.newDatabaseTester(nonexistingSchema);
+        IDatabaseConnection dbConnection = getConnection3(nonexistingSchema);
+
+        assertEquals(convertString(nonexistingSchema), dbConnection.getSchema());
         try {
-            IDatabaseConnection dbConnection = dbTester.getConnection();
-
-            assertEquals(convertString(nonexistingSchema), dbConnection.getSchema());
-            try {
-                dbConnection.getRowCount("TEST_TABLE");
-                fail("Should not be able to retrieve row count for non-existing schema " + nonexistingSchema);
-            } catch (SQLException expected) {
-                // All right
-            }
-        } finally {
-            // Reset the testers schema for subsequent tests (environment.dbTester is a
-            // singleton)
-            dbTester.setSchema(environment.getSchema());
+            dbConnection.getRowCount("TEST_TABLE");
+            fail("Should not be able to retrieve row count for non-existing schema " + nonexistingSchema);
+        } catch (SQLException expected) {
+            // All right
         }
     }
 
     @Test
     public final void testGetRowCount_NoSchemaSpecified() throws Exception {
         DatabaseConnection customizedConnection = database.getConnection();
-        this.schema = null;
-        IDatabaseTester dbTester = this.newDatabaseTester(this.schema);
-        try {
-            IDatabaseConnection dbConnection = dbTester.getConnection();
+        IDatabaseConnection dbConnection = getConnection3(null);
 
-            assertEquals(null, dbConnection.getSchema());
-            assertEquals("TEST_TABLE", 6, customizedConnection.getRowCount("TEST_TABLE", null));
-        } finally {
-            // Reset the testers schema for subsequent tests (environment.dbTester is a
-            // singleton)
-            dbTester.setSchema(environment.getSchema());
-        }
+        assertEquals(null, dbConnection.getSchema());
+        assertEquals("TEST_TABLE", 6, customizedConnection.getRowCount("TEST_TABLE", null));
     }
 
-    private DefaultDatabaseTester newDatabaseTester(String schema) throws Exception {
-        DatabaseConnection customizedConnection = database.getConnection();
-        Connection jdbcConnection = database.getJdbcConnection();
+    private IDatabaseConnection getConnection3(String schema) throws Exception {
+        Connection jdbcConnection = this.database.getJdbcConnection();
 
-        io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig databaseConfig = environment.getDatabaseConfig();
+        DatabaseConfig databaseConfig = this.environment.getDatabaseConfig();
         MetadataManager metadataManager = new MetadataManager(jdbcConnection, databaseConfig, null,
-                environment.getSchema());
-        customizedConnection = new DatabaseConnection(jdbcConnection, databaseConfig, environment.getSchema(),
-                metadataManager);
+                this.environment.getSchema());
 
-        final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, databaseConfig, this.schema,
-                metadataManager);
-        DefaultDatabaseTester tester = new DefaultDatabaseTester(connection);
-        tester.setOperationListener(new DefaultOperationListener() {
-
-            @Override
-            public void operationSetUpFinished(IDatabaseConnection connection) {
-            }
-
-            @Override
-            public void operationTearDownFinished(IDatabaseConnection connection) {
-            }
-        });
-        tester.setSchema(schema);
-        return tester;
+        return new DatabaseConnection(jdbcConnection, databaseConfig, schema, metadataManager);
     }
 }

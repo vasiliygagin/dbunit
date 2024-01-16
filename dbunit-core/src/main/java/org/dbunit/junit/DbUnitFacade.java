@@ -4,9 +4,13 @@
 package org.dbunit.junit;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
+import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.junit.internal.DbUnitRule;
+import org.dbunit.operation.DatabaseOperation;
 
 /**
  * JUnit 4 way of integrating DbUnit framework into JUnit
@@ -26,5 +30,10 @@ public class DbUnitFacade extends DbUnitRule {
 
     public Connection getJdbcConnection() throws Exception {
         return getConnection().getConnection();
+    }
+
+    public void executeOperation(DatabaseOperation operation, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException, DatabaseException {
+        operation.execute(getConnection(), dataSet);
     }
 }

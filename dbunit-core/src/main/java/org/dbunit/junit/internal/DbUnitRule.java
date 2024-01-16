@@ -3,7 +3,11 @@
  */
 package org.dbunit.junit.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dbunit.junit.DatabaseException;
+import org.dbunit.operation.DbunitTask;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -19,6 +23,9 @@ public abstract class DbUnitRule implements MethodRule {
     protected final GlobalContext context = GlobalContext.getIt();
     private TestContext testContext;
 
+    private List<DbunitTask> tasksBefore = new ArrayList<>();
+    private List<DbunitTask> tasksAfter = new ArrayList<>();
+
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object target) {
 
@@ -29,7 +36,8 @@ public abstract class DbUnitRule implements MethodRule {
             @Override
             public void evaluate() throws Throwable {
                 try {
-                    context.getAnnotationProcessor().configureTest(target.getClass(), testContext);
+                    context.getAnnotationProcessor().configureTest(target.getClass(), method.getMethod(), testContext,
+                            DbUnitRule.this);
                 } catch (DatabaseException exc) {
                     throw new AssertionError("Unable to configure test", exc);
                 }
@@ -55,13 +63,20 @@ public abstract class DbUnitRule implements MethodRule {
      * @throws Throwable if setup fails (which will disable {@code after}
      */
     protected void before(Object target, FrameworkMethod method) throws Throwable {
+        for (DbunitTask task : tasksBefore) {
+            task.execute(testContext);
+        }
     }
 
     /**
      * Override to tear down your specific external resource.
      * @param testContext
+     * @throws Throwable
      */
-    protected void after() {
+    protected void after() throws Throwable {
+        for (DbunitTask task : tasksAfter) {
+            task.execute(testContext);
+        }
     }
 
     protected void rollbackConnections() {
@@ -78,5 +93,13 @@ public abstract class DbUnitRule implements MethodRule {
 
     public TestContext getTestContext() {
         return testContext;
+    }
+
+    public void addTaskBefore(DbunitTask task) {
+        tasksBefore.add(task);
+    }
+
+    public void addTaskAfter(DbunitTask task) {
+        tasksAfter.add(task);
     }
 }

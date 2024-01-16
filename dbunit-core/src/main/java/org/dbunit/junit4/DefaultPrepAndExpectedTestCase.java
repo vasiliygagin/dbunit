@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.8
  */
-public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase implements PrepAndExpectedTestCase {
+public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements PrepAndExpectedTestCase {
 
     private final Logger log = LoggerFactory.getLogger(DefaultPrepAndExpectedTestCase.class);
 
@@ -100,15 +100,6 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase implements 
     public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader, final IDatabaseTester databaseTester) {
         this.dataFileLoader = dataFileLoader;
         this.databaseTester = databaseTester;
-    }
-
-    /**
-     * {@inheritDoc} This implementation returns the databaseTester set by the test.
-     */
-    @Override
-    public IDatabaseTester buildDatabaseTester() throws Exception {
-        // questionable, but there is not a "setter" for any parent...
-        return databaseTester;
     }
 
     /**

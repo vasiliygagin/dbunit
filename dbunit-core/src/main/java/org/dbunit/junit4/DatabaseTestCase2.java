@@ -10,29 +10,25 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.junit.DbUnitTestFacade;
-import org.dbunit.junit.internal.DbunitTestCaseTestRunner;
-import org.dbunit.junit.internal.SqlScriptExecutor;
+import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.runner.RunWith;
 
 /**
  * Convenience class for writing JUnit tests with dbunit easily. <br />
  * Note that there are some even more convenient classes available such as
  * {@link DBTestCase}.
  */
-@RunWith(DbunitTestCaseTestRunner.class)
-public abstract class DatabaseInternalTestCase {
+public abstract class DatabaseTestCase2 {
 
     @Rule
-    public final DbUnitTestFacade dbUnit = new DbUnitTestFacade();
+    public final DbUnitFacade dbUnit = new DbUnitFacade();
 
     private DefaultDatabaseTester databaseTester;
 
-    public DatabaseInternalTestCase() {
+    public DatabaseTestCase2() {
     }
 
     /**
@@ -45,8 +41,6 @@ public abstract class DatabaseInternalTestCase {
     @Before
     public final void setUpDatabaseTester() throws Exception {
         DatabaseConnection connection = dbUnit.getConnection();
-        SqlScriptExecutor.execute(connection, "src/test/resources/sql/hypersonic.sql");
-
         databaseTester = new DefaultDatabaseTester(connection);
         databaseTester.setOperationListener(new DefaultOperationListener() {
 
@@ -75,22 +69,6 @@ public abstract class DatabaseInternalTestCase {
         databaseTester.setDataSet(getDataSet());
 
         databaseTester.onTearDown();
-        Connection jdbcConnection = dbUnit.getJdbcConnection();
-        DbunitTestCaseTestRunner.assertAfter(() -> {
-            org.dbunit.DdlExecutor.executeSql(jdbcConnection, "SHUTDOWN IMMEDIATELY");
-        });
-    }
-
-    /**
-     * Creates a IDatabaseTester for this testCase.<br>
-     *
-     * A {@link DefaultDatabaseTester} is used by default.
-     *
-     * @throws Exception
-     */
-    protected IDatabaseTester buildDatabaseTester() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
-        return new DefaultDatabaseTester(connection);
     }
 
     protected Connection getJdbcConnection() throws Exception, SQLException {
