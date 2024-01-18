@@ -1,7 +1,9 @@
 package org.dbunit.junit4;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import java.lang.reflect.Field;
 
 import org.dbunit.Assertion;
 import org.dbunit.PrepAndExpectedTestCaseSteps;
@@ -12,11 +14,13 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.junit.DbUnitTestFacade;
 import org.dbunit.junit4.database.MockDatabaseConnection;
 import org.dbunit.junit4.database.statement.MockBatchStatement;
 import org.dbunit.junit4.database.statement.MockStatementFactory;
 import org.dbunit.util.fileloader.DataFileLoader;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
+import org.junit.Test;
 
 import com.mockobjects.sql.MockConnection;
 
@@ -27,21 +31,25 @@ public class DefaultPrepAndExpectedTestCaseTest {
 
     private final DataFileLoader dataFileLoader = new FlatXmlDataFileLoader();
     private final DefaultPrepAndExpectedTestCase tc;
+    private final DbUnitTestFacade dbUnitTestFacade = mock(DbUnitTestFacade.class);
 
-    public DefaultPrepAndExpectedTestCaseTest() {
-        final IDatabaseConnection onnection = makeDatabaseConnection();
-        tc = new DefaultPrepAndExpectedTestCase(dataFileLoader, onnection);
+    public DefaultPrepAndExpectedTestCaseTest() throws Exception {
+        tc = new DefaultPrepAndExpectedTestCase();
+        tc.setDataFileLoader(dataFileLoader);
+
+        Field dbUnitField = DefaultPrepAndExpectedTestCase.class.getDeclaredField("dbUnit");
+        dbUnitField.setAccessible(true);
+        dbUnitField.set(tc, dbUnitTestFacade);
     }
 
+    @Test
     public void testConfigureTest() throws Exception {
 
         final String[] prepDataFiles = { PREP_DATA_FILE_NAME };
         final String[] expectedDataFiles = { EXP_DATA_FILE_NAME };
         final VerifyTableDefinition[] tables = {};
 
-        tc.configureTest(tables, prepDataFiles, expectedDataFiles);
-
-        assertEquals("Configured tables do not match expected.", tables, tc.getVerifyTableDefs());
+        tc.configureTest(prepDataFiles, expectedDataFiles);
 
         final IDataSet expPrepDs = dataFileLoader.load(PREP_DATA_FILE_NAME);
         Assertion.assertEquals(expPrepDs, tc.getPrepDataset());
@@ -50,10 +58,7 @@ public class DefaultPrepAndExpectedTestCaseTest {
         Assertion.assertEquals(expExpDs, tc.getExpectedDataset());
     }
 
-    public void testPreTest() throws Exception {
-        // TODO implement test
-    }
-
+    @Test
     public void testRunTest() throws Exception {
         final VerifyTableDefinition[] tables = {};
         final String[] prepDataFiles = {};
@@ -68,35 +73,8 @@ public class DefaultPrepAndExpectedTestCaseTest {
         assertTrue("Did not receive expected value from runTest().", actual);
     }
 
-    public void testPostTest() {
-        // TODO implement test
-    }
-
-    public void testPostTest_false() {
-        // TODO implement test
-    }
-
-    public void testSetupData() {
-        // TODO implement test
-    }
-
-    public void testVerifyData() {
-        // TODO implement test
-    }
-
-    public void testVerifyDataITableITableStringArrayStringArray() {
-        // TODO implement test
-    }
-
-    public void testCleanupData() {
-        // TODO implement test
-    }
-
-    public void testMakeCompositeDataSet() {
-        // TODO implement test
-    }
-
     // TODO implement test - doesn't test anything yet
+    @Test
     public void testApplyColumnFiltersBothNull() throws DataSetException {
         final ITable table = new DefaultTable("test_table");
         final String[] excludeColumns = null;
@@ -105,6 +83,7 @@ public class DefaultPrepAndExpectedTestCaseTest {
     }
 
     // TODO implement test - doesn't test anything yet
+    @Test
     public void testApplyColumnFiltersBothNotNull() throws DataSetException {
         final ITable table = new DefaultTable("test_table");
         final String[] excludeColumns = { "COL1" };

@@ -37,10 +37,14 @@ public class DbUnitValueComparerAssertIT {
 
         final ITable expectedTable = dataSet.getTable("TEST_TABLE");
         final ITable actualTable = dataSet.getTable("TEST_TABLE_WITH_WRONG_VALUE_ALL_ROWS");
+
         final ValueComparer defaultValueComparer = ValueComparers.isActualEqualToExpected;
         final ValueComparer valueComparer = ValueComparers.isActualNotEqualToExpected;
         final Map<String, ValueComparer> columnValueComparers = new ColumnValueComparerMapBuilder()
                 .add("COLUMN2", valueComparer).build();
-        sut.assertWithValueComparer(expectedTable, actualTable, defaultValueComparer, columnValueComparers);
+        ColumnValueComparerSource columnValueComparerSource = new ColumnValueComparerSource(defaultValueComparer,
+                columnValueComparers);
+
+        sut.assertWithValueComparer(expectedTable, actualTable, columnValueComparerSource);
     }
 }

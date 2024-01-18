@@ -46,18 +46,10 @@ public class DefaultPrepAndExpectedTestCaseExtIT extends DefaultPrepAndExpectedT
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
 
-        configureTest(tables, prepDataFiles, expectedDataFiles);
+        configureTest(prepDataFiles, expectedDataFiles);
 
-        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-        // closes after it obtains feature setting
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        preTest();
-
-        // skip modifying data and just verify the insert
-
-        // reopen connection as DefaultOperationListener closes it after inserts
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        postTest();
+        configureVerify(tables);
+        verifyData();
     }
 
     public void testFailRun() throws Exception {
@@ -66,19 +58,11 @@ public class DefaultPrepAndExpectedTestCaseExtIT extends DefaultPrepAndExpectedT
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
 
-        configureTest(tables, prepDataFiles, expectedDataFiles);
+        configureTest(prepDataFiles, expectedDataFiles);
 
-        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-        // closes after it obtains feature setting
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        preTest();
-
-        // skip modifying data and just verify the insert
-
-        // reopen connection as DefaultOperationListener closes it after inserts
-        // maybe we need a KeepConnectionOpenOperationListener class?!
         try {
-            postTest();
+            configureVerify(tables);
+            verifyData();
             fail("Did not catch expected exception:" + " junit.framework.ComparisonFailure");
         } catch (final ComparisonFailure e) {
             // test passes

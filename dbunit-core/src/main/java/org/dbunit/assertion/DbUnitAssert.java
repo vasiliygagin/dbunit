@@ -125,12 +125,12 @@ public class DbUnitAssert extends DbUnitAssertBase {
      */
     public void assertEquals(final IDataSet expectedDataSet, final IDataSet actualDataSet,
             final FailureHandler failureHandler) throws DatabaseUnitException {
-        assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, null, null);
+        assertWithValueComparer(expectedDataSet, actualDataSet, failureHandler, null);
     }
 
     protected void compareTables(final IDataSet expectedDataSet, final IDataSet actualDataSet,
             final String[] expectedNames, final FailureHandler failureHandler) throws DatabaseUnitException {
-        compareTables(expectedDataSet, actualDataSet, expectedNames, failureHandler, null, null);
+        compareTables(expectedDataSet, actualDataSet, expectedNames, failureHandler, null);
     }
 
     /**
@@ -214,11 +214,15 @@ public class DbUnitAssert extends DbUnitAssertBase {
         } else {
             messageBuilder = new MessageBuilder(null);
         }
-        TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
-                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage, null);
+
+        final String expectedTableName = expectedTable.getTableMetaData().getTableName();
+
+        ColumnValueComparerSource columnValueComparerSource = new ColumnValueComparerSource(
+                ValueComparers.isActualEqualToExpectedWithEmptyFailMessage,
+                valueComparerDefaults.getDefaultColumnValueComparerMapForTable(expectedTableName));
 
         assertWithValueComparer(expectedTable, actualTable, failureHandler, excludedColumn, messageBuilder,
-                tableValueComparerSource);
+                columnValueComparerSource);
     }
 
     /**

@@ -6,6 +6,7 @@ package org.dbunit.assertion;
 import java.util.Map;
 
 import org.dbunit.assertion.comparer.value.ValueComparer;
+import org.dbunit.assertion.comparer.value.ValueComparerDefaults;
 
 /**
  *
@@ -32,5 +33,30 @@ public class ColumnValueComparerSource {
         }
 
         return valueComparer;
+    }
+
+    @Deprecated
+    public ValueComparer getDefaultValueComparer() {
+        return defaultValueComparer;
+    }
+
+    @Deprecated
+    public Map<String, ValueComparer> getColumnValueComparers() {
+        return columnValueComparers;
+    }
+
+    public ColumnValueComparerSource applyTableDefaults(final String expectedTableName,
+            ValueComparerDefaults valueComparerDefaults) {
+        ValueComparer validDefaultValueComparer = defaultValueComparer;
+        if (validDefaultValueComparer == null) {
+            validDefaultValueComparer = valueComparerDefaults.getDefaultValueComparer();
+        }
+
+        Map<String, ValueComparer> validColumnValueComparers = columnValueComparers;
+        if (validColumnValueComparers == null) {
+            validColumnValueComparers = valueComparerDefaults
+                    .getDefaultColumnValueComparerMapForTable(expectedTableName);
+        }
+        return new ColumnValueComparerSource(validDefaultValueComparer, validColumnValueComparers);
     }
 }

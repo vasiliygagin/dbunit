@@ -11,12 +11,13 @@ import org.junit.Test;
 // TODO always passes on same counts, fix prod to always verify table names
 
 public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifierTest {
+
     private static final ITable TABLE_1 = new DefaultTable("TABLE_1");
     private static final ITable TABLE_2 = new DefaultTable("TABLE_2");
 
     private static final DatabaseConfig DATABASE_CONFIG = new DatabaseConfig();
 
-    private ExpectedDataSetAndVerifyTableDefinitionVerifier sut = new DefaultExpectedDataSetAndVerifyTableDefinitionVerifier();
+    private DefaultExpectedDataSetAndVerifyTableDefinitionVerifier sut = new DefaultExpectedDataSetAndVerifyTableDefinitionVerifier();
 
     @Test
     public void testVerify_VtdMatchesExpected_Success() throws DataSetException {
@@ -43,7 +44,7 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifierTest {
     }
 
     private VerifyTableDefinition[] makeVerifyTableDefinitions_MatchingExpected() {
-        final String[] excludeColumns = new String[0];
+        final String[] excludeColumns = {};
 
         final VerifyTableDefinition testTable = new VerifyTableDefinition("test_table", excludeColumns);
         final VerifyTableDefinition secondTable = new VerifyTableDefinition("second_table", excludeColumns);
@@ -53,7 +54,7 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifierTest {
     }
 
     private VerifyTableDefinition[] makeVerifyTableDefinitions_LessThanExpected() {
-        final String[] excludeColumns = new String[0];
+        final String[] excludeColumns = {};
 
         final VerifyTableDefinition testTable = new VerifyTableDefinition("test_table", excludeColumns);
 
@@ -62,7 +63,7 @@ public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifierTest {
     }
 
     private VerifyTableDefinition[] makeVerifyTableDefinitions_MoreThanExpected() {
-        final String[] excludeColumns = new String[0];
+        final String[] excludeColumns = {};
 
         final VerifyTableDefinition testTable = new VerifyTableDefinition("test_table", excludeColumns);
         final VerifyTableDefinition secondTable = new VerifyTableDefinition("second_table", excludeColumns);
