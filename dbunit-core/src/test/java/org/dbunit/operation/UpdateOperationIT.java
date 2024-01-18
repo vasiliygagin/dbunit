@@ -23,6 +23,8 @@ package org.dbunit.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.FileReader;
 import java.io.Reader;
@@ -30,8 +32,8 @@ import java.io.Reader;
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
 import org.dbunit.TestFeature;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
 import org.dbunit.dataset.Column;
@@ -49,6 +51,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -118,18 +122,18 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreatePreparedStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         new UpdateOperation().execute(connection, dataSet);
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test
@@ -153,11 +157,12 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreatePreparedStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         connection.getDatabaseConfig().setAllowEmptyFields(false);
@@ -169,7 +174,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         } finally {
             statement.verify();
             factory.verify();
-            connection.verify();
         }
     }
 
@@ -198,11 +202,12 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreatePreparedStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         connection.getDatabaseConfig().setAllowEmptyFields(false);
@@ -210,7 +215,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test
@@ -240,11 +244,12 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreatePreparedStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         connection.getDatabaseConfig().setAllowEmptyFields(true);
@@ -252,7 +257,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test
@@ -282,11 +286,12 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreatePreparedStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         connection.getDatabaseConfig().setEscapePattern("[?]");
@@ -294,7 +299,6 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test
@@ -307,16 +311,16 @@ public class UpdateOperationIT extends AbstractDatabaseIT {
         MockStatementFactory factory = new MockStatementFactory();
         factory.setExpectedCreatePreparedStatementCalls(0);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
 
         // execute operation
         new UpdateOperation().execute(connection, dataSet);
 
         factory.verify();
-        connection.verify();
     }
 
     @Test

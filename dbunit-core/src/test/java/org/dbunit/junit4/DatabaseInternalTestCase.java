@@ -6,6 +6,7 @@ package org.dbunit.junit4;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
@@ -64,7 +65,7 @@ public abstract class DatabaseInternalTestCase {
         return connection.getConnection();
     }
 
-    protected IDatabaseConnection getConnection() throws Exception {
+    protected AbstractDatabaseConnection getConnection() throws Exception {
         return dbUnit.getConnection();
     }
 

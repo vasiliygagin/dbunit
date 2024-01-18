@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class CloseConnectionOperationIT extends AbstractDatabaseIT {
     public void testMockExecute() throws Exception {
 
         DatabaseOperation operation = mock(DatabaseOperation.class);
-        IDatabaseConnection connection = mock(IDatabaseConnection.class);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
         IDataSet dataSet = mock(IDataSet.class);
 
         new CloseConnectionOperation(operation).execute(connection, dataSet);

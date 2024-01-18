@@ -29,8 +29,8 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.types.FilterSet;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.AmbiguousTableNameException;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +115,6 @@ public class QuerySet extends ProjectComponent {
     private static String ERR_MSG = "Cannot specify 'id' and 'refid' attributes together in queryset.";
 
     public QuerySet() {
-        super();
     }
 
     public void addQuery(Query query) {
@@ -186,7 +185,7 @@ public class QuerySet extends ProjectComponent {
         }
     }
 
-    public QueryDataSet getQueryDataSet(IDatabaseConnection connection)
+    public QueryDataSet getQueryDataSet(AbstractDatabaseConnection connection)
             throws SQLException, AmbiguousTableNameException {
         logger.debug("getQueryDataSet(connection={}) - start", connection);
 

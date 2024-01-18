@@ -28,8 +28,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import javax.sql.DataSource;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseDataSourceConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,14 +57,14 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     private ApplicationContext applicationContext;
 
-    private IDatabaseConnection databaseConnection;
+    private AbstractDatabaseConnection databaseConnection;
 
     private DataSource dataSource;
 
     @Before
     public void setup() {
         this.applicationContext = mock(ApplicationContext.class);
-        this.databaseConnection = mock(IDatabaseConnection.class);
+        this.databaseConnection = mock(AbstractDatabaseConnection.class);
         this.dataSource = mock(DataSource.class);
         DbUnitTestExecutionListenerPrepareTest.applicationContextThreadLocal.set(this.applicationContext);
     }
@@ -78,7 +78,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @Test
     public void shouldUseSensibleDefaultsOnClassWithNoDbUnitConfiguration() throws Exception {
-        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
+        given(this.applicationContext.getBeansOfType(AbstractDatabaseConnection.class))
                 .willReturn(singletonMap("dbUnitDatabaseConnection", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(NoDbUnitConfiguration.class);
         testContextManager.prepareTestInstance();
@@ -103,7 +103,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
     private void testCommonBeanNames(Class<?> testClass) throws Exception {
         given(this.applicationContext.getBeansOfType(DataSource.class))
                 .willReturn(singletonMap("dataSource", this.dataSource));
-        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
+        given(this.applicationContext.getBeansOfType(AbstractDatabaseConnection.class))
                 .willReturn(singletonMap("dbUnitDatabaseConnection", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(testClass);
         testContextManager.prepareTestInstance();
@@ -112,7 +112,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
         DatabaseConnections databaseConnections = listener.databaseConnections;
         assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
         verify(this.applicationContext).getBeansOfType(DataSource.class);
-        verify(this.applicationContext).getBeansOfType(IDatabaseConnection.class);
+        verify(this.applicationContext).getBeansOfType(AbstractDatabaseConnection.class);
         verify(this.applicationContext).containsBean("dbUnitDataSetLoader");
         verifyNoMoreInteractions(this.applicationContext);
     }
@@ -137,13 +137,13 @@ public class DbUnitTestExecutionListenerPrepareTest {
             testContextManager.prepareTestInstance();
         } catch (IllegalStateException ex) {
             assertEquals(ex.getMessage(),
-                    "No IDatabaseConenction found. Expecting at least one Spring bean of type org.dbunit.database.IDatabaseConnection or javax.sql.DataSource.");
+                    "No IDatabaseConenction found. Expecting at least one Spring bean of type org.dbunit.database.AbstractDatabaseConnection or javax.sql.DataSource.");
         }
     }
 
     @Test
     public void shouldSupportAllDbUnitConfigurationAttributes() throws Exception {
-        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
+        given(this.applicationContext.getBeansOfType(AbstractDatabaseConnection.class))
                 .willReturn(singletonMap("customBean", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(CustomConfiguration.class);
         testContextManager.prepareTestInstance();
@@ -158,7 +158,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @Test
     public void shouldFailIfDatasetLoaderCannotBeCreated() throws Exception {
-        given(this.applicationContext.getBeansOfType(IDatabaseConnection.class))
+        given(this.applicationContext.getBeansOfType(AbstractDatabaseConnection.class))
                 .willReturn(singletonMap("dbUnitDatabaseConnection", this.databaseConnection));
         ExtendedTestContextManager testContextManager = new ExtendedTestContextManager(NonCreatableDataSetLoader.class);
         try {
@@ -183,6 +183,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
     }
 
     private static class LocalApplicationContextLoader implements ContextLoader {
+
         @Override
         public String[] processLocations(Class<?> clazz, String... locations) {
             return new String[] {};
@@ -195,6 +196,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
     }
 
     public abstract static class AbstractCustomDataSetLoader implements DataSetLoader {
+
         @Override
         public IDataSet loadDataSet(Class<?> testClass, String location) throws Exception {
             return null;
@@ -205,6 +207,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
     }
 
     public static class CustomDatabaseOperationLookup implements DatabaseOperationLookup {
+
         @Override
         public org.dbunit.operation.DatabaseOperation get(DatabaseOperation operation) {
             return null;

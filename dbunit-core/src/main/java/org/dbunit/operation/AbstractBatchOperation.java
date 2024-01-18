@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.BitSet;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IPreparedBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
@@ -108,7 +109,8 @@ public abstract class AbstractBatchOperation extends AbstractOperation {
     // DatabaseOperation class
 
     @Override
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
         IStatementFactory factory = connection.getDatabaseConfig().getStatementFactory();

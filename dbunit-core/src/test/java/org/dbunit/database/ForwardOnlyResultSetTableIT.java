@@ -43,7 +43,7 @@ public class ForwardOnlyResultSetTableIT extends ForwardOnlyTableTest {
 
     @Override
     protected ITable createTable() throws Exception {
-        IDatabaseConnection connection = database.getConnection();
+        AbstractDatabaseConnection connection = database.getConnection();
 
         IDataSet initDataSet = environment.getInitDataSet();
         DatabaseOperation.CLEAN_INSERT.execute(connection, initDataSet);

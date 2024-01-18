@@ -36,20 +36,6 @@ import java.sql.SQLException;
 public interface IMetadataHandler {
 
     /**
-     * Returns the result set for an invocation of
-     * {@link DatabaseMetaData#getColumns(String, String, String, String)}.
-     *
-     * @param databaseMetaData The database metadata to be used for retrieving the
-     *                         columns
-     * @param schemaName       The schema name
-     * @param tableName        The table name
-     * @return The result set containing all columns
-     * @throws SQLException
-     * @since 2.4.4
-     */
-    ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName) throws SQLException;
-
-    /**
      * Checks if the given <code>resultSet</code> matches the given schema and table
      * name. The comparison is <b>case sensitive</b>.
      *

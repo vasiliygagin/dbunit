@@ -32,8 +32,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.CachedDataSet;
@@ -53,7 +53,7 @@ public class CsvProducerTest {
     private String url;
     private String user;
     private String password;
-    private IDatabaseConnection connection;
+    private AbstractDatabaseConnection connection;
     private static final String THE_DIRECTORY = TestUtils.getFileName("csv/orders");
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
@@ -89,7 +89,7 @@ public class CsvProducerTest {
         }
     }
 
-    private IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
+    private AbstractDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
         HsqldbDatabaseConfig config = new HsqldbDatabaseConfig();
         DriverManagerConnectionSource driverManagerConnectionSource = GlobalContext.getIt()
                 .getDriverManagerConnectionSource();

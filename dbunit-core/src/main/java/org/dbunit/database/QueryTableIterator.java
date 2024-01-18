@@ -49,7 +49,7 @@ public class QueryTableIterator implements ITableIterator {
     private static final Logger logger = LoggerFactory.getLogger(QueryTableIterator.class);
 
     private final List _tableEntries;
-    private final IDatabaseConnection _connection;
+    private final AbstractDatabaseConnection _connection;
     private IResultSetTable _currentTable;
     private int _index = -1;
 
@@ -57,7 +57,7 @@ public class QueryTableIterator implements ITableIterator {
      * @param tableEntries list of {@link TableEntry} objects
      * @param connection   The database connection needed to load data
      */
-    public QueryTableIterator(List tableEntries, IDatabaseConnection connection) {
+    public QueryTableIterator(List tableEntries, AbstractDatabaseConnection connection) {
         if (tableEntries == null) {
             throw new NullPointerException("The parameter 'tableEntries' must not be null");
         }

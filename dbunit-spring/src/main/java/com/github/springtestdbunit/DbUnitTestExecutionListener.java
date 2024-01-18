@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.slf4j.Logger;
@@ -116,13 +117,14 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
 
     private DatabaseConnections prepareDatabaseConnections(ApplicationContext applicationContext,
             DbUnitConfiguration configuration) throws SQLException {
-        Map<String, IDatabaseConnection> allDatabaseConnections = discoverDatabaseConnections(applicationContext);
+        Map<String, AbstractDatabaseConnection> allDatabaseConnections = discoverDatabaseConnections(
+                applicationContext);
         if (allDatabaseConnections.isEmpty()) {
             throw new IllegalStateException("No IDatabaseConenction found. Expecting at least one Spring bean of type "
-                    + IDatabaseConnection.class.getName() + " or " + DataSource.class.getName() + ".");
+                    + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName() + ".");
         }
 
-        Map<String, IDatabaseConnection> selectedDatabaseConnections = null;
+        Map<String, AbstractDatabaseConnection> selectedDatabaseConnections = null;
         String defaultName = null;
         List<String> names = discoverConfiguredConnectionNames(configuration);
         if (!names.isEmpty()) {
@@ -145,10 +147,10 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         return new DatabaseConnections(selectedDatabaseConnections, defaultName);
     }
 
-    private Map<String, IDatabaseConnection> getDatabaseConnectionUsingCommonBeanNames(
-            Map<String, IDatabaseConnection> allDatabaseConnections) {
+    private Map<String, AbstractDatabaseConnection> getDatabaseConnectionUsingCommonBeanNames(
+            Map<String, AbstractDatabaseConnection> allDatabaseConnections) {
         for (String beanName : COMMON_DATABASE_CONNECTION_BEAN_NAMES) {
-            IDatabaseConnection databaseConnection = allDatabaseConnections.get(beanName);
+            AbstractDatabaseConnection databaseConnection = allDatabaseConnections.get(beanName);
             if (databaseConnection != null) {
                 return Collections.singletonMap(beanName, databaseConnection);
             }
@@ -171,15 +173,15 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         return names;
     }
 
-    private Map<String, IDatabaseConnection> filterByNames(Map<String, IDatabaseConnection> connections,
+    private Map<String, AbstractDatabaseConnection> filterByNames(Map<String, AbstractDatabaseConnection> connections,
             List<String> names) {
-        Map<String, IDatabaseConnection> selectedConnections = new HashMap<>();
+        Map<String, AbstractDatabaseConnection> selectedConnections = new HashMap<>();
         for (String name : names) {
-            IDatabaseConnection connection = connections.get(name);
+            AbstractDatabaseConnection connection = connections.get(name);
             if (connection == null) {
                 throw new IllegalArgumentException(
                         "IDatabaseConenction can not be found. Expecting Spring bean of type "
-                                + IDatabaseConnection.class.getName() + " or " + DataSource.class.getName()
+                                + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName()
                                 + " with name \"" + name + "\"");
             }
             selectedConnections.put(name, connection);
@@ -187,10 +189,10 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         return selectedConnections;
     }
 
-    private Map<String, IDatabaseConnection> discoverDatabaseConnections(ApplicationContext applicationContext)
+    private Map<String, AbstractDatabaseConnection> discoverDatabaseConnections(ApplicationContext applicationContext)
             throws SQLException {
-        Map<String, IDatabaseConnection> databaseConnections = new HashMap<>(
-                applicationContext.getBeansOfType(IDatabaseConnection.class));
+        Map<String, AbstractDatabaseConnection> databaseConnections = new HashMap<>(
+                applicationContext.getBeansOfType(AbstractDatabaseConnection.class));
         Map<String, DataSource> dataSources = applicationContext.getBeansOfType(DataSource.class);
         for (Entry<String, DataSource> entry : dataSources.entrySet()) {
             String beanName2 = entry.getKey();

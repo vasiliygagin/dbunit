@@ -20,22 +20,21 @@
  */
 package org.dbunit.ant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.Assertion;
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.NoSuchTableException;
-import org.dbunit.dataset.SortedTable;
-import org.dbunit.dataset.ITableMetaData;
-import org.dbunit.dataset.filter.DefaultColumnFilter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.dbunit.Assertion;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.NoSuchTableException;
+import org.dbunit.dataset.SortedTable;
+import org.dbunit.dataset.filter.DefaultColumnFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <code>Compare</code> class is the step that compare the content of the
@@ -105,7 +104,7 @@ public class Compare extends AbstractStep {
         _tables.add(query);
     }
 
-    public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
+    public void execute(AbstractDatabaseConnection connection) throws DatabaseUnitException {
         logger.debug("execute(connection={}) - start", connection);
 
         IDataSet expectedDataset = getSrcDataSet(_src, getFormat(), false);
@@ -120,8 +119,7 @@ public class Compare extends AbstractStep {
             tableNames = actualDataset.getTableNames();
         }
 
-        for (int i = 0; i < tableNames.length; i++) {
-            String tableName = tableNames[i];
+        for (String tableName : tableNames) {
             ITable expectedTable;
             try {
                 expectedTable = expectedDataset.getTable(tableName);
@@ -150,11 +148,13 @@ public class Compare extends AbstractStep {
         }
     }
 
+    @Override
     public String getLogMessage() {
         return "Executing compare: " + "\n          from file: " + ((_src == null) ? null : _src.getAbsolutePath())
                 + "\n          with format: " + _format;
     }
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
         result.append("Compare: ");

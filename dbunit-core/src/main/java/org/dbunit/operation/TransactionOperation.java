@@ -21,15 +21,14 @@
 
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorates an operation and executes within the context of a transaction.
@@ -57,11 +56,12 @@ public class TransactionOperation extends DatabaseOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    @Override
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
-        IDatabaseConnection databaseConnection = connection;
-        Connection jdbcConnection = databaseConnection.getConnection();
+        Connection jdbcConnection = connection.getConnection();
 
         if (jdbcConnection.getAutoCommit() == false) {
             throw new ExclusiveTransactionException();
@@ -69,15 +69,9 @@ public class TransactionOperation extends DatabaseOperation {
 
         jdbcConnection.setAutoCommit(false);
         try {
-            _operation.execute(databaseConnection, dataSet);
+            _operation.execute(connection, dataSet);
             jdbcConnection.commit();
-        } catch (DatabaseUnitException e) {
-            jdbcConnection.rollback();
-            throw e;
-        } catch (SQLException e) {
-            jdbcConnection.rollback();
-            throw e;
-        } catch (RuntimeException e) {
+        } catch (DatabaseUnitException | SQLException | RuntimeException e) {
             jdbcConnection.rollback();
             throw e;
         } finally {

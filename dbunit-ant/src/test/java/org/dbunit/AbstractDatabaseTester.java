@@ -25,6 +25,7 @@ import java.sql.Connection;
 
 import org.dbunit.assertion.DefaultFailureHandler;
 import org.dbunit.assertion.SimpleAssert;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.metadata.MetadataManager;
@@ -96,7 +97,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
     }
 
     @Override
-    public IDatabaseConnection getConnection() throws Exception {
+    public AbstractDatabaseConnection getConnection() throws Exception {
         Connection connection = buildJdbcConnection();
         return buildConnection(databaseConfig, connection);
     }
@@ -207,7 +208,7 @@ public abstract class AbstractDatabaseTester extends SimpleAssert implements IDa
                 operationListener = new DefaultOperationListener();
             }
 
-            IDatabaseConnection connection = getConnection();
+            AbstractDatabaseConnection connection = getConnection();
             operationListener.connectionRetrieved(connection);
 
             try {

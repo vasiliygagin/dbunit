@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 
 import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.CompositeTable;
@@ -425,7 +425,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
     @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualExcluded() throws Exception {
-        IDatabaseConnection connection = database.getConnection();
+        AbstractDatabaseConnection connection = database.getConnection();
 
         IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");
@@ -444,7 +444,7 @@ public class DbUnitAssertIT extends AbstractDatabaseTest {
 
     @Test
     public void testAssertTablesByQueryWithColFilterAndValuesNotEqualNotExcluded() throws Exception {
-        IDatabaseConnection connection = database.getConnection();
+        AbstractDatabaseConnection connection = database.getConnection();
 
         IDataSet dataSet = environment.getInitDataSet();
         ITable expectedTable = dataSet.getTable("TEST_TABLE");

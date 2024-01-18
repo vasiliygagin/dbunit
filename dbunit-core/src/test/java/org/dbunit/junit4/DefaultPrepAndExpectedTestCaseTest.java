@@ -8,21 +8,14 @@ import java.lang.reflect.Field;
 import org.dbunit.Assertion;
 import org.dbunit.PrepAndExpectedTestCaseSteps;
 import org.dbunit.VerifyTableDefinition;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.junit.DbUnitTestFacade;
-import org.dbunit.junit4.database.MockDatabaseConnection;
-import org.dbunit.junit4.database.statement.MockBatchStatement;
-import org.dbunit.junit4.database.statement.MockStatementFactory;
 import org.dbunit.util.fileloader.DataFileLoader;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import org.junit.Test;
-
-import com.mockobjects.sql.MockConnection;
 
 public class DefaultPrepAndExpectedTestCaseTest {
 
@@ -89,21 +82,5 @@ public class DefaultPrepAndExpectedTestCaseTest {
         final String[] excludeColumns = { "COL1" };
         final String[] includeColumns = { "COL2" };
         tc.applyColumnFilters(table, excludeColumns, includeColumns);
-    }
-
-    protected IDatabaseConnection makeDatabaseConnection() {
-        final MockConnection mockConnection = new MockConnection();
-
-        final MockStatementFactory mockStatementFactory = new MockStatementFactory();
-        final IBatchStatement mockBatchStatement = new MockBatchStatement();
-        mockStatementFactory.setupStatement(mockBatchStatement);
-
-        final MockDatabaseConnection mockDbConnection = new MockDatabaseConnection();
-        mockDbConnection.setupConnection(mockConnection);
-        mockDbConnection.setupStatementFactory(mockStatementFactory);
-
-        mockDbConnection.getDatabaseConfig().setCaseSensitiveTableNames(true);
-
-        return mockDbConnection;
     }
 }

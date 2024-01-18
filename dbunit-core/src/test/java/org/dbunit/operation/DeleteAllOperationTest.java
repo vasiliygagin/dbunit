@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import org.dbunit.assertion.TestDataSet;
 import org.dbunit.assertion.TestTable;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.IDataSet;
@@ -28,7 +28,7 @@ public class DeleteAllOperationTest {
         TestTable testTable3 = new TestTable("T1");
         TestDataSet testDataSet = new TestDataSet(testTable1, testTable2, testTable3);
 
-        IDatabaseConnection connection = mock(IDatabaseConnection.class);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
         IStatementFactory statementFactory = mock(IStatementFactory.class);
         IDataSet databaseDataSet = mock(IDataSet.class);
 

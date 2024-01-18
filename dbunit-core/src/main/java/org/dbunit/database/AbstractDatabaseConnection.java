@@ -27,13 +27,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import org.dbunit.DatabaseUnitRuntimeException;
+import org.dbunit.database.metadata.MetadataCrawlingTableFinder;
 import org.dbunit.database.metadata.MetadataManager;
-import org.dbunit.database.metadata.SchemaMetadata;
+import org.dbunit.database.metadata.TableFinder;
 import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
@@ -63,13 +61,16 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDatabaseConnection.class);
 
     protected final Connection jdbcConnection;
-    private final MetadataManager metadataManager;
+    protected final MetadataManager metadataManager;
+    protected final TableFinder tableFinder;
+
     private IDataSet _dataSet = null;
     final DatabaseConfig _databaseConfig;
 
     public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config,
             MetadataManager metadataManager) {
         this.metadataManager = metadataManager;
+        tableFinder = new MetadataCrawlingTableFinder(metadataManager);
         if (jdbcConnection == null) {
             throw new IllegalArgumentException("The parameter 'connection' must not be null");
         }
@@ -222,9 +223,9 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         QualifiedTableName2 tn = QualifiedTableName2.parseFullTableName2(freeFormTableName, getSchema());
 
         try {
-            IMetadataHandler metadataHandler = getDatabaseConfig().getMetadataHandler();
             DatabaseMetaData databaseMetaData = getConnection().getMetaData();
 
+            IMetadataHandler metadataHandler = getDatabaseConfig().getMetadataHandler();
             String catalog = metadataHandler.toCatalog(tn.schema);
             String schema = metadataHandler.toSchema(tn.schema);
 
@@ -247,72 +248,8 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     }
 
-    @Override
     public String correctTableName(String tableName) throws DataSetException {
-//        return oldWayCorrectTableName(tableName);
-        return newWayCorrectTableName(tableName);
-    }
-
-    protected String newWayCorrectTableName(String freeHandTableName) throws NoSuchTableException, DataSetException {
-        String[] parts = freeHandTableName.split("\\.");
-        if (parts.length > 3) {
-            throw new DataSetException("Invalid table name [" + freeHandTableName + "]");
-        }
-
-        List<TableMetadata> exactTableNameCandidates = new ArrayList<>();
-        List<TableMetadata> wrongCaseCandidates = new ArrayList<>();
-        try {
-            List<TableMetadata> tableMetadatas = getMetadataManager().getTables(null);
-            for (TableMetadata tableMetadata : tableMetadatas) {
-                if (parts[0].equals(tableMetadata.tableName)) {
-                    if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
-                        exactTableNameCandidates.add(tableMetadata);
-                    }
-                } else if (parts[0].equalsIgnoreCase(tableMetadata.tableName)) {
-                    if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
-                        wrongCaseCandidates.add(tableMetadata);
-                    }
-                }
-            }
-
-            List<TableMetadata> candidates = exactTableNameCandidates.isEmpty() ? wrongCaseCandidates
-                    : exactTableNameCandidates;
-            if (candidates.isEmpty()) {
-                throw new NoSuchTableException(freeHandTableName);
-            }
-
-            if (candidates.size() == 1) {
-                return toStringTableId(candidates.get(0));
-            }
-
-            throw new AmbiguousTableNameException(freeHandTableName); // add message about multiple candidates.
-        } catch (SQLException exc) {
-            throw new DataSetException(
-                    "Exception while retrieving JDBC connection from dbunit connection '" + this + "'", exc);
-        }
-    }
-
-    /**
-     * @param parts
-     * @param schemaMetadata
-     * @return
-     */
-    private boolean schemaMatches(String[] parts, SchemaMetadata schemaMetadata) {
-        if (parts.length == 1) {
-            return true;
-        }
-        if (parts.length == 3) {
-            return parts[1].equalsIgnoreCase(schemaMetadata.schema)
-                    && parts[2].equalsIgnoreCase(schemaMetadata.catalog);
-        }
-        // parts.length = 2
-        if (schemaMetadata.schema != null) {
-            return parts[1].equalsIgnoreCase(schemaMetadata.schema);
-        }
-        if (schemaMetadata.catalog != null) {
-            return parts[1].equalsIgnoreCase(schemaMetadata.catalog);
-        }
-        return false;
+        return toStringTableId(tableFinder.nameToTable(tableName));
     }
 
     /**
@@ -329,56 +266,5 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         }
         sb.append('"').append(tableMetadata.tableName).append('"');
         return sb.toString();
-    }
-
-    protected String oldWayCorrectTableName(String tableName) throws NoSuchTableException, DataSetException {
-        // olg algorithm of correcting table names
-        boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
-        boolean qualifiedTableNames = _databaseConfig.isQualifiedTableNames();
-
-        String result1 = tableName;
-        if (!caseSensitiveTableNames) {
-            // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
-            // locale like turkish. (for release 2.4.3)
-            result1 = tableName.toUpperCase(Locale.ENGLISH);
-        }
-        String correctedCaseTableName = result1;
-        try {
-            boolean containsTable = false;
-            List<TableMetadata> tableMetadatas = getMetadataManager().getTables(null);
-            for (TableMetadata tableMetadata : tableMetadatas) {
-                String qualifiedName;
-                if (qualifiedTableNames) {
-                    qualifiedName = tableMetadata.schemaMetadata.schema + "." + tableMetadata.tableName;
-                } else {
-                    qualifiedName = tableMetadata.tableName;
-                }
-
-                String result = qualifiedName;
-                if (!caseSensitiveTableNames) {
-                    // "Locale.ENGLISH" Fixes bug #1537894 when clients have a special
-                    // locale like turkish. (for release 2.4.3)
-                    result = qualifiedName.toUpperCase(Locale.ENGLISH);
-                }
-
-                if (result.equals(correctedCaseTableName)) {
-                    containsTable = true;
-                }
-            }
-
-            // Verify if table exist in the database
-            if (!containsTable) {
-                throw new NoSuchTableException(tableName);
-            }
-
-            if (!caseSensitiveTableNames) {
-                return SQLHelper.correctCase(tableName, jdbcConnection);
-            } else {
-                return tableName;
-            }
-        } catch (SQLException exc) {
-            throw new DataSetException(
-                    "Exception while retrieving JDBC connection from dbunit connection '" + this + "'", exc);
-        }
     }
 }

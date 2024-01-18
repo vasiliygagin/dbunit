@@ -129,7 +129,7 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
      * @return The datatype factory of the given connection
      * @throws SQLException
      */
-    public IDataTypeFactory getDataTypeFactory(IDatabaseConnection connection) throws SQLException {
+    public final IDataTypeFactory getDataTypeFactory(IDatabaseConnection connection) throws SQLException {
         IDataTypeFactory dataTypeFactory = connection.getDatabaseConfig().getDataTypeFactory();
 
         // Validate, e.g. oracle metaData + oracleDataTypeFactory ==> OK

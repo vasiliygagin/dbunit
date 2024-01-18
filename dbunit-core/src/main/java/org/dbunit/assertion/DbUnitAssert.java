@@ -238,8 +238,6 @@ public class DbUnitAssert extends DbUnitAssertBase {
      */
     public static class ComparisonColumn {
 
-        private static final Logger logger = LoggerFactory.getLogger(ComparisonColumn.class);
-
         private String columnName;
         private DataType dataType;
 

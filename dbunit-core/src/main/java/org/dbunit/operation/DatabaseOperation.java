@@ -24,7 +24,7 @@ package org.dbunit.operation;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 
 /**
@@ -74,13 +74,13 @@ public abstract class DatabaseOperation {
      * @param connection the database connection.
      * @param dataSet    the dataset to be used by this operation.
      */
-    public abstract void execute(IDatabaseConnection connection, IDataSet dataSet)
+    public abstract void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
             throws DatabaseUnitException, SQLException;
 
     private static class DummyOperation extends DatabaseOperation {
 
         @Override
-        public void execute(IDatabaseConnection connection, IDataSet dataSet) {
+        public void execute(AbstractDatabaseConnection connection, IDataSet dataSet) {
         }
     }
 }

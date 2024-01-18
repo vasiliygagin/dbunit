@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.statement.IBatchStatement;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
@@ -53,7 +53,8 @@ public class DeleteAllOperation extends AbstractOperation {
     // DatabaseOperation class
 
     @Override
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         IStatementFactory statementFactory = connection.getDatabaseConfig().getStatementFactory();
         IBatchStatement statement = statementFactory.createBatchStatement(connection);
         try {

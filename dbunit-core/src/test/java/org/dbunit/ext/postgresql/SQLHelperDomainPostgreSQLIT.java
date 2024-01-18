@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.PostgresqlEnvironment;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
@@ -28,7 +28,7 @@ import org.xml.sax.InputSource;
  */
 public class SQLHelperDomainPostgreSQLIT extends AbstractDatabaseTest {
 
-    private IDatabaseConnection _connection;
+    private AbstractDatabaseConnection _connection;
 
     private static final String xmlData = "<?xml version=\"1.0\"?>" + "<dataset>" + "<T1 PK=\"1\" STATE=\"is_blabla\"/>"
             + "</dataset>";

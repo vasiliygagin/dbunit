@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public class QueryDataSetIT extends AbstractDataSetTest {
 
-    private IDatabaseConnection _connection;
+    private AbstractDatabaseConnection _connection;
 
     ////////////////////////////////////////////////////////////////////////////
     // TestCase class

@@ -33,8 +33,8 @@ import java.util.List;
 
 import org.apache.tools.ant.Project;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseSequenceFilter;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSetWriter;
@@ -147,7 +147,7 @@ public class Export extends AbstractStep {
     }
 
     @Override
-    public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
+    public void execute(AbstractDatabaseConnection connection) throws DatabaseUnitException {
         logger.debug("execute(connection={}) - start", connection);
 
         try {
@@ -199,7 +199,8 @@ public class Export extends AbstractStep {
      * @throws DatabaseUnitException
      * @throws SQLException
      */
-    protected IDataSet getExportDataSet(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
+    protected IDataSet getExportDataSet(AbstractDatabaseConnection connection)
+            throws DatabaseUnitException, SQLException {
         IDataSet dataset = getDatabaseDataSet(connection, this._tables);
         if (isOrdered()) {
             // Use topologically sorted database
