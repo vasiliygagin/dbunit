@@ -28,7 +28,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
@@ -78,7 +78,7 @@ public class DatabaseTestCase_DataSet_IT extends DatabaseInternalTestCase {
     @Test
     public void testOperation() throws Exception {
 
-        IDatabaseConnection connection = getConnection();
+        AbstractDatabaseConnection connection = getConnection();
         DefaultTable table = new DefaultTable("PARENT",
                 new Column[] { new Column("ID", DataType.INTEGER), new Column("NAME", DataType.VARCHAR) });
         table.addRow(new Object[] { 2, "PARENT 2" });

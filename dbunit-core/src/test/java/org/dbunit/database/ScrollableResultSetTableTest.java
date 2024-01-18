@@ -25,8 +25,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.DatabaseEnvironmentLoader;
+import org.dbunit.DatabaseTestingEnvironment;
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.TestFeature;
 import org.dbunit.dataset.Column;
@@ -52,7 +52,7 @@ public class ScrollableResultSetTableTest {
     }
 
     protected ITable createTable() throws Exception {
-        IDatabaseConnection connection = environment.getOpenedDatabase().getConnection();
+        AbstractDatabaseConnection connection = environment.getOpenedDatabase().getConnection();
 
         DatabaseOperation.CLEAN_INSERT.execute(connection, environment.getInitDataSet());
 

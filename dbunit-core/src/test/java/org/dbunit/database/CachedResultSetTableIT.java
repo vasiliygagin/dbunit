@@ -37,7 +37,7 @@ public class CachedResultSetTableIT extends AbstractTableTest {
 
     @Override
     protected ITable createTable() throws Exception {
-        IDatabaseConnection connection = database.getConnection();
+        AbstractDatabaseConnection connection = database.getConnection();
         IDataSet dataSet = environment.getInitDataSet();
         DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
         DatabaseOperation.INSERT.execute(connection, dataSet);

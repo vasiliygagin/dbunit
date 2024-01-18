@@ -110,43 +110,6 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         }
     }
 
-    /**
-     * @param tableName
-     * @param resultSet
-     * @param dataTypeFactory
-     * @return The table metadata created for the given parameters
-     * @throws DataSetException
-     * @throws SQLException
-     * @deprecated since 2.3.0. use
-     *             {@link ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDataTypeFactory, boolean)}
-     */
-    @Deprecated
-    public static ITableMetaData createMetaData(String tableName, ResultSet resultSet, IDataTypeFactory dataTypeFactory)
-            throws DataSetException, SQLException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("createMetaData(tableName={}, resultSet={}, dataTypeFactory={}) - start", tableName, resultSet,
-                    dataTypeFactory);
-        }
-
-        return new ResultSetTableMetaData(tableName, resultSet, dataTypeFactory, false);
-    }
-
-    /**
-     * @param tableName
-     * @param resultSet
-     * @param connection
-     * @return The table metadata created for the given parameters
-     * @throws SQLException
-     * @throws DataSetException
-     * @deprecated since 2.3.0. use
-     *             {@link org.dbunit.database.ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDatabaseConnection, boolean)}
-     */
-    @Deprecated
-    public static ITableMetaData createMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection)
-            throws SQLException, DataSetException {
-        return new ResultSetTableMetaData(tableName, resultSet, connection, false);
-    }
-
     private String[] getPrimaryKeyNames() throws SQLException {
 
         Connection connection = _connection.getConnection();
@@ -232,8 +195,9 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                 DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
 
                 IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
-                ResultSet resultSet = metadataHandler.getColumns(databaseMetaData, tableMetadata.schemaMetadata.schema,
-                        tableMetadata.tableName);
+                ResultSet resultSet = databaseMetaData.getColumns(
+                        metadataHandler.toCatalog(tableMetadata.schemaMetadata.schema),
+                        metadataHandler.toSchema(tableMetadata.schemaMetadata.schema), tableMetadata.tableName, "%");
 
                 try {
                     IDataTypeFactory dataTypeFactory = super.getDataTypeFactory(_connection);

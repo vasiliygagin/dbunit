@@ -37,7 +37,7 @@ import org.dbunit.dataset.ITable;
  * @version $Revision$
  * @since Mar 6, 2002
  */
-public interface IDatabaseConnection extends DbConnection {
+public interface IDatabaseConnection {
 
     /**
      * Returns a JDBC database connection.
@@ -141,12 +141,4 @@ public interface IDatabaseConnection extends DbConnection {
     default IStatementFactory getStatementFactory() {
         return getDatabaseConfig().getStatementFactory();
     }
-
-    /**
-     * temp
-     * @param tableName
-     * @return
-     * @throws DataSetException
-     */
-    String correctTableName(String tableName) throws DataSetException;
 }

@@ -35,9 +35,9 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.slf4j.Logger;
@@ -374,7 +374,7 @@ public class DbUnitTask extends Task {
         logger.trace("execute() - start");
 
         try {
-            IDatabaseConnection connection = createConnection();
+            AbstractDatabaseConnection connection = createConnection();
 
             Iterator stepIter = steps.listIterator();
             while (stepIter.hasNext()) {
@@ -395,7 +395,7 @@ public class DbUnitTask extends Task {
         }
     }
 
-    protected IDatabaseConnection createConnection() throws SQLException {
+    protected AbstractDatabaseConnection createConnection() throws SQLException {
         logger.trace("createConnection() - start");
 
         if (driver == null) {
@@ -463,9 +463,9 @@ public class DbUnitTask extends Task {
      * @param dbSchema
      * @return The dbunit connection
      */
-    protected IDatabaseConnection createDatabaseConnection(Connection jdbcConnection, String dbSchema) {
+    protected AbstractDatabaseConnection createDatabaseConnection(Connection jdbcConnection, String dbSchema) {
         DatabaseConfig config = new DatabaseConfig();
-        IDatabaseConnection connection = null;
+        AbstractDatabaseConnection connection = null;
         try {
             MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, dbSchema);
             connection = new DatabaseConnection(jdbcConnection, config, dbSchema, metadataManager);

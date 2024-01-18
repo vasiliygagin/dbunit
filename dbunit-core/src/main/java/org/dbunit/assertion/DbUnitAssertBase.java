@@ -341,12 +341,9 @@ public class DbUnitAssertBase {
             throws DataSetException, DatabaseUnitException {
         final Object expectedValue = expectedTable.getValue(rowNum, columnName);
         final Object actualValue = actualTable.getValue(rowNum, columnName);
-
-        // Compare the values
         final ValueComparer valueComparer = columnValueComparerSource.selectValueComparer(columnName);
 
         final String failMessage = valueComparer.compare(dataType, expectedValue, actualValue);
-
         if (failMessage != null) {
             final String msg = messageBuilder.buildMessage(expectedTable, actualTable, rowNum, columnName, failMessage);
             failureHandler.handleFailure(msg, String.valueOf(expectedValue), String.valueOf(actualValue));

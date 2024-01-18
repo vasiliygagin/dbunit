@@ -174,4 +174,5 @@ public class MetadataManager {
     public SchemaMetadata findSchema(String schema) {
         return schemasManager.findSchema(schema);
     }
+
 }

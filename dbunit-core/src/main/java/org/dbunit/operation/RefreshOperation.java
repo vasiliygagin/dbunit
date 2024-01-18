@@ -21,10 +21,13 @@
 
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.BitSet;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.statement.IPreparedBatchStatement;
 import org.dbunit.database.statement.SimplePreparedStatement;
@@ -37,11 +40,8 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.NoPrimaryKeyException;
 import org.dbunit.dataset.RowOutOfBoundsException;
 import org.dbunit.dataset.datatype.DataType;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.BitSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This operation literally refreshes dataset contents into the database. This
@@ -75,7 +75,9 @@ public class RefreshOperation extends AbstractOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    @Override
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet) - start", connection);
 
         // for each table
@@ -148,7 +150,7 @@ public class RefreshOperation extends AbstractOperation {
 
         /**
          * Execute this operation on the sepcified table row.
-         * 
+         *
          * @return <code>true</code> if operation have been executed on the row.
          */
         public boolean execute(ITable table, int row) throws DataSetException, SQLException {
@@ -200,6 +202,7 @@ public class RefreshOperation extends AbstractOperation {
             _metaData = metaData;
         }
 
+        @Override
         public boolean execute(ITable table, int row) throws DataSetException, SQLException {
             logger.debug("execute(table={}, row={}) - start", table, String.valueOf(row));
 
@@ -225,6 +228,7 @@ public class RefreshOperation extends AbstractOperation {
      * Update row operation.
      */
     private class UpdateRowOperation extends RowOperation {
+
         PreparedStatement _countStatement;
 
         public UpdateRowOperation(IDatabaseConnection connection, ITableMetaData metaData)
@@ -290,9 +294,10 @@ public class RefreshOperation extends AbstractOperation {
 
         /**
          * Verify if the specified table row exists in the database.
-         * 
+         *
          * @return <code>true</code> if row exists.
          */
+        @Override
         public boolean execute(ITable table, int row) throws DataSetException, SQLException {
             logger.debug("execute(table={}, row={}) - start", table, String.valueOf(row));
 
@@ -312,6 +317,7 @@ public class RefreshOperation extends AbstractOperation {
             }
         }
 
+        @Override
         public void close() throws SQLException {
             logger.debug("close() - start");
 

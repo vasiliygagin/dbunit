@@ -49,15 +49,6 @@ public class NetezzaMetadataHandler implements IMetadataHandler {
     }
 
     @Override
-    public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-            throws SQLException {
-        // Note that Netezza uses the catalogName instead of the schemaName, so
-        // pass in the given schema name as catalog name (first argument).
-        ResultSet resultSet = databaseMetaData.getColumns(toCatalog(schemaName), toSchema(schemaName), tableName, "%");
-        return resultSet;
-    }
-
-    @Override
     public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
             throws SQLException {
         return matches(resultSet, null, schema, table, null, caseSensitive);

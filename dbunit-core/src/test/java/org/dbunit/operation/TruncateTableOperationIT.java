@@ -23,11 +23,13 @@ package org.dbunit.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.TestFeature;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.MockDatabaseConnection;
 import org.dbunit.database.statement.MockBatchStatement;
 import org.dbunit.database.statement.MockStatementFactory;
 import org.dbunit.dataset.AbstractDataSetTest;
@@ -40,6 +42,8 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
 import org.junit.Before;
 import org.junit.Test;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -89,18 +93,18 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreateStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         getDeleteAllOperation().execute(connection, dataSet);
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test
@@ -123,11 +127,12 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
         factory.setExpectedCreateStatementCalls(1);
         factory.setupStatement(statement);
 
-        MockDatabaseConnection connection = new MockDatabaseConnection();
-        connection.setupDataSet(dataSet);
-        connection.setupSchema(schemaName);
-        connection.setupStatementFactory(factory);
-        connection.setExpectedCloseCalls(0);
+        DatabaseConfig databaseConfig = new DatabaseConfig();
+        databaseConfig.setStatementFactory(factory);
+        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
+        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
+        when(connection.createDataSet()).thenReturn(dataSet);
+        when(connection.getSchema()).thenReturn(schemaName);
 
         // execute operation
         connection.getDatabaseConfig().setEscapePattern("'?'");
@@ -135,7 +140,6 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
 
         statement.verify();
         factory.verify();
-        connection.verify();
     }
 
     @Test

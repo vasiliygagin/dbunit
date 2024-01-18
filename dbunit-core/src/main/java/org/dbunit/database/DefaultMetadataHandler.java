@@ -45,17 +45,6 @@ public class DefaultMetadataHandler implements IMetadataHandler {
     private static final Logger logger = LoggerFactory.getLogger(DefaultMetadataHandler.class);
 
     @Override
-    public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-            throws SQLException {
-        if (logger.isTraceEnabled())
-            logger.trace("getColumns(databaseMetaData={}, schemaName={}, tableName={}) - start", databaseMetaData,
-                    schemaName, tableName);
-
-        ResultSet resultSet = databaseMetaData.getColumns(toCatalog(schemaName), toSchema(schemaName), tableName, "%");
-        return resultSet;
-    }
-
-    @Override
     public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
             throws SQLException {
         return matches(resultSet, null, schema, table, null, caseSensitive);

@@ -56,6 +56,7 @@ import org.apache.tools.ant.util.ProcessUtil;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -66,7 +67,7 @@ import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.ext.oracle.OracleDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.FileHelper;
-import org.hsqldb.jdbcDriver;
+import org.hsqldb.jdbc.JDBCDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -104,7 +105,7 @@ public class DbUnitTaskIT {
 
     @BeforeClass
     public static void initDb() throws Exception {
-        final Connection connection = jdbcDriver.getConnection("jdbc:hsqldb:mem:.", new Properties());
+        final Connection connection = JDBCDriver.getConnection("jdbc:hsqldb:mem:.", new Properties());
 
         final File ddlFile = new File("src/test/resources/sql/hypersonic.sql");
         final String sql = readSqlFromFile(ddlFile);
@@ -294,7 +295,7 @@ public class DbUnitTaskIT {
         // Test if the correct result set table factory is set according to dbconfig
         Export export = (Export) getFirstStepFromTarget(targetName);
         DbUnitTask task = getFirstTargetTask(targetName);
-        IDatabaseConnection connection = task.createConnection();
+        AbstractDatabaseConnection connection = task.createConnection();
         export.getExportDataSet(connection);
         assertEquals("org.dbunit.database.ForwardOnlyResultSetTableFactory",
                 connection.getDatabaseConfig().getResultSetTableFactory().getClass().getName());
@@ -362,7 +363,7 @@ public class DbUnitTaskIT {
 
         // Test if the correct dataset is created for ordered export
         DbUnitTask task = getFirstTargetTask(targetName);
-        IDatabaseConnection connection = task.createConnection();
+        AbstractDatabaseConnection connection = task.createConnection();
         IDataSet dataSetToBeExported = export.getExportDataSet(connection);
         // Ordered export should use the filtered dataset
         assertEquals(dataSetToBeExported.getClass(), FilteredDataSet.class);
@@ -748,6 +749,7 @@ public class DbUnitTaskIT {
      * an output stream which saves stuff to our buffer.
      */
     private static class AntOutputStream extends OutputStream {
+
         private StringBuffer buffer;
 
         public AntOutputStream(StringBuffer buffer) {
@@ -764,6 +766,7 @@ public class DbUnitTaskIT {
      * Our own personal build listener.
      */
     private class AntTestListener implements BuildListener {
+
         private int logLevel;
 
         /**

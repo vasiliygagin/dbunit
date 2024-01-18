@@ -47,7 +47,7 @@ public class QueryDataSet extends AbstractDataSet {
      */
     private static final Logger logger = LoggerFactory.getLogger(QueryDataSet.class);
 
-    private final IDatabaseConnection _connection;
+    private final AbstractDatabaseConnection _connection;
     private final OrderedTableNameMap _tables;
 
     /**
@@ -55,7 +55,7 @@ public class QueryDataSet extends AbstractDataSet {
      *
      * @param connection The connection object to the database.
      */
-    public QueryDataSet(IDatabaseConnection connection) {
+    public QueryDataSet(AbstractDatabaseConnection connection) {
         this(connection, connection.getDatabaseConfig().isCaseSensitiveTableNames());
     }
 
@@ -67,7 +67,7 @@ public class QueryDataSet extends AbstractDataSet {
      *                                sensitive table names
      * @since 2.4.2
      */
-    public QueryDataSet(IDatabaseConnection connection, boolean caseSensitiveTableNames) {
+    public QueryDataSet(AbstractDatabaseConnection connection, boolean caseSensitiveTableNames) {
         super(caseSensitiveTableNames);
         if (connection == null) {
             throw new NullPointerException("The parameter 'connection' must not be null");
@@ -131,6 +131,7 @@ public class QueryDataSet extends AbstractDataSet {
      * for this table.
      */
     static class TableEntry {
+
         private final String _tableName;
         private final String _query;
 

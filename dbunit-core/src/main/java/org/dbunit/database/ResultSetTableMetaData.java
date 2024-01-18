@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
  * @since 2.3.0
  */
 public class ResultSetTableMetaData extends AbstractTableMetaData {
+
     /**
      * Logger for this class
      */
@@ -98,30 +99,8 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
 
     }
 
-    /**
-     * @param tableName             The name of the database table
-     * @param resultSet             The JDBC result set that is used to retrieve the
-     *                              columns
-     * @param dataTypeFactory
-     * @param caseSensitiveMetaData Whether or not the metadata is case sensitive
-     * @throws DataSetException
-     * @throws SQLException
-     * @deprecated since 2.4.4. use
-     *             {@link ResultSetTableMetaData#ResultSetTableMetaData(String, ResultSet, IDatabaseConnection, boolean)}
-     */
-    @Deprecated
-    public ResultSetTableMetaData(String tableName, ResultSet resultSet, IDataTypeFactory dataTypeFactory,
-            boolean caseSensitiveMetaData) throws DataSetException, SQLException {
-        _caseSensitiveMetaData = caseSensitiveMetaData;
-        this.wrappedTableMetaData = createMetaData(tableName, resultSet, dataTypeFactory, new DefaultMetadataHandler());
-    }
-
     private DefaultTableMetaData createMetaData(String tableName, ResultSet resultSet, IDatabaseConnection connection)
             throws SQLException, DataSetException {
-        if (logger.isTraceEnabled())
-            logger.trace("createMetaData(tableName={}, resultSet={}, connection={}) - start", tableName, resultSet,
-                    connection);
-
         IMetadataHandler columnFactory = connection.getDatabaseConfig().getMetadataHandler();
         IDataTypeFactory typeFactory = super.getDataTypeFactory(connection);
         return createMetaData(tableName, resultSet, typeFactory, columnFactory);
@@ -129,148 +108,87 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
 
     private DefaultTableMetaData createMetaData(String tableName, ResultSet resultSet, IDataTypeFactory dataTypeFactory,
             IMetadataHandler columnFactory) throws DataSetException, SQLException {
-        if (logger.isTraceEnabled())
-            logger.trace("createMetaData(tableName={}, resultSet={}, dataTypeFactory={}, columnFactory={}) - start",
-                    tableName, resultSet, dataTypeFactory, columnFactory);
-
         Connection connection = resultSet.getStatement().getConnection();
+
         DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        Column[] columns = new Column[metaData.getColumnCount()];
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        Column[] columns = new Column[resultSetMetaData.getColumnCount()];
         for (int i = 0; i < columns.length; i++) {
             int rsIndex = i + 1;
-
-            // 1. try to create the column from the DatabaseMetaData object. The
-            // DatabaseMetaData
-            // provides more information and is more precise so that it should always be
-            // used in
-            // preference to the ResultSetMetaData object.
-            columns[i] = createColumnFromDbMetaData(metaData, rsIndex, databaseMetaData, dataTypeFactory,
-                    columnFactory);
-
-            // 2. If we could not create the Column from a DatabaseMetaData object, try to
-            // create it
-            // from the ResultSetMetaData object directly
-            if (columns[i] == null) {
-                columns[i] = createColumnFromRsMetaData(metaData, rsIndex, tableName, dataTypeFactory);
-            }
+            Column column = buildColumn(tableName, dataTypeFactory, columnFactory, databaseMetaData, resultSetMetaData,
+                    rsIndex);
+            columns[i] = column;
         }
 
         return new DefaultTableMetaData(tableName, columns);
     }
 
-    private Column createColumnFromRsMetaData(ResultSetMetaData rsMetaData, int rsIndex, String tableName,
-            IDataTypeFactory dataTypeFactory) throws SQLException, DataTypeException {
-        if (logger.isTraceEnabled()) {
-            logger.trace(
-                    "createColumnFromRsMetaData(rsMetaData={}, rsIndex={},"
-                            + " tableName={}, dataTypeFactory={}) - start",
-                    rsMetaData, String.valueOf(rsIndex), tableName, dataTypeFactory);
-        }
-
-        int columnType = rsMetaData.getColumnType(rsIndex);
-        String columnTypeName = rsMetaData.getColumnTypeName(rsIndex);
-        String columnName = rsMetaData.getColumnLabel(rsIndex);
-        int isNullable = rsMetaData.isNullable(rsIndex);
-
-        DataType dataType = dataTypeFactory.createDataType(columnType, columnTypeName, tableName, columnName);
-
-        Column column = new Column(columnName, dataType, columnTypeName, Column.nullableValue(isNullable));
-        return column;
-    }
-
-    /**
-     * Try to create the Column using information from the given
-     * {@link ResultSetMetaData} to search the column via the given
-     * {@link DatabaseMetaData}. If the {@link ResultSetMetaData} does not provide
-     * the required information (one of catalog/schema/table is "") the search for
-     * the Column via {@link DatabaseMetaData} is not executed and <code>null</code>
-     * is returned immediately.
-     *
-     * @param rsMetaData       The {@link ResultSetMetaData} from which to retrieve
-     *                         the {@link DatabaseMetaData}
-     * @param rsIndex          The current index in the {@link ResultSetMetaData}
-     * @param databaseMetaData The {@link DatabaseMetaData} which is used to lookup
-     *                         detailed information about the column if possible
-     * @param dataTypeFactory  dbunit {@link IDataTypeFactory} needed to create the
-     *                         Column
-     * @param metadataHandler  the handler to be used for {@link DatabaseMetaData}
-     *                         handling
-     * @return The column or <code>null</code> if it can be not created using a
-     *         {@link DatabaseMetaData} object because of missing information in the
-     *         {@link ResultSetMetaData} object
-     * @throws SQLException
-     * @throws DataTypeException
-     */
-    private Column createColumnFromDbMetaData(ResultSetMetaData rsMetaData, int rsIndex,
-            DatabaseMetaData databaseMetaData, IDataTypeFactory dataTypeFactory, IMetadataHandler metadataHandler)
+    private Column buildColumn(String tableName, IDataTypeFactory dataTypeFactory, IMetadataHandler columnFactory,
+            DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData, int rsIndex)
             throws SQLException, DataTypeException {
-        if (logger.isTraceEnabled()) {
-            logger.trace(
-                    "createColumnFromMetaData(rsMetaData={}, rsIndex={},"
-                            + " databaseMetaData={}, dataTypeFactory={}, columnFactory={}) - start",
-                    rsMetaData, String.valueOf(rsIndex), databaseMetaData, dataTypeFactory, metadataHandler);
-        }
-
-        // use DatabaseMetaData to retrieve the actual column definition
-        String catalogName = rsMetaData.getCatalogName(rsIndex);
-        String schemaName = rsMetaData.getSchemaName(rsIndex);
-        String tableName = rsMetaData.getTableName(rsIndex);
-        String columnName = rsMetaData.getColumnLabel(rsIndex);
 
         // Due to a bug in the DB2 JDBC driver we have to trim the names
-        catalogName = trim(catalogName);
-        schemaName = trim(schemaName);
-        tableName = trim(tableName);
-        columnName = trim(columnName);
+        String catalogName = trim(resultSetMetaData.getCatalogName(rsIndex));
+        String schemaName = trim(resultSetMetaData.getSchemaName(rsIndex));
+        String tableName1 = trim(resultSetMetaData.getTableName(rsIndex));
+        String columnName = trim(resultSetMetaData.getColumnLabel(rsIndex));
 
         // Check if at least one of catalog/schema/table attributes is
         // not applicable (i.e. "" is returned). If so do not try
         // to get the column metadata from the DatabaseMetaData object.
         // This is the case for all oracle JDBC drivers
         if (catalogName != null && catalogName.equals("")) {
-            // Catalog name is not required
             catalogName = null;
         }
-        if (schemaName != null && schemaName.equals("")) {
-            logger.debug("The 'schemaName' from the ResultSetMetaData is empty-string and not applicable hence. "
-                    + "Will not try to lookup column properties via DatabaseMetaData.getColumns.");
-            return null;
+
+        Column column = null;
+        if (schemaName == null || !schemaName.equals("")) {
+            if (tableName1 == null || !tableName1.equals("")) {
+
+                try ( //
+                        ResultSet columnsResultSet = databaseMetaData.getColumns(columnFactory.toCatalog(schemaName),
+                                columnFactory.toSchema(schemaName), tableName1, "%"); //
+                ) {
+                    // Scroll resultset forward - must have one result which exactly matches the
+                    // required parameters
+                    boolean found = false;
+                    while (columnsResultSet.next()) {
+                        boolean match = columnFactory.matches(columnsResultSet, catalogName, schemaName, tableName1,
+                                columnName, _caseSensitiveMetaData);
+                        if (match) {
+                            // All right. Return immediately because the resultSet is positioned on the
+                            // correct row
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        logger.warn(
+                                "Cannot find column from ResultSetMetaData info via DatabaseMetaData. Returning null."
+                                        + " Even if this is expected to never happen it probably happened due to a JDBC driver bug."
+                                        + " To get around this you may want to configure a user defined "
+                                        + IMetadataHandler.class);
+                        logger.warn("Did not find column '" + columnName + "' for <schema.table> '" + schemaName + "."
+                                + tableName1 + "' in catalog '" + catalogName
+                                + "' because names do not exactly match.");
+                    } else {
+                        column = SQLHelper.createColumn(columnsResultSet, dataTypeFactory, true);
+                    }
+                }
+            }
         }
-        if (tableName != null && tableName.equals("")) {
-            logger.debug("The 'tableName' from the ResultSetMetaData is empty-string and not applicable hence. "
-                    + "Will not try to lookup column properties via DatabaseMetaData.getColumns.");
-            return null;
+        if (column == null) {
+            int columnType = resultSetMetaData.getColumnType(rsIndex);
+            String columnTypeName = resultSetMetaData.getColumnTypeName(rsIndex);
+            String columnName1 = resultSetMetaData.getColumnLabel(rsIndex);
+            int isNullable = resultSetMetaData.isNullable(rsIndex);
+
+            DataType dataType = dataTypeFactory.createDataType(columnType, columnTypeName, tableName, columnName1);
+            column = new Column(columnName1, dataType, columnTypeName, Column.nullableValue(isNullable));
         }
-
-        if (logger.isDebugEnabled())
-            logger.debug(
-                    "All attributes from the ResultSetMetaData are valid, "
-                            + "trying to lookup values in DatabaseMetaData. catalog={}, schema={}, table={}, column={}",
-                    catalogName, schemaName, tableName, columnName);
-
-        // All of the retrieved attributes are valid,
-        // so lookup the column via DatabaseMetaData
-        ResultSet columnsResultSet = metadataHandler.getColumns(databaseMetaData, schemaName, tableName);
-
-        try {
-            // Scroll resultset forward - must have one result which exactly matches the
-            // required parameters
-            scrollTo(columnsResultSet, metadataHandler, catalogName, schemaName, tableName, columnName);
-
-            Column column = SQLHelper.createColumn(columnsResultSet, dataTypeFactory, true);
-            return column;
-        } catch (IllegalStateException e) {
-            logger.warn(
-                    "Cannot find column from ResultSetMetaData info via DatabaseMetaData. Returning null."
-                            + " Even if this is expected to never happen it probably happened due to a JDBC driver bug."
-                            + " To get around this you may want to configure a user defined " + IMetadataHandler.class,
-                    e);
-            return null;
-        } finally {
-            SQLHelper.close(columnsResultSet);
-        }
+        return column;
     }
 
     /**
@@ -282,25 +200,6 @@ public class ResultSetTableMetaData extends AbstractTableMetaData {
      */
     private String trim(String value) {
         return (value == null ? null : value.trim());
-    }
-
-    private void scrollTo(ResultSet columnsResultSet, IMetadataHandler metadataHandler, String catalog, String schema,
-            String table, String column) throws SQLException {
-        while (columnsResultSet.next()) {
-            boolean match = metadataHandler.matches(columnsResultSet, catalog, schema, table, column,
-                    _caseSensitiveMetaData);
-            if (match) {
-                // All right. Return immediately because the resultSet is positioned on the
-                // correct row
-                return;
-            }
-        }
-
-        // If we get here the column could not be found
-        String msg = "Did not find column '" + column + "' for <schema.table> '" + schema + "." + table
-                + "' in catalog '" + catalog + "' because names do not exactly match.";
-
-        throw new IllegalStateException(msg);
     }
 
     @Override

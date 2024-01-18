@@ -21,15 +21,14 @@
 
 package org.dbunit.operation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-
 import java.sql.SQLException;
 import java.util.Arrays;
+
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a composite that combines multiple database operation in a
@@ -65,15 +64,16 @@ public class CompositeOperation extends DatabaseOperation {
     ////////////////////////////////////////////////////////////////////////////
     // DatabaseOperation class
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, , dataSet={}) - start", connection, dataSet);
 
-        for (int i = 0; i < _actions.length; i++) {
-            DatabaseOperation action = _actions[i];
+        for (DatabaseOperation action : _actions) {
             action.execute(connection, dataSet);
         }
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

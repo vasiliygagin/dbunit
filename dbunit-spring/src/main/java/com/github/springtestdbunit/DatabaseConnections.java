@@ -19,6 +19,7 @@ package com.github.springtestdbunit;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 
 /**
@@ -28,37 +29,37 @@ import org.dbunit.database.IDatabaseConnection;
  */
 public class DatabaseConnections {
 
-    private final Map<String, IDatabaseConnection> connectionByName;
+    private final Map<String, AbstractDatabaseConnection> connectionByName;
     private final String defaultName;
 
-    public DatabaseConnections(Map<String, IDatabaseConnection> connectionByName, String defaultName) {
-	this.connectionByName = connectionByName;
-	this.defaultName = defaultName;
+    public DatabaseConnections(Map<String, AbstractDatabaseConnection> connectionByName, String defaultName) {
+        this.connectionByName = connectionByName;
+        this.defaultName = defaultName;
     }
 
     public void closeAll() throws SQLException {
-	for (IDatabaseConnection connection : this.connectionByName.values()) {
-	    connection.close();
-	}
+        for (AbstractDatabaseConnection connection : this.connectionByName.values()) {
+            connection.close();
+        }
     }
 
-    public IDatabaseConnection get(String name) {
-	if (name == null || name.length() == 0) {
-	    return defaultConnection();
-	}
-	IDatabaseConnection connection = connectionByName.get(name);
-	if (connection == null) {
-	    throw new IllegalStateException("Unable to find IDatabaseConnection named " + name);
-	}
-	return connection;
+    public AbstractDatabaseConnection get(String name) {
+        if (name == null || name.length() == 0) {
+            return defaultConnection();
+        }
+        AbstractDatabaseConnection connection = connectionByName.get(name);
+        if (connection == null) {
+            throw new IllegalStateException("Unable to find IDatabaseConnection named " + name);
+        }
+        return connection;
     }
 
-    private IDatabaseConnection defaultConnection() {
-	if (defaultName == null) {
-	    throw new IllegalArgumentException(
-		    "Requested a IDatabaseConnection without specifying name, but multiple connections available: "
-			    + connectionByName.keySet() + ", Please provide connection name");
-	}
-	return connectionByName.get(defaultName);
+    private AbstractDatabaseConnection defaultConnection() {
+        if (defaultName == null) {
+            throw new IllegalArgumentException(
+                    "Requested a IDatabaseConnection without specifying name, but multiple connections available: "
+                            + connectionByName.keySet() + ", Please provide connection name");
+        }
+        return connectionByName.get(defaultName);
     }
 }

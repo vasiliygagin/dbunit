@@ -28,8 +28,8 @@ import java.io.FileOutputStream;
 import java.sql.Connection;
 
 import org.dbunit.DdlExecutor;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.datatype.DataType;
@@ -51,7 +51,7 @@ import org.junit.Test;
 public class CompositeDataSetIterationTest {
 
     private Connection jdbcConnection;
-    private IDatabaseConnection connection;
+    private AbstractDatabaseConnection connection;
 
     @Before
     public void setUp() throws Exception {

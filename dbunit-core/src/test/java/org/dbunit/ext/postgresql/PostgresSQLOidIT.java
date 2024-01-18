@@ -11,7 +11,7 @@ import java.sql.Types;
 
 import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.PostgresqlEnvironment;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
 
 public class PostgresSQLOidIT extends AbstractDatabaseTest {
 
-    private IDatabaseConnection _connection;
+    private AbstractDatabaseConnection _connection;
 
  // @formatter:off
     private static final String xmlData ="<?xml version=\"1.0\"?>" +

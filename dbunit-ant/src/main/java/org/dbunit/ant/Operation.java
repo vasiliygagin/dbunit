@@ -21,28 +21,26 @@
 
 package org.dbunit.ant;
 
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Resource;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.dataset.CompositeDataSet;
+import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
-import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.operation.TransactionOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The <code>Operation</code> class is the step that defines which operation
@@ -179,7 +177,7 @@ public class Operation extends AbstractStep {
         _type = type;
     }
 
-    public void execute(IDatabaseConnection connection) throws DatabaseUnitException {
+    public void execute(AbstractDatabaseConnection connection) throws DatabaseUnitException {
         logger.debug("execute(connection={}) - start", connection);
         if (_operation == null) {
             throw new DatabaseUnitException("Operation.execute(): setType(String) must be called before execute()!");
@@ -223,6 +221,7 @@ public class Operation extends AbstractStep {
         }
     }
 
+    @Override
     public String getLogMessage() {
         StringBuffer result = new StringBuffer();
         result.append("Executing operation: " + _type);
@@ -235,6 +234,7 @@ public class Operation extends AbstractStep {
         return result.toString();
     }
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
         result.append("Operation: ");

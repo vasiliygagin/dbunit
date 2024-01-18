@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.apache.tools.ant.ProjectComponent;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.CompositeDataSet;
@@ -71,7 +71,8 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
 
     private boolean ordered = false;
 
-    protected IDataSet getDatabaseDataSet(IDatabaseConnection connection, List tables) throws DatabaseUnitException {
+    protected IDataSet getDatabaseDataSet(AbstractDatabaseConnection connection, List tables)
+            throws DatabaseUnitException {
 
         try {
             DatabaseConfig config = connection.getDatabaseConfig();
@@ -107,7 +108,8 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
         return forwardOnlyDataSets;
     }
 
-    private List createQueryDataSet(List tables, IDatabaseConnection connection) throws DataSetException, SQLException {
+    private List createQueryDataSet(List tables, AbstractDatabaseConnection connection)
+            throws DataSetException, SQLException {
         logger.debug("createQueryDataSet(tables={}, connection={})", tables, connection);
 
         List queryDataSets = new ArrayList();

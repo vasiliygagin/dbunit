@@ -24,7 +24,7 @@ package org.dbunit.operation;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,8 @@ public class CloseConnectionOperation extends DatabaseOperation {
     }
 
     @Override
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+    public void execute(AbstractDatabaseConnection connection, IDataSet dataSet)
+            throws DatabaseUnitException, SQLException {
         logger.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
 
         try {

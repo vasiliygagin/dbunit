@@ -21,7 +21,7 @@
 package org.dbunit.ant;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 
 /**
  * The <code>DbUnitTaskStep</code> interface allows the execute method to be
@@ -34,7 +34,7 @@ import org.dbunit.database.IDatabaseConnection;
  */
 public interface DbUnitTaskStep {
 
-    public void execute(IDatabaseConnection connection) throws DatabaseUnitException;
+    public void execute(AbstractDatabaseConnection connection) throws DatabaseUnitException;
 
     public String getLogMessage();
 
