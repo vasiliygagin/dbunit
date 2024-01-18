@@ -36,7 +36,7 @@ public class DbUnitAssertBase {
 
     private FailureHandler junitFailureFactory = getJUnitFailureFactory();
 
-    public final ValueComparerDefaults valueComparerDefaults = new DefaultValueComparerDefaults();
+    public final DefaultValueComparerDefaults valueComparerDefaults = new DefaultValueComparerDefaults();
     protected final ColumnsComparer columnComparer = new ColumnsComparer();
 
     /**
@@ -174,13 +174,8 @@ public class DbUnitAssertBase {
      * @throws DatabaseUnitException
      */
     public void assertWithValueComparer(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-            final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
-        log.debug(
-                "assertWithValueComparer(expectedDataSet={}, actualDataSet={},"
-                        + " failureHandler={}, defaultValueComparer={}," + " tableColumnValueComparers={}) - start",
-                expectedDataSet, actualDataSet, failureHandler, defaultValueComparer, tableColumnValueComparers);
-
+            final FailureHandler failureHandler, TableColumnValueComparerSource tableColumnValueComparerSource)
+            throws DataSetException, Error, DatabaseUnitException {
         // do not continue if same instance
         if (expectedDataSet == actualDataSet) {
             log.debug("The given datasets reference the same object." + " Skipping comparisons.");
@@ -197,20 +192,18 @@ public class DbUnitAssertBase {
         // table names in no specific order
         compareTableNames(expectedNames, actualNames, validFailureHandler);
 
-        compareTables(expectedDataSet, actualDataSet, expectedNames, validFailureHandler, defaultValueComparer,
-                tableColumnValueComparers);
+        compareTables(expectedDataSet, actualDataSet, expectedNames, validFailureHandler,
+                tableColumnValueComparerSource);
     }
 
     protected void compareTables(final IDataSet expectedDataSet, final IDataSet actualDataSet,
-            final String[] expectedNames, final FailureHandler failureHandler, final ValueComparer defaultValueComparer,
-            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) throws DatabaseUnitException {
-        final Map<String, Map<String, ValueComparer>> validTableColumnValueComparers = determineValidTableColumnValueComparers(
-                tableColumnValueComparers);
+            final String[] expectedNames, final FailureHandler failureHandler,
+            TableColumnValueComparerSource tableColumnValueComparerSource)
+            throws DataSetException, Error, DatabaseUnitException {
 
         for (final String tableName : expectedNames) {
             final ITable expectedTable = expectedDataSet.getTable(tableName);
             final ITable actualTable = actualDataSet.getTable(tableName);
-            final Map<String, ValueComparer> columnValueComparers = validTableColumnValueComparers.get(tableName);
 
             MessageBuilder messageBuilder;
             if (failureHandler instanceof DefaultFailureHandler) {
@@ -218,11 +211,15 @@ public class DbUnitAssertBase {
             } else {
                 messageBuilder = new MessageBuilder(null);
             }
-            TableValueComparerSource tableValueComparerSource = new TableValueComparerSource(valueComparerDefaults,
-                    defaultValueComparer, columnValueComparers);
 
-            assertWithValueComparer(expectedTable, actualTable, failureHandler, c -> false, messageBuilder,
-                    tableValueComparerSource);
+            if (tableColumnValueComparerSource == null) {
+                tableColumnValueComparerSource = new TableColumnValueComparerSource();
+            }
+            ColumnValueComparerSource columnValueComparerSource = tableColumnValueComparerSource
+                    .getColumnValueComparerSource(tableName);
+
+            assertWithValueComparer2(expectedTable, actualTable, failureHandler, messageBuilder,
+                    columnValueComparerSource);
         }
     }
 
@@ -260,7 +257,7 @@ public class DbUnitAssertBase {
 
     public void assertWithValueComparer(final ITable expectedTable, final ITable actualTable,
             final FailureHandler failureHandler, Predicate<Column> excludedColumn, MessageBuilder messageBuilder,
-            TableValueComparerSource tableValueComparerSource) throws Error, DataSetException, DatabaseUnitException {
+            ColumnValueComparerSource columnValueComparerSource) throws Error, DataSetException, DatabaseUnitException {
         // Do not continue if same instance
         if (expectedTable == actualTable) {
             log.debug("The given tables reference the same object." + " Skipping comparisons.");
@@ -278,9 +275,6 @@ public class DbUnitAssertBase {
         final ITableMetaData expectedMetaData = expectedTable.getTableMetaData();
         final ITableMetaData actualMetaData = actualTable.getTableMetaData();
         final String expectedTableName = expectedMetaData.getTableName();
-
-        ColumnValueComparerSource columnValueComparerSource = tableValueComparerSource
-                .selectColumnValueComparer(expectedTableName);
 
         final boolean isTablesEmpty = compareRowCounts(expectedTable, actualTable, validFailureHandler,
                 expectedTableName);
@@ -359,18 +353,32 @@ public class DbUnitAssertBase {
         }
     }
 
-    protected Map<String, Map<String, ValueComparer>> determineValidTableColumnValueComparers(
-            final Map<String, Map<String, ValueComparer>> tableColumnValueComparers) {
-        final Map<String, Map<String, ValueComparer>> validMap;
+    public void assertWithValueComparerWithTableDefaults(final ITable expectedTable, final ITable actualTable,
+            final FailureHandler failureHandler, Predicate<Column> excludedColumn, MessageBuilder messageBuilder,
+            ColumnValueComparerSource columnValueComparerSource, ValueComparerDefaults valueComparerDefaults)
+            throws Error, DataSetException, DatabaseUnitException {
 
-        if (tableColumnValueComparers == null) {
-            validMap = valueComparerDefaults.getDefaultTableColumnValueComparerMap();
-            log.debug("determineValidTableColumnValueComparers:" + " using getDefaultTableColumnValueComparerMap()={}"
-                    + " as tableColumnValueComparers={}", validMap, tableColumnValueComparers);
-        } else {
-            validMap = tableColumnValueComparers;
-        }
+        final String expectedTableName = expectedTable.getTableMetaData().getTableName();
 
-        return validMap;
+        ColumnValueComparerSource columnValueComparerSourceWithDefaults = columnValueComparerSource
+                .applyTableDefaults(expectedTableName, valueComparerDefaults);
+
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, excludedColumn, messageBuilder,
+                columnValueComparerSourceWithDefaults);
+    }
+
+    public void assertWithValueComparer2(final ITable expectedTable, final ITable actualTable,
+            final FailureHandler failureHandler, MessageBuilder messageBuilder,
+            ColumnValueComparerSource columnValueComparerSource) throws Error, DataSetException, DatabaseUnitException {
+        assertWithValueComparer(expectedTable, actualTable, failureHandler, (Predicate<Column>) c -> false,
+                messageBuilder, columnValueComparerSource);
+    }
+
+    public void assertWithValueComparer3(final ITable expectedTable, final ITable actualTable,
+            final FailureHandler failureHandler, MessageBuilder messageBuilder,
+            final ColumnValueComparerSource columnValueComparerSource)
+            throws Error, DataSetException, DatabaseUnitException {
+        assertWithValueComparerWithTableDefaults(expectedTable, actualTable, failureHandler,
+                (Predicate<Column>) c -> false, messageBuilder, columnValueComparerSource, valueComparerDefaults);
     }
 }

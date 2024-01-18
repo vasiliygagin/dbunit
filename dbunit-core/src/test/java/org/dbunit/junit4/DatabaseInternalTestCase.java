@@ -30,8 +30,6 @@ public abstract class DatabaseInternalTestCase {
     @Rule
     public final DbUnitTestFacade dbUnit = new DbUnitTestFacade();
 
-    private DefaultDatabaseTester databaseTester;
-
     public DatabaseInternalTestCase() {
     }
 
@@ -47,50 +45,18 @@ public abstract class DatabaseInternalTestCase {
         DatabaseConnection connection = dbUnit.getConnection();
         SqlScriptExecutor.execute(connection, "src/test/resources/sql/hypersonic.sql");
 
-        databaseTester = new DefaultDatabaseTester(connection);
-        databaseTester.setOperationListener(new DefaultOperationListener() {
-
-            @Override
-            public void operationSetUpFinished(IDatabaseConnection connection) {
-                // Ugly prevent close.
-                // Need to teach Database Tester to get / release connections from ConnectionSource
-            }
-
-            @Override
-            public void operationTearDownFinished(IDatabaseConnection connection) {
-                // Ugly prevent close.
-                // Need to teach Database Tester to get / release connections from ConnectionSource
-            }
-        });
-
-        databaseTester.setSetUpOperation(getSetUpOperation());
-        databaseTester.setDataSet(getDataSet());
-
-        databaseTester.onSetup();
+        getSetUpOperation().execute(connection, getDataSet());
     }
 
     @After
     public void tearDown() throws Exception {
-        databaseTester.setTearDownOperation(getTearDownOperation());
-        databaseTester.setDataSet(getDataSet());
+        DatabaseConnection connection = dbUnit.getConnection();
+        getTearDownOperation().execute(connection, getDataSet());
 
-        databaseTester.onTearDown();
         Connection jdbcConnection = dbUnit.getJdbcConnection();
         DbunitTestCaseTestRunner.assertAfter(() -> {
             org.dbunit.DdlExecutor.executeSql(jdbcConnection, "SHUTDOWN IMMEDIATELY");
         });
-    }
-
-    /**
-     * Creates a IDatabaseTester for this testCase.<br>
-     *
-     * A {@link DefaultDatabaseTester} is used by default.
-     *
-     * @throws Exception
-     */
-    protected IDatabaseTester buildDatabaseTester() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
-        return new DefaultDatabaseTester(connection);
     }
 
     protected Connection getJdbcConnection() throws Exception, SQLException {
@@ -99,16 +65,7 @@ public abstract class DatabaseInternalTestCase {
     }
 
     protected IDatabaseConnection getConnection() throws Exception {
-        IDatabaseTester tester = getDatabaseTester();
-        return tester.getConnection();
-    }
-
-    /**
-     * Gets the IDatabaseTester for this testCase.<br>
-     * Should this be public?
-     */
-    protected IDatabaseTester getDatabaseTester() {
-        return this.databaseTester;
+        return dbUnit.getConnection();
     }
 
     /**

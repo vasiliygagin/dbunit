@@ -1,8 +1,9 @@
 package org.dbunit;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Strategy pattern for verifying {@link VerifyTableDefinition}s and
@@ -12,6 +13,7 @@ import org.dbunit.dataset.IDataSet;
  * @author Jeff Jensen
  */
 public interface ExpectedDataSetAndVerifyTableDefinitionVerifier {
+
     /**
      * Verify {@link VerifyTableDefinition}s and expectedDataSet configurations
      * agree.

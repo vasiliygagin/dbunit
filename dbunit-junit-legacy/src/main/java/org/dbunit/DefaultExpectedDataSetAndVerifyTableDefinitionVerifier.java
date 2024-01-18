@@ -3,11 +3,13 @@ package org.dbunit;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.junit4.DefaultPrepAndExpectedTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * Default implementation for
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultExpectedDataSetAndVerifyTableDefinitionVerifier
         implements ExpectedDataSetAndVerifyTableDefinitionVerifier {
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dbunit.assertion.ColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
  * @since 2.4.8
  */
 public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAndExpectedTestCase {
+
     private final Logger log = LoggerFactory.getLogger(DefaultPrepAndExpectedTestCase.class);
 
     private static final String DATABASE_TESTER_IS_NULL_MSG = "databaseTester is null; must configure or set it first";
@@ -333,8 +335,11 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAn
 
         final String[] excludeColumns = verifyTableDefinition.getColumnExclusionFilters();
         final String[] includeColumns = verifyTableDefinition.getColumnInclusionFilters();
-        final Map<String, ValueComparer> columnValueComparers = verifyTableDefinition.getColumnValueComparers();
-        final ValueComparer defaultValueComparer = verifyTableDefinition.getDefaultValueComparer();
+        ColumnValueComparerSource columnValueComparerSource = verifyTableDefinition.getColumnValueComparerSource();
+        final Map<String, ValueComparer> columnValueComparers = columnValueComparerSource == null ? null
+                : columnValueComparerSource.getColumnValueComparers();
+        final ValueComparer defaultValueComparer = columnValueComparerSource == null ? null
+                : columnValueComparerSource.getDefaultValueComparer();
 
         final ITable expectedTable = loadTableDataFromDataSet(tableName);
         final ITable actualTable = loadTableDataFromDatabase(tableName, connection);
@@ -508,8 +513,9 @@ public class DefaultPrepAndExpectedTestCase extends DBTestCase implements PrepAn
     protected void compareData(final ITable expectedTable, final ITable actualTable,
             final Column[] additionalColumnInfo, final ValueComparer defaultValueComparer,
             final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
-        Assertion.assertWithValueComparer(expectedTable, actualTable, additionalColumnInfo, defaultValueComparer,
+        ColumnValueComparerSource columnValueComparerSource = new ColumnValueComparerSource(defaultValueComparer,
                 columnValueComparers);
+        Assertion.assertWithValueComparer(expectedTable, actualTable, additionalColumnInfo, columnValueComparerSource);
     }
 
     /**

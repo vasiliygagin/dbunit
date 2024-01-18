@@ -23,9 +23,8 @@ package org.dbunit;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.dbunit.assertion.ColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
-import org.dbunit.assertion.comparer.value.verifier.DefaultVerifyTableDefinitionVerifier;
-import org.dbunit.assertion.comparer.value.verifier.VerifyTableDefinitionVerifier;
 
 /**
  * Defines a database table to verify (assert on data), specifying include and
@@ -37,6 +36,7 @@ import org.dbunit.assertion.comparer.value.verifier.VerifyTableDefinitionVerifie
  * @since 2.4.8
  */
 public class VerifyTableDefinition {
+
     /** The name of the table. */
     private final String tableName;
 
@@ -50,19 +50,11 @@ public class VerifyTableDefinition {
      * {@link ValueComparer} to use with column value comparisons when the column
      * name for the table is not in the {@link columnValueComparers} {@link Map}.
      * Can be <code>null</code> and will default.
+     * Map of column names to {@link ValueComparer}s to use for comparison.
      *
      * @since 2.6.0
      */
-    private final ValueComparer defaultValueComparer;
-
-    /**
-     * Map of column names to {@link ValueComparer}s to use for comparison.
-     * 
-     * @since 2.6.0
-     */
-    private final Map<String, ValueComparer> columnValueComparers;
-
-    private VerifyTableDefinitionVerifier verifyTableDefinitionVerifier = new DefaultVerifyTableDefinitionVerifier();
+    private final ColumnValueComparerSource columnValueComparerSource;
 
     /**
      * Create a valid instance with all columns compared except exclude the
@@ -74,7 +66,7 @@ public class VerifyTableDefinition {
      *                       exclude no columns.
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns) {
-        this(table, excludeColumns, null, null, null);
+        this(table, excludeColumns, null, null);
     }
 
     /**
@@ -95,9 +87,8 @@ public class VerifyTableDefinition {
      *                             in all tables.
      * @since 2.6.0
      */
-    public VerifyTableDefinition(final String table, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers) {
-        this(table, null, null, defaultValueComparer, columnValueComparers);
+    public VerifyTableDefinition(final String table, final ColumnValueComparerSource columnValueComparerSource) {
+        this(table, null, null, columnValueComparerSource);
     }
 
     /**
@@ -122,8 +113,8 @@ public class VerifyTableDefinition {
      * @since 2.6.0
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns,
-            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
-        this(table, excludeColumns, null, defaultValueComparer, columnValueComparers);
+            final ColumnValueComparerSource columnValueComparerSource) {
+        this(table, excludeColumns, null, columnValueComparerSource);
     }
 
     /**
@@ -138,7 +129,7 @@ public class VerifyTableDefinition {
      *                       array to include no columns.
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns, final String[] includeColumns) {
-        this(table, excludeColumns, includeColumns, null, null);
+        this(table, excludeColumns, includeColumns, null);
     }
 
     /**
@@ -166,7 +157,8 @@ public class VerifyTableDefinition {
      * @since 2.6.0
      */
     public VerifyTableDefinition(final String table, final String[] excludeColumns, final String[] includeColumns,
-            final ValueComparer defaultValueComparer, final Map<String, ValueComparer> columnValueComparers) {
+            final ColumnValueComparerSource columnValueComparerSource) {
+        this.columnValueComparerSource = columnValueComparerSource;
         if (table == null) {
             throw new IllegalArgumentException("table is null.");
         }
@@ -174,10 +166,6 @@ public class VerifyTableDefinition {
         tableName = table;
         columnExclusionFilters = excludeColumns;
         columnInclusionFilters = includeColumns;
-        this.defaultValueComparer = defaultValueComparer;
-        this.columnValueComparers = columnValueComparers;
-
-        verifyTableDefinitionVerifier.verify(this);
     }
 
     public String getTableName() {
@@ -192,42 +180,11 @@ public class VerifyTableDefinition {
         return columnInclusionFilters;
     }
 
-    /** @since 2.6.0 */
-    public ValueComparer getDefaultValueComparer() {
-        return defaultValueComparer;
-    }
-
-    /** @since 2.6.0 */
-    public Map<String, ValueComparer> getColumnValueComparers() {
-        return columnValueComparers;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final String exclusionString = arrayToString(columnExclusionFilters);
-        final String inclusionString = arrayToString(columnInclusionFilters);
-
-        final StringBuilder sb = new StringBuilder(1000);
-        sb.append("tableName='").append(tableName).append("'");
-        sb.append(", columnExclusionFilters='").append(exclusionString).append("'");
-        sb.append(", columnInclusionFilters='").append(inclusionString).append("'");
-        sb.append(", defaultValueComparer='").append(defaultValueComparer).append("'");
-        sb.append(", columnValueComparers='").append(columnValueComparers).append("'");
-        return sb.toString();
+    public ColumnValueComparerSource getColumnValueComparerSource() {
+        return columnValueComparerSource;
     }
 
     protected String arrayToString(final String[] array) {
         return array == null ? "" : Arrays.toString(array);
-    }
-
-    public VerifyTableDefinitionVerifier getVerifyTableDefinitionVerifier() {
-        return verifyTableDefinitionVerifier;
-    }
-
-    public void setVerifyTableDefinitionVerifier(final VerifyTableDefinitionVerifier verifyTableDefinitionVerifier) {
-        this.verifyTableDefinitionVerifier = verifyTableDefinitionVerifier;
     }
 }

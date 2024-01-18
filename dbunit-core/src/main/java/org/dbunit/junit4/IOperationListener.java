@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Listener for {@link IDatabaseConnection} events.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
@@ -40,7 +40,7 @@ public interface IOperationListener {
      * connection is retrieved to do some work on it. It should be used to
      * initialize the {@link DatabaseConfig} of the connection with user defined
      * parameters.
-     * 
+     *
      * @param connection The database connection
      * @since 2.4.4
      */
@@ -49,7 +49,7 @@ public interface IOperationListener {
     /**
      * Notification of the completion of the {@link IDatabaseTester#onSetup()}
      * method. Should close the given connection if desired.
-     * 
+     *
      * @param connection The database connection
      * @since 2.4.4
      */
@@ -58,7 +58,7 @@ public interface IOperationListener {
     /**
      * Notification of the completion of the {@link IDatabaseTester#onTearDown()}
      * method Should close the given connection if desired.
-     * 
+     *
      * @param connection The database connection
      * @since 2.4.4
      */
@@ -69,20 +69,24 @@ public interface IOperationListener {
      * close the database connection after setUp and tearDown. Can be used via
      * {@link IDatabaseTester#setOperationListener(IOperationListener)} to avoid
      * that connections are closed.
-     * 
+     *
      * @since 2.4.5
      */
     public static final IOperationListener NO_OP_OPERATION_LISTENER = new IOperationListener() {
-        private final Logger logger = LoggerFactory.getLogger(IDatabaseTester.class);
 
+        private final Logger logger = LoggerFactory.getLogger(IOperationListener.class);
+
+        @Override
         public void connectionRetrieved(IDatabaseConnection connection) {
             logger.trace("connectionCreated(connection={}) - start", connection);
         }
 
+        @Override
         public void operationSetUpFinished(IDatabaseConnection connection) {
             logger.trace("operationSetUpDone(connection={}) - start", connection);
         }
 
+        @Override
         public void operationTearDownFinished(IDatabaseConnection connection) {
             logger.trace("operationTearDownDone(connection={}) - start", connection);
         }

@@ -20,8 +20,6 @@
  */
 package org.dbunit.junit4;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,12 +29,11 @@ import java.util.stream.Collectors;
 
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.DefaultExpectedDataSetAndVerifyTableDefinitionVerifier;
-import org.dbunit.ExpectedDataSetAndVerifyTableDefinitionVerifier;
 import org.dbunit.PrepAndExpectedTestCaseSteps;
 import org.dbunit.VerifyTableDefinition;
+import org.dbunit.assertion.ColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
-import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
@@ -48,9 +45,13 @@ import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
+import org.dbunit.junit.DbUnitFacade;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.TableFormatter;
 import org.dbunit.util.fileloader.DataFileLoader;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,235 +68,76 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 2.4.8
  */
-public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements PrepAndExpectedTestCase {
+public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
 
     private final Logger log = LoggerFactory.getLogger(DefaultPrepAndExpectedTestCase.class);
 
-    private static final String DATABASE_TESTER_IS_NULL_MSG = "databaseTester is null; must configure or set it first";
-
     public static final String TEST_ERROR_MSG = "DbUnit test error.";
 
-    private IDatabaseTester databaseTester;
     private DataFileLoader dataFileLoader;
 
-    // per test data
+    // ?DatabaseSetp
     private IDataSet prepDataSet = new DefaultDataSet();
+    // ?ExpectedDatabase
     private IDataSet expectedDataSet = new DefaultDataSet();
     private VerifyTableDefinition[] verifyTableDefs = {};
 
-    private ExpectedDataSetAndVerifyTableDefinitionVerifier expectedDataSetAndVerifyTableDefinitionVerifier = new DefaultExpectedDataSetAndVerifyTableDefinitionVerifier();
-
     final TableFormatter tableFormatter = new TableFormatter();
+
+    @Rule
+    public final DbUnitFacade dbUnit = new DbUnitFacade();
 
     /** Create new instance. */
     public DefaultPrepAndExpectedTestCase() {
     }
 
-    /**
-     * Create new instance with specified dataFileLoader and databaseTester.
-     *
-     * @param dataFileLoader Load to use for loading the data files.
-     * @param databaseTester Tester to use for database manipulation.
-     */
-    public DefaultPrepAndExpectedTestCase(final DataFileLoader dataFileLoader, final IDatabaseTester databaseTester) {
-        this.dataFileLoader = dataFileLoader;
-        this.databaseTester = databaseTester;
+    public void configureTest(final String[] prepDataFiles, final String[] expectedDataFiles)
+            throws Exception, DataSetException {
+        this.prepDataSet = makeCompositeDataSet(prepDataFiles, true);
+        this.expectedDataSet = makeCompositeDataSet(expectedDataFiles, true);
     }
 
-    /**
-     * {@inheritDoc} Returns the prep dataset.
-     */
-    @Override
-    public IDataSet getDataSet() throws Exception {
-        return prepDataSet;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void configureTest(final VerifyTableDefinition[] verifyTableDefinitions, final String[] prepDataFiles,
-            final String[] expectedDataFiles) throws Exception {
-        log.info("configureTest: saving instance variables");
-
-        final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
-        log.info("configureTest: using case sensitive table names={}", isCaseSensitiveTableNames);
-
-        this.prepDataSet = makeCompositeDataSet(prepDataFiles, "prep", isCaseSensitiveTableNames);
-        this.expectedDataSet = makeCompositeDataSet(expectedDataFiles, "expected", isCaseSensitiveTableNames);
-
+    public void configureVerify(final VerifyTableDefinition[] verifyTableDefinitions) {
         this.verifyTableDefs = verifyTableDefinitions;
     }
 
-    private boolean isCaseSensitiveTableNames() throws Exception {
-        boolean featureValue;
-
-        IDatabaseConnection connection = null;
-        try {
-            connection = getConnection();
-            featureValue = connection.getDatabaseConfig().isCaseSensitiveTableNames();
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
-        }
-
-        return featureValue;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void preTest() throws Exception {
-        setupData();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void preTest(final VerifyTableDefinition[] tables, final String[] prepDataFiles,
-            final String[] expectedDataFiles) throws Exception {
-        configureTest(tables, prepDataFiles, expectedDataFiles);
-        preTest();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object runTest(final VerifyTableDefinition[] verifyTables, final String[] prepDataFiles,
             final String[] expectedDataFiles, final PrepAndExpectedTestCaseSteps testSteps) throws Exception {
         final Object result;
 
         try {
-            preTest(verifyTables, prepDataFiles, expectedDataFiles);
+            configureTest(prepDataFiles, expectedDataFiles);
             log.info("runTest: running test steps");
             result = testSteps.run();
         } catch (final Throwable e) {
             log.error(TEST_ERROR_MSG, e);
-            // don't verify table data when test execution has errors as:
-            // * a verify data failure masks the test error exception
-            // * tables in unknown state and therefore probably not accurate
-            postTest(false);
             throw e;
         }
 
-        postTest();
-
+        configureVerify(verifyTables);
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postTest() throws Exception {
-        postTest(true);
+    @Before
+    public final void setUpDatabaseTester() throws Exception {
+        DatabaseConnection connection = dbUnit.getConnection();
+        DatabaseOperation.CLEAN_INSERT.execute(connection, prepDataSet);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postTest(final boolean verifyData) throws Exception {
-        try {
-            if (verifyData) {
-                verifyData();
-            }
-        } finally {
-            // it is deliberate to have cleanup exceptions shadow verify
-            // failures so user knows db is probably in unknown state (for
-            // those not using an in-memory db or transaction rollback),
-            // otherwise would mask probable cause of subsequent test failures
-            cleanupData();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void cleanupData() throws Exception {
-        try {
-            final boolean isCaseSensitiveTableNames = isCaseSensitiveTableNames();
-            log.info("cleanupData: using case sensitive table names={}", isCaseSensitiveTableNames);
-
-            final IDataSet[] dataSets = { prepDataSet, expectedDataSet };
-            final IDataSet dataset = new CompositeDataSet(dataSets, true, isCaseSensitiveTableNames);
-            final String[] tableNames = dataset.getTableNames();
-            final int count = tableNames.length;
-            log.info("cleanupData: about to clean up {} tables={}", count, tableNames);
-
-            if (databaseTester == null) {
-                throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-            }
-
-            databaseTester.setTearDownOperation(getTearDownOperation());
-            databaseTester.setDataSet(dataset);
-//            databaseTester.setOperationListener(getOperationListener());
-            databaseTester.onTearDown();
-            log.debug("cleanupData: Clean up done");
-        } catch (final Exception e) {
-            log.error("cleanupData: Exception:", e);
-            throw e;
-        }
-    }
-
-    @Override
-    public void tearDown() throws Exception {
+    @After
+    public final void tearDown() throws Exception {
         // parent tearDown() only cleans up prep data
-        cleanupData();
-        super.tearDown();
+
     }
 
-    /**
-     * Use the provided databaseTester to prep the database with the provided prep
-     * dataset. See {@link org.dbunit.IDatabaseTester#onSetup()}.
-     *
-     * @throws Exception
-     */
-    public void setupData() throws Exception {
-        log.info("setupData: setting prep dataset and inserting rows");
-        if (databaseTester == null) {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
-    }
-
-    @Override
-    protected DatabaseOperation getSetUpOperation() throws Exception {
-        assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
-        return databaseTester.getSetUpOperation();
-    }
-
-    @Override
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        assertNotNull(DATABASE_TESTER_IS_NULL_MSG, databaseTester);
-        return databaseTester.getTearDownOperation();
-    }
-
-    /**
-     * {@inheritDoc} Uses the connection from the provided databaseTester.
-     */
-    @Override
+    @After
     public void verifyData() throws Exception {
-        if (databaseTester == null) {
-            throw new IllegalStateException(DATABASE_TESTER_IS_NULL_MSG);
-        }
 
-        final IDatabaseConnection connection = getConnection();
-
-        final DatabaseConfig config = connection.getConfig();
-        expectedDataSetAndVerifyTableDefinitionVerifier.verify(verifyTableDefs, expectedDataSet, config);
+        final IDatabaseConnection connection = dbUnit.getConnection();
 
         try {
             final int tableDefsCount = verifyTableDefs.length;
-            log.info("verifyData: about to verify {} tables" + " using verifyTableDefinitions={}", tableDefsCount,
-                    verifyTableDefs);
-            if (tableDefsCount == 0) {
-                log.warn("verifyData: No tables to verify as" + " no VerifyTableDefinitions specified");
-            }
 
             for (int i = 0; i < tableDefsCount; i++) {
                 final VerifyTableDefinition td = verifyTableDefs[i];
@@ -317,14 +159,12 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
 
         final String[] excludeColumns = verifyTableDefinition.getColumnExclusionFilters();
         final String[] includeColumns = verifyTableDefinition.getColumnInclusionFilters();
-        final Map<String, ValueComparer> columnValueComparers = verifyTableDefinition.getColumnValueComparers();
-        final ValueComparer defaultValueComparer = verifyTableDefinition.getDefaultValueComparer();
+        ColumnValueComparerSource columnValueComparerSource = verifyTableDefinition.getColumnValueComparerSource();
 
         final ITable expectedTable = loadTableDataFromDataSet(tableName);
         final ITable actualTable = loadTableDataFromDatabase(tableName, connection);
 
-        verifyData(expectedTable, actualTable, excludeColumns, includeColumns, defaultValueComparer,
-                columnValueComparers);
+        verifyData(expectedTable, actualTable, excludeColumns, includeColumns, columnValueComparerSource);
     }
 
     public ITable loadTableDataFromDataSet(final String tableName) throws DataSetException {
@@ -388,8 +228,8 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
      * @throws DatabaseUnitException
      */
     protected void verifyData(final ITable expectedTable, final ITable actualTable, final String[] excludeColumns,
-            final String[] includeColumns, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
+            final String[] includeColumns, final ColumnValueComparerSource columnValueComparerSource)
+            throws DatabaseUnitException {
         final String methodName = "verifyData";
 
         final ITableMetaData actualTableMetaData = actualTable.getTableMetaData();
@@ -421,8 +261,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
         logSortedTables(expectedSortedTable, actualSortedTable);
 
         log.debug("{}: Comparing expected table to actual table", methodName);
-        compareData(expectedFilteredTable, actualFilteredTable, additionalColumnInfo, defaultValueComparer,
-                columnValueComparers);
+        compareData(expectedFilteredTable, actualFilteredTable, additionalColumnInfo, columnValueComparerSource);
     }
 
     /**
@@ -490,10 +329,9 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
 
     /** Compare the tables, enables easy overriding. */
     protected void compareData(final ITable expectedTable, final ITable actualTable,
-            final Column[] additionalColumnInfo, final ValueComparer defaultValueComparer,
-            final Map<String, ValueComparer> columnValueComparers) throws DatabaseUnitException {
-        Assertion.assertWithValueComparer(expectedTable, actualTable, additionalColumnInfo, defaultValueComparer,
-                columnValueComparers);
+            final Column[] additionalColumnInfo, final ColumnValueComparerSource columnValueComparerSource)
+            throws DatabaseUnitException {
+        Assertion.assertWithValueComparer(expectedTable, actualTable, additionalColumnInfo, columnValueComparerSource);
     }
 
     /**
@@ -532,49 +370,26 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     }
 
     /**
-     * Make a <code>IDataSet</code> from the specified files with case sensitive
-     * table names as false.
-     *
-     * @param dataFiles     Represents the array of dbUnit data files.
-     * @param dataFilesName Concept name of the data files, e.g. prep, expected.
-     * @return The composite dataset.
-     * @throws DataSetException On dbUnit errors.
-     */
-    public IDataSet makeCompositeDataSet(final String[] dataFiles, final String dataFilesName) throws DataSetException {
-        return makeCompositeDataSet(dataFiles, dataFilesName, false);
-    }
-
-    /**
      * Make a <code>IDataSet</code> from the specified files.
      *
      * @param dataFiles                 Represents the array of dbUnit data files.
-     * @param dataFilesName             Concept name of the data files, e.g. prep,
-     *                                  expected.
      * @param isCaseSensitiveTableNames true if case sensitive table names is on.
      * @return The composite dataset.
      * @throws DataSetException On dbUnit errors.
      */
-    public IDataSet makeCompositeDataSet(final String[] dataFiles, final String dataFilesName,
+    private final CompositeDataSet makeCompositeDataSet(final String[] dataFiles,
             final boolean isCaseSensitiveTableNames) throws DataSetException {
         if (dataFileLoader == null) {
             throw new IllegalStateException("dataFileLoader is null; must configure or set it first");
         }
 
         final int count = dataFiles.length;
-        log.debug("makeCompositeDataSet: {} dataFiles count={}", dataFilesName, count);
-        if (count == 0) {
-            log.info("makeCompositeDataSet: Specified zero {} data files", dataFilesName);
-        }
-
-        final List list = new ArrayList();
+        final IDataSet[] dataSet = new IDataSet[count];
         for (int i = 0; i < count; i++) {
-            final IDataSet ds = dataFileLoader.load(dataFiles[i]);
-            list.add(ds);
+            dataSet[i] = dataFileLoader.load(dataFiles[i]);
         }
 
-        final IDataSet[] dataSet = (IDataSet[]) list.toArray(new IDataSet[] {});
-        final IDataSet compositeDS = new CompositeDataSet(dataSet, true, isCaseSensitiveTableNames);
-        return compositeDS;
+        return new CompositeDataSet(dataSet, true, isCaseSensitiveTableNames);
     }
 
     /**
@@ -618,6 +433,7 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
+
     @Override
     public IDataSet getPrepDataset() {
         return prepDataSet;
@@ -626,32 +442,10 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
     /**
      * {@inheritDoc}
      */
+
     @Override
     public IDataSet getExpectedDataset() {
         return expectedDataSet;
-    }
-
-    /**
-     * Get the databaseTester.
-     *
-     * @see {@link #databaseTester}.
-     *
-     * @return The databaseTester.
-     */
-    @Override
-    public IDatabaseTester getDatabaseTester() {
-        return databaseTester;
-    }
-
-    /**
-     * Set the databaseTester.
-     *
-     * @see {@link #databaseTester}.
-     *
-     * @param databaseTester The databaseTester to set.
-     */
-    public void setDatabaseTester(final IDatabaseTester databaseTester) {
-        this.databaseTester = databaseTester;
     }
 
     /**
@@ -707,25 +501,5 @@ public class DefaultPrepAndExpectedTestCase extends DatabaseTestCase2 implements
      */
     public VerifyTableDefinition[] getVerifyTableDefs() {
         return verifyTableDefs;
-    }
-
-    /**
-     * Set the tableDefs.
-     *
-     * @see {@link #verifyTableDefs}.
-     *
-     * @param verifyTableDefs The tableDefs to set.
-     */
-    public void setVerifyTableDefs(final VerifyTableDefinition[] verifyTableDefs) {
-        this.verifyTableDefs = verifyTableDefs;
-    }
-
-    public ExpectedDataSetAndVerifyTableDefinitionVerifier getExpectedDataSetAndVerifyTableDefinitionVerifier() {
-        return expectedDataSetAndVerifyTableDefinitionVerifier;
-    }
-
-    public void setExpectedDataSetAndVerifyTableDefinitionVerifier(
-            final ExpectedDataSetAndVerifyTableDefinitionVerifier expectedDataSetAndVerifyTableDefinitionVerifier) {
-        this.expectedDataSetAndVerifyTableDefinitionVerifier = expectedDataSetAndVerifyTableDefinitionVerifier;
     }
 }

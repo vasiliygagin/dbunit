@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 
 import org.dbunit.VerifyTableDefinition;
 import org.dbunit.assertion.ComparisonFailure;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.util.fileloader.DataFileLoader;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import org.junit.Before;
@@ -47,27 +46,10 @@ public class DefaultPrepAndExpectedTestCaseExtIT extends DefaultPrepAndExpectedT
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
 
-        final IDatabaseTester databaseTester = makeDatabaseTester();
-        setDatabaseTester(databaseTester);
+        configureTest(prepDataFiles, expectedDataFiles);
 
-        configureTest(tables, prepDataFiles, expectedDataFiles);
-
-        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-        // closes after it obtains feature setting
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
-        setDatabaseTester(databaseTesterNew1);
-
-        preTest();
-
-        // skip modifying data and just verify the insert
-
-        // reopen connection as DefaultOperationListener closes it after inserts
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
-        setDatabaseTester(databaseTesterNew2);
-
-        postTest();
+        configureVerify(tables);
+        verifyData();
     }
 
     public void testFailRun() throws Exception {
@@ -76,36 +58,14 @@ public class DefaultPrepAndExpectedTestCaseExtIT extends DefaultPrepAndExpectedT
         final VerifyTableDefinition[] tables = { TEST_TABLE, SECOND_TABLE, EMPTY_TABLE, PK_TABLE, ONLY_PK_TABLE,
                 EMPTY_MULTITYPE_TABLE };
 
-        final IDatabaseTester databaseTester = makeDatabaseTester();
-        setDatabaseTester(databaseTester);
-
-        configureTest(tables, prepDataFiles, expectedDataFiles);
-
-        // reopen connection as DefaultPrepAndExpectedTestCase#configureTest
-        // closes after it obtains feature setting
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        final IDatabaseTester databaseTesterNew1 = makeDatabaseTester();
-        setDatabaseTester(databaseTesterNew1);
-
-        preTest();
-
-        // skip modifying data and just verify the insert
-
-        // reopen connection as DefaultOperationListener closes it after inserts
-        // maybe we need a KeepConnectionOpenOperationListener class?!
-        final IDatabaseTester databaseTesterNew2 = makeDatabaseTester();
-        setDatabaseTester(databaseTesterNew2);
+        configureTest(prepDataFiles, expectedDataFiles);
 
         try {
-            postTest();
+            configureVerify(tables);
+            verifyData();
             fail("Did not catch expected exception:" + " junit.framework.ComparisonFailure");
         } catch (final ComparisonFailure e) {
             // test passes
         }
-    }
-
-    protected IDatabaseTester makeDatabaseTester() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
-        return new DefaultDatabaseTester(connection);
     }
 }
