@@ -9,9 +9,15 @@ public class TableMetadata {
     public final String tableName;
     public final String tableType;
 
+    ColumnMetadata[] columns;
+
     public TableMetadata(SchemaMetadata schema, String tableName, String tableType) {
         this.schemaMetadata = schema;
         this.tableName = tableName;
         this.tableType = tableType;
+    }
+
+    public ColumnMetadata[] getColumns() {
+        return columns;
     }
 }

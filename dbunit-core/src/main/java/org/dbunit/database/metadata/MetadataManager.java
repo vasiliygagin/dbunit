@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.dbunit.database.IMetadataHandler;
+import org.dbunit.dataset.datatype.DataTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,4 +176,33 @@ public class MetadataManager {
         return schemasManager.findSchema(schema);
     }
 
+    /**
+     * @param tableMetadata
+     * @throws SQLException
+     * @throws DataTypeException
+     */
+    public void loadColumns(TableMetadata tableMetadata) throws SQLException, DataTypeException {
+
+        if (tableMetadata.columns != null) {
+            return;
+        }
+
+        DatabaseMetaData databaseMetaData = jdbcConnectione.getMetaData();
+
+        List<ColumnMetadata> columns = new ArrayList<>();
+        try ( //
+                ResultSet rs = databaseMetaData.getColumns(tableMetadata.schemaMetadata.catalog,
+                        tableMetadata.schemaMetadata.schema, tableMetadata.tableName, "%"); //
+        ) {
+            while (rs.next()) {
+                String columnName = rs.getString(4);
+                int sqlType = rs.getInt(5);
+                String sqlTypeName = rs.getString(6);
+
+                columns.add(new ColumnMetadata(columnName, sqlType, sqlTypeName));
+            }
+        }
+
+        tableMetadata.columns = columns.toArray(new ColumnMetadata[columns.size()]);
+    }
 }

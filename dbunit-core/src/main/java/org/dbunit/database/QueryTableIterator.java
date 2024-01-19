@@ -109,12 +109,8 @@ public class QueryTableIterator implements ITableIterator {
 
         // No query specified, use metadata from dataset
         if (entry.getQuery() == null) {
-            try {
-                ITable table = _connection.createTable(entry.getTableName());
-                return table.getTableMetaData();
-            } catch (SQLException e) {
-                throw new DataSetException(e);
-            }
+            FullyLoadedTable table = _connection.loadTable(entry.getTableName()); // TODO unnecessary load of all records.
+            return table.getTableMetaData();
         } else {
             return getTable().getTableMetaData();
         }
@@ -125,19 +121,20 @@ public class QueryTableIterator implements ITableIterator {
      */
     @Override
     public ITable getTable() throws DataSetException {
-        logger.debug("getTable() - start");
-
         if (_currentTable == null) {
             try {
                 QueryDataSet.TableEntry entry = (QueryDataSet.TableEntry) _tableEntries.get(_index);
 
                 // No query specified, use table from dataset
                 if (entry.getQuery() == null) {
-                    _currentTable = (IResultSetTable) _connection.createTable(entry.getTableName());
+                    _currentTable = _connection.loadTable(entry.getTableName());
                 } else {
-                    IResultSetTableFactory factory = _connection.getDatabaseConfig().getResultSetTableFactory();
+                    IResultSetTableFactory resultSetTableFactory = _connection.getDatabaseConfig()
+                            .getResultSetTableFactory();
+                    IResultSetTable table = resultSetTableFactory.createTable(entry.getTableName(), entry.getQuery(),
+                            _connection);
 
-                    _currentTable = factory.createTable(entry.getTableName(), entry.getQuery(), _connection);
+                    _currentTable = new CachedResultSetTable(table);
                 }
             } catch (SQLException e) {
                 throw new DataSetException(e);

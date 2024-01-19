@@ -3,8 +3,8 @@
  */
 package io.github.vasiliygagin.dbunit.jdbc;
 
-import org.dbunit.database.CachedResultSetTableFactory;
 import org.dbunit.database.DefaultMetadataHandler;
+import org.dbunit.database.ForwardOnlyResultSetTableFactory;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.database.IResultSetTableFactory;
 import org.dbunit.database.metadata.IgnoredTablePredicate;
@@ -20,13 +20,12 @@ import org.dbunit.dataset.filter.IColumnFilter;
 public class DatabaseConfig {
 
     private static final PreparedStatementFactory STATEMENT_FACTORY = new PreparedStatementFactory();
-    private static final CachedResultSetTableFactory RESULT_SET_TABLE_FACTORY = new CachedResultSetTableFactory();
     private static final DefaultDataTypeFactory DATA_TYPE_FACTORY = new DefaultDataTypeFactory();
     private static final String[] TABLE_TYPES = { "TABLE" };
     private static final DefaultMetadataHandler METADATA_HANDLER = new DefaultMetadataHandler();
 
+    private IResultSetTableFactory resultSetTableFactory = new ForwardOnlyResultSetTableFactory();
     private IStatementFactory statementFactory = STATEMENT_FACTORY;
-    private IResultSetTableFactory resultSetTableFactory = RESULT_SET_TABLE_FACTORY;
     private IDataTypeFactory dataTypeFactory = DATA_TYPE_FACTORY;
     private String escapePattern = null;
     private String[] tableTypes = TABLE_TYPES;
@@ -78,7 +77,6 @@ public class DatabaseConfig {
 
     public void setResultSetTableFactory(IResultSetTableFactory resultSetTableFactory) {
         checkFrozen();
-        notNull(resultSetTableFactory, "resultSetTableFactory cannot be null");
         this.resultSetTableFactory = resultSetTableFactory;
     }
 

@@ -422,18 +422,19 @@ public class SQLHelper {
 
         // Convert SQL type to DataType
         DataType dataType = dataTypeFactory.createDataType(sqlType, sqlTypeName, tableName, columnName);
+        Column column;
         if (dataType != DataType.UNKNOWN) {
-            Column column = new Column(columnName, dataType, sqlTypeName, Column.nullableValue(nullable),
-                    columnDefaultValue, remarks, Column.AutoIncrement.autoIncrementValue(isAutoIncrement));
-            return column;
+            column = new Column(columnName, dataType, sqlTypeName, Column.nullableValue(nullable), columnDefaultValue,
+                    remarks, Column.AutoIncrement.autoIncrementValue(isAutoIncrement));
         } else {
             if (datatypeWarning)
                 logger.warn(tableName + "." + columnName + " data type (" + sqlType + ", '" + sqlTypeName
                         + "') not recognized and will be ignored. See FAQ for more information.");
 
             // datatype unknown - column not created
-            return null;
+            column = null;
         }
+        return column;
     }
 
     /**
