@@ -109,8 +109,8 @@ public class QueryTableIterator implements ITableIterator {
 
         // No query specified, use metadata from dataset
         if (entry.getQuery() == null) {
-            FullyLoadedTable table = _connection.loadTable(entry.getTableName()); // TODO unnecessary load of all records.
-            return table.getTableMetaData();
+            ResultSetTable resultSetTable = _connection.loadTableResultSet(entry.getTableName());
+            return resultSetTable.getMetaData();
         } else {
             return getTable().getTableMetaData();
         }
@@ -127,7 +127,8 @@ public class QueryTableIterator implements ITableIterator {
 
                 // No query specified, use table from dataset
                 if (entry.getQuery() == null) {
-                    _currentTable = _connection.loadTable(entry.getTableName());
+                    ResultSetTable resultSetTable = _connection.loadTableResultSet(entry.getTableName());
+                    _currentTable = new FullyLoadedTable(resultSetTable);
                 } else {
                     IResultSetTableFactory resultSetTableFactory = _connection.getDatabaseConfig()
                             .getResultSetTableFactory();

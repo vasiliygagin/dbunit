@@ -36,6 +36,7 @@ import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.FullyLoadedTable;
+import org.dbunit.database.ResultSetTable;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -163,7 +164,7 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
         ColumnValueComparerSource columnValueComparerSource = verifyTableDefinition.getColumnValueComparerSource();
 
         final ITable expectedTable = loadTableDataFromDataSet(tableName);
-        final ITable actualTable = loadTableDataFromDatabase(tableName, connection);
+        final FullyLoadedTable actualTable = loadTableDataFromDatabase(tableName, connection);
 
         verifyData(expectedTable, actualTable, excludeColumns, includeColumns, columnValueComparerSource);
     }
@@ -184,14 +185,15 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
         return table;
     }
 
-    public ITable loadTableDataFromDatabase(final String tableName, final AbstractDatabaseConnection connection)
-            throws Exception {
+    public FullyLoadedTable loadTableDataFromDatabase(final String tableName,
+            final AbstractDatabaseConnection connection) throws Exception {
         FullyLoadedTable table;
 
         final String methodName = "loadTableDataFromDatabase";
 
         try {
-            table = connection.loadTable(tableName);
+            ResultSetTable resultSetTable = connection.loadTableResultSet(tableName);
+            table = new FullyLoadedTable(resultSetTable);
         } catch (final Exception e) {
             final String msg = methodName + ": Problem obtaining table '" + tableName + "' from database";
             log.error(msg, e);

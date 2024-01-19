@@ -41,7 +41,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.internal.connections.DriverManagerConnectionSource;
 import org.dbunit.junit.internal.GlobalContext;
-import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
 /**
@@ -69,8 +68,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         final String[] expectedNoFilter = { "A", "B", "C", "D", "E", "F", "G", "H", };
         final String[] expectedFiltered = { "D", "A", "F", "C", "G", "E", "H", "B", };
 
-        final Connection jdbcConnection = database.getJdbcConnection();
-        DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/hypersonic_fk.sql"));
+        dbUnit.executeSqlScript("src/test/resources/sql/hypersonic_fk.sql");
 
         DatabaseConnection connection = database.getConnection();
         final IDataSet databaseDataset = connection.createDataSet();
@@ -117,9 +115,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         final String[] expectedNoFilter = { "MixedCaseTable", "UPPER_CASE_TABLE" };
         final String[] expectedFiltered = { "MixedCaseTable", "UPPER_CASE_TABLE" };
 
-        final Connection jdbcConnection = database.getJdbcConnection();
-        DdlExecutor.executeDdlFile(environment, jdbcConnection,
-                TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
+        dbUnit.executeSqlScript("src/test/resources/sql/hypersonic_case_sensitive_test.sql");
 
         DatabaseConnection connection = database.getConnection();
 
@@ -147,7 +143,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
                 .getDriverManagerConnectionSource();
         final Connection jdbcConnection = driverManagerConnectionSource.fetchConnection("org.h2.Driver",
                 "jdbc:h2:mem:test", "sa", "");
-        DdlExecutor.executeDdlFile(environment, jdbcConnection, TestUtils.getFile("sql/h2_multischema_fk_test.sql"));
+        dbUnit.executeSqlScript("src/test/resources/sql/h2_multischema_fk_test.sql");
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
         MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);

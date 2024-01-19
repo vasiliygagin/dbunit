@@ -39,15 +39,12 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
     }
 
     protected void addInput(String tableName, String[] ids) {
-//    Set idsSet = CollectionsHelper.objectsToSet( ids );
-        SortedSet idsSet = new TreeSet(Arrays.asList(ids));
+        SortedSet<Object> idsSet = new TreeSet<>(Arrays.asList(ids));
         this.fInput.put(tableName, idsSet);
     }
 
     protected void addOutput(String tableName, String[] ids) {
-//    List idsList = Arrays.asList( ids );
-//      Set idsSet = CollectionsHelper.objectsToSet( ids );
-        SortedSet idsSet = new TreeSet(Arrays.asList(ids));
+        SortedSet<Object> idsSet = new TreeSet<>(Arrays.asList(ids));
         this.fOutput.put(tableName, idsSet);
     }
 
@@ -137,7 +134,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
         }
     }
 
-    protected PkTableMap getInput() {
+    protected final PkTableMap getInput() {
         return this.fInput;
     }
 

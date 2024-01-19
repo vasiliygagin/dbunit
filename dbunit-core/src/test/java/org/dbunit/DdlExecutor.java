@@ -83,8 +83,8 @@ public final class DdlExecutor {
     }
 
     @Deprecated
-    public static void executeDdlFile(DatabaseTestingEnvironment environment, final Connection connection, final File ddlFile)
-            throws Exception {
+    public static void executeDdlFile(DatabaseTestingEnvironment environment, final Connection connection,
+            final File ddlFile) throws Exception {
         final boolean multiLineSupport = environment.getProfileMultilineSupport();
         executeDdlFile(ddlFile, connection, multiLineSupport);
     }

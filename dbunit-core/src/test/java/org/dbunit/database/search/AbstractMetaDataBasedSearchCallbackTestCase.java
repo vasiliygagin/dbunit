@@ -22,11 +22,9 @@ package org.dbunit.database.search;
 
 import static org.junit.Assert.assertArrayEquals;
 
-import java.io.File;
 import java.util.Set;
 
 import org.dbunit.AbstractDatabaseTest;
-import org.dbunit.DdlExecutor;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.util.CollectionsHelper;
 import org.dbunit.util.search.DepthFirstSearch;
@@ -49,10 +47,7 @@ public abstract class AbstractMetaDataBasedSearchCallbackTestCase extends Abstra
 
     @Before
     public final void setUp() throws Exception {
-//        this.jdbcConnection = DriverManagerConnectionsFactory.getIT().fetchConnection("org.hsqldb.jdbcDriver",
-//                "jdbc:hsqldb:mem:" + "tempdb", "sa", "");
-        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
-                new File("src/test/resources/sql/" + this.sqlFile));
+        dbUnit.executeSqlScript("src/test/resources/sql/" + this.sqlFile);
     }
 
     protected abstract String[][] getInput();

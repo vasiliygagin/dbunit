@@ -1,6 +1,5 @@
 package org.dbunit;
 
-import java.io.File;
 import java.util.Set;
 
 import org.dbunit.util.CollectionsHelper;
@@ -66,9 +65,7 @@ public abstract class AbstractHSQLTestCase extends AbstractDatabaseTest {
 
     @Before
     public final void setUp() throws Exception {
-
-        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
-                new File("src/test/resources/sql/" + sqlFile));
+        dbUnit.executeSqlScript("src/test/resources/sql/" + sqlFile);
     }
 
     @After

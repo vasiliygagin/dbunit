@@ -291,8 +291,7 @@ public class DatabaseTableMetaDataIT extends AbstractDatabaseIT {
         assumeTrue(environment instanceof HsqldbEnvironment);
         DatabaseConnection connection = database.getConnection();
 
-        DdlExecutor.executeDdlFile(environment, connection.getConnection(),
-                TestUtils.getFile("sql/hypersonic_case_sensitive_test.sql"));
+        dbUnit.executeSqlScript("src/test/resources/sql/hypersonic_case_sensitive_test.sql");
 
         String tableName = "MixedCaseTable";
         String tableNameWrongCase = "MIXEDCASETABLE";

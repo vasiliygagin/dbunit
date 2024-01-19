@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -460,11 +461,11 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
      */
     public static class PkTableMap {
 
-        private final LinkedHashMap pksPerTable;
+        private final LinkedHashMap<String, SortedSet<Object>> pksPerTable;
         private final Logger logger = LoggerFactory.getLogger(PkTableMap.class);
 
         public PkTableMap() {
-            this.pksPerTable = new LinkedHashMap();
+            this.pksPerTable = new LinkedHashMap<>();
         }
 
         /**
@@ -473,13 +474,11 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
          * @param allowedPKs
          */
         public PkTableMap(PkTableMap allowedPKs) {
-            this.pksPerTable = new LinkedHashMap();
-            Iterator iterator = allowedPKs.pksPerTable.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String table = (String) entry.getKey();
-                SortedSet pkObjectSet = (SortedSet) entry.getValue();
-                SortedSet newSet = new TreeSet(pkObjectSet);
+            this.pksPerTable = new LinkedHashMap<>();
+            for (Entry<String, SortedSet<Object>> entry : allowedPKs.pksPerTable.entrySet()) {
+                String table = entry.getKey();
+                SortedSet<Object> pkObjectSet = entry.getValue();
+                SortedSet<Object> newSet = new TreeSet<>(pkObjectSet);
                 this.pksPerTable.put(table, newSet);
             }
         }
@@ -493,7 +492,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
         }
 
         public boolean contains(String table, Object pkObject) {
-            Set pksPerTable = this.get(table);
+            Set<Object> pksPerTable = this.get(table);
             return (pksPerTable != null && pksPerTable.contains(pkObject));
         }
 
@@ -501,45 +500,44 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
             this.pksPerTable.remove(tableName);
         }
 
-        public void put(String table, SortedSet pkObjects) {
+        public void put(String table, SortedSet<Object> pkObjects) {
             this.pksPerTable.put(table, pkObjects);
         }
 
         public void add(String tableName, Object pkObject) {
-            Set pksPerTable = getCreateIfNeeded(tableName);
+            Set<Object> pksPerTable = getCreateIfNeeded(tableName);
             pksPerTable.add(pkObject);
         }
 
-        public void addAll(String tableName, Set pkObjectsToAdd) {
-            Set pksPerTable = this.getCreateIfNeeded(tableName);
+        public void addAll(String tableName, Set<Object> pkObjectsToAdd) {
+            Set<Object> pksPerTable = this.getCreateIfNeeded(tableName);
             pksPerTable.addAll(pkObjectsToAdd);
         }
 
-        public SortedSet get(String tableName) {
-            return (SortedSet) this.pksPerTable.get(tableName);
+        public SortedSet<Object> get(String tableName) {
+            return this.pksPerTable.get(tableName);
         }
 
-        private SortedSet getCreateIfNeeded(String tableName) {
-            SortedSet pksPerTable = this.get(tableName);
+        private SortedSet<Object> getCreateIfNeeded(String tableName) {
+            SortedSet<Object> pksPerTable = this.get(tableName);
             // Lazily create the set if it did not exist yet
             if (pksPerTable == null) {
-                pksPerTable = new TreeSet();
+                pksPerTable = new TreeSet<>();
                 this.pksPerTable.put(tableName, pksPerTable);
             }
             return pksPerTable;
         }
 
         public String[] getTableNames() {
-            return (String[]) this.pksPerTable.keySet().toArray(new String[0]);
+            return this.pksPerTable.keySet().toArray(new String[0]);
         }
 
-        public void retainOnly(List tableNames) {
+        public void retainOnly(List<String> tableNames) {
 
-            List tablesToRemove = new ArrayList();
-            for (Object element : this.pksPerTable.entrySet()) {
-                Map.Entry entry = (Map.Entry) element;
-                String table = (String) entry.getKey();
-                SortedSet pksToScan = (SortedSet) entry.getValue();
+            List<String> tablesToRemove = new ArrayList<>();
+            for (Entry<String, SortedSet<Object>> entry : this.pksPerTable.entrySet()) {
+                String table = entry.getKey();
+                SortedSet<Object> pksToScan = entry.getValue();
                 boolean removeIt = pksToScan.isEmpty();
 
                 if (!tableNames.contains(table)) {
@@ -554,8 +552,8 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
                 }
             }
 
-            for (Object element : tablesToRemove) {
-                this.remove((String) element);
+            for (String element : tablesToRemove) {
+                this.remove(element);
             }
         }
 
