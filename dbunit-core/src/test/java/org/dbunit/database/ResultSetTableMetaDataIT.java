@@ -3,11 +3,9 @@ package org.dbunit.database;
 import static org.junit.Assert.assertEquals;
 
 import org.dbunit.AbstractDatabaseIT;
-import org.dbunit.DdlExecutor;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Columns;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
 
 /**
@@ -34,8 +32,7 @@ public class ResultSetTableMetaDataIT extends AbstractDatabaseIT {
      */
     @Test
     public void testGetColumnsForTablesMatchingSamePattern() throws Exception {
-        DdlExecutor.executeDdlFile(environment, database.getJdbcConnection(),
-                TestUtils.getFile("sql/hypersonic_dataset_pattern_test.sql"));
+        dbUnit.executeSqlScript("src/test/resources/sql/hypersonic_dataset_pattern_test.sql");
 
         String tableName = "PATTERN_LIKE_TABLE_X_";
         String[] columnNames = { "VARCHAR_COL_XUNDERSCORE" };

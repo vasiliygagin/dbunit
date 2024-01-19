@@ -123,11 +123,6 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return new CachedResultSetTable(table);
     }
 
-    @Override
-    public ITable createTable(String tableName) throws DataSetException, SQLException {
-        return loadTable(tableName);
-    }
-
     public FullyLoadedTable loadTable(String tableName) throws NoSuchTableException, DataSetException {
         TableMetadata tableMetadata = tableFinder.nameToTable(tableName);
         String sql = "select * from " + toStringTableId(tableMetadata);
