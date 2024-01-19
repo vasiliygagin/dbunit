@@ -48,10 +48,6 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
     @Override
     public ForwardOnlyResultSetTable createTable(String tableName, String selectStatement,
             IDatabaseConnection connection) throws SQLException, DataSetException {
-        if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, selectStatement={}, connection={}) - start", tableName,
-                    selectStatement, connection);
-
         return new ForwardOnlyResultSetTable(tableName, selectStatement, connection);
     }
 
@@ -66,10 +62,6 @@ public class ForwardOnlyResultSetTableFactory implements IResultSetTableFactory 
     @Override
     public IResultSetTable createTable(String tableName, PreparedStatement preparedStatement,
             IDatabaseConnection connection) throws SQLException, DataSetException {
-        if (logger.isTraceEnabled())
-            logger.trace("createTable(tableName={}, preparedStatement={}, connection={}) - start", tableName,
-                    preparedStatement, connection);
-
         return createForwardOnlyResultSetTable(tableName, preparedStatement, connection);
     }
 

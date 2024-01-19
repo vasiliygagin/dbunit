@@ -34,7 +34,6 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvProducer;
 import org.dbunit.dataset.excel.XlsDataSet;
@@ -86,26 +85,11 @@ public abstract class AbstractStep extends ProjectComponent implements DbUnitTas
             List queryDataSets = createQueryDataSet(tables, connection);
 
             IDataSet[] dataSetsArray = null;
-            if (config.getResultSetTableFactory().getClass().getName()
-                    .equals("org.dbunit.database.ForwardOnlyResultSetTableFactory")) {
-                dataSetsArray = createForwardOnlyDataSetArray(queryDataSets);
-            } else {
-                dataSetsArray = (IDataSet[]) queryDataSets.toArray(new IDataSet[queryDataSets.size()]);
-            }
+            dataSetsArray = (IDataSet[]) queryDataSets.toArray(new IDataSet[queryDataSets.size()]);
             return new CompositeDataSet(dataSetsArray);
         } catch (SQLException e) {
             throw new DatabaseUnitException(e);
         }
-    }
-
-    private ForwardOnlyDataSet[] createForwardOnlyDataSetArray(List<QueryDataSet> dataSets) {
-        ForwardOnlyDataSet[] forwardOnlyDataSets = new ForwardOnlyDataSet[dataSets.size()];
-
-        for (int i = 0; i < dataSets.size(); i++) {
-            forwardOnlyDataSets[i] = new ForwardOnlyDataSet(dataSets.get(i));
-        }
-
-        return forwardOnlyDataSets;
     }
 
     private List createQueryDataSet(List tables, AbstractDatabaseConnection connection)

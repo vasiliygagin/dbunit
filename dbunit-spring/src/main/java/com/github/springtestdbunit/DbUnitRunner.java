@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.database.FullyLoadedTable;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -129,7 +130,7 @@ public class DbUnitRunner {
                 ITable actualTable = connection.createQueryTable(table, query);
                 assertion.assertEquals(expectedTable, actualTable, columnFilters);
             } else if (StringUtils.hasLength(table)) {
-                ITable actualTable = connection.createTable(table);
+                FullyLoadedTable actualTable = connection.loadTable(table);
                 ITable expectedTable = expectedDataSet.getTable(table);
                 assertion.assertEquals(expectedTable, actualTable, columnFilters);
             } else {

@@ -110,48 +110,28 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     @Override
     public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
-        logger.debug("createQueryTable(resultName={}, sql={}) - start", resultName, sql);
-
-        IResultSetTableFactory tableFactory = _databaseConfig.getResultSetTableFactory();
-        IResultSetTable rsTable = tableFactory.createTable(resultName, sql, this);
-        if (logger.isDebugEnabled()) {
-            String rowCount = null;
-            try {
-                int rowCountInt = rsTable.getRowCount();
-                rowCount = String.valueOf(rowCountInt);
-            } catch (Exception e) {
-                rowCount = "Unable to determine row count due to Exception: " + e.getLocalizedMessage();
-            }
-            logger.debug("createQueryTable: rowCount={}", rowCount);
-        }
-        return rsTable;
+        IResultSetTableFactory resultSetTableFactory = _databaseConfig.getResultSetTableFactory();
+        IResultSetTable table = resultSetTableFactory.createTable(resultName, sql, this);
+        return new CachedResultSetTable(table);
     }
 
     @Override
     public ITable createTable(String resultName, PreparedStatement preparedStatement)
             throws DataSetException, SQLException {
-        logger.debug("createQueryTable(resultName={}, preparedStatement={}) - start", resultName, preparedStatement);
-
-        IResultSetTableFactory tableFactory = _databaseConfig.getResultSetTableFactory();
-        IResultSetTable rsTable = tableFactory.createTable(resultName, preparedStatement, this);
-        return rsTable;
+        IResultSetTableFactory resultSetTableFactory = _databaseConfig.getResultSetTableFactory();
+        IResultSetTable table = resultSetTableFactory.createTable(resultName, preparedStatement, this);
+        return new CachedResultSetTable(table);
     }
 
     @Override
     public ITable createTable(String tableName) throws DataSetException, SQLException {
-        logger.debug("createTable(tableName={}) - start", tableName);
+        return loadTable(tableName);
+    }
 
-        if (tableName == null) {
-            throw new NullPointerException("The parameter 'tableName' must not be null");
-        }
-
-        String escapePattern = getDatabaseConfig().getEscapePattern();
-
-        // qualify with schema if configured
-        QualifiedTableName qualifiedTableName = new QualifiedTableName(tableName, this.getSchema(), escapePattern);
-        String qualifiedName = qualifiedTableName.getQualifiedName();
-        String sql = "select * from " + qualifiedName;
-        return this.createQueryTable(tableName, sql);
+    public FullyLoadedTable loadTable(String tableName) throws NoSuchTableException, DataSetException {
+        TableMetadata tableMetadata = tableFinder.nameToTable(tableName);
+        String sql = "select * from " + toStringTableId(tableMetadata);
+        return new FullyLoadedTable(tableName, sql, this, tableMetadata);
     }
 
     @Override

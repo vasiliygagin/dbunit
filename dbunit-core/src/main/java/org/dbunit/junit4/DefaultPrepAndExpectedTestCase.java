@@ -33,8 +33,9 @@ import org.dbunit.PrepAndExpectedTestCaseSteps;
 import org.dbunit.VerifyTableDefinition;
 import org.dbunit.assertion.ColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.FullyLoadedTable;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -134,7 +135,7 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
     @After
     public void verifyData() throws Exception {
 
-        final IDatabaseConnection connection = dbUnit.getConnection();
+        final AbstractDatabaseConnection connection = dbUnit.getConnection();
 
         try {
             final int tableDefsCount = verifyTableDefs.length;
@@ -152,8 +153,8 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
         }
     }
 
-    protected void verifyData(final IDatabaseConnection connection, final VerifyTableDefinition verifyTableDefinition)
-            throws Exception {
+    protected void verifyData(final AbstractDatabaseConnection connection,
+            final VerifyTableDefinition verifyTableDefinition) throws Exception {
         final String tableName = verifyTableDefinition.getTableName();
         log.info("verifyData: Verifying table '{}'", tableName);
 
@@ -183,15 +184,14 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
         return table;
     }
 
-    public ITable loadTableDataFromDatabase(final String tableName, final IDatabaseConnection connection)
+    public ITable loadTableDataFromDatabase(final String tableName, final AbstractDatabaseConnection connection)
             throws Exception {
-        ITable table = null;
+        FullyLoadedTable table;
 
         final String methodName = "loadTableDataFromDatabase";
 
-        log.debug("{}: Loading table {} from database", methodName, tableName);
         try {
-            table = connection.createTable(tableName);
+            table = connection.loadTable(tableName);
         } catch (final Exception e) {
             final String msg = methodName + ": Problem obtaining table '" + tableName + "' from database";
             log.error(msg, e);

@@ -52,7 +52,9 @@ public class MetadataCrawlingTableFinder implements TableFinder {
             }
 
             if (candidates.size() == 1) {
-                return candidates.get(0);
+                TableMetadata tableMetadata = candidates.get(0);
+                metadataManager.loadColumns(tableMetadata);
+                return tableMetadata;
             }
 
             throw new AmbiguousTableNameException(freeHandTableName); // add message about multiple candidates.

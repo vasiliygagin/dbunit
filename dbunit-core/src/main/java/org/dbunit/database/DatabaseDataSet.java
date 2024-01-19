@@ -202,8 +202,9 @@ public class DatabaseDataSet implements IDataSet {
         try {
             ITableMetaData metaData = getTableMetaData(tableName);
 
-            IResultSetTableFactory factory = config.getResultSetTableFactory();
-            return factory.createTable(metaData, _connection);
+            IResultSetTableFactory resultSetTableFactory = config.getResultSetTableFactory();
+            IResultSetTable resultSetTable = resultSetTableFactory.createTable(metaData, _connection);
+            return new CachedResultSetTable(resultSetTable);
         } catch (SQLException e) {
             throw new DataSetException(e);
         }
