@@ -20,7 +20,6 @@
  */
 package org.dbunit.dataset.filter;
 
-import org.dbunit.dataset.DataSetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +77,7 @@ public class ExcludeTableFilter extends AbstractTableFilter {
     // ITableFilter interface
 
     @Override
-    public boolean accept(String tableName) throws DataSetException {
+    public boolean accept(String tableName) {
         logger.debug("isValidName(tableName=" + tableName + ") - start");
 
         return !_patternMatcher.accept(tableName);

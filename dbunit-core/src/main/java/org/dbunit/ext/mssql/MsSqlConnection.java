@@ -83,7 +83,7 @@ public class MsSqlConnection extends DatabaseConnection {
     // IDatabaseConnection
 
     @Override
-    public IDataSet createDataSet() throws SQLException {
+    public IDataSet createDataSet() throws SQLException, DataSetException {
         logger.debug("createDataSet() - start");
 
         IDataSet dataSet = super.createDataSet();

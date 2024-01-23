@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTableMetaData;
@@ -59,7 +60,7 @@ public abstract class AbstractOperation extends DatabaseOperation {
      * @param connection the database connection
      * @param metaData   the XML table metadata
      */
-    static ITableMetaData getOperationMetaData(IDatabaseConnection connection, ITableMetaData metaData)
+    static ITableMetaData getOperationMetaData(AbstractDatabaseConnection connection, ITableMetaData metaData)
             throws DatabaseUnitException, SQLException {
         logger.debug("getOperationMetaData(connection={}, metaData={}) - start", connection, metaData);
 

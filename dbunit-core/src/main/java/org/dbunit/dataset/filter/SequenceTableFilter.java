@@ -57,7 +57,7 @@ public class SequenceTableFilter implements ITableFilter {
 
     /**
      * Creates a new SequenceTableFilter with specified table names sequence.
-     * 
+     *
      * @throws AmbiguousTableNameException If the given array contains ambiguous
      *                                     names
      */
@@ -67,7 +67,7 @@ public class SequenceTableFilter implements ITableFilter {
 
     /**
      * Creates a new SequenceTableFilter with specified table names sequence.
-     * 
+     *
      * @param tableNames
      * @param caseSensitiveTableNames
      * @throws AmbiguousTableNameException If the given array contains ambiguous
@@ -79,34 +79,36 @@ public class SequenceTableFilter implements ITableFilter {
         // Gather all tables in the OrderedTableNameMap which also makes the duplicate
         // check
         _tableNameMap = new OrderedTableNameMap(caseSensitiveTableNames);
-        for (int i = 0; i < tableNames.length; i++) {
-            _tableNameMap.add(tableNames[i], null);
+        for (String tableName : tableNames) {
+            _tableNameMap.add(tableName, null);
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // ITableFilter interface
 
-    public boolean accept(String tableName) throws DataSetException {
+    @Override
+    public boolean accept(String tableName) {
         logger.debug("accept(tableName={}) - start", tableName);
 
         return _tableNameMap.containsTable(tableName);
     }
 
+    @Override
     public String[] getTableNames(IDataSet dataSet) throws DataSetException {
         logger.debug("getTableNames(dataSet={}) - start", dataSet);
 
         List nameList = new ArrayList();
         String[] tableNames = _tableNameMap.getTableNames();
-        for (int i = 0; i < tableNames.length; i++) {
+        for (String tableName : tableNames) {
             try {
                 // Use the table name from the filtered dataset. This ensure
                 // that table names are having the same case (lower/upper) from
                 // getTableNames() and getTables() methods.
-                ITableMetaData metaData = dataSet.getTableMetaData(tableNames[i]);
+                ITableMetaData metaData = dataSet.getTableMetaData(tableName);
                 nameList.add(metaData.getTableName());
             } catch (NoSuchTableException e) {
-                logger.debug("Table '{}' not found in filtered dataset {}", tableNames[i], dataSet);
+                logger.debug("Table '{}' not found in filtered dataset {}", tableName, dataSet);
                 // Skip this table name because the filtered dataset does not
                 // contains it.
             }
@@ -115,6 +117,7 @@ public class SequenceTableFilter implements ITableFilter {
         return (String[]) nameList.toArray(new String[0]);
     }
 
+    @Override
     public ITableIterator iterator(IDataSet dataSet, boolean reversed) throws DataSetException {
         if (logger.isDebugEnabled())
             logger.debug("iterator(dataSet={}, reversed={}) - start", dataSet, String.valueOf(reversed));
@@ -123,6 +126,7 @@ public class SequenceTableFilter implements ITableFilter {
         return new SequenceTableIterator(reversed ? DataSetUtils.reverseStringArray(tableNames) : tableNames, dataSet);
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName()).append("[");

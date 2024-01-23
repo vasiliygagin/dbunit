@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
     /**
      * Create a DatabaseSequenceFilter that exposes all the database tables.
      */
-    public DatabaseSequenceFilter(IDatabaseConnection connection) throws DataSetException, SQLException {
+    public DatabaseSequenceFilter(AbstractDatabaseConnection connection) throws DataSetException, SQLException {
         this(connection, connection.createDataSet().getTableNames());
     }
 
@@ -90,8 +89,7 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
         // Get dependencies for each table
         Map dependencies = new HashMap();
         try {
-            for (int i = 0; i < tableNames.length; i++) {
-                String tableName = tableNames[i];
+            for (String tableName : tableNames) {
                 DependencyInfo info = getDependencyInfo(connection, tableName);
                 dependencies.put(tableName, info);
             }
@@ -100,8 +98,8 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
         }
 
         // Check whether the table dependency info contains cycles
-        for (Iterator iterator = dependencies.values().iterator(); iterator.hasNext();) {
-            DependencyInfo info = (DependencyInfo) iterator.next();
+        for (Object element : dependencies.values()) {
+            DependencyInfo info = (DependencyInfo) element;
             info.checkCycles();
         }
 
@@ -119,14 +117,14 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
             sortedTableNames = new LinkedList();
 
             // re-order 'tmpTableNames' into 'sortedTableNames'
-            for (Iterator i = tmpTableNames.iterator(); i.hasNext();) {
+            for (Object tmpTableName : tmpTableNames) {
                 boolean foundDependentInSortedTableNames = false;
-                String tmpTable = (String) i.next();
+                String tmpTable = (String) tmpTableName;
                 DependencyInfo tmpTableDependents = (DependencyInfo) dependencies.get(tmpTable);
 
                 int sortedTableIndex = -1;
-                for (Iterator k = sortedTableNames.iterator(); k.hasNext();) {
-                    String sortedTable = (String) k.next();
+                for (Object sortedTableName : sortedTableNames) {
+                    String sortedTable = (String) sortedTableName;
                     if (tmpTableDependents.containsDirectDependsOn(sortedTable)) {
                         sortedTableIndex = sortedTableNames.indexOf(sortedTable);
                         foundDependentInSortedTableNames = true;
@@ -163,7 +161,7 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
 
     /**
      * Creates the dependency information for the given table
-     * 
+     *
      * @param connection
      * @param tableName
      * @return The dependency information for the given table
@@ -197,13 +195,14 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
 
     /**
      * Container of dependency information for one single table.
-     * 
+     *
      * @author gommma (gommma AT users.sourceforge.net)
      * @author Last changed by: $Author$
      * @version $Revision$ $Date$
      * @since 2.4.0
      */
     static class DependencyInfo {
+
         /**
          * Logger for this class
          */
@@ -226,7 +225,6 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
          */
         public DependencyInfo(String tableName, Set directDependsOnTablesSet, Set directDependentTablesSet,
                 Set allTableDependsOn, Set allTableDependent) {
-            super();
             this.directDependsOnTablesSet = directDependsOnTablesSet;
             this.directDependentTablesSet = directDependentTablesSet;
             this.allTableDependsOn = allTableDependsOn;
@@ -265,7 +263,7 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
         /**
          * Checks this table's information for cycles by intersecting the two sets. When
          * the result set has at least one element we do have cycles.
-         * 
+         *
          * @throws CyclicTablesDependencyException
          */
         public void checkCycles() throws CyclicTablesDependencyException {
@@ -279,6 +277,7 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
             }
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("DependencyInfo[");

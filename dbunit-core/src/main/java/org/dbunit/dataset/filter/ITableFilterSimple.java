@@ -20,20 +20,19 @@
  */
 package org.dbunit.dataset.filter;
 
-import org.dbunit.dataset.DataSetException;
-
 /**
  * A filter for table names.
- * 
+ *
  * @author gommma (gommma AT users.sourceforge.net)
  * @author Last changed by: $Author$
  * @version $Revision$ $Date$
  * @since 2.4.3
  */
 public interface ITableFilterSimple {
+
     /**
      * Returns <code>true</code> if specified table is allowed by this filter.
      */
-    public boolean accept(String tableName) throws DataSetException;
+    public boolean accept(String tableName);
 
 }

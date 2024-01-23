@@ -20,7 +20,6 @@
  */
 package org.dbunit.dataset.filter;
 
-import org.dbunit.dataset.DataSetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class DefaultTableFilter extends AbstractTableFilter {
     // AbstractTableFilter interface
 
     @Override
-    public boolean accept(String tableName) throws DataSetException {
+    public boolean accept(String tableName) {
         if (_includeFilter.isEmpty() || _includeFilter.accept(tableName)) {
             return _excludeFilter.accept(tableName);
         }
