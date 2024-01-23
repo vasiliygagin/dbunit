@@ -22,13 +22,11 @@
 package org.dbunit.database;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
 
 /**
  * This interface represents a connection to a specific database.
@@ -68,33 +66,6 @@ public interface IDatabaseConnection {
      * @throws DataSetException
      */
     public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException;
-
-    /**
-     * Creates a table with the result of the specified SQL statement. The table can
-     * be the result of a join statement.
-     *
-     * @param tableName The name to be returned by
-     *                  {@link org.dbunit.dataset.ITableMetaData#getTableName}.
-     * @param sql       The SQL <code>SELECT</code> statement
-     * @return The new table
-     * @throws DataSetException
-     * @throws SQLException
-     */
-    public IResultSetTable createQueryTable(String tableName, String sql) throws DataSetException, SQLException;
-
-    /**
-     * Creates a table using the given PreparedStatement to retrieve a ResultSet.
-     *
-     * @param tableName         The name to be returned by
-     *                          {@link org.dbunit.dataset.ITableMetaData#getTableName}.
-     * @param preparedStatement The statement to be executed as query
-     * @return The new table
-     * @throws DataSetException
-     * @throws SQLException
-     * @since 2.4.4
-     */
-    public ITable createTable(String tableName, PreparedStatement preparedStatement)
-            throws DataSetException, SQLException;
 
     /**
      * Returns the specified table row count.

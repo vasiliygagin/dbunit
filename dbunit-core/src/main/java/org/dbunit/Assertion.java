@@ -21,7 +21,6 @@
 
 package org.dbunit;
 
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -33,7 +32,6 @@ import org.dbunit.assertion.FailureHandler;
 import org.dbunit.assertion.MessageBuilder;
 import org.dbunit.assertion.TableColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -70,16 +68,6 @@ public class Assertion {
     public static void assertEqualsIgnoreCols(final ITable expectedTable, final ITable actualTable,
             final String[] ignoreCols) throws DatabaseUnitException {
         EQUALS_INSTANCE.assertEqualsIgnoreCols(expectedTable, actualTable, ignoreCols);
-    }
-
-    /**
-     * @see DbUnitAssert#assertEqualsByQuery(ITable, IDatabaseConnection, String,
-     *      String, String[])
-     */
-    public static void assertEqualsByQuery(final ITable expectedTable, final IDatabaseConnection connection,
-            final String tableName, final String sqlQuery, final String[] ignoreCols)
-            throws DatabaseUnitException, SQLException {
-        EQUALS_INSTANCE.assertEqualsByQuery(expectedTable, connection, tableName, sqlQuery, ignoreCols);
     }
 
     /**

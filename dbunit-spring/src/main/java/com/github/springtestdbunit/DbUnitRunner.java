@@ -125,15 +125,15 @@ public class DbUnitRunner {
         if (expectedDataSet != null) {
             DatabaseAssertion assertion = annotation.assertionMode().getDatabaseAssertion();
             List<IColumnFilter> columnFilters = getColumnFilters(annotation);
-            if (StringUtils.hasLength(query)) {
-                Assert.hasLength(table, "The table name must be specified when using a SQL query");
+            if (StringUtils.hasLength(table)) {
                 ITable expectedTable = expectedDataSet.getTable(table);
-                ITable actualTable = connection.createQueryTable(table, query);
-                assertion.assertEquals(expectedTable, actualTable, columnFilters);
-            } else if (StringUtils.hasLength(table)) {
-                ResultSetTable resultSetTable = connection.loadTableResultSet(table);
+                ResultSetTable resultSetTable;
+                if (StringUtils.hasLength(query)) {
+                    resultSetTable = connection.loadTableResultSetViaQuery(table, query);
+                } else {
+                    resultSetTable = connection.loadTableResultSet(table);
+                }
                 FullyLoadedTable actualTable = new FullyLoadedTable(resultSetTable);
-                ITable expectedTable = expectedDataSet.getTable(table);
                 assertion.assertEquals(expectedTable, actualTable, columnFilters);
             } else {
                 // whole database compare !? Wonder the use of this
