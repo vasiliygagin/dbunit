@@ -146,7 +146,7 @@ public class PrimaryKeyFilter extends AbstractTableFilter {
      * @see AbstractTableFilter
      */
     @Override
-    public boolean accept(String tableName) throws DataSetException {
+    public boolean accept(String tableName) {
         // boolean isValid = this.allowedIds.containsKey(tableName);
         // return isValid;
         return true;

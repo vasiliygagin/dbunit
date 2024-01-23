@@ -30,7 +30,6 @@ import java.util.TreeSet;
 import org.dbunit.AbstractDatabaseTest;
 import org.dbunit.DdlExecutor;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.IDataSet;
@@ -48,7 +47,7 @@ import org.junit.Test;
  */
 public class TablesDependencyHelperTest extends AbstractDatabaseTest {
 
-    private IDatabaseConnection connection;
+    private DatabaseConnection connection;
 
     public TablesDependencyHelperTest() throws Exception {
     }

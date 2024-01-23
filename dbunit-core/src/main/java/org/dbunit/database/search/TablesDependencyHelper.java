@@ -23,6 +23,7 @@ package org.dbunit.database.search;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.PrimaryKeyFilter.PkTableMap;
 import org.dbunit.dataset.DataSetException;
@@ -151,7 +152,7 @@ public class TablesDependencyHelper {
 
     // TODO: javadoc (and unit tests) from down here...
 
-    public static IDataSet getDataset(IDatabaseConnection connection, String rootTable, Set allowedIds)
+    public static IDataSet getDataset(AbstractDatabaseConnection connection, String rootTable, Set allowedIds)
             throws SearchException, SQLException, DataSetException {
         if (logger.isDebugEnabled()) {
             logger.debug("getDataset(connection={}, rootTable={}, allowedIds={}) - start", connection, rootTable,
@@ -163,7 +164,7 @@ public class TablesDependencyHelper {
         return getDataset(connection, map);
     }
 
-    public static IDataSet getDataset(IDatabaseConnection connection, PkTableMap rootTables)
+    public static IDataSet getDataset(AbstractDatabaseConnection connection, PkTableMap rootTables)
             throws SearchException, SQLException, DataSetException {
         logger.debug("getDataset(connection={}, rootTables={}) - start", connection, rootTables);
 
@@ -179,7 +180,7 @@ public class TablesDependencyHelper {
         return dataset;
     }
 
-    public static IDataSet getAllDataset(IDatabaseConnection connection, PkTableMap rootTables)
+    public static IDataSet getAllDataset(AbstractDatabaseConnection connection, PkTableMap rootTables)
             throws SearchException, SQLException, DataSetException {
         logger.debug("getAllDataset(connection={}, rootTables={}) - start", connection, rootTables);
 

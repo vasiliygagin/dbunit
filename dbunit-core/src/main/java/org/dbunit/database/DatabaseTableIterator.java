@@ -55,6 +55,7 @@ public class DatabaseTableIterator implements ITableIterator {
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
+    @Override
     public boolean next() throws DataSetException {
         logger.debug("next() - start");
 
@@ -69,12 +70,14 @@ public class DatabaseTableIterator implements ITableIterator {
         return _index < _tableNames.length;
     }
 
+    @Override
     public ITableMetaData getTableMetaData() throws DataSetException {
         logger.debug("getTableMetaData() - start");
 
         return _dataSet.getTableMetaData(_tableNames[_index]);
     }
 
+    @Override
     public ITable getTable() throws DataSetException {
         logger.debug("getTable() - start");
 

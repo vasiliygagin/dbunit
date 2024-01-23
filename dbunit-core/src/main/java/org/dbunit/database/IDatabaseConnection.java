@@ -25,8 +25,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.database.statement.IStatementFactory;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
 
 /**
  * This interface represents a connection to a specific database.
@@ -51,21 +49,6 @@ public interface IDatabaseConnection {
      * Close this connection.
      */
     public void close() throws SQLException;
-
-    /**
-     * Creates a dataset corresponding to the entire database.
-     */
-    public IDataSet createDataSet() throws SQLException;
-
-    /**
-     * Creates a dataset containing only the specified tables from the database.
-     *
-     * @param tableNames The tables for which a dataset shall be created
-     * @return The new dataset
-     * @throws SQLException
-     * @throws DataSetException
-     */
-    public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException;
 
     /**
      * Returns the specified table row count.

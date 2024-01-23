@@ -83,27 +83,23 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return metadataManager;
     }
 
-    @Override
-    public IDataSet createDataSet() throws SQLException {
-        logger.debug("createDataSet() - start");
-
+    public IDataSet createDataSet() throws SQLException, DataSetException {
         if (_dataSet == null) {
-            _dataSet = new DatabaseDataSet(this);
+            _dataSet = new DatabaseDataSet(this, tableFinder);
         }
 
         return _dataSet;
     }
 
-    @Override
-    public final Connection getConnection() throws SQLException {
-        return jdbcConnection;
-    }
-
-    @Override
     public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
         boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
         SequenceTableFilter filter = new SequenceTableFilter(tableNames, caseSensitiveTableNames);
         return new FilteredDataSet(filter, createDataSet());
+    }
+
+    @Override
+    public final Connection getConnection() throws SQLException {
+        return jdbcConnection;
     }
 
     public ResultSetTable loadTableResultSetViaQuery(String tableName, String tableQuery)
@@ -114,14 +110,16 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
 
     public ResultSetTable loadTableResultSet(String tableName) throws NoSuchTableException, DataSetException {
         TableMetadata tableMetadata = tableFinder.nameToTable(tableName);
+        return loadTableResultSet(tableMetadata);
+    }
+
+    public ResultSetTable loadTableResultSet(TableMetadata tableMetadata) throws DataSetException {
         String sql = "select * from " + toStringTableId(tableMetadata);
-        return new ResultSetTable(tableName, sql, this, tableMetadata);
+        return new ResultSetTable(tableMetadata.tableName, sql, this, tableMetadata);
     }
 
     @Override
     public int getRowCount(String tableName) throws SQLException {
-        logger.debug("getRowCount(tableName={}) - start", tableName);
-
         return getRowCount(tableName, null);
     }
 

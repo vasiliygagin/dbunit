@@ -147,7 +147,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         DatabaseConfig config = new DatabaseConfig();
         config.setQualifiedTableNames(true);
         MetadataManager metadataManager = new MetadataManager(jdbcConnection, config, null, null);
-        final IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
+        final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
 
         final IDataSet databaseDataset = connection.createDataSet();
         final ITableFilter filter = new DatabaseSequenceFilter(connection);

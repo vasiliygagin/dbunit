@@ -34,7 +34,7 @@ public abstract class AbstractSearchCallbackFilteredByPKsTestCase extends Abstra
 
     protected abstract int[] setupTablesSizeFixture();
 
-    protected IDataSet setupTablesDataSetFixture() throws SQLException {
+    protected IDataSet setupTablesDataSetFixture() throws SQLException, DataSetException {
         return database.getConnection().createDataSet();
     }
 

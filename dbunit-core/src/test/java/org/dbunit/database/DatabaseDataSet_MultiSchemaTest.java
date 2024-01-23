@@ -52,7 +52,7 @@ public class DatabaseDataSet_MultiSchemaTest extends AbstractDatabaseTest {
     private static final Boolean IS_USING_QUALIFIED_TABLE_NAMES = Boolean.TRUE;
     private static final Boolean IS_NOT_USING_QUALIFIED_TABLE_NAMES = Boolean.FALSE;
 
-    private IDatabaseConnection connectionTest;
+    private DatabaseConnection connectionTest;
 
     private final TestMetadataHandler testMetadataHandler = new TestMetadataHandler();
 

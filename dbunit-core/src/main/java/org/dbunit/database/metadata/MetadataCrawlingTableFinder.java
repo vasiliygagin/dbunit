@@ -28,17 +28,18 @@ public class MetadataCrawlingTableFinder implements TableFinder {
         if (parts.length > 3) {
             throw new DataSetException("Invalid table name [" + freeHandTableName + "]");
         }
+        String tableNamePart = parts[parts.length - 1];
 
         List<TableMetadata> exactTableNameCandidates = new ArrayList<>();
         List<TableMetadata> wrongCaseCandidates = new ArrayList<>();
         try {
             List<TableMetadata> tableMetadatas = metadataManager.getTables(null);
             for (TableMetadata tableMetadata : tableMetadatas) {
-                if (parts[0].equals(tableMetadata.tableName)) {
+                if (tableNamePart.equals(tableMetadata.tableName)) {
                     if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
                         exactTableNameCandidates.add(tableMetadata);
                     }
-                } else if (parts[0].equalsIgnoreCase(tableMetadata.tableName)) {
+                } else if (tableNamePart.equalsIgnoreCase(tableMetadata.tableName)) {
                     if (schemaMatches(parts, tableMetadata.schemaMetadata)) {
                         wrongCaseCandidates.add(tableMetadata);
                     }
@@ -73,10 +74,10 @@ public class MetadataCrawlingTableFinder implements TableFinder {
         }
         // parts.length = 2
         if (schemaMetadata.schema != null) {
-            return parts[1].equalsIgnoreCase(schemaMetadata.schema);
+            return parts[0].equalsIgnoreCase(schemaMetadata.schema);
         }
         if (schemaMetadata.catalog != null) {
-            return parts[1].equalsIgnoreCase(schemaMetadata.catalog);
+            return parts[0].equalsIgnoreCase(schemaMetadata.catalog);
         }
         return false;
     }

@@ -54,7 +54,6 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.util.ProcessUtil;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -572,7 +571,7 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOperation() throws Exception {
         String targetName = "test-replace";
-        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+        final JdbcDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
                 "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
@@ -584,7 +583,7 @@ public class DbUnitTaskIT {
     @Test
     public void testOrderedOperation() throws Exception {
         String targetName = "test-ordered";
-        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+        final JdbcDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
                 "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
@@ -596,7 +595,7 @@ public class DbUnitTaskIT {
     @Test
     public void testReplaceOrderedOperation() throws Exception {
         String targetName = "test-replace-ordered";
-        final IDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
+        final JdbcDatabaseTester dbTest = new JdbcDatabaseTester("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:.", "sa", "",
                 "PUBLIC");
         executeTarget(targetName);
         final IDataSet ds = dbTest.getConnection().createDataSet();
