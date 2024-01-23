@@ -30,12 +30,10 @@ import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.util.Locale;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.metadata.MetadataManager;
-import org.dbunit.dataset.ITable;
 import org.junit.Test;
 
 /**
@@ -142,30 +140,6 @@ public class DatabaseConnectionIT extends AbstractDatabaseConnectionIT {
         } else {
             // skip this test
             assertTrue(true);
-        }
-    }
-
-    @Test
-    public void testCreateQueryWithPreparedStatement() throws Exception {
-        IDatabaseConnection connection = getConnection32();
-        PreparedStatement pstmt = connection.getConnection()
-                .prepareStatement("select * from TEST_TABLE where COLUMN0=?");
-
-        try {
-            pstmt.setString(1, "row 1 col 0");
-            ITable table = connection.createTable("MY_TABLE", pstmt);
-            assertEquals(1, table.getRowCount());
-            assertEquals(4, table.getTableMetaData().getColumns().length);
-            assertEquals("row 1 col 1", table.getValue(0, "COLUMN1"));
-
-            // Now reuse the prepared statement
-            pstmt.setString(1, "row 2 col 0");
-            ITable table2 = connection.createTable("MY_TABLE", pstmt);
-            assertEquals(1, table2.getRowCount());
-            assertEquals(4, table2.getTableMetaData().getColumns().length);
-            assertEquals("row 2 col 1", table2.getValue(0, "COLUMN1"));
-        } finally {
-            pstmt.close();
         }
     }
 

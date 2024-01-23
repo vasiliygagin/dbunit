@@ -23,7 +23,6 @@ package org.dbunit.database;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,7 +36,6 @@ import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.util.QualifiedTableName;
@@ -108,19 +106,10 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return new FilteredDataSet(filter, createDataSet());
     }
 
-    @Override
-    public IResultSetTable createQueryTable(String resultName, String sql) throws DataSetException, SQLException {
-        IResultSetTableFactory resultSetTableFactory = _databaseConfig.getResultSetTableFactory();
-        IResultSetTable table = resultSetTableFactory.createTable(resultName, sql, this);
-        return new CachedResultSetTable(table);
-    }
-
-    @Override
-    public ITable createTable(String resultName, PreparedStatement preparedStatement)
-            throws DataSetException, SQLException {
-        IResultSetTableFactory resultSetTableFactory = _databaseConfig.getResultSetTableFactory();
-        IResultSetTable table = resultSetTableFactory.createTable(resultName, preparedStatement, this);
-        return new CachedResultSetTable(table);
+    public ResultSetTable loadTableResultSetViaQuery(String tableName, String tableQuery)
+            throws NoSuchTableException, DataSetException {
+        TableMetadata tableMetadata = tableFinder.nameToTable(tableName);
+        return new ResultSetTable(tableName, tableQuery, this, tableMetadata);
     }
 
     public ResultSetTable loadTableResultSet(String tableName) throws NoSuchTableException, DataSetException {

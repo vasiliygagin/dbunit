@@ -25,14 +25,16 @@ import java.util.function.Predicate;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.comparer.value.ValueComparers;
-import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.database.FullyLoadedTable;
+import org.dbunit.database.ResultSetTable;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.UnknownDataType;
-import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.PatternMatcher;
+import org.dbunit.dataset.filter.ExcludedColumnPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +96,12 @@ public class DbUnitAssert extends DbUnitAssertBase {
      *                               comparison.
      * @throws java.sql.SQLException If an SQL error occurs.
      */
-    public void assertEqualsByQuery(final ITable expectedTable, final IDatabaseConnection connection,
+    public void assertEqualsByQuery(final ITable expectedTable, final AbstractDatabaseConnection connection,
             final String tableName, final String sqlQuery, final String[] ignoreCols)
             throws DatabaseUnitException, SQLException {
-        logger.debug(
-                "assertEqualsByQuery(expectedTable={}, connection={}, tableName={}, sqlQuery={}, ignoreCols={}) - start",
-                expectedTable, connection, tableName, sqlQuery, ignoreCols);
-
-        final ITable expected = DefaultColumnFilter.excludedColumnsTable(expectedTable, ignoreCols);
-        final ITable queriedTable = connection.createQueryTable(tableName, sqlQuery);
-        final ITable actual = DefaultColumnFilter.excludedColumnsTable(queriedTable, ignoreCols);
-        assertEquals(expected, actual, (Predicate<Column>) c -> false);
+        final ResultSetTable queriedTable = connection.loadTableResultSetViaQuery(tableName, sqlQuery);
+        FullyLoadedTable fullyLoadedTable = new FullyLoadedTable(queriedTable);
+        assertEquals(expectedTable, fullyLoadedTable, new ExcludedColumnPredicate(ignoreCols));
     }
 
     /**
