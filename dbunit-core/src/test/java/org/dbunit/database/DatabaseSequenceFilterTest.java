@@ -75,7 +75,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         final String[] actualNoFilter = databaseDataset.getTableNames();
         assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
 
-        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final ITableFilter filter = new DatabaseSequenceFilter(connection, connection.createDataSet().getTableNames());
         final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
         final String[] actualFiltered = filteredDataSet.getTableNames();
         assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
@@ -99,7 +99,8 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         boolean gotCyclicTablesDependencyException = false;
 
         try {
-            final ITableFilter filter = new DatabaseSequenceFilter(connection);
+            final ITableFilter filter = new DatabaseSequenceFilter(connection,
+                    connection.createDataSet().getTableNames());
             final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
             filteredDataSet.getTableNames();
             fail("Should not be here!");
@@ -123,7 +124,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         final String[] actualNoFilter = databaseDataset.getTableNames();
         assertEquals("no filter", Arrays.asList(expectedNoFilter), Arrays.asList(actualNoFilter));
 
-        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final ITableFilter filter = new DatabaseSequenceFilter(connection, connection.createDataSet().getTableNames());
         final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
         final String[] actualFiltered = filteredDataSet.getTableNames();
         assertEquals("filtered", Arrays.asList(expectedFiltered), Arrays.asList(actualFiltered));
@@ -150,7 +151,7 @@ public class DatabaseSequenceFilterTest extends AbstractDatabaseTest {
         final DatabaseConnection connection = new DatabaseConnection(jdbcConnection, config, metadataManager);
 
         final IDataSet databaseDataset = connection.createDataSet();
-        final ITableFilter filter = new DatabaseSequenceFilter(connection);
+        final ITableFilter filter = new DatabaseSequenceFilter(connection, connection.createDataSet().getTableNames());
         final IDataSet filteredDataSet = new FilteredDataSet(filter, databaseDataset);
 
         final String[] actualNoFilter = databaseDataset.getTableNames();

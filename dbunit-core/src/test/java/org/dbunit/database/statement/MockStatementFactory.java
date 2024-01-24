@@ -21,11 +21,12 @@
 
 package org.dbunit.database.statement;
 
-import com.mockobjects.ExpectationCounter;
-import com.mockobjects.Verifiable;
+import java.sql.SQLException;
+
 import org.dbunit.database.IDatabaseConnection;
 
-import java.sql.SQLException;
+import com.mockobjects.ExpectationCounter;
+import com.mockobjects.Verifiable;
 
 /**
  * @author Manuel Laflamme
@@ -33,12 +34,13 @@ import java.sql.SQLException;
  * @since Mar 16, 2002
  */
 public class MockStatementFactory implements IStatementFactory, Verifiable {
+
     private IBatchStatement _batchStatement = null;
 //    private IPreparedBatchStatement _preparedBatchStatement = null;
     private ExpectationCounter _createStatementCalls = new ExpectationCounter(
-            "MockStatementFactory.createBatchStatement");;
+            "MockStatementFactory.createBatchStatement");
     private ExpectationCounter _createPreparedStatementCalls = new ExpectationCounter(
-            "MockStatementFactory.createPreparedBatchStatement");;
+            "MockStatementFactory.createPreparedBatchStatement");
 
     public void setupStatement(IBatchStatement batchStatement) {
         _batchStatement = batchStatement;
@@ -60,6 +62,7 @@ public class MockStatementFactory implements IStatementFactory, Verifiable {
     ////////////////////////////////////////////////////////////////////////////
     // Verifiable interface
 
+    @Override
     public void verify() {
         _createStatementCalls.verify();
         _createPreparedStatementCalls.verify();
@@ -68,11 +71,13 @@ public class MockStatementFactory implements IStatementFactory, Verifiable {
     ////////////////////////////////////////////////////////////////////////////
     // IStatementFactory interface
 
+    @Override
     public IBatchStatement createBatchStatement(IDatabaseConnection connection) throws SQLException {
         _createStatementCalls.inc();
         return _batchStatement;
     }
 
+    @Override
     public IPreparedBatchStatement createPreparedBatchStatement(String sql, IDatabaseConnection connection)
             throws SQLException {
         _createPreparedStatementCalls.inc();

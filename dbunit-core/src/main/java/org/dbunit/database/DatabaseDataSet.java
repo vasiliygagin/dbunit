@@ -36,13 +36,10 @@ public class DatabaseDataSet implements IDataSet {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDataSet.class);
 
     private final AbstractDatabaseConnection _connection;
-    private final String defaultSchema;
     private final DatabaseConfig config;
-    private final boolean qualifiedTableNamesActive;
 
     private final Map<TableMetadata, DatabaseTableMetaData> tableMetaDatas;
 
-    private final Predicate<String> acceptedTable;
     private final TableFinder tableFinder;
 
     /**
@@ -66,17 +63,15 @@ public class DatabaseDataSet implements IDataSet {
 
     public DatabaseDataSet(AbstractDatabaseConnection connection, TableFinder tableFinder,
             Predicate<String> acceptedTable) throws DataSetException {
-        this.acceptedTable = acceptedTable;
         this.tableFinder = tableFinder;
         _caseSensitiveTableNames = connection.getDatabaseConfig().isCaseSensitiveTableNames();
         _connection = connection;
-        defaultSchema = _connection.getSchema();
         config = connection.getDatabaseConfig();
-        qualifiedTableNamesActive = config.isQualifiedTableNames();
         tableMetaDatas = new LinkedHashMap<>();
 
         MetadataManager metadataManager = _connection.getMetadataManager();
         SchemaMetadata schemaMetadata = null;
+        String defaultSchema = _connection.getSchema();
         if (defaultSchema != null) {
             schemaMetadata = metadataManager.findSchema(defaultSchema);
         }
@@ -119,7 +114,7 @@ public class DatabaseDataSet implements IDataSet {
     }
 
     @Override
-    public final ITableMetaData getTableMetaData(String tableName) throws DataSetException {
+    public ITableMetaData getTableMetaData(String tableName) throws DataSetException {
         TableMetadata tableMetadata = tableFinder.nameToTable(tableName);
         // Verify if table exist in the database
         if (!tableMetaDatas.containsKey(tableMetadata)) {

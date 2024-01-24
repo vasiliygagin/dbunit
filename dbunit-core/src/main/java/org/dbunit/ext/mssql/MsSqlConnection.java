@@ -24,16 +24,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.DatabaseDataSet;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.FilteredDataSet;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.filter.ExcludeTableFilter;
-import org.dbunit.dataset.filter.ITableFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -41,13 +37,6 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  */
 public class MsSqlConnection extends DatabaseConnection {
-
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = LoggerFactory.getLogger(MsSqlConnection.class);
-
-    private final ITableFilter _filter = new ExcludeTableFilter(new String[] { "dtproperties" });
 
     /**
      * Creates a new <code>MsSqlConnection</code>.
@@ -83,18 +72,7 @@ public class MsSqlConnection extends DatabaseConnection {
     // IDatabaseConnection
 
     @Override
-    public IDataSet createDataSet() throws SQLException, DataSetException {
-        logger.debug("createDataSet() - start");
-
-        IDataSet dataSet = super.createDataSet();
-        return new FilteredDataSet(_filter, dataSet);
-    }
-
-    @Override
-    public IDataSet createDataSet(String[] tableNames) throws SQLException, DataSetException {
-        logger.debug("createDataSet(tableNames={}) - start", tableNames);
-
-        IDataSet dataSet = super.createDataSet(tableNames);
-        return new FilteredDataSet(_filter, dataSet);
+    public DatabaseDataSet createDataSet() throws SQLException, DataSetException {
+        return super.createDataSet(tableName -> !"DTPROPERTIES".equalsIgnoreCase(tableName));
     }
 }

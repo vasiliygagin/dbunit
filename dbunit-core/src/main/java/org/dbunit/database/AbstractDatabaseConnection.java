@@ -26,6 +26,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.function.Predicate;
 
 import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.metadata.MetadataCrawlingTableFinder;
@@ -34,10 +35,7 @@ import org.dbunit.database.metadata.TableFinder;
 import org.dbunit.database.metadata.TableMetadata;
 import org.dbunit.database.statement.IStatementFactory;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.FilteredDataSet;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
-import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.util.QualifiedTableName;
 import org.dbunit.util.QualifiedTableName2;
 import org.dbunit.util.SQLHelper;
@@ -62,7 +60,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     protected final MetadataManager metadataManager;
     protected final TableFinder tableFinder;
 
-    private IDataSet _dataSet = null;
+    private DatabaseDataSet _dataSet = null;
     final DatabaseConfig _databaseConfig;
 
     public AbstractDatabaseConnection(Connection jdbcConnection, DatabaseConfig config,
@@ -83,7 +81,7 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return metadataManager;
     }
 
-    public IDataSet createDataSet() throws SQLException, DataSetException {
+    public DatabaseDataSet createDataSet() throws SQLException, DataSetException {
         if (_dataSet == null) {
             _dataSet = new DatabaseDataSet(this, tableFinder);
         }
@@ -91,10 +89,12 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
         return _dataSet;
     }
 
-    public IDataSet createDataSet(String[] tableNames) throws DataSetException, SQLException {
-        boolean caseSensitiveTableNames = _databaseConfig.isCaseSensitiveTableNames();
-        SequenceTableFilter filter = new SequenceTableFilter(tableNames, caseSensitiveTableNames);
-        return new FilteredDataSet(filter, createDataSet());
+    public DatabaseDataSet createDataSet(Predicate<String> allowedTableName) throws DataSetException {
+        if (_dataSet == null) {
+            _dataSet = new DatabaseDataSet(this, tableFinder, allowedTableName);
+        }
+
+        return _dataSet;
     }
 
     @Override
@@ -166,14 +166,6 @@ public abstract class AbstractDatabaseConnection implements IDatabaseConnection 
     @Deprecated
     public IStatementFactory getStatementFactory() {
         return _databaseConfig.getStatementFactory();
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("_databaseConfig=").append(_databaseConfig);
-        sb.append(", _dataSet=").append(_dataSet);
-        return sb.toString();
     }
 
     public Object getMetadataStore() {

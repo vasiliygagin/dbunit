@@ -23,27 +23,19 @@ package org.dbunit.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.TestFeature;
-import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.statement.MockBatchStatement;
-import org.dbunit.database.statement.MockStatementFactory;
 import org.dbunit.dataset.AbstractDataSetTest;
 import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.DefaultDataSet;
-import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.EmptyTableDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
 import org.junit.Before;
 import org.junit.Test;
-
-import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -71,75 +63,6 @@ public class TruncateTableOperationIT extends AbstractDatabaseIT {
     public final void setUp1() throws Exception {
         DatabaseConnection customizedConnection = database.getConnection();
         DatabaseOperation.CLEAN_INSERT.execute(customizedConnection, environment.getInitDataSet());
-    }
-
-    @Test
-    public void testMockExecute() throws Exception {
-        assumeTrue(environmentHasTruncateFeature());
-        String schemaName = "schema";
-        String tableName = "table";
-        String expected = getExpectedStament(schemaName + "." + tableName);
-
-        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
-
-        // setup mock objects
-        MockBatchStatement statement = new MockBatchStatement();
-        statement.addExpectedBatchString(expected);
-        statement.setExpectedExecuteBatchCalls(1);
-        statement.setExpectedClearBatchCalls(1);
-        statement.setExpectedCloseCalls(1);
-
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreateStatementCalls(1);
-        factory.setupStatement(statement);
-
-        DatabaseConfig databaseConfig = new DatabaseConfig();
-        databaseConfig.setStatementFactory(factory);
-        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
-        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
-        when(connection.createDataSet()).thenReturn(dataSet);
-        when(connection.getSchema()).thenReturn(schemaName);
-
-        // execute operation
-        getDeleteAllOperation().execute(connection, dataSet);
-
-        statement.verify();
-        factory.verify();
-    }
-
-    @Test
-    public void testExecuteWithEscapedNames() throws Exception {
-        assumeTrue(environmentHasTruncateFeature());
-        String schemaName = "schema";
-        String tableName = "table";
-        String expected = getExpectedStament("'" + schemaName + "'.'" + tableName + "'");
-
-        IDataSet dataSet = new DefaultDataSet(new DefaultTable(tableName));
-
-        // setup mock objects
-        MockBatchStatement statement = new MockBatchStatement();
-        statement.addExpectedBatchString(expected);
-        statement.setExpectedExecuteBatchCalls(1);
-        statement.setExpectedClearBatchCalls(1);
-        statement.setExpectedCloseCalls(1);
-
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreateStatementCalls(1);
-        factory.setupStatement(statement);
-
-        DatabaseConfig databaseConfig = new DatabaseConfig();
-        databaseConfig.setStatementFactory(factory);
-        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
-        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
-        when(connection.createDataSet()).thenReturn(dataSet);
-        when(connection.getSchema()).thenReturn(schemaName);
-
-        // execute operation
-        connection.getDatabaseConfig().setEscapePattern("'?'");
-        getDeleteAllOperation().execute(connection, dataSet);
-
-        statement.verify();
-        factory.verify();
     }
 
     @Test

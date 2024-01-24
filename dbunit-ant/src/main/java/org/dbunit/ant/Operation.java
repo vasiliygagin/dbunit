@@ -177,6 +177,7 @@ public class Operation extends AbstractStep {
         _type = type;
     }
 
+    @Override
     public void execute(AbstractDatabaseConnection connection) throws DatabaseUnitException {
         logger.debug("execute(connection={}) - start", connection);
         if (_operation == null) {
@@ -212,7 +213,8 @@ public class Operation extends AbstractStep {
                 ((ReplacementDataSet) dataset).addReplacementObject(_nullToken, null);
             }
             if (isOrdered()) {
-                DatabaseSequenceFilter databaseSequenceFilter = new DatabaseSequenceFilter(connection);
+                DatabaseSequenceFilter databaseSequenceFilter = new DatabaseSequenceFilter(connection,
+                        connection.createDataSet().getTableNames());
                 dataset = new FilteredDataSet(databaseSequenceFilter, dataset);
             }
             operation.execute(connection, dataset);
