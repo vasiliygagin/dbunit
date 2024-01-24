@@ -30,6 +30,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
+import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.util.CollectionsHelper;
 import org.dbunit.util.search.DepthFirstSearch;
 import org.dbunit.util.search.SearchException;
@@ -175,7 +176,9 @@ public class TablesDependencyHelper {
         String[] tableNames = rootTables.getTableNames();
         Set tmpTables = search.search(tableNames, callback);
         String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
-        IDataSet tmpDataset = connection.createDataSet(dependentTables);
+        boolean caseSensitiveTableNames = connection.getDatabaseConfig().isCaseSensitiveTableNames();
+        SequenceTableFilter filter1 = new SequenceTableFilter(dependentTables, caseSensitiveTableNames);
+        FilteredDataSet tmpDataset = new FilteredDataSet(filter1, connection.createDataSet());
         FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
         return dataset;
     }
@@ -191,7 +194,9 @@ public class TablesDependencyHelper {
         String[] tableNames = rootTables.getTableNames();
         Set tmpTables = search.search(tableNames, callback);
         String[] dependentTables = CollectionsHelper.setToStrings(tmpTables);
-        IDataSet tmpDataset = connection.createDataSet(dependentTables);
+        boolean caseSensitiveTableNames = connection.getDatabaseConfig().isCaseSensitiveTableNames();
+        SequenceTableFilter filter1 = new SequenceTableFilter(dependentTables, caseSensitiveTableNames);
+        FilteredDataSet tmpDataset = new FilteredDataSet(filter1, connection.createDataSet());
         FilteredDataSet dataset = new FilteredDataSet(filter, tmpDataset);
         return dataset;
     }

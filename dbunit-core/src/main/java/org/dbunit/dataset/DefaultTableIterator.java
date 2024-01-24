@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  */
 public class DefaultTableIterator implements ITableIterator {
+
     private Logger logger = LoggerFactory.getLogger(DefaultTableIterator.class);
 
     private final ITable[] _tables;
@@ -53,17 +54,20 @@ public class DefaultTableIterator implements ITableIterator {
     ////////////////////////////////////////////////////////////////////////////
     // ITableIterator interface
 
+    @Override
     public boolean next() throws DataSetException {
         _index++;
         return _index < _tables.length;
     }
 
+    @Override
     public ITableMetaData getTableMetaData() throws DataSetException {
         logger.debug("getTableMetaData() - start");
 
         return getTable().getTableMetaData();
     }
 
+    @Override
     public ITable getTable() throws DataSetException {
         logger.debug("getTable() - start");
 

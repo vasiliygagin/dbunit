@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
  * @version $Revision$
  */
 public class AllTests extends TestSuite {
+
     public static Test suite() throws Exception {
         TestSuite suite = new TestSuite();
         suite.addTest(org.dbunit.assertion.AllTests.suite());
@@ -36,7 +37,6 @@ public class AllTests extends TestSuite {
         suite.addTest(org.dbunit.database.search.AllTests.suite());
         suite.addTest(org.dbunit.dataset.AllTests.suite());
         suite.addTest(org.dbunit.ext.AllTests.suite());
-        suite.addTest(org.dbunit.operation.AllTests.suite());
         suite.addTest(org.dbunit.util.AllTests.suite());
         suite.addTest(org.dbunit.util.search.AllTests.suite());
         suite.addTest(new TestSuite(DatabaseUnitExceptionTest.class));

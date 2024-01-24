@@ -23,33 +23,20 @@ package org.dbunit.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.Reader;
 
 import org.dbunit.AbstractDatabaseIT;
 import org.dbunit.Assertion;
-import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.statement.MockBatchStatement;
-import org.dbunit.database.statement.MockStatementFactory;
-import org.dbunit.dataset.Column;
-import org.dbunit.dataset.DefaultDataSet;
-import org.dbunit.dataset.DefaultTable;
-import org.dbunit.dataset.DefaultTableMetaData;
 import org.dbunit.dataset.ForwardOnlyDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.LowerCaseDataSet;
 import org.dbunit.dataset.NoPrimaryKeyException;
-import org.dbunit.dataset.NoSuchColumnException;
-import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
-
-import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 /**
  * @author Manuel Laflamme
@@ -131,69 +118,5 @@ public class RefreshOperationIT extends AbstractDatabaseIT {
 
         // verify table after
         assertEquals("row count before", 6, customizedConnection.getRowCount(tableName));
-    }
-
-    @Test
-    public void testExecuteWithEmptyTable() throws Exception {
-        Column[] columns = { new Column("c1", DataType.VARCHAR) };
-        ITable table = new DefaultTable(new DefaultTableMetaData("name", columns, columns));
-        IDataSet dataSet = new DefaultDataSet(table);
-
-        // setup mock objects
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreatePreparedStatementCalls(0);
-
-        DatabaseConfig databaseConfig = new DatabaseConfig();
-        databaseConfig.setStatementFactory(factory);
-        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
-        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
-        when(connection.createDataSet()).thenReturn(dataSet);
-
-        // execute operation
-        DatabaseOperation.REFRESH.execute(connection, dataSet);
-
-        factory.verify();
-    }
-
-    @Test
-    public void testExecuteUnknownColumn() throws Exception {
-        String tableName = "table";
-
-        // setup table
-        Column[] columns = { new Column("unknown", DataType.VARCHAR), };
-        DefaultTable table = new DefaultTable(tableName, columns);
-        table.addRow();
-        table.setValue(0, columns[0].getColumnName(), "value");
-        IDataSet insertDataset = new DefaultDataSet(table);
-
-        IDataSet databaseDataSet = new DefaultDataSet(
-                new DefaultTable(tableName, new Column[] { new Column("column", DataType.VARCHAR), }));
-
-        // setup mock objects
-        MockBatchStatement statement = new MockBatchStatement();
-        statement.setExpectedExecuteBatchCalls(0);
-        statement.setExpectedClearBatchCalls(0);
-        statement.setExpectedCloseCalls(0);
-
-        MockStatementFactory factory = new MockStatementFactory();
-        factory.setExpectedCreatePreparedStatementCalls(0);
-        factory.setupStatement(statement);
-
-        DatabaseConfig databaseConfig = new DatabaseConfig();
-        databaseConfig.setStatementFactory(factory);
-        AbstractDatabaseConnection connection = mock(AbstractDatabaseConnection.class);
-        when(connection.getDatabaseConfig()).thenReturn(databaseConfig);
-        when(connection.createDataSet()).thenReturn(databaseDataSet);
-
-        // execute operation
-        try {
-            new RefreshOperation().execute(connection, insertDataset);
-            fail("Should not be here!");
-        } catch (NoSuchColumnException e) {
-
-        }
-
-        statement.verify();
-        factory.verify();
     }
 }

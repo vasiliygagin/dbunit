@@ -39,7 +39,6 @@ import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSetWriter;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
-import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.dbunit.dataset.xml.FlatXmlWriter;
 import org.dbunit.dataset.xml.XmlDataSetWriter;
@@ -204,7 +203,8 @@ public class Export extends AbstractStep {
         IDataSet dataset = getDatabaseDataSet(connection, this._tables);
         if (isOrdered()) {
             // Use topologically sorted database
-            ITableFilter filter = new DatabaseSequenceFilter(connection);
+            DatabaseSequenceFilter filter = new DatabaseSequenceFilter(connection,
+                    connection.createDataSet().getTableNames());
             dataset = new FilteredDataSet(filter, dataset);
         }
         return dataset;

@@ -46,7 +46,7 @@ public class MsSqlDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "mssql", "Microsoft SQL Server" });
+    private static final Collection DATABASE_PRODUCTS = Arrays.asList("mssql", "Microsoft SQL Server");
 
     private static final DateTimeOffsetType DATE_TIME_OFFSET_TYPE = new DateTimeOffsetType();
 
@@ -58,10 +58,12 @@ public class MsSqlDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
+    @Override
     public Collection getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
+    @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
         if (logger.isDebugEnabled())
             logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);

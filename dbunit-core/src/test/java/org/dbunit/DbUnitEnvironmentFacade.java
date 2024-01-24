@@ -64,4 +64,9 @@ public class DbUnitEnvironmentFacade extends DbUnitFacade {
     public void executeSqlScript(String filePath) throws DatabaseException {
         SqlScriptExecutor.execute(database.getConnection(), filePath);
     }
+
+    @Override
+    public DatabaseConnection getConnection() throws DatabaseException {
+        return database.getConnection();
+    }
 }

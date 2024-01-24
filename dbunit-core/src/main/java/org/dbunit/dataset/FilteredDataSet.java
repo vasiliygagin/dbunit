@@ -1,45 +1,10 @@
-/*
- *
- * The DbUnit Database Testing Framework
- * Copyright (C)2002-2004, DbUnit.org
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
-
 package org.dbunit.dataset;
 
 import org.dbunit.dataset.filter.ITableFilter;
-import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Decorates a dataset and exposes only some tables from it. Can be used with
- * different filtering strategies.
- *
- * @see ITableFilter
- * @see SequenceTableFilter
- * @see org.dbunit.dataset.filter.DefaultTableFilter
- *
- * @author Manuel Laflamme
- * @author Last changed by: Luke Cann
- * @version $Revision$
- * @since Feb 22, 2002
- */
-public class FilteredDataSet extends AbstractDataSet {
+public class FilteredDataSet implements IDataSet {
 
     /**
      * Logger for this class
@@ -49,6 +14,14 @@ public class FilteredDataSet extends AbstractDataSet {
     private final IDataSet _dataSet;
     private final ITableFilter _filter;
 
+    private OrderedTableNameMap<ITable> _orderedTableNameMap;
+
+    /**
+     * Whether or not table names of this dataset are case sensitive. By default
+     * case-sensitivity is set to false for datasets
+     */
+    private boolean _caseSensitiveTableNames = false;
+
     /**
      * Creates a FilteredDataSet that decorates the specified dataset and exposes
      * only the tables allowed by the specified filter.
@@ -57,7 +30,7 @@ public class FilteredDataSet extends AbstractDataSet {
      * @param filter  the filtering strategy
      */
     public FilteredDataSet(ITableFilter filter, IDataSet dataSet) {
-        super(dataSet.isCaseSensitiveTableNames());
+        _caseSensitiveTableNames = dataSet.isCaseSensitiveTableNames();
         _dataSet = dataSet;
         _filter = filter;
     }
@@ -65,8 +38,7 @@ public class FilteredDataSet extends AbstractDataSet {
     ////////////////////////////////////////////////////////////////////////////
     // AbstractDataSet class
 
-    @Override
-    protected ITableIterator createIterator(boolean reversed) throws DataSetException {
+    private ITableIterator createIterator(boolean reversed) throws DataSetException {
         return _filter.iterator(_dataSet, reversed);
     }
 
@@ -96,5 +68,54 @@ public class FilteredDataSet extends AbstractDataSet {
         }
 
         return _dataSet.getTable(tableName);
+    }
+
+    /**
+     * @return <code>true</code> if the case sensitivity of table names is used in
+     *         this dataset.
+     * @since 2.4
+     */
+    @Override
+    public boolean isCaseSensitiveTableNames() {
+        return this._caseSensitiveTableNames;
+    }
+
+    /**
+     * Initializes the tables of this dataset
+     *
+     * @throws DataSetException
+     * @since 2.4
+     */
+    private void initialize() throws DataSetException {
+        if (_orderedTableNameMap != null) {
+            // already initialized
+            return;
+        }
+
+        // Gather all tables in the OrderedTableNameMap which also makes the duplicate
+        // check
+        _orderedTableNameMap = new OrderedTableNameMap<>(this.isCaseSensitiveTableNames());
+        ITableIterator iterator = createIterator(false);
+        while (iterator.next()) {
+            ITable table = iterator.getTable();
+            _orderedTableNameMap.add(table.getTableMetaData().getTableName(), table);
+        }
+    }
+
+    @Override
+    public ITable[] getTables() throws DataSetException {
+        initialize();
+
+        return this._orderedTableNameMap.orderedValues().toArray(new ITable[0]);
+    }
+
+    @Override
+    public ITableIterator iterator() throws DataSetException {
+        return createIterator(false);
+    }
+
+    @Override
+    public ITableIterator reverseIterator() throws DataSetException {
+        return createIterator(true);
     }
 }

@@ -26,6 +26,7 @@ import java.sql.Statement;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AbstractDatabaseConnection;
+import org.dbunit.database.DatabaseDataSet;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.Column.AutoIncrement;
@@ -148,7 +149,7 @@ public class InsertIdentityOperation extends AbstractOperation {
 
         boolean wasAutoCommit = false;
         try {
-            IDataSet databaseDataSet = connection.createDataSet();
+            DatabaseDataSet databaseDataSet = connection.createDataSet();
 
             // Note that MSSQL has a different transaction strategy from oracle.
             // By default the transaction is always in "autocommit=true" so

@@ -64,13 +64,6 @@ public class DatabaseSequenceFilter extends SequenceTableFilter {
     }
 
     /**
-     * Create a DatabaseSequenceFilter that exposes all the database tables.
-     */
-    public DatabaseSequenceFilter(AbstractDatabaseConnection connection) throws DataSetException, SQLException {
-        this(connection, connection.createDataSet().getTableNames());
-    }
-
-    /**
      * Re-orders a string array of table names, placing dependent ("parent") tables
      * after their dependencies ("children").
      *
