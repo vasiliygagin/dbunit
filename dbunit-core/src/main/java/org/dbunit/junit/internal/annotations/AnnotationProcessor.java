@@ -6,7 +6,6 @@ package org.dbunit.junit.internal.annotations;
 import java.lang.reflect.Method;
 
 import org.dbunit.junit.DatabaseException;
-import org.dbunit.junit.internal.DbUnitRule;
 import org.dbunit.junit.internal.TestContext;
 
 /**
@@ -23,15 +22,13 @@ public class AnnotationProcessor {
     /**
      * @param klass
      * @param method
-     * @param dbUnitRule
      * @throws DatabaseException
      */
-    public void configureTest(Class<? extends Object> klass, Method method, TestContext testContext,
-            DbUnitRule dbUnitRule) throws DatabaseException {
+    public void configureTest(Class<? extends Object> klass, Method method, TestContext testContext) throws DatabaseException {
         driverManagerConnectionAnnotationProcessor.process(klass, testContext);
         propertiesDriverManagerConnectionAnnotationProcessor.process(klass, testContext);
         schemaAnnotationProcessor.process(klass, testContext);
         dataSourceAnnotationProcessor.process(klass, testContext);
-        sqlAnnotationProcessor.process(klass, method, dbUnitRule);
+        sqlAnnotationProcessor.process(klass, method, testContext);
     }
 }

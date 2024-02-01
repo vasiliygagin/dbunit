@@ -9,7 +9,6 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.junit.DatabaseException;
 import org.dbunit.junit.SqlAfter;
 import org.dbunit.junit.SqlBefore;
-import org.dbunit.junit.internal.DbUnitRule;
 import org.dbunit.junit.internal.SqlScriptExecutor;
 import org.dbunit.junit.internal.TestContext;
 
@@ -18,32 +17,26 @@ import org.dbunit.junit.internal.TestContext;
  */
 public class SqlAnnotationProcessor {
 
-    /**
-     * @param klass
-     * @param method
-     * @param dbUnitRule
-     * @throws DatabaseException
-     */
-    public void process(Class<? extends Object> klass, Method method, DbUnitRule dbUnitRule) throws DatabaseException {
-        processBeforeAnnotations(dbUnitRule, klass.getAnnotationsByType(SqlBefore.class));
-        processBeforeAnnotations(dbUnitRule, method.getAnnotationsByType(SqlBefore.class));
-        processAfterAnnotations(dbUnitRule, klass.getAnnotationsByType(SqlAfter.class));
-        processAfterAnnotations(dbUnitRule, method.getAnnotationsByType(SqlAfter.class));
+    public void process(Class<? extends Object> klass, Method method, TestContext testContext) {
+        processBeforeAnnotations(testContext, klass.getAnnotationsByType(SqlBefore.class));
+        processBeforeAnnotations(testContext, method.getAnnotationsByType(SqlBefore.class));
+        processAfterAnnotations(testContext, klass.getAnnotationsByType(SqlAfter.class));
+        processAfterAnnotations(testContext, method.getAnnotationsByType(SqlAfter.class));
     }
 
-    void processBeforeAnnotations(DbUnitRule dbUnitRule, SqlBefore[] annotations) {
+    void processBeforeAnnotations(TestContext testContext, SqlBefore[] annotations) {
         for (SqlBefore annotation : annotations) {
-            dbUnitRule.addTaskBefore(testContext -> {
-                DatabaseConnection connection = selectConnection(testContext, annotation.dataSourceName());
+            testContext.addTaskBefore(tc -> {
+                DatabaseConnection connection = selectConnection(tc, annotation.dataSourceName());
                 SqlScriptExecutor.execute(connection, annotation.filePath());
             });
         }
     }
 
-    void processAfterAnnotations(DbUnitRule dbUnitRule, SqlAfter[] annotations) {
+    void processAfterAnnotations(TestContext testContext, SqlAfter[] annotations) {
         for (SqlAfter annotation : annotations) {
-            dbUnitRule.addTaskAfter(testContext -> {
-                DatabaseConnection connection = selectConnection(testContext, annotation.dataSourceName());
+            testContext.addTaskAfter(tc -> {
+                DatabaseConnection connection = selectConnection(tc, annotation.dataSourceName());
                 SqlScriptExecutor.execute(connection, annotation.filePath());
             });
         }
