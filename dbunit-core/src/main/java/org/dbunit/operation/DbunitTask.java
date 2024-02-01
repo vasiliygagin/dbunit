@@ -11,5 +11,5 @@ import org.dbunit.junit.internal.TestContext;
 @FunctionalInterface
 public interface DbunitTask {
 
-    void execute(TestContext testContext) throws Throwable;
+    void execute(TestContext testContext) throws Exception;
 }

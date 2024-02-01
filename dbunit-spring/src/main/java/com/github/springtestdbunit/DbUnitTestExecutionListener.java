@@ -30,6 +30,8 @@ import javax.sql.DataSource;
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.junit.internal.TestContextAccessor;
+import org.dbunit.junit.internal.TestContextDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -81,6 +83,7 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
 
     private static final String DATA_SET_LOADER_BEAN_NAME = "dbUnitDataSetLoader";
 
+    private TestContextDriver testContextDriver;
     // TODO: probably want to save something in spring context for performance
     // reasons
     DatabaseConnections databaseConnections;
@@ -93,18 +96,18 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         Class<?> testClass = testContext.getTestClass();
         ApplicationContext applicationContext = testContext.getApplicationContext();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Preparing test instance " + testClass + " for DBUnit");
-        }
+        testContextDriver = TestContextAccessor.buildTestContext();
+
+        loadStuff(testClass, applicationContext);
+    }
+
+    private void loadStuff(Class<?> testClass, ApplicationContext applicationContext) throws SQLException {
         String dataSetLoaderBeanName = null;
         Class<? extends DataSetLoader> dataSetLoaderClass = FlatXmlDataSetLoader.class;
         Class<? extends DatabaseOperationLookup> databaseOperationLookupClass = DefaultDatabaseOperationLookup.class;
 
         DbUnitConfiguration configuration = testClass.getAnnotation(DbUnitConfiguration.class);
         if (configuration != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Using @DbUnitConfiguration configuration");
-            }
             dataSetLoaderClass = configuration.dataSetLoader();
             dataSetLoaderBeanName = configuration.dataSetLoaderBean();
             databaseOperationLookupClass = configuration.databaseOperationLookup();
@@ -247,7 +250,8 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
     public void beforeTestMethod(TestContext testContext) throws Exception {
         Class<?> testClass = testContext.getTestClass();
         Method testMethod = testContext.getTestMethod();
-
+        testContextDriver.configureTestContext(testClass, testMethod);
+        testContextDriver.beforeTest();
         runner.beforeTestMethod(testClass, testMethod, databaseConnections, dataSetLoader, databaseOperationLookup);
     }
 
@@ -260,5 +264,8 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         testException = runner.afterTestMethod(testClass, testInstance, testMethod, testException, databaseConnections,
                 dataSetLoader, databaseOperationLookup);
         testContext.updateState(testInstance, testMethod, testException);
+        testContextDriver.afterTest();
+        testContextDriver.rollbackConnections();
+        testContextDriver.releaseTestContext();
     }
 }

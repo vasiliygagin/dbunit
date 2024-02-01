@@ -44,12 +44,12 @@ public class TestContextAccessor {
         }
 
         @Override
-        public void beforeTest() throws Throwable {
+        public void beforeTest() throws Exception {
             testContext.beforeTest();
         }
 
         @Override
-        public void afterTest() throws Throwable {
+        public void afterTest() throws Exception {
             testContext.afterTest();
         }
 
@@ -83,11 +83,11 @@ public class TestContextAccessor {
         }
 
         @Override
-        public void beforeTest() throws Throwable {
+        public void beforeTest() throws Exception {
         }
 
         @Override
-        public void afterTest() throws Throwable {
+        public void afterTest() throws Exception {
         }
 
         @Override

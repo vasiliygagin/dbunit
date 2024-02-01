@@ -16,9 +16,9 @@ public interface TestContextDriver {
 
     void configureTestContext(Class<?> klass, Method method) throws DatabaseException;
 
-    void beforeTest() throws Throwable;
+    void beforeTest() throws Exception;
 
-    void afterTest() throws Throwable;
+    void afterTest() throws Exception;
 
     void rollbackConnections();
 

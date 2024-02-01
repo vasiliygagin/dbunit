@@ -22,11 +22,11 @@ package org.dbunit.assertion;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileReader;
 import java.util.List;
 
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.XmlUtil;
 import org.junit.Test;
 
 /**
@@ -41,7 +41,8 @@ public class DiffCollectingFailureHandlerTest {
 
     @Test
     public void testAssertTablesWithDifferentValues() throws Exception {
-        IDataSet dataSet = new FlatXmlDataSet(new FileReader("src/test/resources/xml/assertionTest.xml"));
+        String fileName = "src/test/resources/xml/assertionTest.xml";
+        IDataSet dataSet = new FlatXmlDataSet(XmlUtil.buildInputSourceFromFile(fileName));
 //        IDataSet dataSet = new XmlDataSet(new FileReader(new File("src/test/resources/xml/dataSetTest.xml")));
 
         DiffCollectingFailureHandler myHandler = new DiffCollectingFailureHandler();

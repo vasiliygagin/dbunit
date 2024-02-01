@@ -26,7 +26,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.StringReader;
 
 import org.dbunit.Assertion;
@@ -39,6 +38,7 @@ import org.dbunit.dataset.ITableIterator;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.testutil.TestUtils;
 import org.junit.Test;
+import org.xml.sax.InputSource;
 
 /**
  * @author Manuel Laflamme
@@ -125,24 +125,23 @@ public class FlatXmlDataSetTest extends AbstractDataSetTest {
     public void testWrite() throws Exception {
         IDataSet expectedDataSet = createDataSet();
         // load new dataset from temp file
-        try (FileReader in = new FileReader("src/test/resources/xml/flatXmlDataSetTest.xml")) {
-            IDataSet actualDataSet = new FlatXmlDataSetBuilder().build(in);
+        InputSource in = XmlUtil.buildInputSourceFromFile("src/test/resources/xml/flatXmlDataSetTest.xml");
+        IDataSet actualDataSet = new FlatXmlDataSetBuilder().build(in);
 
-            // verify table count
-            assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
+        // verify table count
+        assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
 
-            // verify each table
-            ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-            ITable[] actual = DataSetUtils.getTables(actualDataSet);
-            assertEquals("table count", expected.length, actual.length);
-            for (int i = 0; i < expected.length; i++) {
-                String expectedName = expected[i].getTableMetaData().getTableName();
-                String actualName = actual[i].getTableMetaData().getTableName();
-                assertEquals("table name", expectedName, actualName);
+        // verify each table
+        ITable[] expected = DataSetUtils.getTables(expectedDataSet);
+        ITable[] actual = DataSetUtils.getTables(actualDataSet);
+        assertEquals("table count", expected.length, actual.length);
+        for (int i = 0; i < expected.length; i++) {
+            String expectedName = expected[i].getTableMetaData().getTableName();
+            String actualName = actual[i].getTableMetaData().getTableName();
+            assertEquals("table name", expectedName, actualName);
 
-                assertTrue("not same instance", expected[i] != actual[i]);
-                Assertion.assertEquals(expected[i], actual[i]);
-            }
+            assertTrue("not same instance", expected[i] != actual[i]);
+            Assertion.assertEquals(expected[i], actual[i]);
         }
     }
 

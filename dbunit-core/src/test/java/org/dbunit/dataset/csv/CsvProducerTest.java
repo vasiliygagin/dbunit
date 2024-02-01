@@ -60,7 +60,7 @@ public class CsvProducerTest extends AbstractDatabaseTest {
 
     @Test
     public void testProduceFromFolder() throws DataSetException {
-        CsvProducer producer = new CsvProducer("src/test/resources/csv/orders");
+        CsvProducer producer = new CsvProducer(new File("src/test/resources/csv/orders").getAbsoluteFile());
         CachedDataSet consumer = new CachedDataSet();
         // producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
 
@@ -93,7 +93,7 @@ public class CsvProducerTest extends AbstractDatabaseTest {
     }
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
-        CsvProducer producer = new CsvProducer("src/test/resources/csv/orders");
+        CsvProducer producer = new CsvProducer(new File("src/test/resources/csv/orders").getAbsoluteFile());
         CachedDataSet consumer = new CachedDataSet();
         producer.produce(consumer);
         DatabaseOperation.INSERT.execute(database.getConnection(), consumer);

@@ -113,13 +113,13 @@ public class TestContext {
         tasksAfter.add(task);
     }
 
-    private void runTasksBefore() throws Throwable {
+    private void runTasksBefore() throws Exception {
         for (DbunitTask task : tasksBefore) {
             task.execute(this);
         }
     }
 
-    private void runTasksAfter() throws Throwable {
+    private void runTasksAfter() throws Exception {
         for (DbunitTask task : tasksAfter) {
             task.execute(this);
         }
@@ -129,11 +129,11 @@ public class TestContext {
         GlobalContext.getIt().getAnnotationProcessor().configureTest(klass, method, this);
     }
 
-    void beforeTest() throws Throwable {
+    void beforeTest() throws Exception {
         runTasksBefore();
     }
 
-    void afterTest() throws Throwable {
+    void afterTest() throws Exception {
         runTasksAfter();
     }
 

@@ -36,6 +36,7 @@ import org.dbunit.testutil.FileAsserts;
  * @version $Revision$
  */
 public class BytesDataTypeTest extends AbstractDataTypeTest {
+
     private final static DataType[] TYPES = { DataType.BINARY, DataType.VARBINARY, DataType.LONGVARBINARY,
 //        DataType.BLOB,
     };
@@ -101,7 +102,7 @@ public class BytesDataTypeTest extends AbstractDataTypeTest {
     }
 
     public void testTypeCastFileName() throws Exception {
-        File file = new File("LICENSE");
+        File file = new File("LICENSE").getAbsoluteFile();
 
         Object[] values = { "[file]" + file.toString(), file.toString(), file.getAbsolutePath(),
                 file.toURI().toURL().toString(), file, file.toURI().toURL(), "[url]" + file.toURI().toURL(), };
