@@ -3,6 +3,7 @@
  */
 package org.dbunit.junit.internal;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,12 +82,6 @@ public class TestContext {
         throw new AssertionError("No connections registered for test case");
     }
 
-    public void rollbackConnections() {
-        for (DatabaseConnection connection : connections.values()) {
-            connection.rollback();
-        }
-    }
-
     public void releaseConnections() {
         for (Entry<String, DatabaseConnection> entry : connections.entrySet()) {
             String connectionName = entry.getKey();
@@ -118,15 +113,33 @@ public class TestContext {
         tasksAfter.add(task);
     }
 
-    public void runTasksBefore() throws Throwable {
+    private void runTasksBefore() throws Throwable {
         for (DbunitTask task : tasksBefore) {
             task.execute(this);
         }
     }
 
-    public void runTasksAfter() throws Throwable {
+    private void runTasksAfter() throws Throwable {
         for (DbunitTask task : tasksAfter) {
             task.execute(this);
+        }
+    }
+
+    void configureTestContext(Class<?> klass, Method method) throws DatabaseException {
+        GlobalContext.getIt().getAnnotationProcessor().configureTest(klass, method, this);
+    }
+
+    void beforeTest() throws Throwable {
+        runTasksBefore();
+    }
+
+    void afterTest() throws Throwable {
+        runTasksAfter();
+    }
+
+    void rollbackConnections() {
+        for (DatabaseConnection connection : connections.values()) {
+            connection.rollback();
         }
     }
 }

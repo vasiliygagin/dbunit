@@ -18,32 +18,31 @@ import org.junit.runners.model.Statement;
 public abstract class DbUnitRule implements MethodRule {
 
     protected final GlobalContext context = GlobalContext.getIt();
-    private TestContext testContext;
+    private TestContextDriver testContextDriver;
 
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object target) {
 
-        this.testContext = new TestContext();
+        testContextDriver = TestContextAccessor.buildTestContext();
 
         return new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
                 try {
-                    context.getAnnotationProcessor().configureTest(target.getClass(), method.getMethod(), testContext,
-                            DbUnitRule.this);
+                    testContextDriver.configureTestContext(target.getClass(), method.getMethod());
                 } catch (DatabaseException exc) {
                     throw new AssertionError("Unable to configure test", exc);
                 }
 
                 before(target, method);
-                testContext.runTasksBefore();
+                testContextDriver.beforeTest();
                 try {
                     base.evaluate();
                 } finally {
-                    testContext.runTasksAfter();
+                    testContextDriver.afterTest();
                     after();
-                    rollbackConnections();
+                    testContextDriver.rollbackConnections();
                     releaseTestContext();
                 }
             }
@@ -69,27 +68,22 @@ public abstract class DbUnitRule implements MethodRule {
     protected void after() throws Throwable {
     }
 
-    protected void rollbackConnections() {
-        testContext.rollbackConnections();
-    }
-
     /**
      * Only here to make testing of dbUnit itself easier
      */
     protected void releaseTestContext() {
-        testContext.releaseConnections();
-        testContext = null;
+        testContextDriver.releaseTestContext();
     }
 
     public TestContext getTestContext() {
-        return testContext;
+        return testContextDriver.getTestContext();
     }
 
     public void addTaskBefore(DbunitTask task) {
-        testContext.addTaskBefore(task);
+        getTestContext().addTaskBefore(task);
     }
 
     public void addTaskAfter(DbunitTask task) {
-        testContext.addTaskAfter(task);
+        getTestContext().addTaskAfter(task);
     }
 }
