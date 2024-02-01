@@ -105,7 +105,8 @@ public class CompositeDataSetIterationTest {
 
         // 4. Write
         try {
-            FlatXmlWriter datasetWriter = new FlatXmlWriter(new FileOutputStream("target/full.xml"));
+            FlatXmlWriter datasetWriter = new FlatXmlWriter(
+                    new FileOutputStream(new File("target/full.xml").getAbsoluteFile()));
             datasetWriter.setIncludeEmptyTable(true);
             datasetWriter.write(compositeDataSet);
         } catch (Exception e) {

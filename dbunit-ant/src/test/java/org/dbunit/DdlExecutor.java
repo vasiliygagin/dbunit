@@ -180,7 +180,7 @@ public final class DdlExecutor {
     }
 
     private static String readSqlFromFile(final File ddlFile) throws IOException {
-        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile));
+        final BufferedReader sqlReader = new BufferedReader(new FileReader(ddlFile.getAbsoluteFile()));
         final StringBuilder sqlBuffer = new StringBuilder();
         while (sqlReader.ready()) {
             String line = sqlReader.readLine();

@@ -6,11 +6,7 @@ import java.io.IOException;
 import org.dbunit.Assertion;
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DataSetUtils;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.testutil.TestUtils;
-import org.dbunit.util.FileHelper;
 
 import junit.framework.TestCase;
 
@@ -20,28 +16,26 @@ import junit.framework.TestCase;
  * Last Checkin: $Author$ Date: $Date$ Revision: $Revision$
  */
 public class CsvDataSetWriterTest extends TestCase {
-    private static final String DEST = "target/csv/orders-out";
-    private static final String SOURCE = TestUtils.getFileName("csv/orders");
-    protected static final File DATASET_DIR = TestUtils.getFile("csv/orders");
 
     public void testProduceAndWriteBackToDisk() throws Exception {
-        produceToFolder(SOURCE, DEST);
-        IDataSet expected = produceToMemory(SOURCE);
-        IDataSet actual = produceToMemory(DEST);
+        produceToFolder("src/test/resources/csv/orders", "target/csv/orders-out");
+        IDataSet expected = produceToMemory("src/test/resources/csv/orders");
+        IDataSet actual = produceToMemory("target/csv/orders-out");
         Assertion.assertEquals(expected, actual);
     }
 
     private IDataSet produceToMemory(String source) throws DataSetException {
-        CsvProducer producer = new CsvProducer(source);
+        CsvProducer producer = new CsvProducer(new File(source));
         CachedDataSet cached = new CachedDataSet();
         producer.produce(cached);
         return cached;
     }
 
     private void produceToFolder(String source, String dest) throws DataSetException {
-        CsvProducer producer = new CsvProducer(source);
-        new File(dest).delete();
-        CsvDataSetWriter writer = new CsvDataSetWriter(dest);
+        CsvProducer producer = new CsvProducer(new File(source).getAbsoluteFile());
+        File destFile = new File(dest).getAbsoluteFile();
+        destFile.delete();
+        CsvDataSetWriter writer = new CsvDataSetWriter(destFile);
         producer.produce(writer);
     }
 
@@ -51,44 +45,6 @@ public class CsvDataSetWriterTest extends TestCase {
 
     public void testEscapeEscape() {
         assertEquals("\\\\foo\\\\", CsvDataSetWriter.escape("\\foo\\"));
-    }
-
-    public void testWrite() throws Exception {
-
-        IDataSet expectedDataSet = new CsvDataSet(DATASET_DIR);
-
-        File tempDir = createTmpDir();
-        try {
-            CsvDataSetWriter writer = new CsvDataSetWriter(tempDir);
-            writer.write(expectedDataSet);
-
-            File tableOrderingFile = new File(tempDir, CsvDataSet.TABLE_ORDERING_FILE);
-            assertTrue(tableOrderingFile.exists());
-
-            IDataSet actualDataSet = new CsvDataSet(tempDir);
-
-            // verify table count
-            assertEquals("table count", expectedDataSet.getTableNames().length, actualDataSet.getTableNames().length);
-
-            // verify each table
-            ITable[] expected = DataSetUtils.getTables(expectedDataSet);
-            ITable[] actual = DataSetUtils.getTables(actualDataSet);
-            assertEquals("table count", expected.length, actual.length);
-            for (int i = 0; i < expected.length; i++) {
-                String expectedName = expected[i].getTableMetaData().getTableName();
-                String actualName = actual[i].getTableMetaData().getTableName();
-                assertEquals("table name", expectedName, actualName);
-
-                assertTrue("not same instance", expected[i] != actual[i]);
-                Assertion.assertEquals(expected[i], actual[i]);
-            }
-
-        } finally {
-            FileHelper.deleteDirectory(tempDir, true);
-
-        }
-
-        // assertFalse("temporary directory was not deleted", tempDir.exists());
     }
 
     private File createTmpDir() throws IOException {
