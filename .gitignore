@@ -2,6 +2,7 @@ target
 .settings
 .classpath
 .project
+derby.log
 *.jar
 
 # Ignoring IntelliJ IDEA project files and directories.  These are personal.
