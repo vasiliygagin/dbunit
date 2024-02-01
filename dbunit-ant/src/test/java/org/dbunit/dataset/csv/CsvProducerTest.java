@@ -41,7 +41,6 @@ import org.dbunit.ext.hsqldb.HsqldbDatabaseConfig;
 import org.dbunit.internal.connections.DriverManagerConnectionSource;
 import org.dbunit.junit.internal.GlobalContext;
 import org.dbunit.operation.DatabaseOperation;
-import org.dbunit.testutil.TestUtils;
 import org.dbunit.util.FileHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -54,10 +53,9 @@ public class CsvProducerTest {
     private String user;
     private String password;
     private AbstractDatabaseConnection connection;
-    private static final String THE_DIRECTORY = TestUtils.getFileName("csv/orders");
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
-        CsvProducer producer = new CsvProducer(THE_DIRECTORY);
+        CsvProducer producer = new CsvProducer(new File("src/test/resources/csv/orders").getAbsoluteFile());
         CachedDataSet consumer = new CachedDataSet();
         producer.produce(consumer);
         DatabaseOperation operation = DatabaseOperation.INSERT;
@@ -80,9 +78,9 @@ public class CsvProducerTest {
             CsvDataSetWriter writer = new CsvDataSetWriter(dir);
             writer.write(queryDataSet);
 
-            final File ordersFile = new File(fromAnt + "/orders.csv");
+            final File ordersFile = new File(fromAnt + "/orders.csv").getAbsoluteFile();
             assertTrue("file '" + ordersFile.getAbsolutePath() + "' does not exists", ordersFile.exists());
-            final File ordersRowFile = new File(fromAnt + "/orders_row.csv");
+            final File ordersRowFile = new File(fromAnt + "/orders_row.csv").getAbsoluteFile();
             assertTrue("file " + ordersRowFile + " does not exists", ordersRowFile.exists());
         } finally {
             FileHelper.deleteDirectory(dir);
@@ -102,11 +100,12 @@ public class CsvProducerTest {
     @Before
     public void setUp() throws Exception {
         Properties properties = new Properties();
-        final FileInputStream inStream = TestUtils.getFileInputStream("csv/cvs-tests.properties");
+        final FileInputStream inStream = new FileInputStream(
+                new File("src/test/resources/csv/cvs-tests.properties").getAbsoluteFile());
         properties.load(inStream);
         inStream.close();
         driverClass = properties.getProperty("cvs-tests.driver.class");
-        url = properties.getProperty("cvs-tests.url");
+        url = "jdbc:hsqldb:" + new File("target/csv/orders-db/orders").getAbsolutePath();
         user = properties.getProperty("cvs-tests.user");
         password = properties.getProperty("cvs-tests.password");
         assertFalse("".equals(driverClass));
@@ -114,7 +113,8 @@ public class CsvProducerTest {
         assertFalse("".equals(user));
         Class.forName(driverClass);
         connection = getConnection();
-        Statement statement = connection.getConnection().createStatement();
+        Connection jdbcConnection = connection.getConnection();
+        Statement statement = jdbcConnection.createStatement();
         try {
             statement.execute("DROP TABLE ORDERS");
             statement.execute("DROP TABLE ORDERS_ROW");

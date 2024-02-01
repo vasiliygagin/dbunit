@@ -45,7 +45,6 @@ public class CsvProducerTest extends AbstractDatabaseTest {
 
     private static final int ORDERS_ROWS_NUMBER = 5;
     private static final int ORDERS_ROW_ROWS_NUMBER = 3;
-    private static final String THE_DIRECTORY = "src/test/resources/csv/orders";
 
     public CsvProducerTest() throws Exception {
     }
@@ -61,7 +60,7 @@ public class CsvProducerTest extends AbstractDatabaseTest {
 
     @Test
     public void testProduceFromFolder() throws DataSetException {
-        CsvProducer producer = new CsvProducer(THE_DIRECTORY);
+        CsvProducer producer = new CsvProducer("src/test/resources/csv/orders");
         CachedDataSet consumer = new CachedDataSet();
         // producer.setConsumer(new CsvDataSetWriter("src/csv/orders-out"));
 
@@ -94,7 +93,7 @@ public class CsvProducerTest extends AbstractDatabaseTest {
     }
 
     private void produceAndInsertToDatabase() throws DatabaseUnitException, SQLException {
-        CsvProducer producer = new CsvProducer(THE_DIRECTORY);
+        CsvProducer producer = new CsvProducer("src/test/resources/csv/orders");
         CachedDataSet consumer = new CachedDataSet();
         producer.produce(consumer);
         DatabaseOperation.INSERT.execute(database.getConnection(), consumer);
@@ -103,7 +102,7 @@ public class CsvProducerTest extends AbstractDatabaseTest {
     @Test
     public void testInsertOperationWithCsvFormat() throws SQLException, DatabaseUnitException {
         try {
-            IDataSetProducer producer = new CsvProducer(new File(THE_DIRECTORY));
+            IDataSetProducer producer = new CsvProducer(new File("src/test/resources/csv/orders").getAbsoluteFile());
             IDataSet dataset = new StreamingDataSet(producer);
             DatabaseOperation.INSERT.execute(database.getConnection(), dataset);
         } catch (SQLException e) {

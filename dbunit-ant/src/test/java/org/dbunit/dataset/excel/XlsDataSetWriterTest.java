@@ -12,12 +12,13 @@ import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 
 public class XlsDataSetWriterTest {
-    private static final File OUTPUT_DIR = new File("target", "excel");
+
+    private static final File OUTPUT_DIR = new File("target", "excel").getAbsoluteFile();
 
     private static final String INPUT_EXCEL_FILE = "/excel/XlsDataSetWriterCellStyleCaching.xlsx";
 
-    private static final File OUTPUT_EXCEL_FILE = new File(OUTPUT_DIR,
-            "XlsDataSetWriterCellStyleCachingTestOutput.xls");
+    private static final File OUTPUT_EXCEL_FILE = new File(OUTPUT_DIR, "XlsDataSetWriterCellStyleCachingTestOutput.xls")
+            .getAbsoluteFile();
 
     /**
      * Test for issue 377. Without 377's changes, test fails with:

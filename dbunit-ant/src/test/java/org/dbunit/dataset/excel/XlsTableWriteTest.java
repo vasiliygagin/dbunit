@@ -111,7 +111,7 @@ public class XlsTableWriteTest {
     }
 
     private IDataSet super_createDataSet() throws Exception {
-        return new XlsDataSet(new File("src/test/resources/xml/tableTest.xls"));
+        return new XlsDataSet(new File("src/test/resources/xml/tableTest.xls").getAbsoluteFile());
     }
 
     @Test

@@ -71,7 +71,7 @@ public class XmlTableWriteTest extends TestCase {
     }
 
     protected IDataSet super_createDataSet() throws Exception {
-        Reader in = new FileReader(new File("src/test/resources/xml/xmlTableTest.xml"));
+        Reader in = new FileReader(new File("src/test/resources/xml/xmlTableTest.xml").getAbsoluteFile());
         return new XmlDataSet(in);
     }
 

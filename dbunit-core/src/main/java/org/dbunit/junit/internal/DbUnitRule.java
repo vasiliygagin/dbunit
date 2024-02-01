@@ -3,9 +3,6 @@
  */
 package org.dbunit.junit.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dbunit.junit.DatabaseException;
 import org.dbunit.operation.DbunitTask;
 import org.junit.rules.MethodRule;
@@ -22,9 +19,6 @@ public abstract class DbUnitRule implements MethodRule {
 
     protected final GlobalContext context = GlobalContext.getIt();
     private TestContext testContext;
-
-    private List<DbunitTask> tasksBefore = new ArrayList<>();
-    private List<DbunitTask> tasksAfter = new ArrayList<>();
 
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object target) {
@@ -43,9 +37,11 @@ public abstract class DbUnitRule implements MethodRule {
                 }
 
                 before(target, method);
+                testContext.runTasksBefore();
                 try {
                     base.evaluate();
                 } finally {
+                    testContext.runTasksAfter();
                     after();
                     rollbackConnections();
                     releaseTestContext();
@@ -63,9 +59,6 @@ public abstract class DbUnitRule implements MethodRule {
      * @throws Throwable if setup fails (which will disable {@code after}
      */
     protected void before(Object target, FrameworkMethod method) throws Throwable {
-        for (DbunitTask task : tasksBefore) {
-            task.execute(testContext);
-        }
     }
 
     /**
@@ -74,9 +67,6 @@ public abstract class DbUnitRule implements MethodRule {
      * @throws Throwable
      */
     protected void after() throws Throwable {
-        for (DbunitTask task : tasksAfter) {
-            task.execute(testContext);
-        }
     }
 
     protected void rollbackConnections() {
@@ -96,10 +86,10 @@ public abstract class DbUnitRule implements MethodRule {
     }
 
     public void addTaskBefore(DbunitTask task) {
-        tasksBefore.add(task);
+        testContext.addTaskBefore(task);
     }
 
     public void addTaskAfter(DbunitTask task) {
-        tasksAfter.add(task);
+        testContext.addTaskAfter(task);
     }
 }

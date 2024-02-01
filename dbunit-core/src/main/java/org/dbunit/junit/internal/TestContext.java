@@ -3,18 +3,24 @@
  */
 package org.dbunit.junit.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.junit.ConnectionSource;
 import org.dbunit.junit.DatabaseException;
+import org.dbunit.operation.DbunitTask;
 
 /**
  *
  */
 public class TestContext {
+
+    private List<DbunitTask> tasksBefore = new ArrayList<>();
+    private List<DbunitTask> tasksAfter = new ArrayList<>();
 
     private Map<String, ConnectionSource> connectionSources = new HashMap<>();
     private Map<String, DatabaseConnection> connections = new HashMap<>();
@@ -102,5 +108,25 @@ public class TestContext {
 
     public void setSchema(String schema) {
         this.schema = schema;
+    }
+
+    public void addTaskBefore(DbunitTask task) {
+        tasksBefore.add(task);
+    }
+
+    public void addTaskAfter(DbunitTask task) {
+        tasksAfter.add(task);
+    }
+
+    public void runTasksBefore() throws Throwable {
+        for (DbunitTask task : tasksBefore) {
+            task.execute(this);
+        }
+    }
+
+    public void runTasksAfter() throws Throwable {
+        for (DbunitTask task : tasksAfter) {
+            task.execute(this);
+        }
     }
 }
