@@ -114,12 +114,21 @@ public class CsvProducerTest {
         assertFalse("".equals(user));
         Class.forName(driverClass);
         connection = getConnection();
-        Statement statement = connection.getConnection().createStatement();
+        Connection jdbcConnection = connection.getConnection();
+        System.err.println("== Connection closed: " + jdbcConnection.isClosed());
+        Statement statement = jdbcConnection.createStatement();
+        System.err.println("== Connection closed 2: " + jdbcConnection.isClosed());
+        System.err.println("== Statement closed: " + statement.isClosed());
         try {
+            statement.execute("SELECT count(1) from ORDERS");
+            System.err.println("== After statement");
             statement.execute("DROP TABLE ORDERS");
             statement.execute("DROP TABLE ORDERS_ROW");
         } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
+        System.err.println("== Connection closed 2: " + statement.getConnection().isClosed());
+        System.err.println("== Statement closed 2: " + statement.isClosed());
         statement.execute("CREATE TABLE ORDERS (ID INTEGER, DESCRIPTION VARCHAR(100))");
         statement.execute("CREATE TABLE ORDERS_ROW (ID INTEGER, DESCRIPTION VARCHAR(100), QUANTITY INTEGER)");
         // statement.execute("delete from orders");
