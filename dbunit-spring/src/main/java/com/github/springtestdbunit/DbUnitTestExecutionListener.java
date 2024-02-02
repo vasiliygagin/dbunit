@@ -68,10 +68,9 @@ import com.github.springtestdbunit.operation.DefaultDatabaseOperationLookup;
  * {@link DbUnitConfiguration#dataSetLoader() configured}.
  * <p>
  * If you are running this listener in combination with the
- * {@link TransactionalTestExecutionListener} then consider using
- * {@link TransactionDbUnitTestExecutionListener} instead.
- *
- * @see TransactionDbUnitTestExecutionListener
+ * {@link TransactionalTestExecutionListener} then pay attention to the order of
+ * listeners. Specify {@link TransactionalTestExecutionListener} 1st so rollback
+ * after test is executed last, after {@link DbUnitTestExecutionListener}.
  *
  * @author Vasiliy Gagin, Phillip Webb
  */
@@ -93,179 +92,179 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
-        Class<?> testClass = testContext.getTestClass();
-        ApplicationContext applicationContext = testContext.getApplicationContext();
+	Class<?> testClass = testContext.getTestClass();
+	ApplicationContext applicationContext = testContext.getApplicationContext();
 
-        testContextDriver = TestContextAccessor.buildTestContext();
+	testContextDriver = TestContextAccessor.buildTestContext();
 
-        loadStuff(testClass, applicationContext);
+	loadStuff(testClass, applicationContext);
     }
 
     private void loadStuff(Class<?> testClass, ApplicationContext applicationContext) throws SQLException {
-        String dataSetLoaderBeanName = null;
-        Class<? extends DataSetLoader> dataSetLoaderClass = FlatXmlDataSetLoader.class;
-        Class<? extends DatabaseOperationLookup> databaseOperationLookupClass = DefaultDatabaseOperationLookup.class;
+	String dataSetLoaderBeanName = null;
+	Class<? extends DataSetLoader> dataSetLoaderClass = FlatXmlDataSetLoader.class;
+	Class<? extends DatabaseOperationLookup> databaseOperationLookupClass = DefaultDatabaseOperationLookup.class;
 
-        DbUnitConfiguration configuration = testClass.getAnnotation(DbUnitConfiguration.class);
-        if (configuration != null) {
-            dataSetLoaderClass = configuration.dataSetLoader();
-            dataSetLoaderBeanName = configuration.dataSetLoaderBean();
-            databaseOperationLookupClass = configuration.databaseOperationLookup();
-        }
+	DbUnitConfiguration configuration = testClass.getAnnotation(DbUnitConfiguration.class);
+	if (configuration != null) {
+	    dataSetLoaderClass = configuration.dataSetLoader();
+	    dataSetLoaderBeanName = configuration.dataSetLoaderBean();
+	    databaseOperationLookupClass = configuration.databaseOperationLookup();
+	}
 
-        databaseConnections = prepareDatabaseConnections(applicationContext, configuration);
-        dataSetLoader = prepareDataSetLoader(applicationContext, dataSetLoaderBeanName, dataSetLoaderClass);
-        databaseOperationLookup = prepareDatabaseOperationLookup(databaseOperationLookupClass);
+	databaseConnections = prepareDatabaseConnections(applicationContext, configuration);
+	dataSetLoader = prepareDataSetLoader(applicationContext, dataSetLoaderBeanName, dataSetLoaderClass);
+	databaseOperationLookup = prepareDatabaseOperationLookup(databaseOperationLookupClass);
     }
 
     private DatabaseConnections prepareDatabaseConnections(ApplicationContext applicationContext,
-            DbUnitConfiguration configuration) throws SQLException {
-        Map<String, AbstractDatabaseConnection> allDatabaseConnections = discoverDatabaseConnections(
-                applicationContext);
-        if (allDatabaseConnections.isEmpty()) {
-            throw new IllegalStateException("No IDatabaseConenction found. Expecting at least one Spring bean of type "
-                    + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName() + ".");
-        }
+	    DbUnitConfiguration configuration) throws SQLException {
+	Map<String, AbstractDatabaseConnection> allDatabaseConnections = discoverDatabaseConnections(
+		applicationContext);
+	if (allDatabaseConnections.isEmpty()) {
+	    throw new IllegalStateException("No IDatabaseConenction found. Expecting at least one Spring bean of type "
+		    + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName() + ".");
+	}
 
-        Map<String, AbstractDatabaseConnection> selectedDatabaseConnections = null;
-        String defaultName = null;
-        List<String> names = discoverConfiguredConnectionNames(configuration);
-        if (!names.isEmpty()) {
-            selectedDatabaseConnections = filterByNames(allDatabaseConnections, names);
-            defaultName = names.get(0);
-        } else if (configuration == null || !configuration.skipLegacyConnectionLookup()) {
-            selectedDatabaseConnections = getDatabaseConnectionUsingCommonBeanNames(allDatabaseConnections);
-        }
+	Map<String, AbstractDatabaseConnection> selectedDatabaseConnections = null;
+	String defaultName = null;
+	List<String> names = discoverConfiguredConnectionNames(configuration);
+	if (!names.isEmpty()) {
+	    selectedDatabaseConnections = filterByNames(allDatabaseConnections, names);
+	    defaultName = names.get(0);
+	} else if (configuration == null || !configuration.skipLegacyConnectionLookup()) {
+	    selectedDatabaseConnections = getDatabaseConnectionUsingCommonBeanNames(allDatabaseConnections);
+	}
 
-        if (selectedDatabaseConnections == null) {
-            selectedDatabaseConnections = allDatabaseConnections;
-        }
+	if (selectedDatabaseConnections == null) {
+	    selectedDatabaseConnections = allDatabaseConnections;
+	}
 
-        if (defaultName == null && selectedDatabaseConnections.size() == 1) {
-            defaultName = selectedDatabaseConnections.keySet().iterator().next();
-        }
+	if (defaultName == null && selectedDatabaseConnections.size() == 1) {
+	    defaultName = selectedDatabaseConnections.keySet().iterator().next();
+	}
 
-        logger.debug("DBUnit tests will run using database connections \"{}\" with default connection name {}",
-                StringUtils.collectionToCommaDelimitedString(selectedDatabaseConnections.keySet()), defaultName);
-        return new DatabaseConnections(selectedDatabaseConnections, defaultName);
+	logger.debug("DBUnit tests will run using database connections \"{}\" with default connection name {}",
+		StringUtils.collectionToCommaDelimitedString(selectedDatabaseConnections.keySet()), defaultName);
+	return new DatabaseConnections(selectedDatabaseConnections, defaultName);
     }
 
     private Map<String, AbstractDatabaseConnection> getDatabaseConnectionUsingCommonBeanNames(
-            Map<String, AbstractDatabaseConnection> allDatabaseConnections) {
-        for (String beanName : COMMON_DATABASE_CONNECTION_BEAN_NAMES) {
-            AbstractDatabaseConnection databaseConnection = allDatabaseConnections.get(beanName);
-            if (databaseConnection != null) {
-                return Collections.singletonMap(beanName, databaseConnection);
-            }
-        }
-        return null;
+	    Map<String, AbstractDatabaseConnection> allDatabaseConnections) {
+	for (String beanName : COMMON_DATABASE_CONNECTION_BEAN_NAMES) {
+	    AbstractDatabaseConnection databaseConnection = allDatabaseConnections.get(beanName);
+	    if (databaseConnection != null) {
+		return Collections.singletonMap(beanName, databaseConnection);
+	    }
+	}
+	return null;
     }
 
     private List<String> discoverConfiguredConnectionNames(DbUnitConfiguration configuration) {
-        List<String> names = new ArrayList<>();
-        if (configuration != null) {
-            String[] databaseConnectionBeanNames = configuration.databaseConnection();
-            if (databaseConnectionBeanNames != null) {
-                for (String name : databaseConnectionBeanNames) {
-                    if (!StringUtils.isEmpty(name)) {
-                        names.add(name);
-                    }
-                }
-            }
-        }
-        return names;
+	List<String> names = new ArrayList<>();
+	if (configuration != null) {
+	    String[] databaseConnectionBeanNames = configuration.databaseConnection();
+	    if (databaseConnectionBeanNames != null) {
+		for (String name : databaseConnectionBeanNames) {
+		    if (!StringUtils.isEmpty(name)) {
+			names.add(name);
+		    }
+		}
+	    }
+	}
+	return names;
     }
 
     private Map<String, AbstractDatabaseConnection> filterByNames(Map<String, AbstractDatabaseConnection> connections,
-            List<String> names) {
-        Map<String, AbstractDatabaseConnection> selectedConnections = new HashMap<>();
-        for (String name : names) {
-            AbstractDatabaseConnection connection = connections.get(name);
-            if (connection == null) {
-                throw new IllegalArgumentException(
-                        "IDatabaseConenction can not be found. Expecting Spring bean of type "
-                                + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName()
-                                + " with name \"" + name + "\"");
-            }
-            selectedConnections.put(name, connection);
-        }
-        return selectedConnections;
+	    List<String> names) {
+	Map<String, AbstractDatabaseConnection> selectedConnections = new HashMap<>();
+	for (String name : names) {
+	    AbstractDatabaseConnection connection = connections.get(name);
+	    if (connection == null) {
+		throw new IllegalArgumentException(
+			"IDatabaseConenction can not be found. Expecting Spring bean of type "
+				+ AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName()
+				+ " with name \"" + name + "\"");
+	    }
+	    selectedConnections.put(name, connection);
+	}
+	return selectedConnections;
     }
 
     private Map<String, AbstractDatabaseConnection> discoverDatabaseConnections(ApplicationContext applicationContext)
-            throws SQLException {
-        Map<String, AbstractDatabaseConnection> databaseConnections = new HashMap<>(
-                applicationContext.getBeansOfType(AbstractDatabaseConnection.class));
-        Map<String, DataSource> dataSources = applicationContext.getBeansOfType(DataSource.class);
-        for (Entry<String, DataSource> entry : dataSources.entrySet()) {
-            String beanName2 = entry.getKey();
-            DataSource dataSource = entry.getValue();
-            DatabaseDataSourceConnection databaseConnection = TransactionAwareConnectionHelper
-                    .newConnection(dataSource);
-            databaseConnections.put(beanName2, databaseConnection);
-        }
-        return databaseConnections;
+	    throws SQLException {
+	Map<String, AbstractDatabaseConnection> databaseConnections = new HashMap<>(
+		applicationContext.getBeansOfType(AbstractDatabaseConnection.class));
+	Map<String, DataSource> dataSources = applicationContext.getBeansOfType(DataSource.class);
+	for (Entry<String, DataSource> entry : dataSources.entrySet()) {
+	    String beanName2 = entry.getKey();
+	    DataSource dataSource = entry.getValue();
+	    DatabaseDataSourceConnection databaseConnection = TransactionAwareConnectionHelper
+		    .newConnection(dataSource);
+	    databaseConnections.put(beanName2, databaseConnection);
+	}
+	return databaseConnections;
     }
 
     private DataSetLoader prepareDataSetLoader(ApplicationContext applicationContext, String dataSetLoaderBeanName,
-            Class<? extends DataSetLoader> dataSetLoaderClass) {
-        if (!StringUtils.hasLength(dataSetLoaderBeanName)
-                && applicationContext.containsBean(DATA_SET_LOADER_BEAN_NAME)) {
-            dataSetLoaderBeanName = DATA_SET_LOADER_BEAN_NAME;
-        }
+	    Class<? extends DataSetLoader> dataSetLoaderClass) {
+	if (!StringUtils.hasLength(dataSetLoaderBeanName)
+		&& applicationContext.containsBean(DATA_SET_LOADER_BEAN_NAME)) {
+	    dataSetLoaderBeanName = DATA_SET_LOADER_BEAN_NAME;
+	}
 
-        DataSetLoader dataSetLoader;
-        if (StringUtils.hasLength(dataSetLoaderBeanName)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("DBUnit tests will load datasets using '" + dataSetLoaderBeanName + "'");
-            }
-            dataSetLoader = applicationContext.getBean(dataSetLoaderBeanName, DataSetLoader.class);
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("DBUnit tests will load datasets using " + dataSetLoaderClass);
-            }
-            try {
-                dataSetLoader = dataSetLoaderClass.newInstance();
-            } catch (Exception ex) {
-                throw new IllegalArgumentException(
-                        "Unable to create data set loader instance for " + dataSetLoaderClass, ex);
-            }
-        }
-        return dataSetLoader;
+	DataSetLoader dataSetLoader;
+	if (StringUtils.hasLength(dataSetLoaderBeanName)) {
+	    if (logger.isDebugEnabled()) {
+		logger.debug("DBUnit tests will load datasets using '" + dataSetLoaderBeanName + "'");
+	    }
+	    dataSetLoader = applicationContext.getBean(dataSetLoaderBeanName, DataSetLoader.class);
+	} else {
+	    if (logger.isDebugEnabled()) {
+		logger.debug("DBUnit tests will load datasets using " + dataSetLoaderClass);
+	    }
+	    try {
+		dataSetLoader = dataSetLoaderClass.newInstance();
+	    } catch (Exception ex) {
+		throw new IllegalArgumentException(
+			"Unable to create data set loader instance for " + dataSetLoaderClass, ex);
+	    }
+	}
+	return dataSetLoader;
     }
 
     private DatabaseOperationLookup prepareDatabaseOperationLookup(
-            Class<? extends DatabaseOperationLookup> databaseOperationLookupClass) {
-        DatabaseOperationLookup instance;
-        try {
-            instance = databaseOperationLookupClass.newInstance();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException(
-                    "Unable to create database operation lookup instance for " + databaseOperationLookupClass, ex);
-        }
-        return instance;
+	    Class<? extends DatabaseOperationLookup> databaseOperationLookupClass) {
+	DatabaseOperationLookup instance;
+	try {
+	    instance = databaseOperationLookupClass.newInstance();
+	} catch (Exception ex) {
+	    throw new IllegalArgumentException(
+		    "Unable to create database operation lookup instance for " + databaseOperationLookupClass, ex);
+	}
+	return instance;
     }
 
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
-        Class<?> testClass = testContext.getTestClass();
-        Method testMethod = testContext.getTestMethod();
-        testContextDriver.configureTestContext(testClass, testMethod);
-        testContextDriver.beforeTest();
-        runner.beforeTestMethod(testClass, testMethod, databaseConnections, dataSetLoader, databaseOperationLookup);
+	Class<?> testClass = testContext.getTestClass();
+	Method testMethod = testContext.getTestMethod();
+	testContextDriver.configureTestContext(testClass, testMethod);
+	testContextDriver.beforeTest();
+	runner.beforeTestMethod(testClass, testMethod, databaseConnections, dataSetLoader, databaseOperationLookup);
     }
 
     @Override
     public void afterTestMethod(TestContext testContext) throws Exception {
-        Class<?> testClass = testContext.getTestClass();
-        Object testInstance = testContext.getTestInstance();
-        Method testMethod = testContext.getTestMethod();
-        Throwable testException = testContext.getTestException();
-        testException = runner.afterTestMethod(testClass, testInstance, testMethod, testException, databaseConnections,
-                dataSetLoader, databaseOperationLookup);
-        testContext.updateState(testInstance, testMethod, testException);
-        testContextDriver.afterTest();
-        testContextDriver.rollbackConnections();
-        testContextDriver.releaseTestContext();
+	Class<?> testClass = testContext.getTestClass();
+	Object testInstance = testContext.getTestInstance();
+	Method testMethod = testContext.getTestMethod();
+	Throwable testException = testContext.getTestException();
+	testException = runner.afterTestMethod(testClass, testInstance, testMethod, testException, databaseConnections,
+		dataSetLoader, databaseOperationLookup);
+	testContext.updateState(testInstance, testMethod, testException);
+	testContextDriver.afterTest();
+	testContextDriver.rollbackConnections();
+	testContextDriver.releaseTestContext();
     }
 }

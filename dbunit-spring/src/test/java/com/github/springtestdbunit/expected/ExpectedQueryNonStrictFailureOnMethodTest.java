@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
@@ -30,7 +31,8 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, MustFailDbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
+        MustFailDbUnitTestExecutionListener.class })
 @Transactional
 public class ExpectedQueryNonStrictFailureOnMethodTest {
 
