@@ -44,9 +44,4 @@ public class ExpectedTableNonStrictOnClassTest {
     public void shouldNotFailEvenThoughExpectedTableDoesNotSpecifyAllColumns() throws Exception {
         this.entityAssert.assertValues("existing1", "existing2");
     }
-
-    @Test
-    public void shouldNot1FailEvenThoughExpectedTableDoesNotSpecifyAllColumns() throws Exception {
-        this.entityAssert.assertValues("existing1", "existing2");
-    }
 }

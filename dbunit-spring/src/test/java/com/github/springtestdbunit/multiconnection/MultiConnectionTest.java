@@ -33,9 +33,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -44,8 +45,8 @@ import com.github.springtestdbunit.entity.EntityAssert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        TransactionDbUnitTestExecutionListener.class, })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
+    DbUnitTestExecutionListener.class, })
 @DbUnitConfiguration(databaseConnection = { "dataSource", "dataSource2" })
 @DatabaseSetup(connection = "dataSource", value = "/META-INF/db/insert.xml")
 @DatabaseSetup(connection = "dataSource2", value = "/META-INF/db/multi-insert.xml")
