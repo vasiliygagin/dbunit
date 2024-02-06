@@ -34,7 +34,6 @@ import org.dbunit.VerifyTableDefinition;
 import org.dbunit.assertion.ColumnValueComparerSource;
 import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.database.AbstractDatabaseConnection;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.FullyLoadedTable;
 import org.dbunit.database.ResultSetTable;
 import org.dbunit.dataset.Column;
@@ -123,7 +122,7 @@ public class DefaultPrepAndExpectedTestCase implements PrepAndExpectedTestCase {
 
     @Before
     public final void setUpDatabaseTester() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
+        AbstractDatabaseConnection connection = dbUnit.getConnection();
         DatabaseOperation.CLEAN_INSERT.execute(connection, prepDataSet);
     }
 

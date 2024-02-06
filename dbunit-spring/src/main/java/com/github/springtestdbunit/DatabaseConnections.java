@@ -37,6 +37,10 @@ public class DatabaseConnections {
         this.defaultName = defaultName;
     }
 
+    public Map<String, AbstractDatabaseConnection> getConnectionByName() {
+        return connectionByName;
+    }
+
     public void closeAll() throws SQLException {
         for (AbstractDatabaseConnection connection : this.connectionByName.values()) {
             connection.close();

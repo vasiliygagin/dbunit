@@ -31,12 +31,14 @@ import javax.sql.DataSource;
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.junit.internal.TestContextDriver;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextLoader;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -88,6 +90,10 @@ public class DbUnitTestExecutionListenerPrepareTest {
         assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
         assertEquals(FlatXmlDataSetLoader.class, listener.dataSetLoader.getClass());
         assertEquals(DefaultDatabaseOperationLookup.class, listener.databaseOperationLookup.getClass());
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -115,6 +121,10 @@ public class DbUnitTestExecutionListenerPrepareTest {
         verify(this.applicationContext).getBeansOfType(AbstractDatabaseConnection.class);
         verify(this.applicationContext).containsBean("dbUnitDataSetLoader");
         verifyNoMoreInteractions(this.applicationContext);
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -128,6 +138,10 @@ public class DbUnitTestExecutionListenerPrepareTest {
         DatabaseConnections databaseConnections = listener.databaseConnections;
         Object connection = databaseConnections.get("dataSource");
         assertEquals(DatabaseDataSourceConnection.class, connection.getClass());
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -139,6 +153,12 @@ public class DbUnitTestExecutionListenerPrepareTest {
             assertEquals(ex.getMessage(),
                     "No IDatabaseConenction found. Expecting at least one Spring bean of type org.dbunit.database.AbstractDatabaseConnection or javax.sql.DataSource.");
         }
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -154,6 +174,10 @@ public class DbUnitTestExecutionListenerPrepareTest {
         assertSame(this.databaseConnection, databaseConnections.get("customBean"));
         assertEquals(CustomDataSetLoader.class, listener.dataSetLoader.getClass());
         assertEquals(CustomDatabaseOperationLookup.class, listener.databaseOperationLookup.getClass());
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -168,6 +192,12 @@ public class DbUnitTestExecutionListenerPrepareTest {
                     + "com.github.springtestdbunit.DbUnitTestExecutionListenerPrepareTest$"
                     + "AbstractCustomDataSetLoader", ex.getMessage());
         }
+        DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
+                .getTestExecutionListeners().get(0);
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     @Test
@@ -180,6 +210,10 @@ public class DbUnitTestExecutionListenerPrepareTest {
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
         assertEquals(CustomDataSetLoader.class, listener.dataSetLoader.getClass());
+
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        testContextDriver.releaseTestContext();
     }
 
     private static class LocalApplicationContextLoader implements ContextLoader {

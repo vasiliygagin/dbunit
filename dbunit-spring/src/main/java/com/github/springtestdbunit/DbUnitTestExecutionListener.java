@@ -32,6 +32,7 @@ import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.junit.internal.TestContextAccessor;
 import org.dbunit.junit.internal.TestContextDriver;
+import org.dbunit.junit.internal.connections.SingleConnectionSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -250,6 +251,12 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
 	Class<?> testClass = testContext.getTestClass();
 	Method testMethod = testContext.getTestMethod();
 	testContextDriver.configureTestContext(testClass, testMethod);
+        org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
+        for (Entry<String, AbstractDatabaseConnection> entry : databaseConnections.getConnectionByName().entrySet()) {
+            String connectionName = entry.getKey();
+            AbstractDatabaseConnection connection = entry.getValue();
+            dbunitTestContext.addConnecionSource(connectionName, new SingleConnectionSource(connection));
+        }
 	testContextDriver.beforeTest();
 	runner.beforeTestMethod(testClass, testMethod, databaseConnections, dataSetLoader, databaseOperationLookup);
     }

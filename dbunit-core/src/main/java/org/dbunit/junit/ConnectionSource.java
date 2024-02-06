@@ -3,14 +3,14 @@
  */
 package org.dbunit.junit;
 
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 
 /**
  *
  */
 public interface ConnectionSource {
 
-    DatabaseConnection getConnection() throws DatabaseException;
+    AbstractDatabaseConnection getConnection() throws DatabaseException;
 
-    void releaseConnection(DatabaseConnection connection);
+    void releaseConnection(AbstractDatabaseConnection connection);
 }
