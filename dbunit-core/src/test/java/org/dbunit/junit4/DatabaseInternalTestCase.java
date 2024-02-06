@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.database.AbstractDatabaseConnection;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.IDataSet;
@@ -43,7 +42,7 @@ public abstract class DatabaseInternalTestCase {
 
     @Before
     public final void setUpDatabaseTester() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
+        AbstractDatabaseConnection connection = dbUnit.getConnection();
         SqlScriptExecutor.execute(connection, "src/test/resources/sql/hypersonic.sql");
 
         getSetUpOperation().execute(connection, getDataSet());
@@ -51,7 +50,7 @@ public abstract class DatabaseInternalTestCase {
 
     @After
     public void tearDown() throws Exception {
-        DatabaseConnection connection = dbUnit.getConnection();
+        AbstractDatabaseConnection connection = dbUnit.getConnection();
         getTearDownOperation().execute(connection, getDataSet());
 
         Connection jdbcConnection = dbUnit.getJdbcConnection();

@@ -76,7 +76,7 @@ public class DbUnitRunner {
         } else {
             try {
                 verifyExpected(testClass, testInstance, testMethod, connections, dataSetLoader);
-            } catch (RuntimeException re) {
+            } catch (Throwable re) {
                 testException = re;
             }
         }

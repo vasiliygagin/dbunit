@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.junit.ConnectionSource;
 import org.dbunit.junit.DatabaseException;
@@ -24,10 +25,10 @@ public class TestContext {
     private List<DbunitTask> tasksAfter = new ArrayList<>();
 
     private Map<String, ConnectionSource> connectionSources = new HashMap<>();
-    private Map<String, DatabaseConnection> connections = new HashMap<>();
+    private Map<String, AbstractDatabaseConnection> connections = new HashMap<>();
     private String schema;
 
-    public DatabaseConnection getConnection() throws DatabaseException {
+    public AbstractDatabaseConnection getConnection() throws DatabaseException {
         String connectionName = getConnectionName();
         return getConnection(connectionName);
     }
@@ -37,8 +38,8 @@ public class TestContext {
      * @return
      * @throws DatabaseException
      */
-    public DatabaseConnection getConnection(String connectionName) throws DatabaseException {
-        DatabaseConnection databaseConnection = connections.get(connectionName);
+    public AbstractDatabaseConnection getConnection(String connectionName) throws DatabaseException {
+        AbstractDatabaseConnection databaseConnection = connections.get(connectionName);
         if (databaseConnection == null) {
             ConnectionSource connectionSource = connectionSources.get(connectionName);
             if (connectionSource == null) {
@@ -83,17 +84,17 @@ public class TestContext {
     }
 
     public void releaseConnections() {
-        for (Entry<String, DatabaseConnection> entry : connections.entrySet()) {
+        for (Entry<String, AbstractDatabaseConnection> entry : connections.entrySet()) {
             String connectionName = entry.getKey();
-            DatabaseConnection connection = entry.getValue();
+            AbstractDatabaseConnection connection = entry.getValue();
             connectionSources.get(connectionName).releaseConnection(connection);
         }
         connections.clear();
     }
 
     public void shutdownConnections() {
-        for (DatabaseConnection connection : connections.values()) {
-            connection.shutdown();
+        for (AbstractDatabaseConnection connection : connections.values()) {
+            ((DatabaseConnection) connection).shutdown();
         }
     }
 
@@ -138,7 +139,7 @@ public class TestContext {
     }
 
     void rollbackConnections() {
-        for (DatabaseConnection connection : connections.values()) {
+        for (AbstractDatabaseConnection connection : connections.values()) {
             connection.rollback();
         }
     }

@@ -35,7 +35,7 @@ import com.github.springtestdbunit.entity.OtherEntityAssert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
-    DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class })
 @Transactional
 public class CleanInsertSetupOnMethodTest {
 
@@ -53,7 +53,7 @@ public class CleanInsertSetupOnMethodTest {
 
     @Test
     @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = { "/META-INF/db/insert.xml",
-    "/META-INF/db/insert_Other.xml" })
+            "/META-INF/db/insert_Other.xml" })
     public void testSeveralSetupFiles() throws Exception {
         this.entityAssert.assertValues("fromDbUnit");
         // OtherSampleEntity is populated using import.sql imitating dirty state of the

@@ -13,17 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.junit.DatabaseException;
 
 public final class SqlScriptExecutor {
 
-    public static void execute(DatabaseConnection connection, String filePath) throws DatabaseException {
+    public static void execute(AbstractDatabaseConnection connection, String filePath) throws DatabaseException {
         File file = new File(filePath).getAbsoluteFile();
         SqlScriptExecutor.execute(connection, file);
     }
 
-    public static void execute(DatabaseConnection connection, File ddlFile) throws DatabaseException {
+    public static void execute(AbstractDatabaseConnection connection, File ddlFile) throws DatabaseException {
         String sql;
         try {
             sql = readSqlFromFile(ddlFile);

@@ -21,10 +21,11 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.metadata.MetadataManager;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+
+import io.github.vasiliygagin.dbunit.jdbc.DatabaseConfig;
 
 public class TransactionAwareConnectionHelper {
 

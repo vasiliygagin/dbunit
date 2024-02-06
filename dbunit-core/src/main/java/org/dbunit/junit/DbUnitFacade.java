@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.junit.internal.DbUnitRule;
 import org.dbunit.operation.DatabaseOperation;
@@ -24,7 +24,7 @@ public class DbUnitFacade extends DbUnitRule {
      * @return a connection to default database
      * @throws DatabaseException
      */
-    public DatabaseConnection getConnection() throws DatabaseException {
+    public AbstractDatabaseConnection getConnection() throws DatabaseException {
         return getTestContext().getConnection();
     }
 

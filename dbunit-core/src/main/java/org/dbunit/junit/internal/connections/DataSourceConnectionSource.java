@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.metadata.MetadataManager;
 import org.dbunit.junit.ConnectionSource;
@@ -58,7 +59,7 @@ public class DataSourceConnectionSource implements ConnectionSource {
     }
 
     @Override
-    public void releaseConnection(DatabaseConnection connection) {
+    public void releaseConnection(AbstractDatabaseConnection connection) {
         try {
             connection.getConnection().close();
         } catch (SQLException exc) {
