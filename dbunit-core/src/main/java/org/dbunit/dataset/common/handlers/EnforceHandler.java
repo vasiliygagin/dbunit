@@ -24,6 +24,8 @@ package org.dbunit.dataset.common.handlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * @author fede
  * @author Last changed by: $Author$
@@ -51,7 +53,7 @@ public class EnforceHandler extends AbstractPipelineComponent {
     }
 
     public static final PipelineComponent ENFORCE(PipelineComponent[] components) {
-        logger.debug("ENFORCE(components={}) - start", components);
+        logger.debug("ENFORCE(components={}) - start", Arrays.toString(components));
 
         return createPipelineComponent(new EnforceHandler(components), new ENFORCE());
     }
@@ -86,7 +88,7 @@ public class EnforceHandler extends AbstractPipelineComponent {
     }
 
     protected void setEnforcedComponents(PipelineComponent[] enforcedComponents) {
-        logger.debug("setEnforcedComponents(enforcedComponents={}) - start", enforcedComponents);
+        logger.debug("setEnforcedComponents(enforcedComponents={}) - start", Arrays.toString(enforcedComponents));
 
         this.enforcedComponents = enforcedComponents;
     }

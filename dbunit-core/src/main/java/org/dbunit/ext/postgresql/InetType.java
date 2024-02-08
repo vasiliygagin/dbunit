@@ -71,8 +71,8 @@ public class InetType extends AbstractDataType {
 
         try {
             Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
-            Constructor ct = aPGObjectClass.getConstructor(null);
-            tempInet = ct.newInstance(null);
+            Constructor ct = aPGObjectClass.getConstructor(new Class[0]);
+            tempInet = ct.newInstance(new Object[0]);
 
             Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
             setTypeMethod.invoke(tempInet, new Object[] { "inet" });

@@ -27,6 +27,8 @@ import org.dbunit.dataset.ITable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * Implementation of the IColumnFilter interface that exposes columns matching
  * include patterns and not matching exclude patterns.
@@ -62,7 +64,7 @@ public class DefaultColumnFilter implements IColumnFilter {
      * Add specified columns to accepted column name list.
      */
     public void includeColumns(Column[] columns) {
-        logger.debug("includeColumns(columns={}) - start", columns);
+        logger.debug("includeColumns(columns={}) - start", Arrays.toString(columns));
 
         for (Column column : columns) {
             _includeMatcher.addPattern(column.getColumnName());
@@ -84,7 +86,7 @@ public class DefaultColumnFilter implements IColumnFilter {
      * Add specified columns to excluded column name list.
      */
     public void excludeColumns(Column[] columns) {
-        logger.debug("excludeColumns(columns={} - start", columns);
+        logger.debug("excludeColumns(columns={} - start", Arrays.toString(columns));
 
         for (Column column : columns) {
             _excludeMatcher.addPattern(column.getColumnName());

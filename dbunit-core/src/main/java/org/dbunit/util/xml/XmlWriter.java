@@ -58,6 +58,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -506,7 +507,7 @@ public class XmlWriter {
     // Two example methods. They should output the same XML:
     // <person name="fred" age="12"><phone>425343</phone><bob/></person>
     static public void main(final String[] args) throws IOException {
-        logger.debug("main(args={}) - start", args);
+        logger.debug("main(args={}) - start", Arrays.toString(args));
 
         test1();
         test2();
