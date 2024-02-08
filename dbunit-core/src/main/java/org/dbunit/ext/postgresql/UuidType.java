@@ -73,8 +73,8 @@ public class UuidType extends AbstractDataType {
 
         try {
             Class aPGObjectClass = super.loadClass("org.postgresql.util.PGobject", connection);
-            Constructor ct = aPGObjectClass.getConstructor(null);
-            tempUUID = ct.newInstance(null);
+            Constructor ct = aPGObjectClass.getConstructor(new Class[0]);
+            tempUUID = ct.newInstance(new Object[0]);
 
             Method setTypeMethod = aPGObjectClass.getMethod("setType", new Class[] { String.class });
             setTypeMethod.invoke(tempUUID, new Object[] { "uuid" });

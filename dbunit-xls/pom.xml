@@ -56,14 +56,13 @@
         <jarPluginVersion>3.0.2</jarPluginVersion>
         <jdependPluginVersion>2.0</jdependPluginVersion>
         <jxrPluginVersion>2.5</jxrPluginVersion>
-        <modernizer-maven-plugin>2.0.0</modernizer-maven-plugin>
         <pmdPluginVersion>3.8</pmdPluginVersion>
         <projectInfoReportsPluginVersion>2.9</projectInfoReportsPluginVersion>
         <releasePluginVersion>2.5.3</releasePluginVersion>
         <resourcesPluginVersion>3.0.2</resourcesPluginVersion>
         <sitePluginVersion>3.7.1</sitePluginVersion>
         <sourcePluginVersion>3.0.1</sourcePluginVersion>
-        <surefirePluginVersion>2.21.0</surefirePluginVersion>
+        <surefirePluginVersion>3.2.5</surefirePluginVersion>
         <versionsMavenPluginVersion>2.8.1</versionsMavenPluginVersion>
         <wagonSshVersion>2.10</wagonSshVersion>
 
@@ -79,13 +78,6 @@
             <artifactId>dbunit-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!--
-      TODO: check which dependencies could marked as optional. For
-      instance, ant is optional because it's only necessary for the
-      dbunit Ant tasks.
-    -->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -120,12 +112,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>true</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <scope>true</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -199,32 +191,6 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${cleanPluginVersion}</version>
                 </plugin>
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-enforcer-plugin</artifactId>-->
-<!--                    <version>${enforcerPluginVersion}</version>-->
-<!--                    <executions>-->
-<!--                        <execution>-->
-<!--                            <id>enforce-versions</id>-->
-<!--                            <goals>-->
-<!--                                <goal>enforce</goal>-->
-<!--                            </goals>-->
-<!--                        </execution>-->
-<!--                    </executions>-->
-<!--                    <configuration>-->
-<!--                        <rules>-->
-<!--                            <requireMavenVersion>-->
-<!--                                <version>${mavenVersion}</version>-->
-<!--                            </requireMavenVersion>-->
-<!--                            <requireJavaVersion>-->
-<!--                                <version>${compileSource}</version>-->
-<!--                            </requireJavaVersion>-->
-<!--                            <requirePluginVersions>-->
-<!--                                <phases>compile</phases>-->
-<!--                            </requirePluginVersions>-->
-<!--                        </rules>-->
-<!--                    </configuration>-->
-<!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -252,14 +218,6 @@
                                 <goal>prepare-agent</goal>
                             </goals>
                         </execution>
-                        <!--
-enable this to generate coverage report HTML files during build (same as site)
-            <execution>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
--->
                     </executions>
                 </plugin>
                 <plugin>
@@ -282,26 +240,6 @@ enable this to generate coverage report HTML files during build (same as site)
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jxr-plugin</artifactId>
                     <version>${jxrPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.gaul</groupId>
-                    <artifactId>modernizer-maven-plugin</artifactId>
-                    <version>${modernizer-maven-plugin}</version>
-                    <configuration>
-                        <javaVersion>${compileSource}</javaVersion>
-                        <!-- TODO enable failOnViolations after fixing
-                        failures-->
-                        <failOnViolations>false</failOnViolations>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>modernizer</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>modernizer</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -355,6 +293,7 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.4.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -363,10 +302,6 @@ enable this to generate coverage report HTML files during build (same as site)
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.gaul</groupId>
-                <artifactId>modernizer-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

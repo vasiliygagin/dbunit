@@ -64,7 +64,7 @@ public abstract class SemaphoreControlledChannel implements BoundedChannel {
      * 
      * @exception IllegalArgumentException  if capacity less or equal to zero.
      * @exception NoSuchMethodException     If class does not have constructor that
-     *                                      intializes permits
+     *                                      initializes permits
      * @exception SecurityException         if constructor information not
      *                                      accessible
      * @exception InstantiationException    if semaphore class is abstract
@@ -72,17 +72,17 @@ public abstract class SemaphoreControlledChannel implements BoundedChannel {
      * @exception InvocationTargetException if semaphore constructor throws an
      *                                      exception
      **/
-    public SemaphoreControlledChannel(int capacity, Class semaphoreClass)
+    public SemaphoreControlledChannel(Integer capacity, Class<?> semaphoreClass)
             throws IllegalArgumentException, NoSuchMethodException, SecurityException, InstantiationException,
             IllegalAccessException, InvocationTargetException {
         if (capacity <= 0)
             throw new IllegalArgumentException();
         capacity_ = capacity;
-        Class[] longarg = { Long.TYPE };
-        Constructor ctor = semaphoreClass.getDeclaredConstructor(longarg);
-        Long[] cap = { new Long(capacity) };
+        Class<?>[] arg = { Integer.TYPE };
+        Constructor<?> ctor = semaphoreClass.getDeclaredConstructor(arg);
+        Object[] cap = {capacity};
         putGuard_ = (Semaphore) (ctor.newInstance(cap));
-        Long[] zero = { new Long(0) };
+        Object[] zero = {0};
         takeGuard_ = (Semaphore) (ctor.newInstance(zero));
     }
 

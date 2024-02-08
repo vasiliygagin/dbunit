@@ -24,6 +24,8 @@ package org.dbunit.dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * Specialized ITableMetaData implementation that convert the table name and
  * column names to lower case. Used in DbUnit own test suite to verify that
@@ -67,7 +69,7 @@ public class LowerCaseTableMetaData extends AbstractTableMetaData {
     }
 
     private Column[] createLowerColumns(Column[] columns) {
-        logger.debug("createLowerColumns(columns={}) - start", columns);
+        logger.debug("createLowerColumns(columns={}) - start", Arrays.toString(columns));
 
         Column[] lowerColumns = new Column[columns.length];
         for (int i = 0; i < columns.length; i++) {

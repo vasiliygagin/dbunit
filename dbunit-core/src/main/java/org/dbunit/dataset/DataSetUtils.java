@@ -22,6 +22,7 @@
 package org.dbunit.dataset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -245,7 +246,7 @@ public class DataSetUtils {
      * @return String[] - reversed array.
      */
     public static String[] reverseStringArray(String[] array) {
-        logger.debug("reverseStringArray(array={}) - start", array);
+        logger.debug("reverseStringArray(array={}) - start", Arrays.toString(array));
         String[] newArray = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             newArray[array.length - 1 - i] = array[i];

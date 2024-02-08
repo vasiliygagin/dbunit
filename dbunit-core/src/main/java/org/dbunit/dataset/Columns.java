@@ -252,7 +252,7 @@ public class Columns {
      * @return The string representation of the given column names
      */
     public static String getColumnNamesAsString(Column[] columns) {
-        logger.debug("getColumnNamesAsString(columns={}) - start", columns);
+        logger.debug("getColumnNamesAsString(columns={}) - start", Arrays.toString(columns));
 
         String[] names = new String[columns.length];
         for (int i = 0; i < columns.length; i++) {
@@ -311,7 +311,7 @@ public class Columns {
         /**
          * Compare columns by name ignoring case
          * 
-         * @see java.util.Comparator#compare(T, T)
+         * @see java.util.Comparator#compare
          */
         public int compare(Object o1, Object o2) {
             logger.debug("compare(o1={}, o2={}) - start", o1, o2);
