@@ -47,23 +47,24 @@ public class DatabaseConnections {
         }
     }
 
-    public AbstractDatabaseConnection get(String name) {
+    public String determineConnectionName(String name) {
         if (name == null || name.length() == 0) {
-            return defaultConnection();
+            if (defaultName == null) {
+                throw new IllegalArgumentException(
+                        "Requested a IDatabaseConnection without specifying name, but multiple connections available: "
+                                + connectionByName.keySet() + ", Please provide connection name");
+            }
+            name = defaultName;
         }
+        return name;
+    }
+
+    public AbstractDatabaseConnection get(String name) {
+        name = determineConnectionName(name);
         AbstractDatabaseConnection connection = connectionByName.get(name);
         if (connection == null) {
             throw new IllegalStateException("Unable to find IDatabaseConnection named " + name);
         }
         return connection;
-    }
-
-    private AbstractDatabaseConnection defaultConnection() {
-        if (defaultName == null) {
-            throw new IllegalArgumentException(
-                    "Requested a IDatabaseConnection without specifying name, but multiple connections available: "
-                            + connectionByName.keySet() + ", Please provide connection name");
-        }
-        return connectionByName.get(defaultName);
     }
 }

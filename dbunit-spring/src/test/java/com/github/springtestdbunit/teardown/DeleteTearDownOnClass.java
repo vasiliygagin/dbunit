@@ -23,17 +23,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.entity.EntityAssert;
-import com.github.springtestdbunit.testutils.AfterTearDownDbUnitTestExecutionListener;
+import com.github.springtestdbunit.testutils.CallAfterTestMethodExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        AfterTearDownDbUnitTestExecutionListener.class })
+        TransactionalTestExecutionListener.class, DbUnitRollbackTestExecutionListener.class,
+        CallAfterTestMethodExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/META-INF/db/delete.xml")
 @Transactional
 public class DeleteTearDownOnClass {

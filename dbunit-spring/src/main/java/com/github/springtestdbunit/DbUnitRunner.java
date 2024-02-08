@@ -33,6 +33,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.filter.IColumnFilter;
+import org.dbunit.junit.internal.TestContext;
 import org.junit.runners.model.MultipleFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,18 +57,18 @@ import com.github.springtestdbunit.operation.DatabaseOperationLookup;
  */
 public class DbUnitRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(DbUnitTestExecutionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbUnitRunner.class);
 
     public void beforeTestMethod(Class<?> testClass, Method testMethod, DatabaseConnections connections,
-            DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup)
+            DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
             throws Exception, SQLException, DataSetException, DatabaseUnitException {
         setupOrTeardown(testClass, testMethod, DatabaseSetup.class, connections, dataSetLoader,
-                databaseOperationLookup);
+                databaseOperationLookup, dbunitTestContext);
     }
 
     public Throwable afterTestMethod(Class<?> testClass, Object testInstance, Method testMethod,
             Throwable testException, DatabaseConnections connections, DataSetLoader dataSetLoader,
-            DatabaseOperationLookup databaseOperationLookup)
+            DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
             throws Exception, DataSetException, SQLException, DatabaseUnitException {
         if (testException != null) {
             if (logger.isDebugEnabled()) {
@@ -83,7 +84,7 @@ public class DbUnitRunner {
 
         try {
             setupOrTeardown(testClass, testMethod, DatabaseTearDown.class, connections, dataSetLoader,
-                    databaseOperationLookup);
+                    databaseOperationLookup, dbunitTestContext);
             connections.closeAll();
         } catch (RuntimeException ex) {
             if (testException == null) {
@@ -155,7 +156,7 @@ public class DbUnitRunner {
 
     private <T extends Annotation> void setupOrTeardown(Class<?> testClass, Method testMethod, Class<T> annotationClass,
             DatabaseConnections connections, DataSetLoader dataSetLoader,
-            DatabaseOperationLookup databaseOperationLookup)
+            DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
             throws Exception, SQLException, DataSetException, DatabaseUnitException {
         Annotations<T> annotations = new Annotations<>(testClass, testMethod, annotationClass);
         for (T annotation : annotations) {
@@ -167,14 +168,20 @@ public class DbUnitRunner {
                     dataSetLocations);
 
             executeOperation(testClass, connections, dataSetLoader, databaseOperationLookup, dataSetLocations,
-                    connectionName, operation);
+                    connectionName, operation, dbunitTestContext);
         }
     }
 
     private void executeOperation(Class<?> testClass, DatabaseConnections connections, DataSetLoader dataSetLoader,
             DatabaseOperationLookup databaseOperationLookup, String[] dataSetLocations, String connectionName,
-            DatabaseOperation operation) throws Exception, SQLException, DataSetException, DatabaseUnitException {
-        AbstractDatabaseConnection databaseConnection = connections.get(connectionName);
+            DatabaseOperation operation, TestContext dbunitTestContext)
+            throws Exception, SQLException, DataSetException, DatabaseUnitException {
+
+        connectionName = connections.determineConnectionName(connectionName);
+        AbstractDatabaseConnection databaseConnection = dbunitTestContext.getConnection(connectionName);
+        if (databaseConnection == null) {
+            throw new IllegalStateException("Unable to find DatabaseConnection named " + connectionName);
+        }
         org.dbunit.operation.DatabaseOperation dbUnitOperation = getDbUnitDatabaseOperation(databaseOperationLookup,
                 operation);
         IDataSet dataSet = loadDataSet(testClass, dataSetLoader, dataSetLocations, databaseConnection);
