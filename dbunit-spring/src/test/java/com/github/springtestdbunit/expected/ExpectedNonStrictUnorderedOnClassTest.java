@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
@@ -32,7 +33,8 @@ import com.github.springtestdbunit.entity.EntityAssert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitRollbackTestExecutionListener.class,
+        DbUnitTestExecutionListener.class })
 @ExpectedDatabase(value = "/META-INF/db/expected_nonstrict_unordered.xml", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
 @Transactional
 public class ExpectedNonStrictUnorderedOnClassTest {

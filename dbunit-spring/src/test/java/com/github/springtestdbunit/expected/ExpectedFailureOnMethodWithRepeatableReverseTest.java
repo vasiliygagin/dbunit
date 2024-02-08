@@ -26,6 +26,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.annotation.ExpectedDatabases;
 import com.github.springtestdbunit.entity.EntityAssert;
@@ -34,7 +35,7 @@ import com.github.springtestdbunit.testutils.MustFailDbUnitTestExecutionListener
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
-        MustFailDbUnitTestExecutionListener.class })
+        DbUnitRollbackTestExecutionListener.class, MustFailDbUnitTestExecutionListener.class })
 @Transactional
 public class ExpectedFailureOnMethodWithRepeatableReverseTest {
 

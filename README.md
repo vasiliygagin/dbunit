@@ -65,6 +65,8 @@ Starting with version 2.10.0 all XLS support moved out to
         </dependency>
 XLS support was very primitive and deprecated, but was pulling a lot of dependencies.
 
+When using dbunit-spring, use DbUnitRollbackTestExecutionListener.class to trigger integration of spring and dbunit. Use original DbUnitTestExecutionListener.class to process original sring-test-dbunit annotations. List DbUnitRollbackTestExecutionListener.class 1st, so transaction does not rollback before validations are done.
+
 Broken things
 =============
 - Something is not working in ant support. Test cases are failing, no guarantees that it will work. Upgraded ant version, things got worse.

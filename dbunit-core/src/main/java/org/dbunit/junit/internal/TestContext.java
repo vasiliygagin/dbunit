@@ -90,6 +90,7 @@ public class TestContext {
             connectionSources.get(connectionName).releaseConnection(connection);
         }
         connections.clear();
+        connectionSources.clear();
     }
 
     public void shutdownConnections() {
