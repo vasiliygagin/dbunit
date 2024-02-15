@@ -50,31 +50,25 @@ public @interface DbUnitConfiguration {
      * Returns the names of the spring beans which will be used to access
      * {@link IDatabaseConnection IDatabaseConnections}. The referenced beans can
      * either be a instance of {@link IDatabaseConnection} or a {@link DataSource}.
-     * 
-     * @return the bean name of the database connection
+     *
+     * @return the bean names of the database connections to be used
      */
     String[] databaseConnection() default {};
 
     /**
-     * If no connections configured via
-     * {@link DbUnitConfiguration#databaseConnection()}, then by default connection
-     * lookup is performed by common connection names "dbUnitDatabaseConnection" and
-     * "dataSource". And only first found connection is used. Only if that lookup
-     * fails, than all auto-discovered connections will be used. By setting this
-     * attribute to <code>true</code> legacy connection lookup by common names will
-     * be skipped and all auto-discovered connections will be used. If connections
-     * are configured via {@link DbUnitConfiguration#databaseConnection()}, then no
-     * connection lookup is performed and this attribute is ignored.
-     * 
-     * @return true if connection lookup by common name should be skipped
+     * Returns name of spring bean to be used as a default connection. Specified
+     * connection will be used if user did not identify connection name for an
+     * operation.
+     *
+     * @return the bean name of default database connection
      */
-    boolean skipLegacyConnectionLookup() default false;
+    String defaultConnectionName() default "";
 
     /**
      * Returns the class that will be used to load {@link IDataSet} resources. The
      * specified class must implement {@link DataSetLoader} and must have a default
      * constructor.
-     * 
+     *
      * @return the data set loader class
      */
     Class<? extends DataSetLoader> dataSetLoader() default FlatXmlDataSetLoader.class;
@@ -82,7 +76,7 @@ public @interface DbUnitConfiguration {
     /**
      * Returns the name of the bean that will be used to load {@link IDataSet}
      * resources. The specified bean must implement {@link DataSetLoader}.
-     * 
+     *
      * @return the data set loader bean name
      */
     String dataSetLoaderBean() default "";
@@ -91,7 +85,7 @@ public @interface DbUnitConfiguration {
      * Returns the class that will be used to lookup DBUnit databse operations. The
      * specific class must implement {@link DatabaseOperationLookup} and must have a
      * default constructor.
-     * 
+     *
      * @return the database operation lookup
      */
     Class<? extends DatabaseOperationLookup> databaseOperationLookup() default DefaultDatabaseOperationLookup.class;

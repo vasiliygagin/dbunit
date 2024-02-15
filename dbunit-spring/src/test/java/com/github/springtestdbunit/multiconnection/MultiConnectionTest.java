@@ -62,7 +62,7 @@ public class MultiConnectionTest {
     private DataSource dataSource;
 
     @Test
-    @DatabaseSetup(value = "/META-INF/db/insert2.xml", type = DatabaseOperation.INSERT)
+    @DatabaseSetup(connection = "dataSource", value = "/META-INF/db/insert2.xml", type = DatabaseOperation.INSERT)
     @DatabaseSetup(connection = "dataSource2", value = "/META-INF/db/multi-insert2.xml", type = DatabaseOperation.INSERT)
     public void testInsert() throws Exception {
         this.entityAssert.assertValues("fromDbUnit", "fromDbUnit2");

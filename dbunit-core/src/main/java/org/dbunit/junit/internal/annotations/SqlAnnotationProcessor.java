@@ -6,7 +6,6 @@ package org.dbunit.junit.internal.annotations;
 import java.lang.reflect.Method;
 
 import org.dbunit.database.AbstractDatabaseConnection;
-import org.dbunit.junit.DatabaseException;
 import org.dbunit.junit.SqlAfter;
 import org.dbunit.junit.SqlBefore;
 import org.dbunit.junit.internal.SqlScriptExecutor;
@@ -27,7 +26,7 @@ public class SqlAnnotationProcessor {
     void processBeforeAnnotations(TestContext testContext, SqlBefore[] annotations) {
         for (SqlBefore annotation : annotations) {
             testContext.addTaskBefore(tc -> {
-                AbstractDatabaseConnection connection = selectConnection(tc, annotation.dataSourceName());
+                AbstractDatabaseConnection connection = tc.getConnection(annotation.dataSourceName());
                 SqlScriptExecutor.execute(connection, annotation.filePath());
             });
         }
@@ -36,20 +35,9 @@ public class SqlAnnotationProcessor {
     void processAfterAnnotations(TestContext testContext, SqlAfter[] annotations) {
         for (SqlAfter annotation : annotations) {
             testContext.addTaskAfter(tc -> {
-                AbstractDatabaseConnection connection = selectConnection(tc, annotation.dataSourceName());
+                AbstractDatabaseConnection connection = tc.getConnection(annotation.dataSourceName());
                 SqlScriptExecutor.execute(connection, annotation.filePath());
             });
         }
-    }
-
-    AbstractDatabaseConnection selectConnection(TestContext testContext, String dataSourceName)
-            throws DatabaseException {
-        AbstractDatabaseConnection connection;
-        if (dataSourceName.isEmpty()) {
-            connection = testContext.getConnection();
-        } else {
-            connection = testContext.getConnection(dataSourceName);
-        }
-        return connection;
     }
 }

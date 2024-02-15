@@ -30,6 +30,7 @@ import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.entity.EntityAssert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,6 +38,7 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
         DbUnitRollbackTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @Transactional
+@DbUnitConfiguration(defaultConnectionName = "dataSource")
 @DatabaseSetup(type = DatabaseOperation.TRUNCATE_TABLE, value = "/META-INF/db/delete.xml")
 public class TruncateSetupOnClassTest {
 

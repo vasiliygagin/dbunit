@@ -19,7 +19,6 @@ package com.github.springtestdbunit;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,14 +78,11 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DbUnitTestExecutionListener.class);
 
-    private static final String[] COMMON_DATABASE_CONNECTION_BEAN_NAMES = { "dbUnitDatabaseConnection", "dataSource" };
-
     private static final String DATA_SET_LOADER_BEAN_NAME = "dbUnitDataSetLoader";
 
     private TestContextDriver testContextDriver;
     // TODO: probably want to save something in spring context for performance
     // reasons
-    DatabaseConnections databaseConnections;
     DataSetLoader dataSetLoader;
     DatabaseOperationLookup databaseOperationLookup;
     private DbUnitRunner runner = new DbUnitRunner();
@@ -96,7 +92,7 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         Class<?> testClass = testContext.getTestClass();
         ApplicationContext applicationContext = testContext.getApplicationContext();
 
-	testContextDriver = TestContextAccessor.buildTestContext();
+        testContextDriver = TestContextAccessor.buildTestContext();
 
         loadStuff(testClass, applicationContext);
     }
@@ -113,52 +109,42 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
             databaseOperationLookupClass = configuration.databaseOperationLookup();
         }
 
-        databaseConnections = prepareDatabaseConnections(applicationContext, configuration);
+        prepareDatabaseConnections(applicationContext, configuration);
         dataSetLoader = prepareDataSetLoader(applicationContext, dataSetLoaderBeanName, dataSetLoaderClass);
         databaseOperationLookup = prepareDatabaseOperationLookup(databaseOperationLookupClass);
     }
 
-    private DatabaseConnections prepareDatabaseConnections(ApplicationContext applicationContext,
-            DbUnitConfiguration configuration) throws SQLException {
+    private void prepareDatabaseConnections(ApplicationContext applicationContext, DbUnitConfiguration configuration)
+            throws SQLException {
+        org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
+
         Map<String, AbstractDatabaseConnection> allDatabaseConnections = discoverDatabaseConnections(
                 applicationContext);
-        if (allDatabaseConnections.isEmpty()) {
+        if (allDatabaseConnections.isEmpty()) { // TODO not sure need to fail here
             throw new IllegalStateException("No IDatabaseConenction found. Expecting at least one Spring bean of type "
                     + AbstractDatabaseConnection.class.getName() + " or " + DataSource.class.getName() + ".");
         }
 
         Map<String, AbstractDatabaseConnection> selectedDatabaseConnections = null;
-        String defaultName = null;
         List<String> names = discoverConfiguredConnectionNames(configuration);
         if (!names.isEmpty()) {
             selectedDatabaseConnections = filterByNames(allDatabaseConnections, names);
-            defaultName = names.get(0);
-        } else if (configuration == null || !configuration.skipLegacyConnectionLookup()) {
-            selectedDatabaseConnections = getDatabaseConnectionUsingCommonBeanNames(allDatabaseConnections);
-        }
-
-        if (selectedDatabaseConnections == null) {
+        } else {
             selectedDatabaseConnections = allDatabaseConnections;
         }
 
-        if (defaultName == null && selectedDatabaseConnections.size() == 1) {
-            defaultName = selectedDatabaseConnections.keySet().iterator().next();
-        }
-
-        logger.debug("DBUnit tests will run using database connections \"{}\" with default connection name {}",
-                StringUtils.collectionToCommaDelimitedString(selectedDatabaseConnections.keySet()), defaultName);
-        return new DatabaseConnections(selectedDatabaseConnections, defaultName);
-    }
-
-    private Map<String, AbstractDatabaseConnection> getDatabaseConnectionUsingCommonBeanNames(
-            Map<String, AbstractDatabaseConnection> allDatabaseConnections) {
-        for (String beanName : COMMON_DATABASE_CONNECTION_BEAN_NAMES) {
-            AbstractDatabaseConnection databaseConnection = allDatabaseConnections.get(beanName);
-            if (databaseConnection != null) {
-                return Collections.singletonMap(beanName, databaseConnection);
+        if (configuration != null) {
+            String defaultConnectionName = configuration.defaultConnectionName();
+            if (!StringUtils.isEmpty(defaultConnectionName)) {
+                dbunitTestContext.setDefaultConnectionName(defaultConnectionName);
             }
         }
-        return null;
+
+        for (Entry<String, AbstractDatabaseConnection> entry : selectedDatabaseConnections.entrySet()) {
+            String connectionName = entry.getKey();
+            AbstractDatabaseConnection connection = entry.getValue();
+            dbunitTestContext.addConnecionSource(connectionName, new SingleConnectionSource(connection));
+        }
     }
 
     private List<String> discoverConfiguredConnectionNames(DbUnitConfiguration configuration) {
@@ -251,16 +237,9 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         Class<?> testClass = testContext.getTestClass();
         Method testMethod = testContext.getTestMethod();
         testContextDriver.configureTestContext(testClass, testMethod);
-        org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
-        for (Entry<String, AbstractDatabaseConnection> entry : databaseConnections.getConnectionByName().entrySet()) {
-            String connectionName = entry.getKey();
-            AbstractDatabaseConnection connection = entry.getValue();
-            dbunitTestContext.addConnecionSource(connectionName, new SingleConnectionSource(connection));
-        }
-
         testContextDriver.beforeTest();
-        runner.beforeTestMethod(testClass, testMethod, databaseConnections, dataSetLoader, databaseOperationLookup,
-                dbunitTestContext);
+        org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
+        runner.beforeTestMethod(testClass, testMethod, dbunitTestContext, dataSetLoader, databaseOperationLookup);
     }
 
     @Override
@@ -271,8 +250,8 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
         Throwable testException = testContext.getTestException();
 
         org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
-        testException = runner.afterTestMethod(testClass, testInstance, testMethod, testException, databaseConnections,
-                dataSetLoader, databaseOperationLookup, dbunitTestContext);
+        testException = runner.afterTestMethod(testClass, testInstance, testMethod, testException, dbunitTestContext,
+                dataSetLoader, databaseOperationLookup);
 
         testContext.updateState(testInstance, testMethod, testException);
         testContextDriver.afterTest();
