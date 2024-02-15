@@ -24,41 +24,13 @@ public class TestContext {
     private List<DbunitTask> tasksBefore = new ArrayList<>();
     private List<DbunitTask> tasksAfter = new ArrayList<>();
 
+    private String defaultConnectionName;
     private Map<String, ConnectionSource> connectionSources = new HashMap<>();
     private Map<String, AbstractDatabaseConnection> connections = new HashMap<>();
     private String schema;
 
-    public AbstractDatabaseConnection getConnection() throws DatabaseException {
-        String connectionName = getConnectionName();
-        return getConnection(connectionName);
-    }
-
-    /**
-     * @param connectionName
-     * @return
-     * @throws DatabaseException
-     */
-    public AbstractDatabaseConnection getConnection(String connectionName) throws DatabaseException {
-        AbstractDatabaseConnection databaseConnection = connections.get(connectionName);
-        if (databaseConnection == null) {
-            ConnectionSource connectionSource = connectionSources.get(connectionName);
-            if (connectionSource == null) {
-                throw new AssertionError("No connection named [" + connectionName + "] is registered for test case");
-            }
-            databaseConnection = connectionSource.getConnection();
-            connections.put(connectionName, databaseConnection);
-        }
-        return databaseConnection;
-    }
-
-    public String getConnectionName() {
-        if (connectionSources.size() > 1) {
-            throw new AssertionError("Multiple connections registered for test case");
-        }
-        if (connectionSources.size() == 1) {
-            return connectionSources.keySet().iterator().next();
-        }
-        throw new AssertionError("No connections registered for test case");
+    public void setDefaultConnectionName(String defaultConnectionName) {
+        this.defaultConnectionName = defaultConnectionName;
     }
 
     /**
@@ -73,14 +45,49 @@ public class TestContext {
 
     }
 
-    public ConnectionSource getSingleConnectionSource() {
+    public AbstractDatabaseConnection getConnection() throws DatabaseException {
+        return getConnection(null);
+    }
+
+    public AbstractDatabaseConnection getConnection(String connectionName) throws DatabaseException {
+        connectionName = determineConnectionName(connectionName);
+        return getConnectionInternal(connectionName);
+    }
+
+    private String determineConnectionName(String providedConnectionName) {
+        if (providedConnectionName != null && providedConnectionName.length() > 0) {
+            return providedConnectionName;
+        }
+        if (defaultConnectionName != null) {
+            return defaultConnectionName;
+        }
+        return getSingleConnectionName();
+    }
+
+    private String getSingleConnectionName() {
         if (connectionSources.size() > 1) {
-            throw new AssertionError("Multiple connections registered for test case");
+            throw new IllegalArgumentException(
+                    "Requested a DatabaseConnection without specifying name, but multiple connections available: "
+                            + connectionSources.keySet() + ", Please provide connection name");
         }
         if (connectionSources.size() == 1) {
-            return connectionSources.values().iterator().next();
+            return connectionSources.keySet().iterator().next();
         }
-        throw new AssertionError("No connections registered for test case");
+        throw new IllegalArgumentException(
+                "Requested a DatabaseConnection, but no connections registered for test case");
+    }
+
+    private AbstractDatabaseConnection getConnectionInternal(String connectionName) throws DatabaseException {
+        AbstractDatabaseConnection databaseConnection = connections.get(connectionName);
+        if (databaseConnection == null) {
+            ConnectionSource connectionSource = connectionSources.get(connectionName);
+            if (connectionSource == null) {
+                throw new AssertionError("No connection named [" + connectionName + "] is registered for test case");
+            }
+            databaseConnection = connectionSource.getConnection();
+            connections.put(connectionName, databaseConnection);
+        }
+        return databaseConnection;
     }
 
     public void releaseConnections() {

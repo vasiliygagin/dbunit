@@ -16,11 +16,13 @@
 
 package com.github.springtestdbunit;
 
-import java.sql.SQLException;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.junit.internal.TestContext;
+import org.dbunit.junit.internal.connections.SingleConnectionSource;
 
 /**
  * Holds a number of {@link IDatabaseConnection} beans.
@@ -29,42 +31,19 @@ import org.dbunit.database.IDatabaseConnection;
  */
 public class DatabaseConnections {
 
-    private final Map<String, AbstractDatabaseConnection> connectionByName;
-    private final String defaultName;
-
-    public DatabaseConnections(Map<String, AbstractDatabaseConnection> connectionByName, String defaultName) {
-        this.connectionByName = connectionByName;
-        this.defaultName = defaultName;
+    public DatabaseConnections(Map<String, AbstractDatabaseConnection> connectionByName, String defaultName,
+            TestContext dbunitTestContext) {
+        init(connectionByName, defaultName, dbunitTestContext);
     }
 
-    public Map<String, AbstractDatabaseConnection> getConnectionByName() {
-        return connectionByName;
-    }
+    static void init(Map<String, AbstractDatabaseConnection> connectionByName, String defaultName,
+            TestContext dbunitTestContext) {
+        dbunitTestContext.setDefaultConnectionName(defaultName);
 
-    public void closeAll() throws SQLException {
-        for (AbstractDatabaseConnection connection : this.connectionByName.values()) {
-            connection.close();
+        for (Entry<String, AbstractDatabaseConnection> entry : connectionByName.entrySet()) {
+            String connectionName = entry.getKey();
+            AbstractDatabaseConnection connection = entry.getValue();
+            dbunitTestContext.addConnecionSource(connectionName, new SingleConnectionSource(connection));
         }
-    }
-
-    public String determineConnectionName(String name) {
-        if (name == null || name.length() == 0) {
-            if (defaultName == null) {
-                throw new IllegalArgumentException(
-                        "Requested a IDatabaseConnection without specifying name, but multiple connections available: "
-                                + connectionByName.keySet() + ", Please provide connection name");
-            }
-            name = defaultName;
-        }
-        return name;
-    }
-
-    public AbstractDatabaseConnection get(String name) {
-        name = determineConnectionName(name);
-        AbstractDatabaseConnection connection = connectionByName.get(name);
-        if (connection == null) {
-            throw new IllegalStateException("Unable to find IDatabaseConnection named " + name);
-        }
-        return connection;
     }
 }

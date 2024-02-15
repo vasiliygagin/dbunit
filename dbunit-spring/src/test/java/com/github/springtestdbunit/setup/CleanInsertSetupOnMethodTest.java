@@ -30,6 +30,7 @@ import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.entity.EntityAssert;
 import com.github.springtestdbunit.entity.OtherEntityAssert;
 
@@ -37,6 +38,7 @@ import com.github.springtestdbunit.entity.OtherEntityAssert;
 @ContextConfiguration("/META-INF/dbunit-context.xml")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
         DbUnitRollbackTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@DbUnitConfiguration(defaultConnectionName = "dataSource")
 @Transactional
 public class CleanInsertSetupOnMethodTest {
 

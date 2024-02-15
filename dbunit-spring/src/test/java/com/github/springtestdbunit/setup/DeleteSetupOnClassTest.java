@@ -30,6 +30,7 @@ import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.entity.EntityAssert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,6 +38,7 @@ import com.github.springtestdbunit.entity.EntityAssert;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class,
         DbUnitRollbackTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup(type = DatabaseOperation.DELETE, value = "/META-INF/db/delete.xml")
+@DbUnitConfiguration(defaultConnectionName = "dataSource")
 @Transactional
 public class DeleteSetupOnClassTest {
 

@@ -59,16 +59,16 @@ public class DbUnitRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DbUnitRunner.class);
 
-    public void beforeTestMethod(Class<?> testClass, Method testMethod, DatabaseConnections connections,
-            DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
+    public void beforeTestMethod(Class<?> testClass, Method testMethod, TestContext dbunitTestContext,
+            DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup)
             throws Exception, SQLException, DataSetException, DatabaseUnitException {
-        setupOrTeardown(testClass, testMethod, DatabaseSetup.class, connections, dataSetLoader,
-                databaseOperationLookup, dbunitTestContext);
+        setupOrTeardown(testClass, testMethod, DatabaseSetup.class, dbunitTestContext, dataSetLoader,
+                databaseOperationLookup);
     }
 
     public Throwable afterTestMethod(Class<?> testClass, Object testInstance, Method testMethod,
-            Throwable testException, DatabaseConnections connections, DataSetLoader dataSetLoader,
-            DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
+            Throwable testException, TestContext dbunitTestContext, DataSetLoader dataSetLoader,
+            DatabaseOperationLookup databaseOperationLookup)
             throws Exception, DataSetException, SQLException, DatabaseUnitException {
         if (testException != null) {
             if (logger.isDebugEnabled()) {
@@ -76,16 +76,15 @@ public class DbUnitRunner {
             }
         } else {
             try {
-                verifyExpected(testClass, testInstance, testMethod, connections, dataSetLoader);
+                verifyExpected(testClass, testInstance, testMethod, dbunitTestContext, dataSetLoader);
             } catch (Throwable re) {
                 testException = re;
             }
         }
 
         try {
-            setupOrTeardown(testClass, testMethod, DatabaseTearDown.class, connections, dataSetLoader,
-                    databaseOperationLookup, dbunitTestContext);
-            connections.closeAll();
+            setupOrTeardown(testClass, testMethod, DatabaseTearDown.class, dbunitTestContext, dataSetLoader,
+                    databaseOperationLookup);
         } catch (RuntimeException ex) {
             if (testException == null) {
                 testException = ex;
@@ -100,29 +99,29 @@ public class DbUnitRunner {
     }
 
     private void verifyExpected(Class<?> testClass, Object testInstance, Method testMethod,
-            DatabaseConnections connections, DataSetLoader dataSetLoader)
+            TestContext dbunitTestContext, DataSetLoader dataSetLoader)
             throws Exception, DataSetException, SQLException, DatabaseUnitException {
         Annotations<ExpectedDatabase> annotations = new Annotations<>(testClass, testMethod, ExpectedDatabase.class);
         DataSetModifier modifier = getModifier(testInstance, annotations); // Not sure why modifiers are combined
         boolean override = false;
         for (ExpectedDatabase annotation : annotations.getMethodAnnotations()) {
-            verifyExpected(dataSetLoader, testClass, connections, modifier, annotation);
+            verifyExpected(dataSetLoader, testClass, dbunitTestContext, modifier, annotation);
             override |= annotation.override();
         }
         if (!override) {
             for (ExpectedDatabase annotation : annotations.getClassAnnotations()) {
-                verifyExpected(dataSetLoader, testClass, connections, modifier, annotation);
+                verifyExpected(dataSetLoader, testClass, dbunitTestContext, modifier, annotation);
             }
         }
     }
 
-    private void verifyExpected(DataSetLoader dataSetLoader, Class<?> testClass, DatabaseConnections connections,
+    private void verifyExpected(DataSetLoader dataSetLoader, Class<?> testClass, TestContext dbunitTestContext,
             DataSetModifier modifier, ExpectedDatabase annotation)
             throws Exception, DataSetException, SQLException, DatabaseUnitException {
         String query = annotation.query();
         String table = annotation.table();
         IDataSet expectedDataSet = loadResourceDataset(dataSetLoader, testClass, annotation.value(), modifier);
-        AbstractDatabaseConnection connection = connections.get(annotation.connection());
+        AbstractDatabaseConnection connection = dbunitTestContext.getConnection(annotation.connection());
         if (expectedDataSet != null) {
             DatabaseAssertion assertion = annotation.assertionMode().getDatabaseAssertion();
             List<IColumnFilter> columnFilters = getColumnFilters(annotation);
@@ -155,8 +154,7 @@ public class DbUnitRunner {
     }
 
     private <T extends Annotation> void setupOrTeardown(Class<?> testClass, Method testMethod, Class<T> annotationClass,
-            DatabaseConnections connections, DataSetLoader dataSetLoader,
-            DatabaseOperationLookup databaseOperationLookup, TestContext dbunitTestContext)
+            TestContext dbunitTestContext, DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup)
             throws Exception, SQLException, DataSetException, DatabaseUnitException {
         Annotations<T> annotations = new Annotations<>(testClass, testMethod, annotationClass);
         for (T annotation : annotations) {
@@ -167,21 +165,16 @@ public class DbUnitRunner {
             logger.debug("Executing annotation {} using {} and locations {}", annotationClass, operation,
                     dataSetLocations);
 
-            executeOperation(testClass, connections, dataSetLoader, databaseOperationLookup, dataSetLocations,
-                    connectionName, operation, dbunitTestContext);
+            executeOperation(testClass, dbunitTestContext, dataSetLoader, databaseOperationLookup, dataSetLocations,
+                    connectionName, operation);
         }
     }
 
-    private void executeOperation(Class<?> testClass, DatabaseConnections connections, DataSetLoader dataSetLoader,
+    private void executeOperation(Class<?> testClass, TestContext dbunitTestContext, DataSetLoader dataSetLoader,
             DatabaseOperationLookup databaseOperationLookup, String[] dataSetLocations, String connectionName,
-            DatabaseOperation operation, TestContext dbunitTestContext)
-            throws Exception, SQLException, DataSetException, DatabaseUnitException {
+            DatabaseOperation operation) throws Exception, SQLException, DataSetException, DatabaseUnitException {
 
-        connectionName = connections.determineConnectionName(connectionName);
         AbstractDatabaseConnection databaseConnection = dbunitTestContext.getConnection(connectionName);
-        if (databaseConnection == null) {
-            throw new IllegalStateException("Unable to find DatabaseConnection named " + connectionName);
-        }
         org.dbunit.operation.DatabaseOperation dbUnitOperation = getDbUnitDatabaseOperation(databaseOperationLookup,
                 operation);
         IDataSet dataSet = loadDataSet(testClass, dataSetLoader, dataSetLocations, databaseConnection);
