@@ -193,9 +193,8 @@ public class DbUnitTestExecutionListenerPrepareTest {
         try {
             testContextManager.prepareTestInstance();
         } catch (IllegalArgumentException ex) {
-            assertEquals("Unable to create data set loader instance for class "
-                    + "com.github.springtestdbunit.DbUnitTestExecutionListenerPrepareTest$"
-                    + "AbstractCustomDataSetLoader", ex.getMessage());
+            assertEquals("Unable to create data set loader instance for interface " + DataSetLoader.class.getName(),
+                    ex.getMessage());
         }
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
@@ -234,15 +233,12 @@ public class DbUnitTestExecutionListenerPrepareTest {
         }
     }
 
-    public abstract static class AbstractCustomDataSetLoader implements DataSetLoader {
+    public static class CustomDataSetLoader implements DataSetLoader {
 
         @Override
         public IDataSet loadDataSet(Class<?> testClass, String location) throws Exception {
             return null;
         }
-    }
-
-    public static class CustomDataSetLoader extends AbstractCustomDataSetLoader {
     }
 
     public static class CustomDatabaseOperationLookup implements DatabaseOperationLookup {
@@ -275,7 +271,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @ContextConfiguration(loader = LocalApplicationContextLoader.class)
     @TestExecutionListeners(DbUnitTestExecutionListener.class)
-    @DbUnitConfiguration(dataSetLoader = AbstractCustomDataSetLoader.class)
+    @DbUnitConfiguration(dataSetLoader = DataSetLoader.class)
     private static class NonCreatableDataSetLoader {
 
     }
