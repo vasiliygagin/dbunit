@@ -109,12 +109,12 @@ public class DbUnitTestExecutionListener extends AbstractTestExecutionListener {
             databaseOperationLookupClass = configuration.databaseOperationLookup();
         }
 
-        prepareDatabaseConnections(applicationContext, configuration);
+        configureDatabaseConnections(applicationContext, configuration);
         dataSetLoader = prepareDataSetLoader(applicationContext, dataSetLoaderBeanName, dataSetLoaderClass);
         databaseOperationLookup = prepareDatabaseOperationLookup(databaseOperationLookupClass);
     }
 
-    private void prepareDatabaseConnections(ApplicationContext applicationContext, DbUnitConfiguration configuration)
+    private void configureDatabaseConnections(ApplicationContext applicationContext, DbUnitConfiguration configuration)
             throws SQLException {
         org.dbunit.junit.internal.TestContext dbunitTestContext = testContextDriver.getTestContext();
 
