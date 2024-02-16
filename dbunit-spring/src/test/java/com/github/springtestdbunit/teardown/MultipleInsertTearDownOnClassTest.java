@@ -30,6 +30,7 @@ import com.github.springtestdbunit.DbUnitRollbackTestExecutionListener;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.entity.EntityAssert;
 import com.github.springtestdbunit.testutils.CallAfterTestMethodExecutionListener;
 
@@ -38,6 +39,7 @@ import com.github.springtestdbunit.testutils.CallAfterTestMethodExecutionListene
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         TransactionalTestExecutionListener.class, DbUnitRollbackTestExecutionListener.class,
         CallAfterTestMethodExecutionListener.class, DbUnitTestExecutionListener.class })
+@DbUnitConfiguration(defaultConnectionName = "dataSource")
 @DatabaseTearDown(type = DatabaseOperation.CLEAN_INSERT, value = { "/META-INF/db/insert.xml",
         "/META-INF/db/insert2.xml" })
 @Transactional

@@ -9,17 +9,8 @@ import com.github.springtestdbunit.operation.DatabaseOperationLookup;
 @Deprecated
 public class DbUnitContext {
 
-    private DatabaseConnections databaseConnections;
     private DataSetLoader dataSetLoader;
     private DatabaseOperationLookup databaseOperationLookup;
-
-    public DatabaseConnections getDatabaseConnections() {
-	return databaseConnections;
-    }
-
-    public void setDatabaseConnections(DatabaseConnections databaseConnections) {
-	this.databaseConnections = databaseConnections;
-    }
 
     public DataSetLoader getDataSetLoader() {
 	return dataSetLoader;

@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 import org.dbunit.database.AbstractDatabaseConnection;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.junit.internal.TestContext;
 import org.dbunit.junit.internal.TestContextDriver;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,13 +87,14 @@ public class DbUnitTestExecutionListenerPrepareTest {
         testContextManager.prepareTestInstance();
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
-        DatabaseConnections databaseConnections = listener.databaseConnections;
-        assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        TestContext dbunitTestContext = testContextDriver.getTestContext();
+
+        assertSame(this.databaseConnection, dbunitTestContext.getConnection("dbUnitDatabaseConnection"));
         assertEquals(FlatXmlDataSetLoader.class, listener.dataSetLoader.getClass());
         assertEquals(DefaultDatabaseOperationLookup.class, listener.databaseOperationLookup.getClass());
 
-        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
-                "testContextDriver");
         testContextDriver.releaseTestContext();
     }
 
@@ -115,15 +117,16 @@ public class DbUnitTestExecutionListenerPrepareTest {
         testContextManager.prepareTestInstance();
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
-        DatabaseConnections databaseConnections = listener.databaseConnections;
-        assertSame(this.databaseConnection, databaseConnections.get("dbUnitDatabaseConnection"));
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        TestContext dbunitTestContext = testContextDriver.getTestContext();
+
+        assertSame(this.databaseConnection, dbunitTestContext.getConnection("dbUnitDatabaseConnection"));
         verify(this.applicationContext).getBeansOfType(DataSource.class);
         verify(this.applicationContext).getBeansOfType(AbstractDatabaseConnection.class);
         verify(this.applicationContext).containsBean("dbUnitDataSetLoader");
         verifyNoMoreInteractions(this.applicationContext);
 
-        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
-                "testContextDriver");
         testContextDriver.releaseTestContext();
     }
 
@@ -135,12 +138,13 @@ public class DbUnitTestExecutionListenerPrepareTest {
         testContextManager.prepareTestInstance();
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
-        DatabaseConnections databaseConnections = listener.databaseConnections;
-        Object connection = databaseConnections.get("dataSource");
-        assertEquals(DatabaseDataSourceConnection.class, connection.getClass());
-
         TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
                 "testContextDriver");
+        TestContext dbunitTestContext = testContextDriver.getTestContext();
+
+        Object connection = dbunitTestContext.getConnection("dataSource");
+        assertEquals(DatabaseDataSourceConnection.class, connection.getClass());
+
         testContextDriver.releaseTestContext();
     }
 
@@ -170,13 +174,14 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
-        DatabaseConnections databaseConnections = listener.databaseConnections;
-        assertSame(this.databaseConnection, databaseConnections.get("customBean"));
+        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
+                "testContextDriver");
+        TestContext dbunitTestContext = testContextDriver.getTestContext();
+
+        assertSame(this.databaseConnection, dbunitTestContext.getConnection("customBean"));
         assertEquals(CustomDataSetLoader.class, listener.dataSetLoader.getClass());
         assertEquals(CustomDatabaseOperationLookup.class, listener.databaseOperationLookup.getClass());
 
-        TestContextDriver testContextDriver = (TestContextDriver) ReflectionTestUtils.getField(listener,
-                "testContextDriver");
         testContextDriver.releaseTestContext();
     }
 
@@ -188,9 +193,8 @@ public class DbUnitTestExecutionListenerPrepareTest {
         try {
             testContextManager.prepareTestInstance();
         } catch (IllegalArgumentException ex) {
-            assertEquals("Unable to create data set loader instance for class "
-                    + "com.github.springtestdbunit.DbUnitTestExecutionListenerPrepareTest$"
-                    + "AbstractCustomDataSetLoader", ex.getMessage());
+            assertEquals("Unable to create data set loader instance for interface " + DataSetLoader.class.getName(),
+                    ex.getMessage());
         }
         DbUnitTestExecutionListener listener = (DbUnitTestExecutionListener) testContextManager
                 .getTestExecutionListeners().get(0);
@@ -229,15 +233,12 @@ public class DbUnitTestExecutionListenerPrepareTest {
         }
     }
 
-    public abstract static class AbstractCustomDataSetLoader implements DataSetLoader {
+    public static class CustomDataSetLoader implements DataSetLoader {
 
         @Override
         public IDataSet loadDataSet(Class<?> testClass, String location) throws Exception {
             return null;
         }
-    }
-
-    public static class CustomDataSetLoader extends AbstractCustomDataSetLoader {
     }
 
     public static class CustomDatabaseOperationLookup implements DatabaseOperationLookup {
@@ -270,7 +271,7 @@ public class DbUnitTestExecutionListenerPrepareTest {
 
     @ContextConfiguration(loader = LocalApplicationContextLoader.class)
     @TestExecutionListeners(DbUnitTestExecutionListener.class)
-    @DbUnitConfiguration(dataSetLoader = AbstractCustomDataSetLoader.class)
+    @DbUnitConfiguration(dataSetLoader = DataSetLoader.class)
     private static class NonCreatableDataSetLoader {
 
     }

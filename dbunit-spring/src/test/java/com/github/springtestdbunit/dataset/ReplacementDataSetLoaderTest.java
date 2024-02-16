@@ -1,6 +1,7 @@
 package com.github.springtestdbunit.dataset;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -17,13 +18,12 @@ import com.github.springtestdbunit.testutils.ExtendedTestContextManager;
  */
 public class ReplacementDataSetLoaderTest {
 
-    private TestContext testContext;
+    private ReplacementDataSetLoader loader = new ReplacementDataSetLoader();
 
-    private ReplacementDataSetLoader loader;
+    private TestContext testContext;
 
     @Before
     public void setup() throws Exception {
-        this.loader = new ReplacementDataSetLoader();
         ExtendedTestContextManager manager = new ExtendedTestContextManager(getClass());
         this.testContext = manager.accessTestContext();
     }
