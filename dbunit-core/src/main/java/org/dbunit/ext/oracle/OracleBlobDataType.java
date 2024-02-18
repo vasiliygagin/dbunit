@@ -20,8 +20,6 @@
  */
 package org.dbunit.ext.oracle;
 
-import oracle.sql.BLOB;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +48,7 @@ public class OracleBlobDataType extends BlobDataType {
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
         if (logger.isDebugEnabled())
-            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", column, resultSet);
 
         return typeCast(resultSet.getBlob(column));
     }
@@ -59,7 +57,7 @@ public class OracleBlobDataType extends BlobDataType {
             throws SQLException, TypeCastException {
         if (logger.isDebugEnabled())
             logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-                    new Object[] { value, new Integer(column), statement });
+                    value, column, statement);
 
         statement.setObject(column, getBlob(value, statement.getConnection()));
     }

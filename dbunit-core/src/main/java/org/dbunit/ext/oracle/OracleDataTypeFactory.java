@@ -21,8 +21,8 @@
 package org.dbunit.ext.oracle;
 
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.dbunit.dataset.datatype.BinaryStreamDataType;
 import org.dbunit.dataset.datatype.DataType;
@@ -48,7 +48,7 @@ public class OracleDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "oracle" });
+    private static final Collection<String> DATABASE_PRODUCTS = Collections.singletonList("oracle");
 
     public static final DataType ORACLE_BLOB = new OracleBlobDataType();
     public static final DataType ORACLE_CLOB = new OracleClobDataType();
@@ -63,13 +63,13 @@ public class OracleDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts() {
+    public Collection<String> getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
         if (logger.isDebugEnabled())
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", sqlType, sqlTypeName);
 
         // Map Oracle DATE to TIMESTAMP
         if (sqlType == Types.DATE) {

@@ -67,10 +67,10 @@ public enum DatabaseOperation {
     TRUNCATE_TABLE,
 
     /**
-     * Deletes all rows from a database table when the tables is specified in the
+     * Deletes all rows from a database table when the tables are specified in the
      * dataset and subsequently insert new contents. Equivalent to calling
      * {@link #DELETE_ALL} followed by {@link #INSERT}.
      */
-    CLEAN_INSERT;
+    CLEAN_INSERT
 
 }

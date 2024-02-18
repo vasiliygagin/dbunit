@@ -20,8 +20,8 @@
  */
 package org.dbunit.ext.h2;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
@@ -45,20 +45,20 @@ public class H2DataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "h2" });
+    private static final Collection<String> DATABASE_PRODUCTS = Collections.singletonList("h2");
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     @Override
-    public Collection getValidDbProducts() {
+    public Collection<String> getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
         if (logger.isDebugEnabled()) {
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", sqlType, sqlTypeName);
         }
 
         if (sqlTypeName.equals("BOOLEAN")) {

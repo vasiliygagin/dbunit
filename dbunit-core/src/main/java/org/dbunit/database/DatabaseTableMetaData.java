@@ -120,7 +120,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         ResultSet resultSet = metadataHandler.getPrimaryKeys(databaseMetaData, tableMetadata.schemaMetadata.schema,
                 tableMetadata.tableName);
 
-        List list = new ArrayList();
+        List<PrimaryKeyData> list = new ArrayList<>();
         try {
             while (resultSet.next()) {
                 String name = resultSet.getString(4);
@@ -134,14 +134,14 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
         Collections.sort(list);
         String[] keys = new String[list.size()];
         for (int i = 0; i < keys.length; i++) {
-            PrimaryKeyData data = (PrimaryKeyData) list.get(i);
+            PrimaryKeyData data = list.get(i);
             keys[i] = data.getName();
         }
 
         return keys;
     }
 
-    private class PrimaryKeyData implements Comparable {
+    private static class PrimaryKeyData implements Comparable<Object> {
 
         private final String _name;
         private final int _index;
@@ -195,15 +195,14 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                 DatabaseMetaData databaseMetaData = jdbcConnection.getMetaData();
 
                 IMetadataHandler metadataHandler = _connection.getDatabaseConfig().getMetadataHandler();
-                ResultSet resultSet = databaseMetaData.getColumns(
-                        metadataHandler.toCatalog(tableMetadata.schemaMetadata.schema),
-                        metadataHandler.toSchema(tableMetadata.schemaMetadata.schema), tableMetadata.tableName, "%");
 
-                try {
+                try (ResultSet resultSet = databaseMetaData.getColumns(
+                        metadataHandler.toCatalog(tableMetadata.schemaMetadata.schema),
+                        metadataHandler.toSchema(tableMetadata.schemaMetadata.schema), tableMetadata.tableName, "%")) {
                     IDataTypeFactory dataTypeFactory = super.getDataTypeFactory(_connection);
                     boolean datatypeWarning = _connection.getDatabaseConfig().isDatatypeWarning();
 
-                    List columnList = new ArrayList();
+                    List<Column> columnList = new ArrayList<>();
                     while (resultSet.next()) {
                         // Check for exact table/schema name match because
                         // databaseMetaData.getColumns() uses patterns for the lookup
@@ -225,9 +224,7 @@ public class DatabaseTableMetaData extends AbstractTableMetaData {
                                 + "' that are supported by dbunit. " + "Will return an empty column list");
                     }
 
-                    _columns = (Column[]) columnList.toArray(new Column[0]);
-                } finally {
-                    resultSet.close();
+                    _columns = columnList.toArray(new Column[0]);
                 }
             } catch (SQLException e) {
                 throw new DataSetException(e);

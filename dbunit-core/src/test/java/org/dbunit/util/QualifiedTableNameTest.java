@@ -48,7 +48,7 @@ public class QualifiedTableNameTest extends TestCase {
 
     public void testQualifiedTableNameNotPresentAndNoDefaultSchema() {
         QualifiedTableName qualifiedTableName = new QualifiedTableName("MYTABLE", null);
-        assertEquals(null, qualifiedTableName.getSchema());
+        assertNull(qualifiedTableName.getSchema());
         assertEquals("MYTABLE", qualifiedTableName.getTable());
         assertEquals("MYTABLE", qualifiedTableName.getQualifiedName());
     }

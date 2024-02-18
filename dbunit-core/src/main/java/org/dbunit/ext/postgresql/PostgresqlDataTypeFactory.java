@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Specialized factory that recognizes Postgresql data types.
@@ -49,23 +49,23 @@ public class PostgresqlDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "PostgreSQL" });
+    private static final Collection<String> DATABASE_PRODUCTS = Collections.singletonList("PostgreSQL");
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
     @Override
-    public Collection getValidDbProducts() {
+    public Collection<String> getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
-    public static Collection getDatabaseProducts() {
+    public static Collection<String> getDatabaseProducts() {
         return DATABASE_PRODUCTS;
     }
 
     @Override
     public DataType createDataType(final int sqlType, final String sqlTypeName) throws DataTypeException {
-        logger.debug("createDataType(sqlType={}, sqlTypeName={})", String.valueOf(sqlType), sqlTypeName);
+        logger.debug("createDataType(sqlType={}, sqlTypeName={})", sqlType, sqlTypeName);
 
         if (sqlType == Types.OTHER) {
             // Treat Postgresql UUID types as VARCHARS
@@ -84,7 +84,7 @@ public class PostgresqlDataTypeFactory extends DefaultDataTypeFactory {
                 if (isEnumType(sqlTypeName)) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Custom enum type used for sqlTypeName {} (sqlType '{}')",
-                                new Object[] { sqlTypeName, new Integer(sqlType) });
+                                sqlTypeName, sqlType);
                     }
                     return new GenericEnumType(sqlTypeName);
                 }
