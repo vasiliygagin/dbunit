@@ -6,11 +6,12 @@ package org.dbunit.assertion.comparer.value;
 class AssertNotNull {
 
     public static void assertNotNull(String message, Object object) {
-        if (object == null) {
-            if (message == null) {
-                throw new AssertionError();
-            }
-            throw new AssertionError(message);
+        if (null != object) {
+            return;
         }
+        if (null == message) {
+            throw new AssertionError();
+        }
+        throw new AssertionError(message);
     }
 }

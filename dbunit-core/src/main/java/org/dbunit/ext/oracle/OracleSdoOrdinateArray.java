@@ -54,7 +54,7 @@ public class OracleSdoOrdinateArray implements ORAData, ORADataFactory {
 
     /* constructors */
     public OracleSdoOrdinateArray() {
-        this((java.math.BigDecimal[]) null);
+        this(null);
     }
 
     public OracleSdoOrdinateArray(java.math.BigDecimal[] a) {
@@ -119,7 +119,7 @@ public class OracleSdoOrdinateArray implements ORAData, ORADataFactory {
     public String toString() {
         try {
             String r = "MDSYS.SDO_ORDINATE_ARRAY" + "(";
-            java.math.BigDecimal[] a = (java.math.BigDecimal[]) getArray();
+            java.math.BigDecimal[] a = getArray();
             for (int i = 0; i < a.length;) {
                 r = r + a[i];
                 i++;

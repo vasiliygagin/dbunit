@@ -22,8 +22,8 @@
 package org.dbunit.ext.db2;
 
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
@@ -50,7 +50,7 @@ public class Db2DataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "db2" });
+    private static final Collection<String> DATABASE_PRODUCTS = Collections.singletonList("db2");
 
     static final DataType DB2XML_XMLVARCHAR = new StringDataType("DB2XML.XMLVARCHAR", Types.DISTINCT);
     static final DataType DB2XML_XMLCLOB = new StringDataType("DB2XML.XMLCLOB", Types.DISTINCT);
@@ -59,13 +59,13 @@ public class Db2DataTypeFactory extends DefaultDataTypeFactory {
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts() {
+    public Collection<String> getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
         if (logger.isDebugEnabled())
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", sqlType, sqlTypeName);
 
         if (sqlType == Types.DISTINCT) {
             if (sqlTypeName.equals(DB2XML_XMLVARCHAR.toString())) {

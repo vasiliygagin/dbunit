@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * MckoiDataTypeFactory - This class is for the DBUnit data type factory for
@@ -49,12 +49,12 @@ public class MckoiDataTypeFactory extends DefaultDataTypeFactory {
     /**
      * Database product names supported.
      */
-    private static final Collection DATABASE_PRODUCTS = Arrays.asList(new String[] { "Mckoi" });
+    private static final Collection<String> DATABASE_PRODUCTS = Collections.singletonList("Mckoi");
 
     /**
      * @see org.dbunit.dataset.datatype.IDbProductRelatable#getValidDbProducts()
      */
-    public Collection getValidDbProducts() {
+    public Collection<String> getValidDbProducts() {
         return DATABASE_PRODUCTS;
     }
 
@@ -62,7 +62,7 @@ public class MckoiDataTypeFactory extends DefaultDataTypeFactory {
         DataType retValue = super.createDataType(sqlType, sqlTypeName);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", String.valueOf(sqlType), sqlTypeName);
+            logger.debug("createDataType(sqlType={}, sqlTypeName={}) - start", sqlType, sqlTypeName);
         }
 
         retValue = (sqlTypeName.equals("BOOLEAN")) ? DataType.BOOLEAN : retValue;

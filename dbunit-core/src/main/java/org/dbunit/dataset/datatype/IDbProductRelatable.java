@@ -24,12 +24,12 @@ import java.util.Collection;
 
 /**
  * Reports what database products this object relates to. Typically implemented
- * by an <code>IDaatTypeFactory</code>.
+ * by an <code>IDataTypeFactory</code>.
  *
  * @author John Hurst
  * @author Last changed by: $Author: $
  * @version $Revision:$ $Date:$
- * @since 2.4.6 (Septemeber 11, 2009)
+ * @since 2.4.6 (September 11, 2009)
  * @see IDataTypeFactory
  */
 public interface IDbProductRelatable {
@@ -39,5 +39,5 @@ public interface IDbProductRelatable {
      * 
      * @return Set of Strings.
      */
-    public Collection getValidDbProducts();
+    Collection<String> getValidDbProducts();
 }

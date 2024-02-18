@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractTableMetaData implements ITableMetaData {
 
-    private Map _columnsToIndexes;
+    private Map<String, Integer> _columnsToIndexes;
 
     /**
      * Logger for this class
@@ -100,9 +100,9 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
         }
 
         String columnNameUpperCase = columnName.toUpperCase();
-        Integer colIndex = (Integer) this._columnsToIndexes.get(columnNameUpperCase);
+        Integer colIndex = this._columnsToIndexes.get(columnNameUpperCase);
         if (colIndex != null) {
-            return colIndex.intValue();
+            return colIndex;
         } else {
             throw new NoSuchColumnException(this.getTableName(), columnNameUpperCase,
                     " (Non-uppercase input column: " + columnName + ") in ColumnNameToIndexes cache map. "
@@ -114,10 +114,10 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
      * @param columns The columns to be put into the hash table
      * @return A map having the key value pair [columnName, columnIndexInInputArray]
      */
-    private Map createColumnIndexesMap(Column[] columns) {
-        Map colsToIndexes = new HashMap(columns.length);
+    private Map<String, Integer> createColumnIndexesMap(Column[] columns) {
+        Map<String, Integer> colsToIndexes = new HashMap<>(columns.length);
         for (int i = 0; i < columns.length; i++) {
-            colsToIndexes.put(columns[i].getColumnName().toUpperCase(), new Integer(i));
+            colsToIndexes.put(columns[i].getColumnName().toUpperCase(), i);
         }
         return colsToIndexes;
     }
@@ -164,7 +164,7 @@ public abstract class AbstractTableMetaData implements ITableMetaData {
         IDbProductRelatable productRelatable = (IDbProductRelatable) dataTypeFactory;
         String databaseProductName = metaData.getDatabaseProductName();
 
-        Collection validDbProductCollection = productRelatable.getValidDbProducts();
+        Collection<String> validDbProductCollection = productRelatable.getValidDbProducts();
         if (validDbProductCollection != null) {
             String lowerCaseDbProductName = databaseProductName.toLowerCase();
             for (Object element : validDbProductCollection) {

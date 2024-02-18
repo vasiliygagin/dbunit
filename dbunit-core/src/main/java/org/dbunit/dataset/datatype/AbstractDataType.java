@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract data type implementation that provides generic methods that are
- * appropriate for most data type implementations. Among those is the generic
+ * appropriate for most data type implementations. Among those are the generic
  * implementation of the {@link #compare(Object, Object)} method.
  * 
  * @author Manuel Laflamme
@@ -48,10 +48,10 @@ public abstract class AbstractDataType extends DataType {
 
     private final String _name;
     private final int _sqlType;
-    private final Class _classType;
+    private final Class<?> _classType;
     private final boolean _isNumber;
 
-    public AbstractDataType(String name, int sqlType, Class classType, boolean isNumber) {
+    public AbstractDataType(String name, int sqlType, Class<?> classType, boolean isNumber) {
         _sqlType = sqlType;
         _name = name;
         _classType = classType;
@@ -113,9 +113,8 @@ public abstract class AbstractDataType extends DataType {
      */
     protected int compareNonNulls(Object value1, Object value2) throws TypeCastException {
         logger.debug("compareNonNulls(value1={}, value2={}) - start", value1, value2);
-
-        Comparable value1comp = (Comparable) value1;
-        Comparable value2comp = (Comparable) value2;
+        Comparable<Object> value1comp = (Comparable<Object>) value1;
+        Comparable<Object> value2comp = (Comparable<Object>) value2;
         return value1comp.compareTo(value2comp);
     }
 
@@ -146,7 +145,7 @@ public abstract class AbstractDataType extends DataType {
         return _sqlType;
     }
 
-    public Class getTypeClass() {
+    public Class<?> getTypeClass() {
         logger.debug("getTypeClass() - start");
 
         return _classType;
@@ -166,7 +165,7 @@ public abstract class AbstractDataType extends DataType {
 
     public Object getSqlValue(int column, ResultSet resultSet) throws SQLException, TypeCastException {
         if (logger.isDebugEnabled())
-            logger.debug("getSqlValue(column={}, resultSet={}) - start", new Integer(column), resultSet);
+            logger.debug("getSqlValue(column={}, resultSet={}) - start", column, resultSet);
 
         Object value = resultSet.getObject(column);
         if (value == null || resultSet.wasNull()) {
@@ -179,7 +178,7 @@ public abstract class AbstractDataType extends DataType {
             throws SQLException, TypeCastException {
         if (logger.isDebugEnabled())
             logger.debug("setSqlValue(value={}, column={}, statement={}) - start",
-                    new Object[] { value, new Integer(column), statement });
+                    value, column, statement);
 
         statement.setObject(column, typeCast(value), getSqlType());
     }
@@ -190,7 +189,7 @@ public abstract class AbstractDataType extends DataType {
      * @return The loaded class
      * @throws ClassNotFoundException
      */
-    protected final Class loadClass(String clazz, Connection connection) throws ClassNotFoundException {
+    protected final Class<?> loadClass(String clazz, Connection connection) throws ClassNotFoundException {
         ClassLoader connectionClassLoader = connection.getClass().getClassLoader();
         return this.loadClass(clazz, connectionClassLoader);
     }
@@ -201,9 +200,8 @@ public abstract class AbstractDataType extends DataType {
      * @return The loaded class
      * @throws ClassNotFoundException
      */
-    protected final Class loadClass(String clazz, ClassLoader classLoader) throws ClassNotFoundException {
-        Class loadedClass = classLoader.loadClass(clazz);
-        return loadedClass;
+    protected final Class<?> loadClass(String clazz, ClassLoader classLoader) throws ClassNotFoundException {
+        return classLoader.loadClass(clazz);
     }
 
     ////////////////////////////////////////////////////////////////////////////

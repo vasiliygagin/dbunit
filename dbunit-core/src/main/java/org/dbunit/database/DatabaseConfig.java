@@ -51,30 +51,32 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
      */
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
 
-    public static final String PROPERTY_STATEMENT_FACTORY = "http://www.dbunit.org/properties/statementFactory";
-    public static final String PROPERTY_RESULTSET_TABLE_FACTORY = "http://www.dbunit.org/properties/resultSetTableFactory";
-    public static final String PROPERTY_DATATYPE_FACTORY = "http://www.dbunit.org/properties/datatypeFactory";
-    public static final String PROPERTY_ESCAPE_PATTERN = "http://www.dbunit.org/properties/escapePattern";
-    public static final String PROPERTY_TABLE_TYPE = "http://www.dbunit.org/properties/tableType";
-    public static final String PROPERTY_PRIMARY_KEY_FILTER = "http://www.dbunit.org/properties/primaryKeyFilter";
-    public static final String PROPERTY_BATCH_SIZE = "http://www.dbunit.org/properties/batchSize";
-    public static final String PROPERTY_FETCH_SIZE = "http://www.dbunit.org/properties/fetchSize";
-    public static final String PROPERTY_METADATA_HANDLER = "http://www.dbunit.org/properties/metadataHandler";
-    public static final String PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH = "http://www.dbunit.org/properties/allowVerifytabledefinitionExpectedtableCountMismatch";
-    public static final String PROPERTY_IDENTITY_COLUMN_FILTER = "http://www.dbunit.org/properties/mssql/identityColumnFilter";
+    private static final String PREFIX = "http://www.dbunit.org/";
 
-    public static final String FEATURE_CASE_SENSITIVE_TABLE_NAMES = "http://www.dbunit.org/features/caseSensitiveTableNames";
-    public static final String FEATURE_QUALIFIED_TABLE_NAMES = "http://www.dbunit.org/features/qualifiedTableNames";
-    public static final String FEATURE_BATCHED_STATEMENTS = "http://www.dbunit.org/features/batchedStatements";
-    public static final String FEATURE_DATATYPE_WARNING = "http://www.dbunit.org/features/datatypeWarning";
-    public static final String FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES = "http://www.dbunit.org/features/skipOracleRecycleBinTables";
-    public static final String FEATURE_ALLOW_EMPTY_FIELDS = "http://www.dbunit.org/features/allowEmptyFields";
+    public static final String PROPERTY_STATEMENT_FACTORY = PREFIX + "properties/statementFactory";
+    public static final String PROPERTY_RESULTSET_TABLE_FACTORY = PREFIX + "properties/resultSetTableFactory";
+    public static final String PROPERTY_DATATYPE_FACTORY = PREFIX +"properties/datatypeFactory";
+    public static final String PROPERTY_ESCAPE_PATTERN = PREFIX +"properties/escapePattern";
+    public static final String PROPERTY_TABLE_TYPE = PREFIX +"properties/tableType";
+    public static final String PROPERTY_PRIMARY_KEY_FILTER = PREFIX +"properties/primaryKeyFilter";
+    public static final String PROPERTY_BATCH_SIZE = PREFIX +"properties/batchSize";
+    public static final String PROPERTY_FETCH_SIZE = PREFIX +"properties/fetchSize";
+    public static final String PROPERTY_METADATA_HANDLER = PREFIX +"properties/metadataHandler";
+    public static final String PROPERTY_ALLOW_VERIFYTABLEDEFINITION_EXPECTEDTABLE_COUNT_MISMATCH = PREFIX +"properties/allowVerifytabledefinitionExpectedtableCountMismatch";
+    public static final String PROPERTY_IDENTITY_COLUMN_FILTER = PREFIX +"properties/mssql/identityColumnFilter";
+
+    public static final String FEATURE_CASE_SENSITIVE_TABLE_NAMES = PREFIX +"features/caseSensitiveTableNames";
+    public static final String FEATURE_QUALIFIED_TABLE_NAMES = PREFIX +"features/qualifiedTableNames";
+    public static final String FEATURE_BATCHED_STATEMENTS = PREFIX +"features/batchedStatements";
+    public static final String FEATURE_DATATYPE_WARNING = PREFIX +"features/datatypeWarning";
+    public static final String FEATURE_SKIP_ORACLE_RECYCLEBIN_TABLES = PREFIX +"features/skipOracleRecycleBinTables";
+    public static final String FEATURE_ALLOW_EMPTY_FIELDS = PREFIX +"features/allowEmptyFields";
 
     /**
      * A list of all properties as {@link ConfigProperty} objects. The objects
      * contain the allowed java type and whether or not a property is nullable.
      */
-    public static final ConfigProperty[] ALL_PROPERTIES = {
+    public static final ConfigProperty<?>[] ALL_PROPERTIES = {
             new ConfigProperty<>(PROPERTY_STATEMENT_FACTORY, IStatementFactory.class, false,
                     DatabaseConfig::getStatementFactory, DatabaseConfig::setStatementFactory),
             new ConfigProperty<>(PROPERTY_RESULTSET_TABLE_FACTORY, IResultSetTableFactory.class, false,
@@ -139,9 +141,9 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
      */
     @Deprecated
     public void setFeature(String name, boolean value) {
-        logger.trace("setFeature(name={}, value={}) - start", name, String.valueOf(value));
+        logger.trace("setFeature(name={}, value={}) - start", name, value);
 
-        setProperty(name, Boolean.valueOf(value));
+        setProperty(name, value);
     }
 
     /**
@@ -159,12 +161,10 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
         if (property == null) {
             result = false;
         } else if (property instanceof Boolean) {
-            Boolean feature = (Boolean) property;
-            result = feature.booleanValue();
+            result = (Boolean) property;
         } else {
             String propString = String.valueOf(property);
-            Boolean feature = Boolean.valueOf(propString);
-            result = feature.booleanValue();
+            result = Boolean.parseBoolean(propString);
         }
         return result;
     }
@@ -177,7 +177,7 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
      */
     public void setProperty(String fullName, Object value) {
 
-        ConfigProperty prop = findByName(fullName);
+        ConfigProperty<?> prop = findByName(fullName);
         if (prop == null) {
             throw new IllegalArgumentException("Did not find property with name '" + fullName + "'");
         }
@@ -211,7 +211,6 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
 
     private Object convertIfNeeded(ConfigProperty prop, Object value) {
         Class allowedPropType = prop.getPropertyType();
-
         if (allowedPropType == Boolean.class || allowedPropType == boolean.class) {
             // String -> Boolean is a special mapping which is allowed
             if (value instanceof String) {
@@ -439,13 +438,11 @@ public class DatabaseConfig extends io.github.vasiliygagin.dbunit.jdbc.DatabaseC
 
         @Override
         public String toString() {
-            StringBuffer sb = new StringBuffer();
-            sb.append(getClass().getName()).append("[");
-            sb.append("property=").append(property);
-            sb.append(", propertyType=").append(propertyType);
-            sb.append(", nullable=").append(nullable);
-            sb.append("]");
-            return sb.toString();
+            return getClass().getName() + "[" +
+                    "property=" + property +
+                    ", propertyType=" + propertyType +
+                    ", nullable=" + nullable +
+                    "]";
         }
     }
 }

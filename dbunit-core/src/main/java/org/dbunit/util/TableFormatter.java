@@ -49,7 +49,7 @@ public class TableFormatter {
      * @throws DataSetException
      */
     public String format(ITable table) throws DataSetException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         ITableMetaData tableMetaData = table.getTableMetaData();
         // Title line
         sb.append("******");
@@ -62,8 +62,8 @@ public class TableFormatter {
         // Column headers
         int width = 20;
         Column[] cols = tableMetaData.getColumns();
-        for (int i = 0; i < cols.length; i++) {
-            sb.append(padRight(cols[i].getColumnName(), width, ' '));
+        for (Column col : cols) {
+            sb.append(padRight(col.getColumnName(), width, ' '));
             sb.append("|");
         }
         sb.append("\n");
@@ -77,8 +77,8 @@ public class TableFormatter {
 
         // Values
         for (int i = 0; i < table.getRowCount(); i++) {
-            for (int j = 0; j < cols.length; j++) {
-                Object value = table.getValue(i, cols[j].getColumnName());
+            for (Column col : cols) {
+                Object value = table.getValue(i, col.getColumnName());
                 String stringValue = String.valueOf(value);
                 sb.append(padRight(stringValue, 20, ' '));
                 sb.append("|");
@@ -99,7 +99,7 @@ public class TableFormatter {
      * @param padChar
      * @return The padded string
      */
-    public static final String padLeft(String s, int length, char padChar) {
+    public static String padLeft(String s, int length, char padChar) {
         String result = s;
 
         char[] padCharArray = getPadCharArray(s, length, padChar);
@@ -118,7 +118,7 @@ public class TableFormatter {
      * @param padChar
      * @return The padded string
      */
-    public static final String padRight(String s, int length, char padChar) {
+    public static String padRight(String s, int length, char padChar) {
         String result = s;
 
         char[] padCharArray = getPadCharArray(s, length, padChar);
@@ -128,7 +128,7 @@ public class TableFormatter {
         return result;
     }
 
-    private static final char[] getPadCharArray(String s, int length, char padChar) {
+    private static char[] getPadCharArray(String s, int length, char padChar) {
         if (length > 0 && length > s.length()) {
             int padCount = length - s.length();
             char[] padArray = new char[padCount];
@@ -141,8 +141,8 @@ public class TableFormatter {
         }
     }
 
-    private static final String pad(String s, char[] padArray, boolean padLeft) {
-        StringBuffer sb = new StringBuffer(s);
+    private static String pad(String s, char[] padArray, boolean padLeft) {
+        StringBuilder sb = new StringBuilder(s);
         if (padLeft) {
             sb.insert(0, padArray);
         } else {

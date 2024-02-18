@@ -13,12 +13,12 @@ public class DbUnitRollbackTestExecutionListener extends AbstractTestExecutionLi
     private TestContextDriver testContextDriver;
 
     @Override
-    public void prepareTestInstance(TestContext testContext) throws Exception {
+    public void prepareTestInstance(TestContext testContext) {
         testContextDriver = TestContextAccessor.buildTestContext();
     }
 
     @Override
-    public void afterTestMethod(TestContext testContext) throws Exception {
+    public void afterTestMethod(TestContext testContext) {
         testContextDriver.rollbackConnections();
         testContextDriver.releaseTestContext();
     }

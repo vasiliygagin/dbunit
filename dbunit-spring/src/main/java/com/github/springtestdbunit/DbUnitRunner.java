@@ -51,7 +51,7 @@ import com.github.springtestdbunit.dataset.DataSetModifier;
 import com.github.springtestdbunit.operation.DatabaseOperationLookup;
 
 /**
- * Internal use. Can be chaned or removed at any time
+ * Internal use. Can be changed or removed at any time
  *
  * @author Vasiliy Gagin
  */
@@ -61,7 +61,7 @@ public class DbUnitRunner {
 
     public void beforeTestMethod(Class<?> testClass, Method testMethod, TestContext dbunitTestContext,
             DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup)
-            throws Exception, SQLException, DataSetException, DatabaseUnitException {
+            throws Exception {
         setupOrTeardown(testClass, testMethod, DatabaseSetup.class, dbunitTestContext, dataSetLoader,
                 databaseOperationLookup);
     }
@@ -117,7 +117,7 @@ public class DbUnitRunner {
 
     private void verifyExpected(DataSetLoader dataSetLoader, Class<?> testClass, TestContext dbunitTestContext,
             DataSetModifier modifier, ExpectedDatabase annotation)
-            throws Exception, DataSetException, SQLException, DatabaseUnitException {
+            throws Exception, SQLException, DatabaseUnitException {
         String query = annotation.query();
         String table = annotation.table();
         IDataSet expectedDataSet = loadResourceDataset(dataSetLoader, testClass, annotation.value(), modifier);
@@ -155,7 +155,7 @@ public class DbUnitRunner {
 
     private <T extends Annotation> void setupOrTeardown(Class<?> testClass, Method testMethod, Class<T> annotationClass,
             TestContext dbunitTestContext, DataSetLoader dataSetLoader, DatabaseOperationLookup databaseOperationLookup)
-            throws Exception, SQLException, DataSetException, DatabaseUnitException {
+            throws Exception, SQLException, DatabaseUnitException {
         Annotations<T> annotations = new Annotations<>(testClass, testMethod, annotationClass);
         for (T annotation : annotations) {
             Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes(annotation);
@@ -172,7 +172,7 @@ public class DbUnitRunner {
 
     private void executeOperation(Class<?> testClass, TestContext dbunitTestContext, DataSetLoader dataSetLoader,
             DatabaseOperationLookup databaseOperationLookup, String[] dataSetLocations, String connectionName,
-            DatabaseOperation operation) throws Exception, SQLException, DataSetException, DatabaseUnitException {
+            DatabaseOperation operation) throws Exception, SQLException, DatabaseUnitException {
 
         AbstractDatabaseConnection databaseConnection = dbunitTestContext.getConnection(connectionName);
         org.dbunit.operation.DatabaseOperation dbUnitOperation = getDbUnitDatabaseOperation(databaseOperationLookup,
@@ -209,7 +209,7 @@ public class DbUnitRunner {
         Class<? extends IColumnFilter>[] columnFilterClasses = annotation.columnFilters();
         List<IColumnFilter> columnFilters = new LinkedList<>();
         for (Class<? extends IColumnFilter> columnFilterClass : columnFilterClasses) {
-            columnFilters.add(columnFilterClass.newInstance());
+            columnFilters.add(columnFilterClass.getDeclaredConstructor().newInstance());
         }
         return columnFilters;
     }

@@ -19,7 +19,7 @@ package com.github.springtestdbunit.operation;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 
 /**
- * Strategy used to lookup a DBUnit
+ * Strategy used to look up a DBUnit
  * {@link org.dbunit.operation.DatabaseOperation Database Operation} from a
  * {@link DatabaseOperation enum value}.
  *
@@ -35,7 +35,7 @@ public interface DatabaseOperationLookup {
      * operation is not supported.
      * 
      * @param operation the enum value
-     * @return the DBUnit databsae operation or {@code null}.
+     * @return the DBUnit database operation or {@code null}.
      */
     org.dbunit.operation.DatabaseOperation get(DatabaseOperation operation);
 

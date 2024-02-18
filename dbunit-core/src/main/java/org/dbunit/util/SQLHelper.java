@@ -78,8 +78,7 @@ public class SQLHelper {
         DatabaseMetaData metadata = conn.getMetaData();
         ResultSet rs = metadata.getPrimaryKeys(null, null, table);
         rs.next();
-        String pkColumn = rs.getString(4);
-        return pkColumn;
+        return rs.getString(4);
     }
 
     /**
@@ -146,8 +145,8 @@ public class SQLHelper {
         }
 
         DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet rs = metaData.getSchemas(); // null, schemaPattern);
-        try {
+        // null, schemaPattern);
+        try (ResultSet rs = metaData.getSchemas()) {
             while (rs.next()) {
                 String foundSchema = rs.getString("TABLE_SCHEM");
                 if (foundSchema.equals(schema)) {
@@ -162,8 +161,6 @@ public class SQLHelper {
             }
 
             return false;
-        } finally {
-            rs.close();
         }
     }
 
@@ -185,8 +182,7 @@ public class SQLHelper {
         }
 
         DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet rs = metaData.getCatalogs();
-        try {
+        try (ResultSet rs = metaData.getCatalogs()) {
             while (rs.next()) {
                 String foundCatalog = rs.getString("TABLE_CAT");
                 if (foundCatalog.equals(catalog)) {
@@ -194,8 +190,6 @@ public class SQLHelper {
                 }
             }
             return false;
-        } finally {
-            rs.close();
         }
 
     }
@@ -264,10 +258,10 @@ public class SQLHelper {
      * @return The database information as formatted string
      */
     public static String getDatabaseInfo(DatabaseMetaData metaData) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("\n");
 
-        String dbInfo = null;
+        String dbInfo;
 
         dbInfo = new ExceptionWrapper() {
 
@@ -326,7 +320,7 @@ public class SQLHelper {
         dbInfo = new ExceptionWrapper() {
 
             @Override
-            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+            public String wrappedCall(DatabaseMetaData metaData) {
                 return String.valueOf(metaData.getDriverMajorVersion());
             }
         }.executeWrappedCall(metaData);
@@ -335,7 +329,7 @@ public class SQLHelper {
         dbInfo = new ExceptionWrapper() {
 
             @Override
-            public String wrappedCall(DatabaseMetaData metaData) throws Exception {
+            public String wrappedCall(DatabaseMetaData metaData) {
                 return String.valueOf(metaData.getDriverMinorVersion());
             }
         }.executeWrappedCall(metaData);
@@ -350,9 +344,8 @@ public class SQLHelper {
      * @param metaData     The JDBC database metadata needed to retrieve database
      *                     information
      * @param outputStream The stream to which the information is printed
-     * @throws SQLException
      */
-    public static void printDatabaseInfo(DatabaseMetaData metaData, PrintStream outputStream) throws SQLException {
+    public static void printDatabaseInfo(DatabaseMetaData metaData, PrintStream outputStream) {
         String dbInfo = getDatabaseInfo(metaData);
         try {
             outputStream.println(dbInfo);
@@ -372,8 +365,7 @@ public class SQLHelper {
      */
     public static boolean isSybaseDb(DatabaseMetaData metaData) throws SQLException {
         String dbProductName = metaData.getDatabaseProductName();
-        boolean isSybase = (dbProductName != null && dbProductName.equals(DB_PRODUCT_SYBASE));
-        return isSybase;
+        return (dbProductName != null && dbProductName.equals(DB_PRODUCT_SYBASE));
     }
 
     /**
@@ -393,8 +385,8 @@ public class SQLHelper {
      * @throws DataTypeException
      * @since 2.4.0
      */
-    public static final Column createColumn(ResultSet resultSet, IDataTypeFactory dataTypeFactory,
-            boolean datatypeWarning) throws SQLException, DataTypeException {
+    public static Column createColumn(ResultSet resultSet, IDataTypeFactory dataTypeFactory,
+                                      boolean datatypeWarning) throws SQLException, DataTypeException {
         String tableName = resultSet.getString(3);
         String columnName = resultSet.getString(4);
         int sqlType = resultSet.getInt(5);
@@ -500,11 +492,10 @@ public class SQLHelper {
             catalogName = null;
         }
 
-        boolean areEqual = areEqualIgnoreNull(catalog, catalogName, caseSensitive)
+        return areEqualIgnoreNull(catalog, catalogName, caseSensitive)
                 && areEqualIgnoreNull(schema, schemaName, caseSensitive)
                 && areEqualIgnoreNull(table, tableName, caseSensitive)
                 && areEqualIgnoreNull(column, columnName, caseSensitive);
-        return areEqual;
     }
 
     /**
@@ -519,7 +510,7 @@ public class SQLHelper {
      *         <code>null</code> or empty string.
      * @since 2.4.4
      */
-    public static final boolean areEqualIgnoreNull(String value1, String value2, boolean caseSensitive) {
+    public static boolean areEqualIgnoreNull(String value1, String value2, boolean caseSensitive) {
         if (value1 == null || value1.equals("")) {
             return true;
         } else {
@@ -545,7 +536,7 @@ public class SQLHelper {
      * @return The database identifier in the correct case for the RDBMS
      * @since 2.4.4
      */
-    public static final String correctCase(final String databaseIdentifier, Connection connection) {
+    public static String correctCase(final String databaseIdentifier, Connection connection) {
         logger.trace("correctCase(tableName={}, connection={}) - start", databaseIdentifier, connection);
 
         try {
@@ -566,7 +557,7 @@ public class SQLHelper {
      * @return The database identifier in the correct case for the RDBMS
      * @since 2.4.4
      */
-    public static final String correctCase(final String databaseIdentifier, DatabaseMetaData databaseMetaData) {
+    public static String correctCase(final String databaseIdentifier, DatabaseMetaData databaseMetaData) {
         logger.trace("correctCase(tableName={}, databaseMetaData={}) - start", databaseIdentifier, databaseMetaData);
 
         if (databaseIdentifier == null) {
@@ -609,7 +600,7 @@ public class SQLHelper {
      *                 log message
      * @since 2.4.4
      */
-    public static final void logInfoIfValueChanged(String oldValue, String newValue, String message, Class source) {
+    public static void logInfoIfValueChanged(String oldValue, String newValue, String message, Class source) {
         if (logger.isInfoEnabled()) {
             if (oldValue != null && !oldValue.equals(newValue))
                 logger.debug("{}. {} oldValue={} newValue={}", source, message, oldValue, newValue);
@@ -622,7 +613,7 @@ public class SQLHelper {
      * @return
      * @since 2.4.4
      */
-    private static final boolean isEscaped(String tableName, String dbIdentifierQuoteString) {
+    private static boolean isEscaped(String tableName, String dbIdentifierQuoteString) {
         logger.trace("isEscaped(tableName={}, dbIdentifierQuoteString={}) - start", tableName, dbIdentifierQuoteString);
 
         if (dbIdentifierQuoteString == null) {
@@ -631,7 +622,7 @@ public class SQLHelper {
         boolean isEscaped = tableName != null && (tableName.startsWith(dbIdentifierQuoteString));
         if (logger.isDebugEnabled())
             logger.debug("isEscaped returns '{}' for tableName={} (dbIdentifierQuoteString={})",
-                    Boolean.valueOf(isEscaped), tableName, dbIdentifierQuoteString);
+                    isEscaped, tableName, dbIdentifierQuoteString);
         return isEscaped;
     }
 
@@ -663,8 +654,7 @@ public class SQLHelper {
          */
         public final String executeWrappedCall(DatabaseMetaData metaData) {
             try {
-                String result = wrappedCall(metaData);
-                return result;
+                return wrappedCall(metaData);
             } catch (Exception e) {
                 logger.trace("Problem retrieving DB information via DatabaseMetaData", e);
                 return NOT_AVAILABLE_TEXT;

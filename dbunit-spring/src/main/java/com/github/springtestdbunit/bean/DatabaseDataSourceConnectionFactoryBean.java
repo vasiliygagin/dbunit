@@ -105,9 +105,9 @@ public class DatabaseDataSourceConnectionFactoryBean implements FactoryBean<Data
     }
 
     /**
-     * Set the user name to use when accessing the data source.
+     * Set the username to use when accessing the data source.
      *
-     * @param username the user name or <tt>null</tt>
+     * @param username the username or <tt>null</tt>
      */
     public void setUsername(String username) {
         this.username = username;
